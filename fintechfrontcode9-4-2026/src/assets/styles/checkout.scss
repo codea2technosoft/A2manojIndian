@@ -1,0 +1,26 @@
+@import './variables.scss';
+
+.selectable-card {
+    cursor: pointer;
+}
+
+.selected-card {
+    border: solid 2px $primary-color;
+    background-color: $primary-color-1;
+}
+
+.checkout-result-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.checkout-result-card {
+    padding: 24px 120px;
+    text-align: center;
+}
+
+.checkout-result-img {
+    width: 300px;
+    height: auto;
+}

@@ -1,0 +1,144 @@
+@import './variables.scss';
+
+.overview-content {
+	.red-color {
+		color: $secondary-color  !important;
+	}
+
+	.purple-color {
+		color: $primary-color  !important;
+	}
+
+	.overview-header {
+		position: relative;
+		top: 0px;
+
+		h3 {
+			font-weight: 500;
+		}
+
+		h3.ant-typography,
+		h2.ant-typography {
+			margin: 10px 5px;
+		}
+	}
+
+	.overview-main ul.ant-pagination.ant-table-pagination.ant-table-pagination-right {
+		display: none;
+	}
+
+
+	.overview-main {
+		.ant-card {
+			position: relative;
+			// box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.03);
+			// box-shadow: 0px 1px 4px rgb(93 28 96);
+			border-radius: 0.5rem;
+			min-height: 142px;
+		}
+
+		.stats{
+			height: calc(100% - 20px);
+		}
+
+		.overview-card {
+			background: $primary-color;
+			color: $white-color  !important;
+			height: 350px;
+
+			.card-image {
+				position: absolute;
+				right: 0;
+				top: 0;
+			}
+
+			h3.ant-typography {
+				color: $white-color;
+			}
+
+			.card-plan {
+				border-radius: 16px;
+				min-height: 175px;
+			}
+
+			.card-footer {
+				position: absolute;
+				bottom: 16px;
+				margin-left: auto;
+				margin-right: auto;
+				left: 0;
+				right: 0;
+				text-align: center;
+			}
+		}
+
+		.overview-orders {
+			min-height: 350px;
+
+			.ant-list-split .ant-list-item {
+				border-bottom: none;
+			}
+
+			.ant-btn {
+				padding: 0px;
+				width: 125px;
+				color: $primary-color;
+			}
+
+			.list-button {
+				font-size: 14px;
+				font-weight: 500;
+			}
+
+			.count-list {
+				border-radius: 8px;
+				padding: 3px;
+			}
+
+			.green-box {
+				color: #65B569;
+				background: #F0FAF0;
+			}
+
+			.red-box {
+				color: #E1092A;
+				background: #F6E1E4;
+			}
+
+			.orange-box {
+				color: #F46615;
+				background: #FFE4BC;
+			}
+		}
+
+		.overview-order-sumary {
+			min-height: 350px;
+		}
+	}
+}
+
+@media screen and (max-width:810.5px){
+	.overview-header {
+		h3 {
+			font-size: 20px;
+		}
+
+		h3.ant-typography,
+		h2.ant-typography {
+			font-size: 20px;
+		}
+	}
+}
+
+@media screen and (max-width:485px){
+	.overview-header {
+		h3 {
+			font-size: 14px;
+		}
+
+		h3.ant-typography,
+		h2.ant-typography {
+			font-size: 14px;
+		}
+	}
+}

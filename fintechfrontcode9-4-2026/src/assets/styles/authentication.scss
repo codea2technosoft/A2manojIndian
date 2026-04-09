@@ -1,0 +1,190 @@
+@import './variables.scss';
+
+.SignIn.authentication-container {
+    padding: 0 15px;
+    height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    background: linear-gradient(45deg, black, #01cc61);
+    position: relative;
+    &::before{
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: url('../../assets/images/bgshape.svg');
+        top: 0px;
+        left: 0px;
+        background-size: cover;
+    }
+
+    a {
+        color: $primary-color;
+        font-weight: 500;
+
+        &:hover {
+            color: $secondary-color;
+        }
+    }
+
+    .logo {
+        position: absolute;
+        top: 5%;
+        width: 70%;
+    }
+}
+
+.authentication-header--wrapper {
+    margin-bottom: 40px;
+}
+
+.authentication-content--wrapper {
+    min-height: 10vh;
+    // background: url(../../assets/images/logbg.png) no-repeat;
+    background-size: 100% 100%;
+}
+
+.authentication-content {
+    margin: 50px 40px 10px 0;
+    ;
+    border-radius: 24px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+    .ant-card-body {
+        padding: 40px;
+
+        h3 {
+            font-size: 30px;
+            font-weight: 700;
+            color: #3d1460;
+        }
+
+        label {
+            font-size: 18px;
+        }
+    }
+
+    label[for='email_otp_code'],
+    label[for='mobile_otp_code'] {
+        width: 100% !important;
+    }
+}
+
+.authentication-block--img {
+    display: flex;
+    // flex-direction: column;
+    align-items: center;
+    max-width: 450px;
+    padding: 50px 30px 30px;
+}
+
+// Social buttons
+.social-authentication-button {
+    width: 100%;
+    height: 48px;
+    position: relative;
+    font-weight: 600;
+
+    img {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+        left: 15px;
+        top: 10px;
+        position: absolute;
+    }
+}
+
+.social-authentication-button--facebook {
+    background-color: #1877f2;
+    color: $white-color;
+    border: solid 1px #1877f2 !important;
+}
+
+.social-authentication-button--facebook:hover {
+    background-color: #1877f2;
+    color: $white-color;
+}
+
+.social-authentication-button--google {
+    background-color: #ffffff;
+    color: rgba(0, 0, 0, 0.54);
+    border: solid 1px #dadce0 !important;
+}
+
+.social-authentication-button--google:hover,
+.social-authentication-button--google:active {
+    background-color: #fafafa;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+// progress bar
+.authentication-progress-bar {
+    position: absolute !important;
+    left: 24px !important;
+    top: -8px !important;
+    width: calc(100% - 48px) !important;
+}
+
+//  ************************ Media Query Start ********************
+
+@media screen and (max-width: 1130px) {
+    .authentication-content {
+        margin: 40px 25px;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .SignIn {
+        .authentication-content {
+            margin: 40px;
+
+            .ant-card-body {
+                padding: 10px 25px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .SignIn.authentication-container {
+        padding: 40px;
+
+        .logo {
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            top: 0%;
+            left: 1%;
+        }
+
+        .authentication-block--img {
+            display: none;
+        }
+
+        .authentication-content--wrapper {
+            background: none;
+            min-height: auto;
+        }
+
+        .authentication-content {
+            margin-top: 60px;
+
+            .ant-card-body {
+                padding: 25px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .SignIn.authentication-container {
+        padding: 20px;
+
+        .authentication-content {
+            margin: 50px 0 0;
+        }
+    }
+}

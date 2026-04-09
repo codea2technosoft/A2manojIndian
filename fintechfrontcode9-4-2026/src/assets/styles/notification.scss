@@ -1,0 +1,255 @@
+@import './variables.scss';
+
+.notification-settings {
+    .whatsapp {
+        .general-settings {
+            width: 600px;
+            max-width: 90%;
+
+            .save-btn {
+                text-align: right;
+            }
+
+            .section {
+                padding-top: 24px;
+                margin-bottom: 24px;
+                border-top: 1px solid #ccc;
+            }
+
+            .section:first-child {
+                padding-top: 0;
+                border-top: 0;
+            }
+        }
+
+        .templates {
+            .util-bar {
+                display: flex;
+                justify-content: space-between;
+
+                .filter {
+                    flex: 1;
+                    background-color: #f0effa;
+                    border-radius: 12px;
+                    align-items: center;
+
+                    .search {
+                        width: 320px;
+                        max-width: 20%;
+                    }
+
+                    .select {
+                        width: 240px;
+                        max-width: 15%;
+                    }
+                }
+            }
+
+            .template-message {
+                .faint {
+                    color: #999;
+                }
+
+                .template {
+                    max-width: 400px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+        }
+    }
+}
+
+.notification-automatic {
+    .ant-table-wrapper {
+        max-width: unset;
+        width: fit-content;
+        min-width: 100%;
+    }
+}
+
+.notification-events {
+    .ant-table-thead {
+        th {
+            white-space: nowrap;
+        }
+    }
+
+    .notification-channels {
+        .channel {
+            height: 40px;
+            line-height: 40px;
+            white-space: nowrap;
+        }
+    }
+
+    .notification-template {
+        .template-action {
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 24px;
+            color: $primary-color;
+        }
+    }
+
+    td.ant-table-cell {
+        vertical-align: top;
+    }
+
+    .additional-settings-container {
+        .ant-collapse-header {
+            color: $primary-color;
+            text-decoration: underline;
+        }
+
+        .ant-collapse-header,
+        .ant-collapse-content-box {
+            padding: 0;
+        }
+
+        .additional-settings {
+            .ant-form-item-control-input {
+                min-height: 0;
+
+                input {
+                    width: 600px;
+                    max-width: 80%;
+                }
+            }
+
+            .ant-form > * {
+                margin-bottom: 8px;
+            }
+
+            .checkbox-select {
+                display: flex;
+
+                .checkbox-label {
+                    padding: 0 8px;
+
+                    .ant-form-item {
+                        display: inline-block;
+                        margin: 0;
+                        height: 22px;
+
+                        * {
+                            display: inline-block !important;
+                        }
+                    }
+
+                    > * + * {
+                        margin-left: 4px;
+                    }
+                }
+            }
+
+            .ant-row {
+                margin-bottom: 8px;
+            }
+        }
+    }
+}
+
+.edit-whatsapp-content {
+    .template-select {
+        border-bottom: 2px solid #9faebb;
+
+        .ant-select {
+            width: 240px;
+        }
+    }
+
+    .edit-preview {
+        display: flex;
+
+        .edit {
+            flex: 1;
+            margin-right: 24px;
+
+            .variable {
+                color: $primary-color;
+            }
+        }
+
+        .preview {
+            flex: 1;
+
+            .preview-box {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #f0f4f7;
+                padding: 80px;
+
+                .message {
+                    width: 320px;
+                    background-color: #fff;
+                    border-radius: 12px;
+                    overflow: hidden;
+
+                    .header {
+                        padding: 12px;
+                        font-weight: 600;
+                    }
+
+                    .header.DOCUMENT,
+                    .header.IMAGE {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        background-color: rgb(234, 211, 183);
+                        height: 160px;
+                    }
+
+                    .body {
+                        padding: 12px;
+                    }
+
+                    .footer {
+                        padding: 12px;
+                        font-size: 12px;
+                    }
+
+                    .buttons {
+                        border-top: 1px solid #e6e8eb;
+                        padding: 12px;
+                        display: flex;
+                        flex-wrap: wrap;
+
+                        .url-button {
+                            flex: 1;
+                            min-width: 49%;
+                            text-align: center;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.sent-message-logs {
+    .whatsapp-template-viewer {
+        width: 400px;
+    }
+    .ant-select-selector {
+        height: 32px !important;
+        .ant-select-selection-item {
+            line-height: 32px;
+        }
+    }
+    .ant-table-wrapper {
+        max-width: unset;
+        width: fit-content;
+        min-width: 100%;
+    }
+
+    .action {
+        .ant-btn {
+            height: 30px;
+        }
+    }
+}

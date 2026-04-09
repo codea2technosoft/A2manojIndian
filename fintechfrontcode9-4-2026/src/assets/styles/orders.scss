@@ -1,0 +1,82 @@
+@import './../../assets/styles/variables.scss';
+
+.wrap-orders {
+	.action-button {
+		.ant-btn {
+			height: 50px;
+			span {
+				font-size: 14px;
+			}
+		}
+	}
+
+	.btn1 {
+		color: $primary-color;
+		border-color: #6c5dd3;
+		background-color: rgba(108, 93, 211, 0.08);
+	}
+
+	.icon-btn {
+		width: 18px;
+		height: 18px;
+		margin-right: 4px;
+		vertical-align: middle;
+	}
+
+	// .ant-list-split .ant-list-item {
+	// 	border-bottom: none;
+	// }
+
+	.ant-table-tbody > tr > td {
+		border-bottom: 1px solid #afbacc;
+	}
+	.ant-table-tbody > tr:last-child > td {
+		border-bottom: none;
+	}
+}
+
+.filter-drawer {
+	.ant-collapse-borderless {
+		background-color: $white-color;
+	}
+	.ant-list-split .ant-list-item {
+		border-bottom: none;
+	}
+	.ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header {
+		padding: 18px 0px;
+	}
+	.ant-collapse-borderless > .ant-collapse-item:first-child {
+		border-top: 1px solid rgba(0, 0, 0, 0.06);
+	}
+	.ant-collapse-borderless > .ant-collapse-item {
+		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+	}
+
+	.button-date {
+		color: $primary-color;
+		width: 100%;
+		border-color: #dddbf4;
+	}
+
+	.button-filter {
+		width: 100%;
+		margin-top: 18px;
+	}
+}
+
+.text-ellipsis {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.order-card-list {
+	background-color: #fff;
+}
+
+.card-order--detail-btn {
+	display: flex;
+	height: 100%;
+	align-items: center;
+	cursor: pointer;
+}

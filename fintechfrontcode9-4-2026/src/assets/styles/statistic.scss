@@ -1,0 +1,72 @@
+.ant-statistic-content {
+    display: flex;
+    align-items: center;
+    .ant-statistic-content-prefix{
+        display: flex;
+    }
+}
+
+.statistic-card--orange {
+    background-color: #fff7e6;
+    // border-color: #fff7e6;
+
+    .ant-statistic-title, .ant-statistic-content {
+        // color: #fa8c16 !important;
+        color: #fff;
+    }
+}
+
+.statistic-card--blue {
+    background-color: #e6f4ff;
+    border-color: #e6f4ff;
+
+    .ant-statistic-title, .ant-statistic-content {
+        // color: #1677ff !important;
+        color: #fff;
+    }
+}
+
+.statistic-card--purple {
+    background-color: #f9f0ff;
+    border-color: #f9f0ff;
+
+    .ant-statistic-title, .ant-statistic-content {
+        // color: #722ed1 !important;
+        color: #fff;
+    }
+}
+
+.statistic-card--yellow {
+    background-color: #feffe6;
+    border-color: #feffe6;
+
+    .ant-statistic-title, .ant-statistic-content {
+        // color: #fadb14 !important;
+        color: #fff;
+    }
+}
+
+.statistic-card--green {
+    background-color: #f6ffed;
+    border-color: #f6ffed;
+
+    .ant-statistic-title, .ant-statistic-content {
+        // color: #52c41a !important;
+        color: #fff;
+    }
+}
+
+.statistic-card--red {
+    background-color: #fff2e8;
+    border-color: #fff2e8;
+
+    .ant-statistic-title, .ant-statistic-content {
+        // color: #fa541c !important;
+        color: #fff;
+    }
+    
+}
+
+.statistic-value--small {
+    font-size: 18px;
+}

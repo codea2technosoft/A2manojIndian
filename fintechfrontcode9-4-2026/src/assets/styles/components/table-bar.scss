@@ -1,0 +1,17 @@
+@import '../variables.scss';
+.filter-button {
+    margin-right: 24px;
+}
+
+.search-input {
+    border-radius: 8px!important;
+    // width: 400px;
+    border-color: $primary-color;
+    &:hover{
+        border-color: $secondary-color !important;
+    }
+}
+
+.color-placeholder {
+    color: $gray-color;
+}

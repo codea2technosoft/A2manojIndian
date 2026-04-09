@@ -1,0 +1,19 @@
+@import '../variables.scss';
+
+.activation-card {
+    background-color: $primary-color;
+    color: $white-color;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 0 24px;
+    cursor: pointer;
+
+    .activation-card--title {
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .activation-card--subtitle {
+        font-size: 12px;
+    }
+}

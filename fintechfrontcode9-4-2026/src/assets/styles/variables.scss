@@ -1,0 +1,45 @@
+// fonts
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cairo:wght@200;300;400;500;600;700;800;900;1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+// colors
+// $primary-color: #5bcfc5;
+$primary-color: #03cd63;
+// $primary-color-1: rgba(108, 93, 211, 0.1);
+$rgba-primary-1: rgb(61 20 95 / 7%);
+// $rgba-primary-1: rgba(91, 207, 197, 0.1);
+$rgba-primary-2: #03cd63;
+$primary-color-1: #f0effa;
+$primary-color-2: #b2b8fa;
+$primary-color-3: rgba(65, 59, 108, 0.72);
+$secondary-color: #310404;
+$secondary-color-1: rgba(225, 9, 42, 0.1);
+$white-color: #ffffff;
+$success-color: #33824a;
+$success-color-1: #ceefd0;
+$gray-color: #a4a5a6;
+$success-rgb: rgba(104, 227, 101);
+$gray-color-1: #6d6d6d;
+$gray-color-2: #e2e2e2;
+$warning-color: #ffa940;
+$warning-rgb: rgba(255, 167, 85);
+$linear-color: linear-gradient(45deg, #3d1460, #c1365f);
+
+$logobg:#001529; 
+
+:export {
+    primaryColor: $primary-color;
+    primaryColor1: $primary-color-1;
+    primaryColor2: $primary-color-2;
+    primaryColor3: $primary-color-3;
+    secondaryColor: $secondary-color;
+    secondaryColor1: $secondary-color-1;
+    whiteColor: $white-color;
+    successColor: $success-color;
+    successColor1: $success-color-1;
+    grayColor: $gray-color;
+    grayColor1: $gray-color-1;
+    grayColor2: $gray-color-2;
+    warningColor: $warning-color;
+    linearColor: $linear-color
+}

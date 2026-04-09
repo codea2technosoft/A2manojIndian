@@ -1,0 +1,58 @@
+@import './variables.scss';
+
+.shipment-rate-table {
+    .ant-input-group-wrapper {
+        width: unset !important;
+    }
+}
+
+.shipment-order-locked {
+    pointer-events: none;
+    filter: grayscale(1);
+
+    td {
+        background-color: $gray-color-2;
+    }
+}
+
+.shipment-error-list {
+    padding-left: 12px;
+}
+
+.shipment-tracking-wrapper {
+    height: 100vh;
+    overflow: hidden;
+
+    .shipment-tracking-header {
+        padding: 20px 50px;
+
+        .shipment-tracking-powered {
+            img {
+                width: 160px;
+                height: auto;
+            }
+        }
+    }
+
+    .shipment-tracking-iframe {
+        width: 100%;
+        height: calc(100vh - 80px);
+        border: none;
+    }
+}
+
+@media screen and (max-width: 550px) {
+    .shipment-tracking-header {
+        flex-direction: column;
+    }
+
+    .shipment-tracking-powered {
+        h4 {
+            font-size: 16px !important;
+        }
+
+        img {
+            width: 120px !important;
+        }
+    }
+}

@@ -1,0 +1,50 @@
+.wrap-payment {
+	.card {
+		background: #ffffff;
+		margin: 4px;
+		box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.16);
+		border-radius: 20px;
+
+		.card-left {
+			padding: 20px;
+			background: rgba(108, 93, 211, 0.1);
+			border-radius: 20px 0px 0px 20px;
+
+			div {
+				margin-bottom: 24px;
+				font-weight: 550;
+			}
+			.title {
+				font-weight: 600;
+				font-size: 16px;
+			}
+		}
+
+		.card-right {
+			padding: 20px;
+			border-radius: 0px 20px 20px 0px;
+
+			.title {
+				font-weight: 600;
+				font-size: 16px;
+			}
+		}
+
+		.active {
+			background: rgba(108, 93, 211, 0.06);
+		}
+	}
+
+	.btn-key {
+		height: 50px;
+	}
+
+	.setting-note {
+		display: flex;
+		background: rgba(208, 215, 229, 0.31);
+		border: 1px dashed #6c5dd3;
+		box-sizing: border-box;
+		border-radius: 4px;
+		padding: 25px 20px;
+	}
+}
