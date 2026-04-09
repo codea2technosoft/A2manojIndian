@@ -1,0 +1,49 @@
+$light-bg: #f5f5f5;
+$light-card-bg: #fff;
+$light-text: #223869;
+$light-border: #ddd;
+$light-navbar: #fff;
+$light-table-header: #f1f1f1;
+$gradientcolor:#333;
+$headercolor:#e7597c;
+$secondcolor:#000;
+$primarycolor: #fff;
+$newcolor: linear-gradient(180deg, #2a3a43 27%, #1c282d 83%);
+$graidentcolornew:linear-gradient(-180deg, #17141a 0%, #243a48 82%);
+// Dark Mode Colors
+$dark-bg: #111;
+$dark-card-bg: #1b1b1b;
+$dark-text: #fff;
+$dark-border: #333;
+$dark-navbar: #1b1b1b;
+$dark-table-header: #2d2d2d;
+$black:#000;
+
+// Common Colors
+$bluecolor: #1a1a2e;
+$whitecolor: #fff;
+$greencolor: #0f0;
+
+// Mixins for theme
+@mixin light-theme {
+  background-color: $light-bg;
+  color: $light-text;
+}
+
+@mixin dark-theme {
+  background-color: $dark-bg;
+  color: $dark-text;
+}
+
+
+
+
+// new color code 
+$yellowcolor:linear-gradient(-180deg, #17141a 0%, #243a48 82%);
+$pinkcolor:linear-gradient(-180deg, #17141a 0%, #243a48 82%);
+
+$allheader:linear-gradient(-180deg, #17141a 0%, #243a48 82%);
+
+
+$greengradient:linear-gradient(#a4dc60 0%, #4f9f21 100%);
+$blueblack:linear-gradient(-180deg, #315195 0%, #14213d 100%);

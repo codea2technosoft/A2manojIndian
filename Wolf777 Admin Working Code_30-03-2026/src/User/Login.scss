@@ -1,0 +1,103 @@
+$secondary: #000;
+$darkcolor: #000;
+
+.login-container {
+  .height_100{
+    height: 100vh;
+  }
+  background: $darkcolor;
+  .bg-login {
+    // background: url('../../assets/images/login-bg.jpg') center center;
+    background-size: cover;
+  }
+
+  .auth-logo img {
+    display: block;
+    margin: 0 auto;
+  }
+
+  .social-list-item {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    border-radius: 50%;
+    font-size: 18px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+  .loginimage{
+    width: 100%;
+    img{
+        width: 100%;
+    }
+  }
+  .py-60 {
+    padding-block: 30px;
+}
+.px-24 {
+    padding-inline: 24px;
+}
+.max-w-464-px {
+      max-width: 600px;
+    background: #fff;
+    margin: 10px;
+    border-radius: 15px;
+}
+.height_100vh{
+  height: 100vh;
+}
+.width_50 {
+  width: 50%;
+}
+.h-56-px {
+    height: 2.5rem !important;
+}
+input{
+  &:hover,
+  &:focus,
+  &:active{
+    box-shadow: none;
+    outline: none;
+    
+  }
+
+}
+.loginbutton{
+     padding: 10px 14px;
+    box-shadow: none;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    background: $secondary;
+}
+.form-check-input:checked {
+    background-color: $secondary;
+    border-color: #ffffff;
+}
+.logo-dark{
+    display: block;
+    width: 200px;
+    img{
+        width: 100%;
+    }
+}
+.forgetpassword{
+    font-size: 15px;
+    text-decoration: none;
+    margin: 10px 0px;
+}
+}
+
+
+@media(max-width:991px){
+  .login-container{
+    .width_50{
+      width: 100%;
+    }
+  }
+}

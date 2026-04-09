@@ -1,0 +1,65 @@
+{
+  "name" : "Matkawaale",
+  "short_name" : "Matkawaale",
+  "display": "standalone",
+  "theme_color" : "#9f0b43",
+  "background_color" : "#151515",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/assets/img/maskable_icon.png",
+      "sizes": "192x192  196x196 144x144  384x384 512x512",
+      "type": "image/png",
+      "purpose":"any maskable"
+    },
+  
+  
+    {
+      "src": "/assets/img/favicon.icon",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src":"/assets/img/cricket-logo256.png",
+      "sizes": "256x256",
+      "type":"image/png"
+    },
+    {
+      "src":"/assets/img/cricket-logo384.png",
+      "sizes": "384x384",
+      "type":"image/png"
+
+    },
+      {
+      "src":"/assets/img/cricket-logo512.png",
+      "sizes": "512x512",
+      "type":"image/png"
+
+    }
+   
+  ],
+  "id": "/",
+  "shortcuts": [
+    {
+      "name": "How's Matkawaale?",
+      "short_name": "Matkawaale",
+      "description": "View Matkawaale information",
+      "url": "/",
+      "icons": [{ "src": "/assets/img/maskable_icon.png", "sizes": "192x192  196x196 144x144  384x384 512x512" }]
+    }
+   
+  ],
+  "description": "Matkawaale information",
+  "screenshots": [
+    {
+      "src": "/assets/img/maskable_icon.png",
+      "type": "image/png",
+      "sizes": "192x192  196x196 144x144  384x384 512x512",
+      "form_factor": "narrow"
+    }
+    
+  ]
+}
+
+

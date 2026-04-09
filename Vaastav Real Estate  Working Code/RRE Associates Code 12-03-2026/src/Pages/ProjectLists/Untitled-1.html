@@ -1,0 +1,65 @@
+import { MdFilterListAlt } from "react-icons/md";
+import { MdFilterAltOff } from "react-icons/md";
+
+
+const [showFilter, setShowFilter] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1199);
+
+  const toggleFilter = () => {
+    setShowFilter((prev) => !prev);
+  };
+
+  useEffect(() => {
+    // Function to check screen width
+    const handleResize = () => {
+      if (window.innerWidth >= 1199) {
+        setIsDesktop(true);
+        setShowFilter(true); // always show filter in desktop
+      } else {
+        setIsDesktop(false);
+        setShowFilter(false); // hide filter in mobile initially
+      }
+    };
+
+    // Run on mount
+    handleResize();
+
+    // Listen to resize
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+
+
+{!isDesktop && (
+            <div className="d-md-block d-lg-block d-xl-none d-block d-sm-block">
+              <button
+                type="button"
+                className="toggle-filter-btn"
+                onClick={toggleFilter}
+              >
+                {showFilter ? <MdFilterAltOff /> : <MdFilterListAlt />}
+              </button>
+            </div>
+            )}
+
+
+
+
+
+         
+
+            <div className="d-md-none d-lg-none d-xl-block d-none d-sm-none">
+
+            </div>
+
+
+
+
+                {showFilter && (
+              <div className=" d-lg-block d-xl-none">
+
+                    
+              </div>
+            )
+          }

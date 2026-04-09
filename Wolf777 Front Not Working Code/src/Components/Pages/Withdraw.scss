@@ -1,0 +1,447 @@
+// Withdraw.scss
+.withdraw-page {
+
+    @media (max-width: 768px) {
+        padding: 10px;
+    }
+}
+
+.withdraw-grid-container {
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: start;
+    display: grid;
+    grid-template-columns: 1fr;
+
+    @media (max-width: 1024px) {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+// Left Column - Withdraw Form
+.withdraw-form-section {
+    .form-container {
+        background: #2a2a2a;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid #404040;
+
+        @media (max-width: 768px) {
+            padding: 20px;
+        }
+    }
+}
+
+.withdraw-header {
+    text-align: center;
+    margin-bottom: 15px;
+
+    h1 {
+        color: #ffffff;
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin: 0;
+
+        @media (max-width: 768px) {
+            font-size: 1.6rem;
+        }
+    }
+}
+
+.balance-info {
+    background: linear-gradient(135deg, #4ecca3, #44722c);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
+
+    .balance-label {
+        font-size: 1rem;
+        opacity: 0.9;
+        color: #ffffff;
+        font-weight: 500;
+    }
+
+    .balance-amount {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #ffffff;
+
+        @media (max-width: 768px) {
+            font-size: 1.8rem;
+        }
+    }
+}
+
+.withdraw-form {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    .form-group {
+        margin-bottom: 20px;
+        width: 49%;
+
+        @media (max-width: 768px) {
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            text-align: left;
+            font-weight: 600;
+            color: #e0e0e0;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #404040;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #1f1f1f;
+            color: #ffffff;
+
+            &:focus {
+                outline: none;
+                border-color: #667eea;
+                background: #2a2a2a;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            }
+
+            &::placeholder {
+                color: #888;
+            }
+
+            &.error-border {
+                border-color: #e74c3c;
+                box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+            }
+        }
+
+        .field-error-message {
+            color: #e74c3c;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            
+            &::before {
+                content: "⚠";
+                margin-right: 5px;
+                font-size: 0.9rem;
+            }
+        }
+
+        .amount-hint,
+        .ifsc-hint {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 5px;
+            font-style: italic;
+        }
+    }
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #4ecca3, #44722c);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+}
+
+.insufficient-balance {
+    background: rgba(231, 76, 60, 0.1);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    color: #e74c3c;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+// Right Column - Bet History
+.bet-history-section {
+    .history-container {
+        background: #2a2a2a;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid #404040;
+        height: fit-content;
+        position: sticky;
+        top: 20px;
+
+        @media (max-width: 1024px) {
+            position: static;
+        }
+
+        @media (max-width: 768px) {
+            padding: 20px;
+        }
+    }
+}
+
+.history-header {
+    border-bottom: 2px solid #404040;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+
+    h3 {
+        color: #ffffff;
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin: 0;
+        text-align: center;
+    }
+}
+
+.history-content {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.no-bets {
+    text-align: center;
+    color: #888;
+    padding: 30px 20px;
+
+    .no-bets-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+
+    p {
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+        color: #b0b0b0;
+    }
+
+    small {
+        font-size: 0.85rem;
+        color: #666;
+    }
+}
+
+.bets-list {
+    width: 100%;
+
+    .bet-item {
+        background: #1f1f1f;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+        border: 1px solid #404040;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        .bet-info {
+            .bet-id {
+                color: #667eea;
+                font-weight: 600;
+                font-size: 0.9rem;
+                margin-bottom: 8px;
+            }
+
+            .bet-details {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+
+                .bet-sport {
+                    color: #e0e0e0;
+                    font-size: 0.9rem;
+                }
+
+                .bet-amount {
+                    color: #ffffff;
+                    font-weight: 600;
+                }
+            }
+
+            .bet-status {
+                display: inline-block;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                text-transform: uppercase;
+
+                &.won {
+                    background: rgba(34, 197, 94, 0.2);
+                    color: #22c55e;
+                }
+
+                &.lost {
+                    background: rgba(239, 68, 68, 0.2);
+                    color: #ef4444;
+                }
+
+                &.pending {
+                    background: rgba(234, 179, 8, 0.2);
+                    color: #eab308;
+                }
+            }
+        }
+    }
+}
+
+.history-footer {
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #404040;
+    text-align: center;
+
+    .reference-code {
+        background: #1f1f1f;
+        border-radius: 6px;
+        padding: 10px;
+        border: 1px solid #404040;
+
+        span {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+    }
+}
+
+// Loading state animation
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.submit-btn:disabled {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+// Success message styling
+.swal2-popup {
+    .swal2-title {
+        color: #2c3e50 !important;
+    }
+
+    .swal2-html-container {
+        color: #555 !important;
+    }
+}
+
+// Responsive improvements
+@media (max-width: 768px) {
+    .withdraw-form .form-group {
+        .form-input {
+            font-size: 16px; // Prevents zoom on iOS
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .withdraw-page {
+        padding: 10px 5px;
+    }
+
+    .withdraw-grid-container {
+        gap: 15px;
+    }
+
+    .withdraw-form-section .form-container,
+    .bet-history-section .history-container {
+        padding: 15px;
+    }
+
+    .withdraw-header h1 {
+        font-size: 1.4rem;
+    }
+
+    .balance-info {
+        padding: 20px;
+
+        .balance-amount {
+            font-size: 1.6rem;
+        }
+    }
+
+    .withdraw-form .form-group {
+        margin-bottom: 15px;
+
+        .form-input {
+            padding: 12px;
+        }
+    }
+}

@@ -1,0 +1,119 @@
+@import '../../assets/scss/Veriable.scss';
+.set-button-value-page {
+  padding: 40px 20px;
+}
+
+.set-value-container {
+  background: #2a2a2a;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 25px 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-section {
+  padding: 12px 15px;
+  border-radius: 5px;
+  text-align: center;
+  margin-bottom: 20px;
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+        display: inline-block;
+  }
+}
+
+.value-list {
+  h4 {
+    background: #ffb300;
+    padding: 10px;
+    border-radius: 5px 5px 0 0;
+    font-weight: 600;
+    color: #000;
+  }
+
+  .value-item {
+    margin: 0;
+    input.value-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      background: #f6f6f6;
+      outline: none;
+    }
+  }
+
+  .add-value-section {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+
+    .add-btn {
+      background: #4ecca3;
+      border: none;
+      color: #fff;
+      padding: 8px 20px;
+      font-size: 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.3s;
+
+      &:hover {
+        background: #4ecca3;
+      }
+    }
+  }
+}
+
+.submit-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+
+  .submit-btn {
+    background: $pinkcolor;
+    color: #fff;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    &:hover {
+      background:$yellowcolor;
+    }
+  }
+}
+.value-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+
+  .value-input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+
+  .remove-btn {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s;
+
+    &:hover {
+      background: #c0392b;
+    }
+  }
+}

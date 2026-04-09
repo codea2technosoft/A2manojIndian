@@ -1,0 +1,6288 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+@import "./Veriable.scss";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  // font-family: "Inter", sans-serif;
+  // font-family: Tahoma, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji' !important;
+  touch-action: manipulation;
+}
+.refresh-btn {
+    background: #87c74b;
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 16px;
+    padding: 10px 15px;
+    transition: background .3s ease;
+}
+.input-action-btn {
+    align-items: center;
+    background: #0093ff;
+    border: none;
+    border-radius: 50%;
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    font-size: 1.2rem;
+    height: 40px;
+    justify-content: center;
+    padding: 8px;
+    transition: background .2s;
+    width: 40px;
+}
+.allbackbutton {
+  background: transparent;
+  max-height: 35px;
+  max-width: 35px;
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .chat-title {
+    h2 {
+      border-bottom: 0px solid #eee;
+    }
+  }
+  }
+
+  .card_chat_new {
+    .card-title {
+      font-size: 15px;
+      text-align: left;
+      border-bottom: 0px;
+      margin-bottom: 0px;
+      padding-bottom: 0px;
+      color: $light-text;
+
+      h2 {
+        border-bottom: 0;
+        color: #fff;
+        font-size: 18px;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+    }
+
+    .card-footer {
+      border: 1px solid #ccc;
+      width: 100%;
+
+      .start-chat {
+        color: #667eea;
+        font-weight: 600;
+        font-size: 14px;
+        transition: color 0.3s ease;
+        width: 100%;
+        text-align: center;
+      }
+    }
+  }
+
+  .text-danger.form-text {
+    background: #ff000030;
+    padding: 1px 15px;
+    color: #000000 !important;
+    text-align: left;
+    padding-left: 7px;
+    margin-top: 5px;
+    display: block;
+    border-left: 2px solid red;
+    border-radius: 5px;
+    font-weight: 600;
+  }
+
+  .addbankaccount,
+  .addbank {
+    background: $greengradient;
+    color: #000000;
+    padding: 5px 15px;
+    border: 0px;
+    border-radius: 5px;
+    font-weight: 600;
+  }
+
+  .btn.btn-primary {
+    background: $yellowcolor !important;
+    border: none;
+    outline: none;
+  }
+
+  tbody.thead-dark tr {
+    background: linear-gradient(-180deg, #17141a 0%, #243a48 82%);
+
+    th {
+      background: transparent !important;
+    }
+  }
+
+  .custum_card {
+    background: #fff;
+    border-radius: 10px;
+
+    .custum_card_header {
+      background: $greengradient;
+      padding: 15px;
+
+      .custum_card_title {
+        color: #fff;
+        font-weight: 600;
+        font-size: 18px;
+      }
+    }
+
+    .custum_card_body {
+      padding: 15px;
+
+      .headingtitle {
+        font-size: 18px;
+        font-weight: 600;
+      }
+    }
+
+    .label_all {
+      font-size: 16px;
+    }
+  }
+
+  .withdrawsection {
+
+    .table_all {
+      table {
+        tr {
+          th {
+            color: #000;
+            text-align: left;
+            vertical-align: middle;
+          }
+        }
+      }
+    }
+  }
+
+  .table_newall {
+    thead {
+      tr {
+        th {
+          color: #fff;
+        }
+      }
+    }
+  }
+
+
+  .closebutton {
+    color: #fff;
+    background: #333;
+    padding: 6px 10px;
+    border: 0px;
+    outline: 0px;
+    border-radius: 5px;
+  }
+
+  .resetbuttonall {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 10px;
+    font-weight: 600;
+    background: #333;
+    color: #fff;
+
+  }
+
+  .searchbutton {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 10px;
+    color: #fff;
+    font-weight: 600;
+    background: $yellowcolor;
+  }
+
+  .gradientbg {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 10px;
+    color: white;
+    background: #555;
+
+    &.card-header {
+      background: $allheader !important;
+      text-align: center !important;
+
+      h4 {
+        padding: 10px;
+        font-size: 15px;
+        margin-bottom: 0px;
+        width: 100%;
+        display: block;
+        color: white;
+      }
+
+    }
+  }
+
+  thead.tablebggg {
+    tr {
+      background: $allheader;
+
+      th {
+        background: transparent;
+        color: #fff !important;
+      }
+    }
+  }
+
+  // zoom off
+  html,
+  body {
+    touch-action: pan-x pan-y;
+    overscroll-behavior: none;
+  }
+
+  .commingsoonpage {
+    width: 100%;
+
+    .pagecooming {
+      width: 100%;
+
+      img {
+        width: 100%;
+      }
+    }
+  }
+
+  .desktop_all {
+    display: block;
+  }
+
+
+
+  .tvall {
+    background: $allheader;
+    color: #fff;
+    text-align: left;
+  }
+
+  // zoom off
+  body {
+    font-size: 14px !important;
+    // background: $light-bg;
+    color: $light-text;
+    background: #121721;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    position: relative;
+    min-height: 100vh;
+
+    &:before {
+      content: '';
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      width: 100%;
+      height: 100%;
+      background-image: url('../images/bgimageshapeall.png');
+      background-size: cover;
+      z-index: -1;
+      opacity: 0.15;
+
+    }
+  }
+
+  .bg_new_iamge_all {
+    background: url('../images/bgimagenew.png');
+    background-size: cover;
+    margin-top: 140px;
+    background-position: center;
+  }
+
+  // body:before{
+  //   content: '';
+  //   position: absolute;
+  //   left: 0px;
+  //   bottom: 0px;
+  //   width: 100%;
+  //   height: 100%;
+  // }
+  .form-group.width_50.mb-2.position-relative {
+
+    select,
+    input.form-control {
+      color: #000;
+      padding-right: 6px;
+      position: relative;
+      z-index: 2;
+      font-size: 15px;
+    }
+  }
+
+  .tab_content {
+    .form-group {
+
+      label {
+        font-size: 14px;
+        font-weight: 600;
+        color: $black !important;
+      }
+    }
+  }
+
+  .textw-hiteall div .text-whiteall {
+    color: #fff !important;
+  }
+
+  .backbutton,
+  .refreshbutton {
+    background: #000;
+    padding: 10px 20px;
+    color: #fff;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+  }
+
+  .headericricet {
+    // background: linear-gradient(135deg, #2a2a2a, #000000);
+    background: $yellowcolor;
+    display: flex;
+    padding: 7px;
+    cursor: pointer;
+    gap: 10px;
+    align-items: end;
+
+    .image_cricketnew {
+      height: 30px;
+      width: 30px;
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    h3 {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #fff;
+    }
+  }
+
+  .completebetalldesignnewa.account_statement {
+    .card-header {
+      background: transparent;
+
+      .title {
+        h3 {
+          font-size: 14px;
+          text-transform: uppercase;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  .bgnell {
+    background: #dfdfdf6b;
+  }
+
+  .table {
+    margin-bottom: 0px;
+    border-radius: 0px;
+
+    .tabledesignnewunse {
+      td {
+        background: transparent;
+        color: #000;
+      }
+    }
+  }
+
+  .filterbutton,
+  .filterbutton:hover,
+  .resetbutton:hover,
+  .applybutton:hover,
+  .resetbutton,
+  .applybutton {
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #fff;
+    background: $black;
+    outline: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .custumheaderunsettled.bg-gradient-color {
+    background: transparent !important;
+
+    h5 {
+      color: #000;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 1.5;
+      word-wrap: break-word;
+      margin-bottom: 0px;
+      text-transform: uppercase;
+    }
+  }
+
+  .bets-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .team_name>* {
+    text-transform: uppercase;
+  }
+
+  .date_match_new {
+    text-transform: uppercase;
+
+    svg {
+      font-size: 10px;
+    }
+
+    span {
+      font-size: 10px;
+      color: rgb(255, 255, 255);
+    }
+  }
+
+  .bets-modal-box {
+    width: 90%;
+    max-width: 600px;
+    background: #fff;
+    border-radius: 10px;
+    animation: betsFadeIn 0.25s ease;
+    overflow: hidden;
+
+    .bets-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: #000;
+      border-bottom: 1px solid #ddd;
+
+      h4 {
+        color: #fff;
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 1.5;
+        word-wrap: break-word;
+        margin-bottom: 0px;
+        text-transform: uppercase;
+      }
+    }
+
+    .bets-close-btn {
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: #fff;
+    }
+
+    .bets-modal-body {
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .bets-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .bets-table th,
+    .bets-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+
+    @keyframes betsFadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  }
+
+  .title h3.text-white.mb-0 {
+    text-transform: uppercase;
+  }
+
+  th {
+    text-transform: uppercase;
+  }
+
+  .table-part {
+
+    tr td.session-message {
+      padding: 2px 10px 2px 2px;
+      text-align: right;
+      color: #b40202;
+      font-weight: 600;
+      border: 5px solid #eee;
+    }
+  }
+
+  .text_blink {
+    margin-bottom: 0px;
+    animation: blinktext 1s linear infinite;
+    text-align: left;
+  }
+
+  @keyframes blinktext {
+    0% {
+      color: #c2e884;
+    }
+
+    20% {
+      color: #c2e884;
+    }
+
+    40% {
+      color: #ff7f00;
+    }
+
+    60% {
+      color: #ff7f00;
+    }
+
+    80% {
+      color: #36cb3b;
+    }
+
+    100% {
+      color: #36cb3b;
+    }
+  }
+
+  .headingheadermatch {
+    h5 {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+  }
+
+  /* trigger */
+  .ladder-trigger {
+    cursor: pointer;
+    display: inline-flex;
+  }
+
+  /* overlay */
+  .ladder-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgb(0 0 0 / 62%);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* modal box */
+  .ladder-modal-box {
+    max-width: 800px;
+    width: 100%;
+    background: #fff;
+    border-radius: 10px;
+    animation: ladderZoom 0.25s ease;
+
+    .themedark {
+      th {
+        text-align: left;
+        background-color: #000;
+        vertical-align: middle !important;
+        color: #fff;
+      }
+    }
+
+    /* header */
+    .ladder-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: #000;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      color: #fff;
+
+      h4 {
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 0px;
+      }
+    }
+
+    /* close */
+    .ladder-close-btn {
+      border: none;
+      background: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #fff;
+    }
+
+    /* body */
+    .ladder-modal-body {
+      padding: 16px;
+    }
+
+    /* table */
+    .ladder-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .ladder-table th,
+    .ladder-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+
+    @keyframes ladderZoom {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+  }
+
+
+  .ladderimage {
+    width: 15px;
+    height: 15px;
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .max_amt {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.88);
+    font-weight: 700 !important;
+    font-style: normal;
+  }
+
+  .bgcolor {
+    background: #f0f2f5;
+
+    .Manu {
+      background: transparent;
+      border-bottom: 0px;
+    }
+
+    .rules-regulations-container {
+      border: 0px;
+
+      .card {
+        background: transparent;
+        border: 0px;
+      }
+    }
+  }
+
+  .table tr th {
+    background: #000;
+  }
+
+  .flex-custum {
+    flex: 1 1;
+  }
+
+  .amountbetalldsd {
+    .amount-row {
+      row-gap: 8px;
+    }
+
+    .amount-input {
+      font-size: 16px;
+    }
+
+    .multiplier-box {
+      background: #000;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .done-btn {
+      font-weight: 600;
+      padding: 8px 14px;
+      background: $black;
+      color: $whitecolor;
+      border: 0px;
+      border-radius: 5px;
+    }
+
+    .done-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  /* Button */
+  .changepassword {
+    .card-header {
+      background: transparent;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    label {
+      color: #000;
+    }
+  }
+
+  .switcher {
+    // background: $black;
+    background: linear-gradient(45deg, #d6a048, #653e00);
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  // main menu
+  .Manu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    a {
+      background: $yellowcolor;
+      color: #000;
+      border-radius: 25px;
+      padding: 8px 15px;
+    }
+  }
+
+  /* Main badge */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+  }
+
+  /* LIVE text */
+  .status-live .status-text {
+    color: rgb(255, 71, 87);
+    /* AntD red */
+  }
+
+  /* Dot */
+  .status-dot {
+    position: relative;
+    width: 6px;
+    height: 6px;
+    background-color: #fadb14;
+    /* AntD yellow */
+    border-radius: 50%;
+  }
+
+  /* Processing / pulse animation (AntD style) */
+  .status-dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background-color: #fadb14;
+    animation: statusPulse 1.2s infinite ease-in-out;
+    opacity: 0.7;
+  }
+
+  @keyframes statusPulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.7;
+    }
+
+    70% {
+      transform: scale(2.4);
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .modal-header {
+    background: linear-gradient(135deg, #0b0b0b, #1b1b1b);
+
+    .btn-close {
+      color: #fff;
+    }
+  }
+
+  // main menu
+  select,
+  input {
+
+    &:hover,
+    &:focus,
+    &:active {
+      outline: none;
+      box-shadow: none !important;
+      border-color: #ccc !important;
+    }
+  }
+
+  .custom-table th,
+  .custom-table td {
+    vertical-align: middle;
+    font-size: 14px;
+  }
+
+  .custom-table th {
+    white-space: nowrap;
+  }
+
+  .custom-table td {
+    background-color: #fff;
+  }
+
+  /* Description ellipsis */
+  .custom-table td:nth-child(2),
+  .custom-table th:nth-child(2) {
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .summary-bar {
+    padding: 12px 0;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 14px;
+
+    .credit-cell {
+      color: #198754;
+      /* Bootstrap success */
+    }
+
+    .debit-cell {
+      color: #dc3545;
+      /* Bootstrap danger */
+    }
+
+    .total-cell {
+      color: #0d6efd;
+      /* Bootstrap primary */
+    }
+  }
+
+
+  @media (max-width: 576px) {
+
+    .summary-bar {
+      gap: 6px;
+      flex-direction: column;
+      align-items: flex-start;
+
+      span.credit-cell,
+      span.debit-cell,
+      span.total-cell {
+        display: flex;
+        gap: 10px;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .header_page {
+    background: $allheader;
+    padding: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+
+    h3 {
+      color: #fff;
+      margin-bottom: 0px;
+      font-size: 15px;
+      text-align: center;
+    }
+  }
+
+  .tabs_account {
+    background: #fff;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    margin-top: 5px;
+    padding: 10px;
+
+    .tab_item {
+      background: #fff;
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: #000;
+      text-align: center;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      height: 32px;
+      padding: 0px 15px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+
+      &.active {
+        background: $black;
+        color: $whitecolor;
+      }
+    }
+  }
+
+  // profile
+  .margin-top-120 {
+    padding-top: 150px;
+  }
+
+  .backtomenu {
+    width: 100%;
+    color: rgba(0, 0, 0, 0.88);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
+    font-size: 14px;
+    height: 32px;
+    padding: 0px 15px;
+    transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+    user-select: none;
+    touch-action: manipulation;
+    margin-bottom: 6px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  .card-header {
+    &.custum_bg {
+      background: #fff;
+      padding: 15px;
+      color: #000;
+      font-family: sans-serif;
+      border-bottom: 1px solid #ccc;
+    }
+  }
+
+  .changepassword {
+    margin-top: 5px;
+    // display: flex;
+    justify-content: end;
+
+    button {
+      background: $yellowcolor;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 5px;
+      border: none;
+    }
+  }
+
+  // profile
+
+  input.form-control.custum_form {
+    border: 1px solid #fff;
+    background: #fff;
+    text-align: left !important;
+
+    &:hover,
+    &:focus,
+    &:active {
+      outline: none;
+      box-shadow: none !important;
+      border-color: #ccc;
+    }
+  }
+
+  .button_all_bet {
+    border-radius: 6px;
+    transition: 0.2s;
+    background: linear-gradient(135deg, #0b0b0b, #1b1b1b);
+    color: rgb(255, 255, 255);
+    transform: translateY(-2px);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 8px;
+    height: 40px;
+    width: 23%;
+  }
+
+  .timer-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #f0f2f5;
+    border-radius: 6px;
+
+    svg,
+    span {
+      color: rgb(24, 144, 255);
+    }
+  }
+
+  .pricedesign {
+    padding: 10px;
+  }
+
+  .bet-slip-modal-content {
+    .modal-header {
+      background: $allheader;
+
+      .modal-title {
+        text-transform: uppercase;
+        color: #fff;
+      }
+    }
+
+    .bettypeall {
+      background: #131313;
+      padding: 15px;
+      border-radius: 6px;
+
+      .bettypetext {
+        color: #fff;
+        font-size: 14px;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+
+      .text_all_bet {
+        background: #fff;
+        padding: 2px 10px;
+        border-radius: 5px;
+      }
+    }
+  }
+
+  // rule
+  .rules-tc-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+  }
+
+  .rules-tc-modal {
+    background: #ffffff;
+    width: 92%;
+    max-width: 720px;
+    border-radius: 12px;
+    overflow: hidden;
+    animation: rulesTcZoom 0.25s ease-in-out;
+
+    @keyframes rulesTcZoom {
+      from {
+        transform: scale(0.92);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .rules-tc-lang {
+      display: flex;
+      gap: 10px;
+
+      // button.fillterbutton_new  {
+      //   padding: 5px 10px;
+      //   border: 1px solid #fff;
+      //   color: #000;
+
+      //   &.active {
+      //     background: $gradientcolor;
+      //     color: #000;
+      //   }
+      // }
+    }
+
+    .rules-tc-header {
+      background: $gradientcolor;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      h4 {
+        color: #fff;
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 1.5;
+        word-wrap: break-word;
+      }
+    }
+
+    .rules-tc-close {
+      background: transparent;
+      border: none;
+      font-size: 26px;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .rules-tc-body {
+      padding: 16px 18px;
+      max-height: 65vh;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+
+    .rules-tc-body p {
+      margin-bottom: 8px;
+      line-height: 1.65;
+    }
+
+    .rules-tc-footer {
+      padding: 5px;
+      text-align: center;
+      border-top: 1px solid #eee;
+    }
+
+    .rules-tc-agree-btn {
+      width: 100%;
+      background: $gradientcolor;
+      color: #fff;
+      border: none;
+      padding: 6px 28px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  }
+
+  // rule
+  .bet-action-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .bet-history-btn {
+    // background: #000;
+    background: $yellowcolor;
+    border: 0px;
+    border-radius: 0px;
+    font-weight: 700;
+    color: #fff;
+    font-size: 16px;
+    padding: 10px;
+  }
+
+
+
+  /* Overlay */
+  .bet-history-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+
+    /* Modal */
+    .bet-history-modal {
+      width: 95%;
+      max-width: 900px;
+      background: linear-gradient(135deg, #0b0b0b, #1b1b1b);
+      border-radius: 18px;
+      color: #fff;
+      overflow: hidden;
+      animation: modalZoom 0.3s ease;
+      background: #fff;
+      width: 100%;
+      max-height: 500px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      animation: slideUp 0.3s ease;
+      overflow: scroll;
+    }
+
+    .bet-table-scroll {
+      .home_page {
+        .slider-container {
+          display: none !important;
+        }
+      }
+    }
+
+    /* Header */
+    .bet-history-header {
+      display: flex;
+      padding: 14px 18px;
+      text-transform: uppercase;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: $pinkcolor;
+    }
+
+    .bet-history-header h4 {
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+
+    .bet-history-header button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    /* Body */
+    .bet-history-body {
+      padding: 14px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    /* Table Scroll */
+    .bet-table-scroll {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    /* Table */
+    .bet-history-table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    .bet-history-table th,
+    .bet-history-table td {
+      padding: 10px;
+      font-size: 13px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .bet-history-table th {
+      background: #000;
+      color: #9ca3af;
+      font-weight: 500;
+    }
+
+    .bet-history-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    /* Status Colors */
+    .bet-win {
+      color: #22c55e;
+      font-weight: 600;
+    }
+
+    .bet-loss {
+      color: #ef4444;
+      font-weight: 600;
+    }
+
+    .bet-success {
+      color: #22c55e;
+    }
+
+    /* Total row */
+    .bet-total-row {
+      background: linear-gradient(135deg, #111, #262626);
+      font-weight: 600;
+    }
+
+    /* Animation */
+    @keyframes modalZoom {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+  }
+
+  /* Button */
+  .completed-btn {
+    // background: #000; 
+    background: $yellowcolor;
+    border-radius: 0px;
+    font-weight: 700;
+    color: #fff;
+    border: 0px;
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  /* Overlay */
+  .completed-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+
+    .completed-table th,
+    .total-row>* {
+      color: #fff;
+    }
+
+    /* Popup */
+    .completed-popup {
+      width: 95%;
+      max-width: 900px;
+      background: #fff;
+      border-radius: 14px;
+      color: #000;
+      overflow: hidden;
+      animation: popupFade 0.3s ease;
+    }
+
+    /* Header */
+    .completed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: $allheader;
+
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .completed-header h4 {
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: 1px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .completed-header button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    /* Body */
+    .completed-body {
+      max-height: 70vh;
+      overflow-y: auto;
+      padding: 3px;
+    }
+
+    /* Table */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .completed-table {
+      width: 100%;
+      min-width: 750px;
+      /* mobile scroll */
+      border-collapse: collapse;
+    }
+
+    .completed-table th,
+    .completed-table td {
+      padding: 10px;
+      text-align: center;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .completed-table th {
+      color: #000;
+      background: #fff;
+      border: 1px solid #000;
+    }
+
+    .completed-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    /* Status */
+    .win {
+      color: #22c55e;
+      font-weight: 600;
+    }
+
+    .loss {
+      color: #ef4444;
+      font-weight: 600;
+    }
+
+    .success {
+      color: #22c55e;
+    }
+
+    /* Total Row */
+    .total-row {
+      background: #111;
+      font-weight: 600;
+    }
+
+    /* Animation */
+    @keyframes popupFade {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+  }
+
+  .Fancybetall,
+  .matchbets {
+    margin-top: 30px;
+
+    .card {
+      border-radius: 0px;
+    }
+
+    .card {
+      .card-header {
+        background: $yellowcolor;
+        border-radius: 0px;
+        text-align: center;
+        padding: 10px;
+        color: #fff;
+
+        div.text-center {
+          font-weight: 700;
+          text-transform: uppercase;
+          text-align: center;
+          width: 100%;
+        }
+      }
+
+      .card-body {
+        .table {
+          tr {
+            background: $gradientcolor !important;
+
+            th {
+              background: transparent;
+              color: #fff;
+              font-weight: 700;
+              text-transform: uppercase;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .custom-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgb(0 0 0 / 12%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+
+  .custom-modal {
+    background: linear-gradient(135deg, #0f0f0f, #1f1f1f);
+    color: #fff;
+    width: 95%;
+    max-width: 600px;
+    border-radius: 14px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+    animation: slideUp 0.3s ease;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .modal-header h5 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .modal-header button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+  .modal-body {
+    padding: 16px;
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(40px);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .new_game_design_myxbet {
+
+    .cricketbettingalldesign .skyDetailsRow .back1,
+    .cricketbettingalldesign .skyDetailsRow .lay3 {
+      // position: static;
+      width: 50%;
+      float: left;
+      margin: -1px;
+    }
+
+    .cricketbettingalldesign th.back-h {
+      background: #faa9ba;
+    }
+
+    .cricketbettingalldesign th.lay-h {
+      background: #72bbef;
+      padding: 0 !important;
+    }
+
+    .suspend-col {
+
+      .bettinggrid.back-2,
+      .bettinggrid.back-3,
+      .bettinggrid.lay-2,
+      .bettinggrid.lay-3 {
+        display: none;
+      }
+    }
+
+    .cricketbettingalldesign th.back-h>span,
+    .cricketbettingalldesign th.lay-h>span {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 6px;
+      border-radius: 0px;
+      height: 100%;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 14px;
+    }
+
+    .stack-info {
+      color: #fff !important;
+
+      span {
+        color: #fff;
+        display: inline-block;
+        margin-right: 0px;
+      }
+    }
+
+    .height_60 {
+      height: 46px;
+    }
+
+    .market-name-th {
+      background: linear-gradient(135deg, #000000, #2e2e2e);
+      color: #fff;
+    }
+
+    th.lay-h,
+    th.back-h {
+      width: 20%;
+    }
+
+    .skyDetailsRow .lay3,
+    .skyDetailsRow .back1 {
+      width: 50%;
+      margin: 1px;
+      min-height: 50px;
+    }
+
+    .cricketbettingalldesign .market-name-th,
+    .cricketbettingalldesign .skyDetailsRow td.selaction_name {
+      width: 60%;
+    }
+
+    .table thead tr th.market-name-th {
+      background: $allheader;
+    }
+
+    tr {
+      background: linear-gradient(135deg, #253c86, #2e2e2e);
+
+    }
+
+    th.back-h>span,
+    th.lay-h>span {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 6px;
+      color: #fff;
+      background: transparent;
+      border-radius: 0px;
+      border-right: 1px solid #fff;
+    }
+
+    p {
+      margin-bottom: 0px;
+      text-transform: uppercase;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .table thead th {
+      vertical-align: middle;
+      border-bottom: 0px solid #dee2e6;
+      padding: 0px 10px;
+      height: 50px;
+    }
+
+    .stack-info {
+      margin: 0;
+      background: transparent !important;
+      text-align: center;
+      border-radius: 3px;
+      text-transform: uppercase;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    &.padding-top-80 {
+      padding: 150px 5px 0px;
+    }
+  }
+
+  // cricket page css 05-01-2026
+  .changealldesign_app {
+    &.main-layout {
+      // background: #fff;
+    }
+
+    .newdesign_myx {
+      &.main-content {
+        background-color: #ededed;
+        border-radius: 8px;
+        width: 80%;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding-left: 0%;
+        padding-right: 0px;
+        padding-bottom: 80px;
+        margin: 150px auto 0px;
+      }
+
+      .newdesignjan {
+
+        th.back-h>span,
+        th.lay-h>span {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          padding: 6px;
+          border-radius: 0px;
+          background: linear-gradient(180deg,
+              rgb(255, 199, 0) 0%,
+              rgb(220, 228, 0) 100%),
+            rgba(0, 0, 0, 0.73);
+          border-right: 1px solid #fff;
+        }
+      }
+    }
+  }
+
+  // cricket page css 05-01-2026
+
+  .cricketbettingalldesign {
+    &.new_design_we {
+      .team_name>* {
+        color: #fff;
+      }
+
+      .team_name a {
+        font-weight: 700;
+        color: #fff !important;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        -webkit-line-clamp: 1;
+        display: -webkit-box !important;
+        text-overflow: ellipsis;
+        margin-bottom: 6px;
+      }
+    }
+
+    .bet_tablearea.exchange.bgnewcolorgradient {
+      // background: linear-gradient(135deg, #2a2a2a, #000000);
+      display: flex;
+      background: $gradientcolor;
+      padding: 7px;
+      border: 1px solid #fff;
+      cursor: pointer;
+
+      .inplayhomepa {
+        flex-direction: column;
+
+        &.team_name {
+          padding-right: 0px;
+        }
+      }
+    }
+  }
+
+  .new_design_we {
+    margin-top: 10px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    margin-bottom: 10px;
+    // border: 1px solid #fff;
+
+    .team_name a {
+      font-weight: 700;
+      color: #000 !important;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      -webkit-line-clamp: 1;
+      display: -webkit-box !important;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .new_design_we:first-child {
+    margin-top: 0;
+  }
+
+  .bgnewcolorgradient {
+    background: linear-gradient(180deg,
+        rgb(255, 199, 0) 0%,
+        rgb(220, 228, 0) 100%),
+      rgba(0, 0, 0, 0.73);
+    display: flex;
+    padding: 7px;
+    cursor: pointer;
+
+    .inplayhomepa {
+      flex-direction: column;
+
+      &.team_name {
+        padding-right: 0px;
+      }
+    }
+  }
+
+
+
+
+  .marquee {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    color: #fff;
+    position: absolute;
+    top: 0;
+  }
+
+  .marquee span {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scroll-left 20s linear infinite;
+  }
+
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0);
+    }
+
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  .cricketbettingalldesign .commonbtn {
+    margin: 0px;
+  }
+
+  .flex-direction-mobile {
+    gap: 5px;
+  }
+
+  // .cricketbettingalldesign .bet_tablearea.exchange:hover {
+  //   background-color: rgb(255, 255, 255);
+  // }
+
+  .allsuspend-text {
+    z-index: 2;
+    background-color: #fff;
+    color: #ca1010;
+    text-align: center;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    line-height: 36px;
+    font-weight: 3700;
+    text-shadow: none;
+    font-size: 30px;
+    border: 2px solid #ca1010;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .flex-col {
+    flex-direction: column;
+    align-items: start !important;
+    text-align: left;
+  }
+
+  .forstrongchang {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    // align-items: center;
+    // justify-content: center;
+  }
+
+  .watchtv_online {
+    .cricketpagemobile {
+      border-bottom: none;
+      margin-bottom: 0px;
+
+      &.history-header {
+        margin-bottom: 0px;
+      }
+    }
+  }
+
+  .buttondesignalltab {
+    .buttonall_new {
+      flex: 0 0 50%;
+      text-align: center;
+      padding: 7px 0px 7px;
+      font-size: 12px;
+      background: $graidentcolornew;
+      color: #fff;
+      border: none;
+      border-radius: 0px;
+      border-bottom: 2px solid transparent;
+
+      &.active {
+        border-bottom: 2px solid #fff;
+      }
+    }
+  }
+
+  .headermobileall {}
+
+  .card {
+    border-radius: 0px;
+  }
+
+  .image_whatsapp {
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .submitbutton {
+    width: 100%;
+    padding: 10px;
+    border: 0px;
+    margin: 0px;
+    background: $secondcolor;
+    border-radius: 10px;
+    color: #fff;
+  }
+
+  .modal-bank,
+  .modal-upi {
+    input {
+      height: 45px;
+      border: 1px solid $secondcolor;
+
+      &:focus,
+      &:active {
+        box-shadow: none;
+        outline: none;
+      }
+    }
+
+    .modal-header {
+      background: $secondcolor;
+      color: #fff;
+      padding: 10px;
+
+      .modal-title {
+        font-size: 16px;
+      }
+    }
+  }
+
+  .withdrawsection {
+    .animated.fadeIn {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .divider-top {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Header Styles */
+    .back-btn {
+      display: flex;
+      align-items: center;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .back-btn:hover {
+      color: #ffd700;
+    }
+
+    .back-btn i {
+      margin-right: 8px;
+      font-size: 20px;
+    }
+
+    /* Customer Support Link */
+    a[href^="https://wa.me"] {
+      display: flex;
+      align-items: center;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    a[href^="https://wa.me"]:hover {
+      color: #25d366;
+    }
+
+    /* Card Styles */
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+      border: none;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card-header {
+      background: $greengradient;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 15px 15px 0 0 !important;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .loader-6 {
+      height: 250px;
+      position: relative;
+
+      .circle {
+        width: 20px;
+        height: 20px;
+        background: #fee11a;
+        border-radius: 50%;
+        margin: -12.5px;
+        animation: mesh 3s ease-in-out infinite -1.5s;
+      }
+
+      .circle1 {
+        background: red;
+      }
+
+      .circle2 {
+        background: rgb(212, 122, 4);
+      }
+
+      .circle3 {
+        background: rgb(197, 9, 141);
+      }
+
+      >div {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+
+        .circle:last-child {
+          animation-delay: 0s;
+        }
+      }
+
+      >div:last-child {
+        transform: rotate(90deg);
+      }
+    }
+
+    /* Keyframes */
+    @keyframes mesh {
+      0% {
+        transform-origin: 50% -100%;
+        transform: rotate(0deg);
+      }
+
+      50% {
+        transform-origin: 50% -100%;
+        transform: rotate(360deg);
+      }
+
+      50.00001% {
+        transform-origin: 50% 200%;
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform-origin: 50% 200%;
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Add these styles to your CSS file */
+    .pin {
+      cursor: pointer;
+      margin-left: 10px;
+      color: #666;
+      transition: all 0.3s ease;
+    }
+
+    .pin:hover {
+      color: #ffa500;
+      transform: scale(1.2);
+    }
+
+    .pin.pinned-active {
+      color: #ffd700;
+      /* Golden yellow for pinned */
+      transform: rotate(45deg);
+    }
+
+    .pin.pinned-active:hover {
+      color: #ff6b6b;
+      /* Red on hover for unpin */
+    }
+
+    .pinned-match {
+      border-left: 3px solid #ffd700 !important;
+      background-color: rgba(255, 215, 0, 0.05) !important;
+    }
+
+    .matches-loader {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 200px;
+    }
+
+    .form-control {
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      // padding: 12px 15px;
+      font-size: 16px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    .form-control:focus {
+      border-color: #4facfe;
+      box-shadow: 0 0 0 0.2rem rgba(79, 172, 254, 0.25);
+      background: white;
+    }
+
+    .asterisk_input::after {
+      content: "*";
+      color: #ff4757;
+      margin-left: 2px;
+    }
+
+    /* Brand Cards */
+    .brand-card {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .brand-card:hover,
+    .brand-card.active {
+      border-color: #4facfe;
+      box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+    }
+
+    .brand-card-header img {
+      width: 50px;
+      height: 50px;
+      margin: 0 auto;
+      display: block;
+      filter: grayscale(100%);
+      transition: filter 0.3s ease;
+    }
+
+    .brand-card:hover img,
+    .brand-card.active img {
+      filter: grayscale(0%);
+    }
+
+    /* Button Styles */
+    .btn-primary {
+      background: $secondcolor;
+      border: none;
+      border-radius: 25px;
+      padding: 7px 30px;
+      width: 100%;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:hover {
+      background: $secondcolor;
+    }
+
+    .instant::after {
+      content: " ⚡";
+    }
+
+    /* Table Styles */
+    .table-responsive {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .table {
+      margin-bottom: 0;
+      background: white;
+    }
+
+    .table th {
+      background: $primarycolor;
+      color: white;
+      border: none;
+      padding: 8px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .table td {
+      padding: 15px;
+      vertical-align: middle;
+      border-color: #e0e0e0;
+    }
+
+    .no-data {
+      background: #f8f9fa;
+      color: #6c757d;
+      font-style: italic;
+      text-align: center;
+      padding: 40px;
+    }
+
+    /* Enhanced Custom Modal Styles */
+    .modal-backdrop {
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(15px);
+      transition: opacity 0.3s ease;
+    }
+
+    /* Modal Dialog Customizations */
+    .modal-dialog {
+      max-width: 500px;
+      margin: 1.75rem auto;
+      transform: translateY(-50px);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .modal.show .modal-dialog {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .teenpatti .modal-dialog,
+    .teenPopupImage .modal-dialog {
+      border-radius: 25px;
+      overflow: hidden;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Modal Content */
+    .modal-content {
+      background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
+      border: none;
+      border-radius: 25px;
+      box-shadow: 0 20px 60px rgba(102, 126, 234, 0.2);
+      overflow: hidden;
+    }
+
+    /* Modal Header Custom Design */
+    .modal-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 25px 25px 0 0;
+      padding: 20px 25px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal-header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #ffd700, #ff6b6b);
+    }
+
+    .modal-title {
+      font-weight: 700;
+      font-size: 22px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin: 0;
+      letter-spacing: 0.5px;
+    }
+
+    .modal-header .close {
+      color: #ffffff;
+      opacity: 0.8;
+      font-size: 28px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      margin: -10px -10px -10px auto;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-header .close:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    /* Modal Body Custom Design */
+    .modal-body {
+      padding: 30px 25px 20px !important;
+      background: #ffffff;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .modal-body::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .modal-body::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 10px;
+    }
+
+    .teenpatti .modal-body,
+    .teenPopupImage .modal-body {
+      background: linear-gradient(180deg, #f8f9ff 0%, #ffffff 100%);
+      border-radius: 0 0 25px 25px;
+    }
+
+    /* Form Styles Inside Modal */
+    .modal .form-group {
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    .modal .form-group label {
+      color: #4a5568;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 10px;
+      display: block;
+      letter-spacing: 0.3px;
+    }
+
+    .modal .form-group label .asterisk_input::after {
+      content: "*";
+      color: #ff4757;
+      margin-left: 4px;
+      font-size: 16px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .modal .col-md-4 {
+      padding-right: 15px;
+    }
+
+    .modal .col-md-7 {
+      padding-left: 15px;
+    }
+
+    .modal .form-control {
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid #e2e8f0;
+      border-radius: 15px;
+      padding: 15px 20px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      height: auto;
+    }
+
+    .modal .form-control:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15),
+        0 4px 15px rgba(102, 126, 234, 0.1);
+      background: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    .modal .form-control::placeholder {
+      color: #a0aec0;
+      font-style: italic;
+    }
+
+    /* Modal Footer Custom Design */
+    .modal-footer {
+      background: linear-gradient(135deg, #f8f9ff 0%, #e2e8f0 100%);
+      border: none;
+      border-radius: 0 0 25px 25px;
+      padding: 20px 25px;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .modal .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 50px;
+      padding: 12px 40px;
+      font-weight: 700;
+      font-size: 16px;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal .btn-primary::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent);
+      transition: left 0.5s;
+    }
+
+    .modal .btn-primary:hover::before {
+      left: 100%;
+    }
+
+    .modal .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    }
+
+    /* Specific Modal Variations */
+    /* For Bank Modals - Add subtle icon or extra styling if needed */
+    .modal-bank .form-control[name="ifsc"] {
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .modal-bank .form-group:nth-child(3) .form-control {
+      font-family: "Courier New", monospace;
+    }
+
+    /* For UPI Modals (PhonePay, GPay, etc.) - Simpler, add phone icon */
+    .modal-upi .form-control[name="number"] {
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="%23999" viewBox="0 0 16 16"><path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H5z"/><path d="M8 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: 15px center;
+      padding-left: 50px;
+    }
+
+    /* Animation for Modal Open */
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9) translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .modal.fade .modal-dialog {
+      animation: modalSlideIn 0.4s ease-out;
+    }
+
+    /* Close Button Enhancement */
+    .modal-header .close span {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .main_section {
+        padding: 10px;
+      }
+
+      .brand-card {
+        margin-bottom: 10px;
+      }
+
+      .edit-mode {
+        display: block;
+        margin: 5px 0;
+      }
+
+      .row {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .modal-dialog {
+        margin: 0.5rem;
+        max-width: calc(100% - 1rem);
+      }
+
+      .modal-body {
+        padding: 20px 15px 15px !important;
+      }
+
+      .modal .form-group {
+        margin-bottom: 20px;
+      }
+
+      .modal .row {
+        margin: 0;
+      }
+
+      .modal .col-md-4,
+      .modal .col-md-7 {
+        padding: 0 5px;
+        margin-bottom: 10px;
+      }
+
+      .modal .col-md-4 {
+        text-align: right;
+      }
+
+      .modal .btn-primary {
+        width: 100%;
+        padding: 15px;
+      }
+    }
+
+    /* Custom Classes from Original */
+    .p-mobile-1 {
+      padding: 0 5px;
+    }
+
+    .d-desk {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .d-desk {
+        display: block;
+      }
+    }
+
+    .hidden-xs {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .hidden-xs {
+        display: block;
+      }
+    }
+
+    .mt-3 {
+      margin-top: 1rem;
+    }
+
+    .mr-2 {
+      margin-right: 0.5rem;
+    }
+
+    .teenpatti,
+    .teenPopupImage {
+      /* Assuming these are for modal styling, enhance if needed */
+      --bs-modal-backdrop-opacity: 0.8;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Scrollbar Styling for Modern Look */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    /* Global Enhancements */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* Custom Loading Spinner for Submit */
+    .fa-spinner {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  }
+
+  // withdrawsection
+  // profile page css
+
+  .REportsPage {
+    // Custom Colors
+    $secondcolor: #232939;
+    $primarycolor: #ffb900;
+
+    $border-radius: 12px;
+    $box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    $transition: all 0.3s ease;
+
+    // Mixins
+    @mixin flex-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @mixin gradient-bg($start, $end) {
+      background: linear-gradient(135deg, $start 0%, $end 100%);
+    }
+
+    @mixin card-hover {}
+
+    @mixin responsive($breakpoint) {
+      @if $breakpoint ==tablet {
+        @media (max-width: 768px) {
+          @content;
+        }
+      }
+
+      @if $breakpoint ==mobile {
+        @media (max-width: 480px) {
+          @content;
+        }
+      }
+    }
+
+    // Main Section
+    .main_section {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+
+      @include responsive(tablet) {
+        padding: 10px;
+      }
+    }
+
+    // Card Component
+    .card {
+      background: white;
+      border-radius: 0px;
+      overflow: hidden;
+      transition: $transition;
+
+      &:hover {
+        @include card-hover;
+      }
+
+      &-header {
+        background: $secondcolor;
+        color: white;
+        padding: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-radius: 0px !important;
+
+        i {
+          font-size: 1.3rem;
+        }
+
+        @include responsive(tablet) {
+          font-size: 15px;
+          padding: 8px 9px;
+        }
+      }
+
+      &-body {
+        padding: 12px;
+
+        @include responsive(tablet) {
+          padding: 15px;
+        }
+      }
+    }
+
+    // Account Information
+    .acc-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+
+      @include responsive(tablet) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .info-item {
+      display: flex;
+      padding: 10px;
+      border-radius: 10px;
+      background-color: lighten($secondcolor, 70%);
+      transition: $transition;
+      justify-content: space-between;
+
+      dt {
+        font-weight: 600;
+        color: #232939;
+        font-size: 0.9rem;
+        margin-bottom: 0px;
+        text-transform: capitalize;
+        letter-spacing: 0.5px;
+      }
+
+      dd {
+        font-size: 14px;
+        color: $secondcolor;
+        font-weight: 500;
+      }
+    }
+
+    // Password Edit Section
+    .password-edit {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+
+      @include responsive(mobile) {
+        gap: 10px;
+      }
+
+      .edit-btn {
+        color: #ffffff;
+        cursor: pointer;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 15px;
+        border-radius: 30px;
+        background-color: rgb(35 41 57);
+        transition: all 0.3s ease;
+        border: none;
+        font-size: 0.9rem;
+
+        &:hover {
+          background-color: $primarycolor;
+          color: white;
+        }
+
+        @include responsive(mobile) {
+          align-self: flex-end;
+        }
+      }
+    }
+
+    // Eye Icon
+    .eye-icon {
+      color: $primarycolor;
+      cursor: pointer;
+      transition: $transition;
+
+      &:hover {
+        color: darken($primarycolor, 15%);
+        transform: scale(1.2);
+      }
+    }
+
+    // Modal Styles
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+      @include flex-center;
+      z-index: 9999;
+      opacity: 0;
+      animation: fadeIn 0.3s forwards;
+
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+        }
+      }
+    }
+
+    .modal-box {
+      background: white;
+      padding: 30px;
+      width: 90%;
+      max-width: 450px;
+      border-radius: $border-radius;
+      box-shadow: $box-shadow;
+      transform: translateY(-20px);
+      animation: slideUp 0.3s forwards;
+
+      @keyframes slideUp {
+        to {
+          transform: translateY(0);
+        }
+      }
+
+      @include responsive(tablet) {
+        padding: 20px;
+      }
+
+      h3 {
+        margin-bottom: 25px;
+        text-align: center;
+        color: $secondcolor;
+        font-size: 1.5rem;
+        @include flex-center;
+        gap: 10px;
+      }
+    }
+
+    // Form Components
+    .form-group {
+      margin-bottom: 5px;
+
+      label {
+        display: block;
+        margin-bottom: 0px;
+        font-weight: 600;
+        color: #232939;
+        text-align: left;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px 15px;
+        border-radius: 8px;
+        border: 2px solid lighten($secondcolor, 60%);
+        font-size: 1rem;
+        transition: $transition;
+
+        &:focus {
+          border-color: $primarycolor;
+          outline: none;
+          box-shadow: 0 0 0 3px rgba($primarycolor, 0.2);
+        }
+      }
+    }
+
+    // Modal Actions
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    // Button Styles
+    @mixin button-style($bg-color, $text-color, $hover-bg, $hover-text: null) {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: $transition;
+      font-size: 1rem;
+      background-color: $bg-color;
+      color: $text-color;
+
+      &:hover {
+        background-color: $hover-bg;
+        color: if($hover-text, $hover-text, $text-color);
+
+        @if $bg-color ==$primarycolor {
+          transform: translateY(-2px);
+          box-shadow: 0 5px 15px rgba($primarycolor, 0.4);
+        }
+      }
+    }
+
+    .btn-cancel {
+      @include button-style(lighten($secondcolor, 70%),
+        $secondcolor,
+        lighten($secondcolor, 60%),
+        $secondcolor );
+    }
+
+    .btn-save {
+      @include button-style($primarycolor, white, darken($primarycolor, 10%));
+      @include gradient-bg($primarycolor, lighten($primarycolor, 10%));
+
+      &:hover {
+        @include gradient-bg(darken($primarycolor, 10%), $primarycolor);
+      }
+    }
+
+    // App Styles (for App.scss)
+    .App {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      @include flex-center;
+    }
+  }
+
+  // profile page css
+
+  .account-page {
+    padding: 20px;
+    text-align: left;
+
+    .account-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .account-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .account-menu li {
+      margin-bottom: 12px;
+    }
+
+    .account-menu li a {
+      display: block;
+      padding: 12px 15px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #222;
+      font-size: 16px;
+      transition: 0.2s;
+    }
+
+    .account-menu li a:hover {
+      background: #e2e2e2;
+    }
+
+    .logoutbutton {
+      padding: 12px 15px;
+      background: $secondcolor;
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .logoutbutton:hover {
+      background: #e60000;
+    }
+  }
+
+  input:hover,
+  input:focus,
+  input:active {
+    box-shadow: none;
+    outline: none;
+  }
+
+  // withdraw page
+  /* Card Style Improve */
+  .custom-card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .card-header.text-start {
+    background: $secondcolor;
+    color: #fff;
+  }
+
+  /* Default Button Design */
+  .custom-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    font-weight: 600;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: all 0.25s ease;
+    border: 2px solid transparent;
+    text-decoration: none;
+  }
+
+  /* Withdraw Button Colors */
+  .withdraw-btn {
+    background: #e3f2ff;
+    color: #0061d5;
+  }
+
+  .withdraw-btn:hover {
+    background: #d2e9ff;
+    transform: translateY(-2px);
+  }
+
+  /* Deposit Button Colors */
+  .deposit-btn {
+    background: #e3ffe9;
+    color: #0a8f45;
+  }
+
+  // .deposit-btn:hover {
+  //   background: #d2ffd9;
+  //   transform: translateY(-2px);
+  // }
+
+  /* Active State */
+  .custom-btn.active {
+    background: #004aad !important;
+    color: #fff !important;
+    border-color: #003780;
+    box-shadow: 0 4px 10px rgba(0, 74, 173, 0.4);
+  }
+
+  /* For Deposit Active State Overwrite */
+  .deposit-btn.active {
+    background: #0a8f45 !important;
+    border-color: #056b32;
+    box-shadow: 0 4px 10px rgba(10, 143, 69, 0.4);
+  }
+
+  // withdraw page
+  // fillter desing
+  /* Mobile Responsive Fix */
+
+  // rules and regulation css
+  .rules-regulations-container {
+    font-weight: 700;
+    font-style: normal;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.88);
+
+    .section-container {
+      background: transparent;
+    }
+
+    .ruledesign {
+      display: flex;
+      align-items: center;
+      margin: 16px 0;
+      color: rgba(0, 0, 0, 0.88);
+      font-weight: 500;
+      font-size: 16px;
+      white-space: nowrap;
+      text-align: center;
+      border-block-start: 0 rgba(5, 5, 5, 0.06);
+      position: relative;
+
+      .sectiontitle {
+        color: rgba(0, 0, 0, 0.88);
+        font-weight: 500;
+        font-size: 16px;
+        white-space: nowrap;
+        text-align: center;
+        position: absolute;
+        left: 30px;
+        background: #f0f2f5;
+        font-weight: 700;
+        font-style: normal;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.88);
+        z-index: 9;
+        padding: 3px 10px;
+        text-transform: uppercase;
+      }
+    }
+
+    .rules-list {
+      background: transparent;
+      padding: 0px;
+      border: 1px solid #ccc;
+    }
+
+    // Custom CSS Properties (Variables)
+    :root {
+      --primary-color: #ffb900;
+      --secondary-color: #232939;
+      --background-light: #f8f9fa;
+      --border-light: #e9ecef;
+      --text-color: #232939;
+
+      --border-radius: 12px;
+      --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --transition: all 0.3s ease;
+    }
+
+    // Mixins
+    @mixin flex-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @mixin gradient-bg($start, $end) {
+      background: linear-gradient(135deg, $start 0%, $end 100%);
+    }
+
+    @mixin card-hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    @mixin responsive($breakpoint) {
+      @if $breakpoint ==tablet {
+        @media (max-width: 768px) {
+          @content;
+        }
+      }
+
+      @if $breakpoint ==mobile {
+        @media (max-width: 480px) {
+          @content;
+        }
+      }
+    }
+
+    // Base Styles
+    .rules-regulations-container {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+
+      @include responsive(tablet) {
+        padding: 15px;
+      }
+
+      @include responsive(mobile) {
+        padding: 10px;
+      }
+    }
+
+    // Card Component
+    .card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+      transition: var(--transition);
+
+      &-body {
+        padding: 0;
+      }
+
+      &-header {
+        background: transparent;
+        text-align: start;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: rgba(0, 0, 0, 0.88) !important;
+        font-weight: 600;
+        font-size: 24px;
+        line-height: 1.3333333333333333;
+
+        @include responsive(tablet) {
+          font-size: 1.3rem;
+          padding: 7px 20px;
+        }
+
+        @include responsive(mobile) {
+          font-size: 13px;
+          padding: 12px 15px;
+        }
+      }
+    }
+
+    // Language Selector
+    .language-selector {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      background-color: var(--background-light);
+      border-bottom: 1px solid var(--border-light);
+
+      @include responsive(mobile) {
+        align-items: center;
+        gap: 10px;
+      }
+
+      .lang-btn {
+        padding: 10px 25px;
+        border: 2px solid $secondcolor;
+        border-radius: 25px;
+        background: $whitecolor;
+        color: $black;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 0.9rem;
+
+        &.active {
+          @include gradient-bg(var(--primary-color), #e6a500);
+          color: white;
+          box-shadow: 0 4px 12px rgba(255, 185, 0, 0.3);
+          border: 1px solid $whitecolor;
+        }
+
+        @include responsive(mobile) {
+          width: 80px;
+          padding: 8px 10px;
+          font-size: 13px;
+        }
+      }
+    }
+
+    // Content Section
+    .content-section {
+      padding: 0px;
+      text-align: left;
+
+      @include responsive(tablet) {
+        padding: 20px;
+      }
+
+      @include responsive(mobile) {
+        padding: 5px;
+      }
+    }
+
+    .intro-text {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-color);
+      margin-bottom: 25px;
+      padding: 9px;
+      border-radius: 0 8px 8px 0;
+      background: #e6f4ff;
+      border: 1px solid #91caff;
+
+      @include responsive(mobile) {
+        font-size: 11px;
+        padding: 12px;
+        margin-bottom: 0px;
+      }
+    }
+
+    // Rules List
+    .rules-list {
+      @include responsive(mobile) {
+        margin: 0px 0;
+        padding: 1px;
+      }
+    }
+
+    .rule-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      margin-bottom: 0;
+      background-color: var(--background-light);
+      border-radius: 8px;
+      transition: var(--transition);
+      border: 1px solid transparent;
+      padding-bottom: 0px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      @include responsive(mobile) {
+        gap: 10px;
+        padding: 12px 5px 0px;
+        margin-bottom: 0px;
+      }
+
+      .rule-number {
+        background: $secondcolor;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        @include flex-center;
+        font-weight: 600;
+        flex-shrink: 0;
+        font-size: 0.9rem;
+        // box-shadow: 0 2px 8px rgba(255, 185, 0, 0.3);
+
+        @include responsive(mobile) {
+          width: 25px;
+          height: 25px;
+          font-size: 0.8rem;
+        }
+      }
+
+      .rule-text {
+        flex: 1 1;
+        font-size: 1rem;
+        line-height: 1.6;
+        color: var(--text-color);
+        text-align: justify;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+        font-weight: 700;
+        font-style: normal;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.88);
+
+        @include responsive(mobile) {
+          font-size: 12px;
+          line-height: 1.5;
+        }
+      }
+    }
+
+    // Closing Text
+    .closing-text {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-top: 30px;
+      padding: 20px;
+      background: linear-gradient(135deg, #fff9e6 0%, #fff0cc 100%);
+      border-radius: 8px;
+      border: 2px dashed var(--primary-color);
+
+      @include responsive(mobile) {
+        font-size: 1.1rem;
+        padding: 15px;
+        margin-top: 25px;
+      }
+    }
+
+    // Hindi Text Specific Styles
+    .hindi-text {
+      font-family: "Arial", "Noto Sans Devanagari", sans-serif;
+      line-height: 1.7;
+
+      .rule-text {
+        line-height: 1.7;
+      }
+    }
+
+    // Apply Hindi styles when language is Hindi
+    [lang="hi"] {
+      .content-section {
+        font-family: "Arial", "Noto Sans Devanagari", sans-serif;
+
+        .intro-text,
+        .rule-text,
+        .closing-text {
+          line-height: 1.7;
+        }
+      }
+    }
+  }
+
+  // rules and regulation css
+
+  // fillter desing
+  // Theme Toggle Button
+  .themeToggle {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 22px;
+    color: $light-text;
+    transition: color 0.3s ease;
+  }
+
+  body.dark-mode {
+    .scroredesign {
+      background: $secondcolor;
+    }
+
+    .REportsPage {
+      .card-header {
+        background: $primarycolor;
+        color: $dark-bg;
+      }
+
+      .info-item {
+        background-color: $secondcolor;
+
+        dt,
+        dd {
+          color: #fff;
+        }
+      }
+    }
+
+    .cricket_design table thead tr th {
+      background: lightslategrey;
+    }
+  }
+
+  // Navigation
+  body.dark-mode .navbar {
+    background: $secondcolor;
+  }
+
+  body.dark-mode {
+    .card-body {
+      background: #282f41;
+      color: #ccc;
+    }
+
+    .main-layout {
+      background: #0b151e;
+
+      .cricketbettingalldesign {
+        background: $secondcolor;
+
+        table {
+          background: $whitecolor;
+
+          .skyDetailsRow td.selaction_name {
+            background: #778899;
+
+            a {
+              color: #fff;
+            }
+          }
+
+          .betname_desig {
+            color: $whitecolor;
+          }
+
+          .placebet {
+            .fancy_design_button {
+              .fancy-quick-btn {
+                &:hover {
+                  color: $whitecolor !important;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  body.dark-mode .tab {
+    color: $dark-bg;
+  }
+
+  body.dark-mode .tab.active {
+    background: $secondcolor !important;
+  }
+
+  // User Dropdown
+  body.dark-mode .user-dropdown {
+    background: $light-card-bg;
+    border: 1px solid $light-border;
+  }
+
+  body.dark-mode .user-dropdown li {
+    color: $light-text;
+  }
+
+  // Page Specific Backgrounds
+  .setbuttonvalue-page {
+    background-color: #f0f8ff;
+
+    body.dark-mode & {
+      background-color: #1a2a3a;
+    }
+  }
+
+  .bethistory-page {
+    background-color: #fff0f5;
+
+    body.dark-mode & {
+      background-color: #3a2a35;
+    }
+  }
+
+  .accountstatement-page {
+    background-color: #f5f5dc;
+
+    body.dark-mode & {
+      background-color: #3a3a2a;
+    }
+  }
+
+  .suspend-overlay-all-new {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .suspended-odds {
+    // opacity: 0.3;
+    pointer-events: none;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Poppins", sans-serif;
+    color: $black;
+  }
+
+  a,
+  a:hover {
+    text-decoration: none;
+    color: $light-text;
+  }
+
+  .fontsizenew {
+    font-size: 13px;
+  }
+
+  .walleticon_icon {
+    p {
+      font-size: 12px;
+      color: $light-text;
+    }
+  }
+
+  .width-100 {
+    .main-content {
+      padding: 10px 0px;
+      width: calc(100% - 20%);
+
+      @media (max-width: 991px) {
+        width: 100%;
+        padding: 0px;
+      }
+    }
+  }
+
+  .pagination {
+    .page-item.active {
+      button {
+        border: 1px solid $primarycolor;
+        background: #000;
+      }
+    }
+  }
+
+  .placebetdesignall {
+    &.laydesign {
+      background: #faa9ba96;
+
+      body.dark-mode & {
+        background: #faa9ba40;
+      }
+
+      td {
+        background: transparent;
+        color: $light-text;
+        font-size: 12px;
+        font-weight: 700;
+
+        @media (max-width: 991px) {
+          padding: 7px;
+        }
+      }
+    }
+
+    &.backsuccess {
+      background: #72bbef8a;
+
+      body.dark-mode & {
+        background: #72bbef40;
+      }
+
+      td {
+        background: transparent;
+        color: $light-text;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        @media (max-width: 991px) {
+          padding: 7px;
+        }
+      }
+    }
+  }
+
+  .width_15 {
+    display: inline-block;
+    width: 20px;
+    text-align: start;
+    margin-right: 5px;
+  }
+
+  .game_status_suspended {
+    background-color: $light-card-bg;
+    opacity: 0.6;
+  }
+
+  .suspended-badge {
+    margin-top: 5px;
+  }
+
+  .teambet {
+    table {
+      thead {
+        tr {
+          th {
+            background: $graidentcolornew;
+            color: $whitecolor;
+            text-align: left;
+            padding: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+          }
+        }
+      }
+
+      tbody {
+        tr {
+          td {
+            padding: 4px;
+            font-size: 12px;
+            color: $light-text;
+          }
+        }
+      }
+    }
+  }
+
+  .bg-gradient-color {
+    // background: $secondcolor !important;
+    background: $yellowcolor !important;
+  }
+
+
+  .notice-page {
+    padding: 20px;
+
+    .card-title {
+      font-size: 15px;
+      text-align: left;
+      border-bottom: 0px;
+      margin-bottom: 0px;
+      padding-bottom: 0px;
+      color: $light-text;
+
+      h2 {
+        border-bottom: 0;
+        color: #fff;
+        font-size: 18px;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+    }
+
+    .notification-box {
+      background: $light-card-bg;
+      border-left: 5px solid $primarycolor;
+      border-radius: 10px;
+      padding: 14px 18px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+      transition: 0.2s ease;
+    }
+
+    .notification-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .notif-icon {
+      font-size: 22px;
+    }
+
+    .notif-title {
+      font-size: 17px;
+      font-weight: 600;
+      margin: 0;
+      color: $light-text;
+    }
+
+    .notification-body {
+      margin-top: 8px;
+      text-align: left;
+    }
+
+    .notice-body {
+      font-size: 15px;
+      margin: 0;
+      color: $light-text;
+      opacity: 0.8;
+    }
+
+    .notice-date {
+      font-size: 13px;
+      margin-bottom: 0px;
+      color: $light-text;
+      opacity: 0.7;
+    }
+  }
+
+  .togglebuttonscore {
+    border: 1px solid $primarycolor;
+    padding: 1px 10px;
+    border-radius: 4px;
+    background: $primarycolor;
+    color: #000000;
+    white-space: nowrap;
+    gap: 5px;
+    cursor: pointer;
+  }
+
+  .scroredesign {
+    background: $black;
+    padding: 5px;
+    text-transform: capitalize;
+    color: $whitecolor;
+
+    .togglebuttonscore {
+      border: 1px solid $primarycolor;
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: $primarycolor;
+      cursor: pointer;
+
+      svg,
+      span {
+        color: #232939;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .cricketpagemobile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid $light-border;
+    background: $black;
+    padding-bottom: 5px;
+
+    h3.title {
+      font-size: 15px;
+      font-weight: 400;
+      color: $light-text;
+      text-align: start;
+    }
+
+    .mybetdesign {
+      background: $primarycolor;
+      padding: 1px 10px;
+      border-radius: 5px;
+      color: #000;
+    }
+
+    .clear-btn {
+      background: #ff4d4f;
+      border: none;
+      color: $whitecolor;
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: 0.3s ease;
+
+      &:hover {
+        background: #d9363e;
+      }
+    }
+  }
+
+  .table {
+    background: $light-card-bg;
+
+    .table-primary-custum {
+      tr {
+        background: $allheader;
+
+        th {
+          background: transparent !important;
+          color: $whitecolor;
+          text-align: start;
+        }
+      }
+    }
+
+    tr {
+
+      td,
+      th {
+        text-align: start;
+        padding: 10px;
+        color: $light-text;
+        border-color: $light-border;
+      }
+
+      td {
+        font-weight: 500;
+      }
+    }
+  }
+
+  .match-time {
+    .date_time {
+      font-size: 12px;
+      color: $light-text;
+    }
+  }
+
+  .App {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .suspend-bookmaker-externa {
+    position: absolute;
+    left: 50%;
+    z-index: 99;
+    top: 50%;
+    background: rgba(3, 2, 4, 0.3411764706);
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $whitecolor;
+  }
+
+  .suspended-overlay-fancy {
+    background-color: rgba(36, 58, 72, 0.4);
+    color: $whitecolor;
+    text-align: center;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    line-height: 36px;
+    font-weight: 300;
+    text-shadow: none;
+    font-size: 12px;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // Account Statement Design
+  .account_statement {
+
+    .card-header {
+      background: $allheader;
+      text-align: left;
+
+      label {
+        color: $whitecolor;
+      }
+
+      input[type="date"]::-webkit-calendar-picker-indicator {
+        opacity: 0;
+        position: absolute;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+      }
+
+      .form-group {
+        width: 100%;
+
+        select,
+        input[type="date"] {
+          background: transparent;
+          color: $black;
+          appearance: none;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+
+          &::-ms-expand {
+            display: none;
+          }
+
+          &:hover,
+          &:focus,
+          &:active {
+            box-shadow: none;
+            outline: none;
+            // color: $whitecolor;
+          }
+
+          &::placeholder {
+            color: $whitecolor;
+            opacity: 0.7;
+          }
+        }
+      }
+    }
+
+    .form-group {
+      &.width_50 {
+        width: 48%;
+      }
+
+      select {
+        option {
+          background: $bluecolor;
+          color: $whitecolor;
+        }
+      }
+    }
+
+    .fillterbutton {
+      max-width: 85px;
+      border: none;
+      height: 40px;
+      width: 100%;
+      font-size: 19px;
+      min-width: 85px;
+      border-radius: 5px;
+
+      &.gobutton {
+        background: #fff;
+        color: $black;
+      }
+
+      &.resetbutton {
+        background: #fff;
+        color: $black;
+      }
+    }
+
+    .thead-dark {
+      tr {
+        background: $allheader;
+
+        th {
+          background: transparent;
+          color: $whitecolor;
+        }
+      }
+    }
+
+    .input-icon {
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      input,
+      select {
+        width: 100%;
+        padding-right: 2.2rem;
+        background: transparent;
+        height: 35px;
+        border: 1px solid #ccc;
+        color: $whitecolor;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+
+        &::-ms-expand {
+          display: none;
+        }
+
+        &:focus {
+          outline: none;
+          box-shadow: none;
+        }
+      }
+
+      .input-icon-icon {
+        position: absolute;
+        right: 10px;
+        pointer-events: none;
+        font-size: 1rem;
+        color: $whitecolor;
+      }
+    }
+  }
+
+  // Inplay Design
+  .fancy-info {
+    p {
+      margin-bottom: 0px;
+      font-size: 13px;
+      padding: 1px 5px;
+      font-weight: 600;
+      color: $light-text;
+
+      span {
+        color: $light-text;
+      }
+    }
+  }
+
+  .inplay_design {
+    .tabs_design {
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid #3b5160;
+      margin: 5px 0px 10px;
+      border-radius: 3px;
+      overflow: hidden;
+      max-width: 420px;
+
+      .inplay_tabs {
+        width: 100%;
+
+        button {
+          width: 100%;
+        }
+      }
+
+      @media screen and (max-width: 767.5px) {
+        justify-content: center;
+      }
+
+      .inplay_tabs {
+        button {
+          border: 0px solid $light-border;
+          outline: none;
+          box-shadow: none;
+          padding: 5px 30px;
+          background: $light-card-bg;
+          color: $light-text;
+          font-size: 13px;
+          font-weight: 700;
+        }
+
+        &:nth-child(2) {
+          border-left: 1px solid #3b5160;
+          border-right: 1px solid #3b5160;
+        }
+
+        &.active {
+          button {
+            color: $whitecolor;
+            background: $bluecolor;
+          }
+        }
+      }
+    }
+
+    .highlight {
+      width: 100%;
+      background: $bluecolor;
+      padding: 5px;
+      margin-top: 10px;
+
+      h3 {
+        color: $whitecolor;
+        font-size: 15px;
+        margin-bottom: 0px;
+        text-align: left;
+        padding: 5px;
+      }
+    }
+  }
+
+  .slider-container {
+    height: 201px;
+    margin-top: 1px;
+
+    .homepageslider {
+      width: 100%;
+      height: 200px;
+
+      img {
+        width: 100%;
+        object-fit: fill;
+        height: 100%;
+        object-position: top;
+      }
+    }
+  }
+
+  .main-layout {
+    display: grid;
+    grid-template-columns: 250px 1fr 300px;
+    gap: 9px;
+    flex: 1 1;
+    // background: #fff;
+  }
+
+  .bookmaker {
+    background: #faf8d8;
+
+    body.dark-mode & {
+      background: #2a2a1a;
+    }
+
+    .table {
+      background: transparent !important;
+
+      thead {
+        tr {
+          th {
+            // background: transparent !important;
+            color: $black;
+          }
+        }
+      }
+
+      .td-event-name {
+        background: transparent !important;
+      }
+    }
+  }
+
+  .tabs_homepage {
+    .tabdesignall {
+      border: 0px;
+      outline: none;
+      text-transform: capitalize;
+      box-shadow: none;
+      padding: 5px 15px;
+      background: $light-card-bg;
+      color: $light-text;
+    }
+
+    .tabsbutton {
+      border: 0px;
+      justify-content: space-between;
+      outline: none;
+      box-shadow: none;
+      padding: 1px 5px 0px;
+      color: $whitecolor;
+      text-align: left;
+      margin: 0 0 5px;
+      display: flex;
+      gap: 2px;
+
+      .tabdesignall {
+        border: 0px;
+        outline: none;
+        box-shadow: none;
+        text-transform: capitalize;
+        padding: 7px 26px;
+        background: #1a1a2e;
+        color: #fff;
+        border-radius: 0px;
+        font-weight: 700;
+        font-size: 12px;
+        width: 100%;
+
+        &.active {
+          border: 0px;
+          background: $primarycolor;
+          color: $black;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+
+  .hightlight {
+    background: $headercolor;
+    color: $bluecolor;
+    padding: 5px;
+
+    h3 {
+      // font-size: 14px;
+      // text-align: left;
+      // margin-bottom: 0px;
+      // font-weight: 600;
+      // letter-spacing: 1px;
+      // color: $whitecolor;
+      letter-spacing: 1px;
+      color: #000000;
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 18px;
+      margin-bottom: 0;
+      text-align: left;
+      padding: 0px;
+      padding-left: 10px;
+    }
+  }
+
+  .verticalmiddle {
+    vertical-align: middle;
+  }
+
+  .minmaxmarket {
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  // Cricket Design
+  .lay {
+    &.backlay {
+
+      &.lay_game,
+      &.lay_game {
+        border-radius: 0px;
+      }
+    }
+  }
+
+  .page-btn {
+    border: none;
+    padding: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    background: $bluecolor;
+    color: $whitecolor;
+  }
+
+  .cricket_design {
+    .gamename_book {
+      a {
+        &.match-name {
+          padding: 3px 10px;
+          background: $bluecolor;
+          border-radius: 5px;
+          color: $whitecolor;
+          width: max-content;
+          font-size: 13px;
+        }
+
+        color: $light-text;
+        font-size: 20px;
+        padding-right: 5px;
+      }
+    }
+
+    // Fancy bet design
+    .fancybetsportsbook {
+      .tabsfancy {
+        display: flex;
+        justify-content: start;
+        gap: 25px;
+
+        .buttontabefancy {
+          border-radius: 5px;
+          background: tan;
+          border: none;
+          outline: none;
+          box-shadow: none;
+          padding: 0 14px 0 8px;
+          cursor: pointer;
+          position: relative;
+          line-height: 30px;
+          font-size: 12px;
+          color: $whitecolor;
+          z-index: 1;
+          float: left;
+          zoom: 1;
+          height: 30px;
+
+          &.fancybetbutton {
+            background: linear-gradient(180deg, #0a92a5 15%, #076875 100%);
+
+            span {
+              background: linear-gradient(180deg, #0a92a5 15%, #076875 100%);
+            }
+          }
+
+          &.sportsbookbutton {
+            background: linear-gradient(180deg, #f26d1c 15%, #d14100 100%);
+          }
+
+          span {
+            position: absolute;
+            right: -20px;
+            top: 0px;
+            vertical-align: top;
+            height: 30px;
+            width: 30px;
+            clip-path: polygon(100% 100%,
+                79% 22%,
+                76% 15%,
+                74% 12%,
+                72% 9%,
+                68% 6%,
+                59% 3%,
+                78% 2%,
+                0% 0%,
+                0% 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            color: $whitecolor;
+            background: linear-gradient(180deg, #f26d1c 15%, #d14100 100%);
+          }
+        }
+      }
+
+      .fancybetcontent {
+        .headinggame {
+          background: $bluecolor;
+
+          .special_bets-tab {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-left: 0px;
+            list-style: none;
+            margin-bottom: 0px;
+            padding: 8px 20px;
+            overflow-y: hidden;
+            width: 100%;
+            overflow-x: scroll;
+            background: $bluecolor;
+
+            &::-webkit-scrollbar {
+              width: 2px;
+              height: 1px;
+            }
+
+            &::-webkit-scrollbar-track {
+              background: #f1f1f1;
+              border-radius: 4px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+              background: #c1c1c1;
+              border-radius: 4px;
+
+              &:hover {
+                background: #a8a8a8;
+              }
+            }
+
+            li {
+              color: $whitecolor;
+              padding: 0px 15px;
+              font-size: 12px;
+              cursor: pointer;
+              user-select: none;
+
+              &.select {
+                background: $primarycolor;
+                border-radius: 25px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .suspend-bookmaker-external {
+      height: auto;
+      background: rgba(36, 58, 72, 0.4);
+      z-index: 5;
+      position: absolute;
+      width: 60%;
+      left: 40%;
+      text-align: center;
+      top: 0px;
+      bottom: 0px;
+
+      &.suspended {
+        background: rgba(36, 58, 72, 0.4);
+        color: $whitecolor;
+        border: 1px solid rgba(36, 58, 72, 0.4);
+      }
+
+      &.active {
+        background: #d1e7dd;
+        color: #0f5132;
+        border: 1px solid #badbcc;
+      }
+    }
+
+    .matchoddsminmax {
+      gap: 3px 1px;
+      background: #bed5d8;
+      border-radius: 6px;
+      display: flex;
+      margin: 0px 12px;
+
+      body.dark-mode & {
+        background: #2a3a3a;
+      }
+    }
+
+    .card-matchodds {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: $light-card-bg;
+      border: 1px solid $light-border;
+      border-radius: 6px;
+
+      .match-odds {
+        background: $newcolor;
+        font-size: 12px;
+        font-weight: 700 !important;
+        color: $whitecolor;
+        display: flex;
+        align-items: center;
+        background: $bluecolor;
+        padding: 5px;
+        border-top-right-radius: 10px;
+        font-weight: 500;
+        text-transform: capitalize;
+
+        svg {
+          color: $whitecolor;
+        }
+      }
+
+      .marketinfo {
+        margin-left: 8px;
+        color: #007bff;
+        cursor: pointer;
+
+        svg {
+          vertical-align: middle;
+        }
+      }
+
+      .cashout-container {
+        flex: 1;
+        text-align: center;
+      }
+
+      .matched-count {
+        font-size: 14px;
+        color: $light-text;
+        margin-right: 10px;
+
+        strong {
+          color: $light-text;
+        }
+      }
+    }
+
+    .hideDesktop {
+      display: none;
+    }
+
+    .custom-td {
+      background: linear-gradient(180deg, #beddf4 0%, #d4e8f8 100%);
+
+      body.dark-mode & {
+        background: linear-gradient(180deg, #2a3a4a 0%, #3a4a5a 100%);
+      }
+    }
+
+    .btn-cancel {
+      width: 100%;
+      // background: $whitecolor;
+      background: red;
+      color: $bluecolor;
+    }
+
+    .btn {
+      &.btn-send {
+        width: 100%;
+        background: $bluecolor;
+        color: $whitecolor !important;
+      }
+    }
+
+    .betButtonPlus {
+      border-bottom-right-radius: 7px;
+      border-top-right-radius: 7px;
+      background-image: linear-gradient(-180deg, #fff 0, #eee 89%);
+      height: 40px;
+      width: 40px;
+      color: #1f72ac;
+      padding: 0px;
+      border: 1px solid #aaaaaa;
+      touch-action: manipulation;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      line-height: 40px;
+      border-top-left-radius: 0px;
+      border-bottom-left-radius: 0px;
+
+      .betButtonPlus_span {
+        font-size: 40px;
+        position: relative;
+        top: -5px;
+      }
+    }
+
+    .input-Betslip.selectodd {
+      border: 1px solid #aaaaaa !important;
+      border-radius: 5px;
+    }
+
+    .only_pc_100 {
+      width: 100%;
+
+      @media screen and (max-width: 767.5px) {
+        width: auto;
+      }
+    }
+
+    .input-Betslip {
+      background: $light-card-bg;
+      border-top: 1px solid #aaaaaa;
+      border-bottom: 1px solid #aaaaaa;
+      border-left: 0px;
+      border-right: 0px;
+      // width: 59%;
+      height: 40px !important;
+      color: $light-text !important;
+      font-weight: 700 !important;
+      font-size: 14px !important;
+      border-radius: 0;
+    }
+
+    .stakeactionminus {
+      .betButtonPlus_span {
+        font-size: 40px;
+        position: relative;
+        top: -5px;
+      }
+
+      border-top-right-radius: 0px;
+      border-bottom-right-radius: 0px;
+      border-bottom-left-radius: 7px;
+      border-top-left-radius: 7px;
+      background-image: linear-gradient(-180deg, #fff 0, #eee 89%);
+      height: 40px;
+      width: 40px;
+      color: #1f72ac;
+      padding: 0px;
+      border: 1px solid #aaaaaa;
+      touch-action: manipulation;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      line-height: 40px;
+    }
+
+    .btn.btn-block.fancy-quick-btn {
+      // background: $light-card-bg;
+      // border: 1px solid $light-border;
+      // border-radius: 4px;
+      // color: $bluecolor !important;
+      // font-weight: 400 !important;
+      // line-height: 18px !important;
+      // font-size: 14px !important;
+      // height: 36px !important;
+      // margin: 0 5px 0 0 !important;
+      // text-align: center;
+      // width: 100%;
+      background: url(https://kolkatabook.com/btn.d9aa1220fb9e7277a34b.gif) repeat-x #eee;
+      padding: 5px !important;
+      font-size: 12px;
+      font-weight: 400;
+      margin: 0;
+      border: 1px solid #333;
+      border-radius: 4px;
+      flex: 0 0 calc(25.2% - 7px);
+      cursor: pointer;
+    }
+
+    .game_status_new {
+      position: relative;
+      cursor: pointer;
+      background: #fff;
+      border: 5px solid #eee;
+    }
+
+    .game_sportbook {
+      font-weight: 700;
+      padding: 0 5px;
+      background: $bluecolor;
+      color: $whitecolor;
+      font-style: italic;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    table {
+      thead {
+        tr {
+          th {
+            vertical-align: middle;
+            background: $light-card-bg;
+            text-align: center;
+            padding: 0px;
+            color: $light-text;
+
+            @media (max-width: 991px) {
+              padding: 7px;
+              font-size: 13x;
+            }
+
+            .backlay {
+              width: 33%;
+              padding: 5px;
+            }
+          }
+        }
+      }
+
+      tr {
+        td {
+          padding: 0px;
+          vertical-align: middle;
+          color: $light-text;
+        }
+      }
+    }
+
+    .add-pin {
+      svg {
+        height: 20px;
+        color: #7e97a7;
+      }
+    }
+
+    .match-name {
+      text-decoration: none !important;
+
+      span {
+        font-family: "Poppins", sans-serif;
+        text-decoration: none !important;
+        font-weight: 600;
+        color: $light-text !important;
+        cursor: pointer;
+        position: relative;
+        font-size: 14px;
+
+        &:hover {
+          text-decoration: none !important;
+        }
+      }
+
+      &:hover {
+        text-decoration: none !important;
+      }
+    }
+
+    .in_play {
+      font-weight: 600;
+      margin-left: 10px;
+      transition: 0.4s ease-in;
+      animation: 1s infinite gamestatus;
+      font-size: 13px;
+    }
+
+    @keyframes gamestatus {
+      0% {
+        transform: scale(1);
+        color: red;
+      }
+
+      50% {
+        transform: scale(1.1);
+        color: green;
+      }
+
+      100% {
+        transform: scale(1);
+        color: red;
+      }
+    }
+
+    .count {
+      width: 10%;
+
+      .lay {
+        cursor: pointer;
+        user-select: none;
+        width: 100%;
+        font-size: 15px;
+        display: flex;
+        color: $light-text;
+        padding: 0px 5px;
+        font-weight: 700;
+        min-width: 62px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .back {
+        cursor: pointer;
+        user-select: none;
+        width: 100%;
+        font-size: 15px;
+        display: flex;
+        color: $light-text;
+        padding: 0px 5px;
+        font-weight: 700;
+        min-width: 62px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+
+  // Betting Grid Colors
+  .lay {
+    &.backlay {
+      background: #faa9ba;
+    }
+  }
+
+  .back {
+    &.backlay {
+      background: #72bbef;
+    }
+  }
+
+  .bettinggrid {
+    .backvalue {
+      display: block;
+      font-size: 12px;
+      color: $light-text;
+      font-weight: 700;
+    }
+
+    small {
+      color: $black;
+      font-size: 80%;
+      font-weight: 400;
+    }
+  }
+
+  .back-0 {
+    background-color: #d7e8f4;
+    border-left-color: $light-card-bg;
+  }
+
+  .back-1 {
+    background-color: #b7d5eb;
+    border-left-color: $light-card-bg;
+  }
+
+  .back-2 {
+    background-color: #72bbef;
+    border-left-color: $light-card-bg;
+  }
+
+  .lay-0 {
+    background: #faa9ba;
+  }
+
+  .lay-1 {
+    background: #efd3d9;
+  }
+
+  .lay-2 {
+    background: #f6e6ea;
+  }
+
+  // Gradient Backgrounds
+  .gradientcolorback {
+    text-align: right;
+    background: linear-gradient(90deg,
+        rgba(130, 183, 221, 0.15) 0,
+        rgba(130, 183, 221, 0.8) 65%);
+    padding: 5px 20px 5px;
+    width: 100%;
+  }
+
+  .gradientcolorlay {
+    padding: 5px 20px 5px;
+    text-align: left;
+    width: 100%;
+    background: linear-gradient(270deg,
+        rgba(231, 170, 184, 0.15) 5%,
+        rgba(231, 170, 184, 0.8) 60%);
+  }
+
+  .team-width {
+    width: 40%;
+
+    &.bookmakerNameRunner {
+      font-size: 12px;
+      font-weight: 700;
+      border-top: none;
+      background: transparent;
+      vertical-align: middle;
+      color: $light-text;
+    }
+  }
+
+  // Additional styles continue with the same pattern...
+
+  // Modal Styles
+  .info-icon {
+    font-size: 32px;
+    color: #2563eb;
+    cursor: pointer;
+    background: none;
+    border: none;
+    outline: none;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #555;
+
+    &:hover {
+      color: #000;
+    }
+  }
+
+  .info_betting {
+    p {
+      margin-bottom: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: $light-text;
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-100px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  // Badge Styles
+  .badge.bg-warning-custum {
+    background: rgba(255, 193, 7, 0.6392156863);
+    padding: 5px 10px;
+    color: #000000;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+  }
+
+  .badge.bg-success-custum {
+    background: rgb(0 100 3 / 99%);
+    padding: 5px 10px;
+    color: #fff;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    text-transform: capitalize;
+  }
+
+  .badge.bg-danger-custum {
+    background: #ff0000a3;
+    padding: 5px 10px;
+    color: #fff;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+  }
+
+  .badge.bg-info-custum {
+    font-weight: 400;
+    padding: 5px 10px;
+    letter-spacing: 0.5px;
+    background: $bluecolor;
+    color: $whitecolor;
+  }
+
+  // footer
+
+  // footer
+
+  // Responsive Design
+  @media (max-width: 1024px) {
+    .main-layout {
+      padding-bottom: 55px;
+    }
+
+    .cricket_design {
+      table {
+        thead {
+          tr {
+            th {
+              .backlay {
+                width: 100%;
+                padding: 5px;
+                font-size: 15px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .main-layout {
+      grid-template-columns: 200px 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .cricket_design {
+      .input-Betslip {
+        // width: 100%;
+        height: 30px !important;
+        width: 100%;
+      }
+
+      .stakeactionplus,
+      .stakeactionminus {
+        height: 30px;
+        width: 30px;
+        font-size: 32px;
+      }
+
+      .hideDesktop {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .suspend-bookmaker-external {
+        width: 28%;
+        right: 0;
+        left: auto;
+      }
+    }
+
+    .main-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .hideMobile {
+      display: none;
+    }
+  }
+
+  @media (max-width: 580px) {
+    .count.boxhide {
+      display: none;
+    }
+
+    .cricket_design .count {
+
+      .back-0.boxhide,
+      .lay-1.boxhide,
+      .lay-2.boxhide,
+      .back-1.boxhide {
+        display: none;
+      }
+    }
+  }
+
+  .sidebar {
+    @media (max-width: 768px) {
+      position: fixed;
+      top: 55px;
+      bottom: 60px;
+      left: -100%;
+      // width: 280px;
+      max-width: 100%;
+      background: #fff;
+      z-index: 1000;
+      transition: left 0.3s ease;
+      overflow-y: auto;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+
+      &.mobile-sidebar--open {
+        left: 0;
+      }
+    }
+  }
+
+  // rule
+  .rules-tc-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+
+  .rules-tc-modal {
+    background: white;
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transform: translate(0%, 10%);
+  }
+
+  .rules-tc-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+  }
+
+  .rules-tc-header h4 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .rules-tc-lang {
+    display: flex;
+    gap: 10px;
+    margin-right: 40px;
+  }
+
+  // .rules-tc-lang button {
+  //   padding: 6px 16px;
+  //   border: 2px solid white;
+  //   background: transparent;
+  //   color: white;
+  //   border-radius: 4px;
+  //   cursor: pointer;
+  //   font-weight: 500;
+  //   transition: all 0.3s;
+  // }
+
+  // .rules-tc-lang button.active {
+  //   background: white;
+  //   color: #667eea;
+  // }
+
+
+
+  .rules-tc-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.3s;
+  }
+
+  .rules-tc-close:hover {
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .rules-tc-body {
+    padding: 25px;
+    overflow-y: auto;
+    flex: 1;
+    background: #f5f5f5;
+  }
+
+  .rules-tc-body p {
+    margin: 0 0 15px 0;
+    line-height: 1.6;
+    color: #333;
+  }
+
+  .rules-section {
+    margin-bottom: 0px;
+    background: transparent;
+    border-radius: 8px;
+  }
+
+  .rules-section h5 {
+    margin: 0 0 15px 0;
+    color: #000000;
+    font-size: 14px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ccc;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+
+
+  .rules-tc-footer {
+    padding: 20px;
+    border-top: 1px solid #e9ecef;
+    text-align: center;
+    background: white;
+  }
+
+  .rules-tc-agree-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 40px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  }
+
+  .rules-tc-agree-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+  }
+
+  .Manu {
+    padding: 15px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    text-align: center;
+  }
+
+  .Manu a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: all 0.3s;
+  }
+
+  .Manu a:hover {
+    background: $black;
+    color: white;
+  }
+
+  .rules-regulations-container {
+    padding: 24px;
+  }
+
+  .card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 25px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .card-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+
+  .language-selector {
+    display: flex;
+    gap: 10px;
+  }
+
+  .lang-btn {
+    background: white;
+    color: #000000e0;
+    min-height: 28px;
+    line-height: 28px;
+    padding: 0 11px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-weight: 700;
+    font-style: normal;
+    text-transform: uppercase;
+    font-size: 14px;
+    border: 0px;
+
+    &.active {
+      background: white;
+    }
+  }
+
+
+  .lang-btn:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .content-section {
+    padding: 30px;
+  }
+
+  .intro-text {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    line-height: 1.8;
+  }
+
+  .section-container {
+    margin-bottom: 30px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .section-title {
+    background: $black;
+    color: white;
+    padding: 15px 25px;
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  .rules-list {
+    padding: 25px;
+  }
+
+  .rule-item {
+    display: flex;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+    align-items: flex-start;
+  }
+
+  .rule-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .rule-number {
+    font-weight: bold;
+    color: #667eea;
+    min-width: 30px;
+    margin-right: 10px;
+    font-size: 1.1rem;
+  }
+
+  .rule-text {
+    flex: 1;
+    line-height: 1.6;
+    color: #444;
+    font-size: 1rem;
+  }
+
+  .closing-section {
+    margin-top: 40px;
+    border-radius: 4px;
+    color: rgba(0, 0, 0, 0.45);
+    font-style: italic;
+  }
+
+  @media (max-width: 768px) {
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .rules-regulations-container {
+      padding: 3px;
+    }
+
+    .language-selector {
+      width: 100%;
+      justify-content: center;
+    }
+
+
+    .rules-tc-lang {
+      margin-right: 0;
+      width: 100%;
+      justify-content: center;
+    }
+
+
+    .content-section {
+      padding: 20px;
+    }
+
+    .rules-list {
+      padding: 15px;
+    }
+  }
+
+  // rule
+  // Optional: Add overlay for better UX
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+
+    @media (max-width: 768px) {
+      &.mobile-sidebar--open {
+        display: block;
+      }
+    }
+
+    @media (max-width: 768px) {
+      &.active {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+      }
+    }
+  }
+
+  .login-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    @media screen and (max-width: 767.5px) {
+      padding: 0;
+    }
+
+    .input-field {
+      padding: 7px 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 150px;
+      font-size: 14px;
+      outline: none;
+
+      @media screen and (max-width: 767.5px) {
+        display: none;
+      }
+    }
+
+    .password-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      @media screen and (max-width: 767.5px) {
+        display: none;
+      }
+
+      .pass-input {
+        padding-right: 32px;
+      }
+
+      .eye-icon {
+        position: absolute;
+        right: 10px;
+        cursor: pointer;
+        color: #333;
+        font-size: 14px;
+      }
+    }
+
+    .login-btn {
+      // background: $whitecolor;
+      // color: $black;
+      // padding: 7px 15px;
+      // border: none;
+      // border-radius: 5px;
+      // font-size: 14px;
+      // font-weight: 600;
+      // cursor: pointer;
+      // display: flex;
+      // align-items: center;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 8px 28px;
+      box-shadow: inset 0px 0px 0px rgba(0, 0, 0, 0.5);
+      border: none;
+      border-radius: 47px;
+      background: linear-gradient(to bottom, #8e0229, #fc575e);
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      letter-spacing: 1px;
+      text-transform: capitalize;
+      border: 3px solid #dea383;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+
+    .create-btn {
+      background: #0096c7;
+      color: #fff;
+      padding: 7px 15px;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+
+  .btn_login {
+    background: #ffb900 !important;
+  }
+
+  @media (max-width: 768px) {
+
+    .eventnameall,
+    .betname_desig {
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .homepageslider {
+      height: 202px;
+    }
+  }
+
+  .stackbutton {
+    flex-wrap: wrap;
+  }
+
+  .basgefont {
+    font-size: 12px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+  }
+
+  @media screen and (min-width: 991.5px) {
+    .close-icon {
+      display: none;
+    }
+  }
+
+  li.sports-nav a {
+    position: relative;
+    top: -6px;
+
+    svg {
+      font-size: 25px;
+    }
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: -12px;
+      width: 100%;
+      height: 25px;
+      pointer-events: none;
+      z-index: -1;
+      left: 0;
+      right: 0;
+      background: #1a1a2e;
+      border-top-left-radius: 59%;
+      border-top-right-radius: 59%;
+    }
+  }
+
+  /* Overlay */
+  .login-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  .login-modal-overlay.fade-in>div {
+    animation: fadeInLeft 0.6s ease-out forwards;
+  }
+
+  .login-modal-overlay.fade-out>div {
+    animation: fadeOutRight 0.6s ease-in forwards;
+  }
+
+  /* Animations */
+  @keyframes fadeInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-600px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fadeOutRight {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    to {
+      opacity: 0;
+      transform: translateX(1000px);
+    }
+  }
+
+  .info-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+
+    .modal-body {
+      padding: 0 20px;
+      user-select: none;
+    }
+
+    .modal-footer {
+      padding: 0;
+      border-top: 1px solid #eee;
+    }
+
+    .ok-btn {
+      width: 100%;
+      height: 48px;
+      background: #dc3545;
+      /* red */
+      color: #fff;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 0 0 8px 8px;
+    }
+
+    .ok-btn:hover {
+      background: #c82333;
+    }
+
+    .fixed-footer {
+      position: sticky;
+      bottom: 0;
+      width: 100%;
+      background: #fff;
+      border-top: 1px solid #eee;
+      z-index: 10;
+      padding: 10px;
+    }
+  }
+
+  .info-modal {
+    background: #fff;
+    width: 90%;
+    max-width: 700px;
+    max-height: 80vh;
+    overflow-y: auto;
+    border-radius: 8px;
+    animation: fadeUp 0.3s ease;
+
+    .modal-header {
+      position: sticky;
+      top: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding: 15px 20px;
+      background: #e3e3e3;
+      z-index: 1;
+
+      h5 {
+        @media screen and (max-width: 768px) {
+          font-size: 14px;
+          font-weight: 700;
+        }
+      }
+    }
+
+    .close-icon {
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+
+  // .update_button {
+  //   padding: 8px 10px;
+  //   color: #fff;
+  //   background: $gradientcolor;
+  //   border-radius: 5px;
+  //   border: none;
+
+  // }
+  .d-flex .refreshbuttonnew {
+    padding: 2px 28px;
+  }
+
+  .fillterbutton_new {
+    background: linear-gradient(209deg, #d6a048 0%, #5d3f3d 50%, #5d3e3c 100%);
+    border-radius: 50px;
+    padding: 6px 16px;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 14px;
+    gap: 9px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+    border: 2px solid rgb(226 226 226);
+
+  }
+
+  .refreshbuttonnew,
+  .update_button {
+    background: $yellowcolor;
+    border-radius: 50px;
+    padding: 6px 16px;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+    border: 2px solid rgb(255 255 255);
+  }
+
+  .btn_custum_ho {}
+
+  .mobile_all {
+    display: none;
+  }
+
+  .table_newall {
+    tr th {
+      background: $yellowcolor !important;
+      color: #000 !important;
+    }
+  }
+
+  .card_your_banks {
+    background: $allheader;
+    padding: 12px;
+
+    h5 {
+      font-size: 18px;
+      color: #fff;
+    }
+  }
+
+  .badge_custum {
+    font-size: 18px;
+    color: #ffff;
+  }
+
+  .withdrawsection {
+
+    .withdraw_page {
+      thead {
+        tr {
+          background: $allheader;
+
+          th {}
+        }
+      }
+    }
+  }
+
+  @media (max-width: 991px) {
+    .rules-tc-modal .rules-tc-body {
+      padding: 16px 18px;
+      max-height: 58vh;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+
+    .mobile_all {
+      display: block;
+    }
+
+    .desktop_all {
+      display: none;
+    }
+
+    .flex-colummobile {
+      .mobilebutton_new {
+        background: #fff;
+        color: #000;
+
+        button {
+          font-size: 10px;
+        }
+      }
+    }
+
+    .account_statement .form-group.width_50 {
+      width: 100%;
+    }
+
+    .account_statement .fillterbutton.mobilebutton_new,
+    .account_statement .fillterbutton.resetbutton {
+      font-size: 15px;
+      background: #fff;
+      color: #000;
+      height: auto;
+      padding: 5px;
+    }
+
+    .bet-slip-modal-content {
+      .modal-body {
+        padding: 5px;
+      }
+    }
+
+    .new_game_design_myxbet .height_60,
+    .new_game_design_myxbet .table thead th {
+      vertical-align: middle;
+      border-bottom: 0px solid #dee2e6;
+      // height: 33px;
+    }
+
+    .new_game_design_myxbet .skyDetailsRow .lay3,
+    .new_game_design_myxbet .skyDetailsRow .back1 {
+      width: 50%;
+      margin: 1px;
+    }
+
+    .login-container {
+      padding: 12px 11px;
+    }
+
+    .button_all_bet {
+      border-radius: 6px;
+      transition: 0.2s;
+      background: $allheader;
+      color: rgb(255, 255, 255);
+      transform: translateY(-2px);
+      box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 8px;
+      height: 32px;
+      width: 23%;
+    }
+
+    .terms-row {
+      flex-direction: row;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .login-container .input-wrapper input {
+      height: 40px;
+    }
+
+    .signin-button,
+    .demo-login-button {
+      padding: 7px;
+      font-size: 15px;
+    }
+
+    .section-title {
+      padding: 10px 12px;
+      font-size: 16px;
+    }
+
+    .title {
+      h3.text-white.mb-0 {
+        font-size: 14px;
+      }
+    }
+
+    .margin-top-120 {
+      padding-top: 140px;
+    }
+
+    .table tr th {
+      background: #000;
+      font-weight: 500;
+      font-size: 12px;
+    }
+
+    .table tr td {
+      font-weight: 500;
+      font-size: 12px;
+    }
+
+    .account_statement .fillterbutton.gobutton {
+      background: $black;
+      font-size: 13px;
+    }
+
+    .account_statement .fillterbutton {
+      height: 28px;
+    }
+
+    .cricketbettingalldesign .bet_tablearea.exchange .team_name {
+      width: 46%;
+      position: relative;
+      padding-right: 60px;
+    }
+
+    .changealldesign_app .newdesign_myx.main-content {
+      background-color: #ededed;
+      border-radius: 8px;
+      width: 100%;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding-left: 0%;
+      padding-right: 0px;
+      margin: 145px auto 0px;
+    }
+
+    .Fancybetall,
+    .matchbets {
+      .card-body {
+        padding: 10px 0px;
+
+        table {
+          padding-bottom: 0px;
+          margin-bottom: 0px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 767px) {
+    .datanameandinput.d-flex.align-items-center.stacksCol.justify-content-end.px-1 {
+      justify-content: center !important;
+
+      .d-flex {
+        width: 100%;
+        flex: 1 1;
+      }
+    }
+
+    .cricketbettingalldesign .container {
+      max-width: 100%;
+    }
+
+    .flex-direction-mobile {
+      gap: 0px;
+    }
+
+    .flex-col-mobile {
+      flex-direction: column;
+    }
+
+    .cricketbettingalldesign .fancy_design_button {
+      flex-basis: calc(25% - 0px);
+    }
+
+    .text-start-mobile {
+      text-align: left;
+    }
+
+    .cricketbettingalldesign .bet_tablearea.exchange .team_name {
+      width: 100%;
+      position: relative;
+      padding-right: 60px;
+    }
+
+    .cricketbettingalldesign .flex-direction-mobile {
+      flex-direction: column;
+      justify-content: start;
+      align-items: start !important;
+      margin-right: auto;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 80%;
+      padding-right: 0px;
+    }
+
+    .cricketbettingalldesign .bet_tablearea.exchange .team_name {
+      padding-right: 29px;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .slider-container {
+      height: 165px;
+      margin-top: 1px;
+      overflow: hidden;
+
+      .homepageslider {
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+
+    .slider-container .homepageslider {
+      width: 100%;
+      height: 165px;
+    }
+  }
+
+  .marquee-box {
+    font-size: 12px;
+    font-weight: 400;
+    color: #6ac2ff;
+    background: #243a48;
+    background: linear-gradient(180deg, #2a3a43 27%, #1c282d 83%);
+    border-radius: 0;
+    padding: 0 5px;
+    margin-right: 0;
+    border: 0;
+    line-height: 25px;
+    height: 25px;
+    font-style: normal;
+    position: relative;
+
+    h4 {
+      font-size: 12px;
+      padding: 2px 6px;
+      font-weight: 700;
+      margin-left: -4px;
+      display: inline-block;
+      color: #fff;
+      background: #26353d;
+      z-index: 1;
+      position: relative;
+    }
+
+    marquee {
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      position: absolute;
+      margin-right: 335px;
+
+      @media screen and (max-width: 768px) {
+        margin-right: 4px;
+      }
+    }
+  }
+
+  .bet-history-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    display: flex;
+
+    .bet-history-modal {
+      background: #fff;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      animation: slideUp 0.3s ease;
+
+      .modal-header {
+        padding: 12px 16px;
+        background: $primarycolor;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        h4 {
+          margin: 0;
+          font-size: 18px;
+          font-weight: 600;
+        }
+
+        .close-btn {
+          background: transparent;
+          border: none;
+          color: #000;
+          font-size: 22px;
+          cursor: pointer;
+          line-height: 1;
+          position: static;
+
+          &:hover {
+            opacity: 0.8;
+          }
+        }
+      }
+
+      .modal-body {
+        padding: 15px;
+        flex: 1;
+        overflow-y: auto;
+        background: #f9f9f9;
+      }
+    }
+  }
+
+  /* Animation */
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+    }
+
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  /* BACKDROP */
+  .book-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 50px;
+
+    @media screen and (max-width: 768px) {
+      padding: 15px;
+    }
+
+    /* MODAL BOX */
+    .book-modal {
+      width: 420px;
+      background: #fff;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+
+      /* HEADER */
+      .book-header {
+        background: linear-gradient(#2f3f4a, #1c2b33);
+        color: #fff;
+        padding: 10px 14px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .close-btn {
+          background: transparent;
+          border: none;
+          color: #fff;
+          font-size: 18px;
+          cursor: pointer;
+
+          &:hover {
+            opacity: 0.8;
+          }
+        }
+      }
+
+      /* TABLE */
+      .book-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+
+        th {
+          background: #d6dbe0;
+          color: #000;
+          padding: 8px;
+          border: 1px solid #999;
+        }
+
+        td {
+          padding: 10px;
+          border: 1px solid #999;
+          text-align: center;
+        }
+
+        .no-data {
+          font-weight: bold;
+          color: #000;
+        }
+      }
+    }
+  }
+
+  /* BOOK BUTTON */
+  .bg_book {
+    background: #1e88e5;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background: darken(#1e88e5, 8%);
+    }
+  }
+
+  .newcricketpage {
+    background: #ededed;
+  }
+
+  @media(max-width:767px) {
+    .cricketbettingalldesign .skyDetailsRow td.selaction_name a {
+      display: block;
+      font-size: 12px;
+      color: #23282c;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .new_game_design_myxbet p,
+    .new_game_design_myxbet .stack-info {
+      font-size: 10px;
+      font-weight: 400;
+    }
+
+    .new_game_design_myxbet.padding-top-80 {
+      padding: 146px 5px 0px;
+    }
+
+    .new_game_design_myxbet .cricketbettingalldesign th.back-h>span,
+    .new_game_design_myxbet .cricketbettingalldesign th.lay-h>span {
+      font-size: 10px;
+    }
+
+    .refreshbuttonnew,
+    .update_button {
+      padding: 6px 16px;
+      font-size: 15px;
+      border: 3px solid rgb(58, 58, 58);
+    }
+  }

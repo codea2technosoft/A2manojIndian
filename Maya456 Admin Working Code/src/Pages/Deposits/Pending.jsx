@@ -1,0 +1,458 @@
+import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import moment from "moment";
+import { useNavigate } from "react-router-dom";
+import { MdFilterListAlt } from "react-icons/md";
+
+const DepositePending = ({ userId }) => {
+  const [withdrawList, setWithdrawList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const token = localStorage.getItem("token");
+  const limit = 10;
+
+  const ucWords = (str) => {
+    if (!str || typeof str !== "string") return "";
+    return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  };
+
+  useEffect(() => {
+    fetchWithdrawList(currentPage);
+  }, [currentPage, userId]);
+
+  const handleAction = async (id, actionType) => {
+    let apiUrl = `${process.env.REACT_APP_API_URL}/deposit-status-update`;
+    let newStatus = actionType;
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+
+      const result = await response.json();
+
+      if (result.success === "1") {
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: `Withdraw request ${newStatus} successfully.`,
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        fetchWithdrawList(currentPage);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Failed",
+          text: result.message || "Action failed",
+        });
+      }
+    } catch (error) {
+      console.error("Status update error:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
+      });
+    }
+  };
+
+  // const filteredList = withdrawList.filter((item) => {
+  //   const search = searchTerm.toLowerCase();
+  //   return (
+  //     item.user_name?.toLowerCase().includes(search) ||
+  //     item.mobile?.toString().includes(search) ||
+  //     item.bank_name?.toLowerCase().includes(search)
+  //   );
+  // });
+
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const renderBankFields = (item) => {
+    if (item.deposit_type === "qr_code") {
+      return (
+        <td>
+          <strong>Gateway Name:</strong> {ucWords(item.getway_name) || "-"}{" "}
+          <br />
+          <strong>UPI:</strong> {item.upi_id || "-"}
+        </td>
+      );
+    } else if (item.deposit_type === "bank_account") {
+      return (
+        <td>
+          <strong>Gateway Name:</strong> {item.getway_name || "-"} <br />
+          <strong>Account No:</strong> {item.account_number || "-"} <br />
+          <strong>IFSC:</strong> {item.ifsc || "-"} <br />
+          <strong>Bank:</strong> {ucWords(item.bank_name) || "-"}
+        </td>
+      );
+    } else {
+      return <td>-</td>; // fallback for unknown types
+    }
+  };
+  const navigate = useNavigate();
+  const handleActionLedger = (user_id) => {
+    navigate(`/ledger/${user_id}`);
+  };
+  const [fillter, setFillter] = useState(false);
+
+  const fillterdata = () => {
+    setFillter((prev) => !prev);
+  };
+
+  const [FilterUsername, setFilterUsername] = useState("");
+  const [FilterAccountNumber, setFilterAccountNumber] = useState("");
+  const [FilterMin, setFilterMin] = useState("");
+  const [FilterMax, setFilterMax] = useState("");
+  const [selectedStartDate, setselectedStartDate] = useState("");
+  const [selectedEndDate, setselectedEndDate] = useState("");
+  // Search handler
+
+  const handleSearchChangeusername = (e) => {
+    const value = e.target.value.toLowerCase();
+    setFilterUsername(value);
+  };
+  const handleSearchChangeAccountNumber = (e) => {
+    const value = e.target.value.toLowerCase();
+    setFilterAccountNumber(value);
+  };
+
+  const handleSearchChangeMin = (e) => {
+    const value = e.target.value.toLowerCase();
+    setFilterMin(value);
+  };
+  const handleSearchChangeMax = (e) => {
+    const value = e.target.value.toLowerCase();
+    setFilterMax(value);
+  };
+  const setSelectedStartDate = (e) => {
+    const value = e;
+    setselectedStartDate(value);
+  };
+  const setSelectedEndDate = (e) => {
+    const value = e;
+    setselectedEndDate(value);
+  };
+  const handleFilter = (e) => {
+    fetchWithdrawList();
+  };
+  const fetchWithdrawList = async (page = 1) => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}deposit-pending-list`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            page: page.toString(),
+            limit: limit.toString(),
+            user_name: FilterUsername,
+            min: FilterMin,
+            max: FilterMax,
+            startDate: selectedStartDate,
+            endDate: selectedEndDate,
+            AccountNumber: FilterAccountNumber,
+          }),
+        }
+      );
+
+      const result = await res.json();
+
+      if (result.success === "1") {
+        setWithdrawList(result.data || []);
+        setTotalPages(Number(result.totalNumberPage) || 1);
+      } else {
+        setWithdrawList([]);
+        // console.error("API Error:", result.message);
+      }
+    } catch (error) {
+      console.error("Fetch Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="mt-3">
+      <div className="card">
+        <div className="card-header bg-color-black">
+          <div className="d-flex align-items-center justify-content-between">
+            <h3 className="card-title text-white">Deposit Pending List</h3>
+            <div className="buttonlist">
+              {/* <Link
+                to="/user/create-user"
+                className="btn button_add d-flex justify-content-center align-items-center"
+              >
+                <FaPlus />
+                Add List
+              </Link> */}
+              <div className="fillterbutton" onClick={fillterdata}>
+                <MdFilterListAlt /> Filter
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="card-body">
+          {fillter && (
+            <div className="row mb-2">
+              <div className="col-md-12">
+                <div className="form-design-fillter gap-2 d-flex justify-content-between align-items-end">
+                  <div className="form_latest_design">
+                    <div className="label">
+                      <label htmlFor="">User Name</label>
+                    </div>
+                    <input
+                      type="text"
+                      name="user_name"
+                      className="form-control"
+                      // placeholder="User Name"
+                      value={FilterUsername}
+                      onChange={handleSearchChangeusername}
+                    />
+                  </div>
+                  <div className="form_latest_design">
+                    <div className="label">
+                      <label htmlFor="">Account Number</label>
+                    </div>
+                    <input
+                      type="text"
+                      name="user_name"
+                      className="form-control"
+                      // placeholder="User Name"
+                      value={FilterAccountNumber}
+                      onChange={handleSearchChangeAccountNumber}
+                    />
+                  </div>
+
+                  <div className="form_latest_design">
+                    <div className="label">
+                      <label htmlFor="">Min Amount</label>
+                    </div>
+                    <input
+                      type="text"
+                      name="user_name"
+                      className="form-control"
+                      // placeholder="Min Amount"
+                      value={FilterMin}
+                      onChange={handleSearchChangeMin}
+                    />
+                  </div>
+                  <div className="form_latest_design">
+                    <div className="label">
+                      <label htmlFor="">Max Amount</label>
+                    </div>
+                    <input
+                      type="text"
+                      name="user_name"
+                      className="form-control"
+                      // placeholder="Max Amount"
+                      value={FilterMax}
+                      onChange={handleSearchChangeMax}
+                    />
+                  </div>
+                  <div className="form_latest_design">
+                    <div className="label">
+                      <label htmlFor="">Start Date</label>
+                    </div>
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={selectedStartDate}
+                      onChange={(e) => setSelectedStartDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="form_latest_design">
+                    <div className="label">
+                      <label htmlFor="">End Date</label>
+                    </div>
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={selectedEndDate}
+                      onChange={(e) => setSelectedEndDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="form_latest_design">
+                    <button
+                      className="btn btn-info text-white"
+                      onClick={handleFilter} // Or any function you want to trigger
+                    >
+                      Filter
+                    </button>
+                  </div>
+                  {/* <di className="form_latest_design"v>
+                  <button className="btn btn-secondary">helo</button>
+                </di> */}
+                </div>
+              </div>
+            </div>
+          )}
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            <>
+              <div className="table-responsive">
+                <table className="table table-bordered">
+                  <thead className="table-light">
+                    <tr>
+                      <th>#</th>
+                      <th>User Name</th>
+                      {/* <th>Mobile</th> */}
+                      <th>Amount</th>
+                      <th>Account / UPI Info</th>
+                      <th>UTR</th>
+                      <th>ScreenShoot</th>
+                      <th>Date & Time</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {withdrawList.length > 0 ? (
+                      withdrawList.map((item, index) => (
+                        <tr key={item._id}>
+                          <td>{index + 1}</td>
+                          <td>{ucWords(item.user_name)}</td>
+                          {/* <td>{item.mobile}</td> */}
+                          <td>{item.amount}</td>
+                          {renderBankFields(item)}
+                          <td>{item.utr}</td>
+                          
+                          {/* <td>
+                            <a
+                              href={`https://adminapi.maya456.com/PaymentApi/uploads/${item.image}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <img
+                                src={`https://adminapi.maya456.com/PaymentApi/uploads/${item.image}`}
+                                width="100px"
+                              />
+                            </a>
+                          </td> */}
+
+
+                             <td>
+                            <a
+                              href={`https://maya456.com/PaymentApi/uploads/${item.image}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <img
+                                src={`https://maya456.com/PaymentApi/uploads/${item.image}`}
+                                width="100px"
+                              />
+                            </a>
+                          </td>
+
+
+
+                          
+
+                          {/* <td>
+                        <span
+                          className={`badge ${
+                            item.status === "pending"
+                              ? "bg-warning text-white"
+                              : item.status === "success"
+                              ? "bg-success"
+                              : "bg-danger"
+                          }`}
+                        >
+                          {item.status?.toUpperCase()}
+                        </span>
+                      </td> */}
+
+                          <td>
+                            {moment(item.created_at).format(
+                              "DD-MM-YYYY hh:mm A"
+                            )}
+                          </td>
+
+                          <td>
+                            <div className="d-flex gap-2">
+                              <button
+                                className="btn btn-sm btn-success"
+                                onClick={() =>
+                                  handleAction(item._id, "success")
+                                }
+                              >
+                                Approve
+                              </button>
+                              <button
+                                className="btn btn-sm btn-danger"
+                                onClick={() => handleAction(item._id, "reject")}
+                              >
+                                Reject
+                              </button>
+                              <button
+                                className="btn btn-sm btn-info"
+                                onClick={() => handleActionLedger(item.user_id)}
+                              >
+                                Ledger
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="7" className="text-center">
+                          No Data Found.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pagination Controls */}
+              {withdrawList.length > 0 && totalPages > 0 && (
+                <div className="d-flex justify-content-between align-items-center mt-3">
+                  <button
+                    className="paginationbutton"
+                    disabled={currentPage === 1}
+                    onClick={handlePrev}
+                  >
+                    Previous
+                  </button>
+                  <span className="alllistnumber">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <button
+                    className="paginationbutton"
+                    disabled={currentPage === totalPages}
+                    onClick={handleNext}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DepositePending;

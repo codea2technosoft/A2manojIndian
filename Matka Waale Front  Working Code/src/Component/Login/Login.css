@@ -1,0 +1,447 @@
+:root {
+  --background: #2c2324;
+  --bg-color: #094c73;
+  --bg-color3: #f9f9f9;
+  --btn-color: linear-gradient(178deg, #f933ac, #d80599);
+}
+
+.splash-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  background-color: #ffffff;
+  z-index: 9999;
+  transition: opacity 0.5s ease;
+  opacity: 1;
+}
+.splash-screen .safe,
+.splash-screen .logonew {
+  width: 160px;
+  margin-bottom: 20px;
+}
+.text-seccolor {
+  color: var(--background);
+}
+
+.splash-screen .trust {
+  text-align: center;
+  font-size: 15px;
+  margin-top: 15px;
+  width: 60%;
+  line-height: 1.5;
+  font-weight: bold;
+}
+
+.installapplication {
+  background-color: var(--background);
+  padding: 5px;
+}
+.offcanvas.offcanvas-bottom {
+  right: 0;
+  left: 0;
+  height: auto !important;
+  background: #212020 !important;
+  max-height: 100%;
+  border-top: var(--bs-offcanvas-border-width) solid
+    var(--bs-offcanvas-border-color);
+  transform: translateY(100%);
+}
+.offcanvas-header {
+  border-bottom: 1px solid #ccc;
+  padding: 5px 10px;
+}
+.offcanvas-header .btn-close {
+  color: #fff;
+}
+.cancelbtn {
+  color: #0075ff;
+}
+.offcanvas {
+  background-color: #0c0a0a !important;
+}
+.offcanvas-title.h5 {
+  font-size: 16px;
+}
+.list-style-none {
+  list-style: none;
+  padding-left: 0px;
+}
+.arrowcolor {
+  color: #0075ff;
+}
+.list-style-none li {
+  margin: 10px 0px;
+}
+.list-style-none li .bi {
+  font-size: 20px;
+}
+.list-style-none li span {
+  margin-left: 12px;
+}
+.content-pwa {
+  color: #d2d2d2;
+  font-size: 15px;
+  font-weight: normal;
+  line-height: 1.4;
+}
+.Loginpage {
+  width: 100vw;
+  background: linear-gradient(35deg, #0d95e9 0%, #e373b7b8 85%);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+}
+.otp_login {
+  outline: 1px solid var(--btn-color);
+  outline-offset: -5px;
+  background: var(--btn-color) !important;
+  margin: auto;
+  padding: 6px 5px;
+  font-size: 14px;
+}
+.logo {
+  width: 180px;
+  background: #fff;
+  border-radius: 50%;
+  position: relative;
+  z-index: 3;
+  height: 180px;
+  /* outline: 2px dotted var(--background); */
+  /* outline-offset: -5px; */
+  padding: 7px;
+}
+
+.fa-facebook-f {
+  background: #3b5998;
+}
+.socialmedianew {
+  margin: 10px 0px;
+}
+.wp-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 8%;
+  text-align: center;
+  line-height: 1.5;
+  vertical-align: middle;
+  color: #fff;
+  display: flex;
+  margin-right: 5px;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+}
+.fa-instagram {
+  background: #d6249f;
+  background: radial-gradient(
+    circle at 30% 107%,
+    #fdf497 0%,
+    #fdf497 5%,
+    #fd5949 45%,
+    #d6249f 60%,
+    #285aeb 90%
+  );
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.25);
+}
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.icontable small {
+  font-size: 15px;
+}
+.socialmedia {
+  width: 50px;
+}
+.socialmedia img {
+  width: 100%;
+  height: 100%;
+}
+
+.logobgshape {
+  border-bottom-left-radius: 80px;
+  position: relative;
+  top: 38px;
+}
+.login-form {
+  width: 90%;
+  max-width: 580px;
+  padding: 0px 0px;
+  height: auto;
+  border-top-right-radius: 13px;
+  border-top-left-radius: 13px;
+  position: relative;
+  z-index: 1;
+  margin: auto;
+  border-radius: 6px;
+  border: 2px solid #61c6fe;
+}
+
+.btn_custum .spinner-border {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  top: 24%;
+  right: 88px;
+}
+.loginform {
+  width: 100%;
+  position: relative;
+}
+
+.loginform h3 {
+  z-index: 1;
+  position: relative;
+}
+
+.form-login-design {
+  padding: 15px;
+}
+.form-custom {
+  width: 100%;
+  padding: 10px 40px;
+  box-shadow: 1px -2px 5px 0px rgb(207 207 207 / 75%);
+  border-radius: 37px !important;
+  appearance: none;
+}
+.form-custom::placeholder {
+  padding: 0px 0px;
+}
+.valid-button {
+  background-color: #720d5d;
+}
+.Loginbtn {
+  box-shadow: none;
+  border: none;
+  outline: none;
+  border-radius: 25px;
+  -webkit-border-radius: 25px;
+  -moz-border-radius: 25px;
+  -ms-border-radius: 25px;
+  -o-border-radius: 25px;
+  width: 100%;
+  text-align: center;
+  background: var(--bg-color);
+  padding: 8px 10px;
+  color: #fff;
+  height: 100%;
+}
+.login-form.bg-white {
+  background-color: #fff !important;
+}
+
+.login-form.bg-white::before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  opacity: 0.6;
+ /* background: url("../../../public/assets/img/loginBg.png");*/
+  background-size: cover;
+}
+.phone {
+  position: absolute;
+  left: 15px;
+  top: 10px;
+}
+a {
+  text-decoration: none;
+}
+.username {
+  padding: 0px;
+  border-radius: 4px;
+  border: 1px solid #2b8cdc;
+  height: 45px;
+}
+.basic_username small {
+  font-size: 15px;
+}
+.site-form-item-icon {
+  background: linear-gradient(170deg, #3f3577, #03349e);
+  color: var(--bg-color3);
+  height: 45px;
+  width: 45px;
+  display: flex;
+  justify-content: center;
+  font-size: 20px;
+  border-radius: 4px;
+  align-items: center;
+}
+.username:focus {
+  box-shadow: none;
+  outline: none;
+}
+.username input::placeholder {
+  opacity: 0.5;
+}
+.pwa_bbtn_color {
+  outline: 2px dotted #fff;
+  outline-offset: -5px;
+  background: var(--background) !important;
+}
+.width_77 {
+  text-align: center;
+  width: 90%;
+  margin: 0px auto 80px;
+  text-align: center;
+  width: 90%;
+  margin: 0px auto 18px;
+  padding: 5px;
+}
+.width_77 h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f51b1b;
+  background-color: white;
+  border-radius: 8px;
+  outline: 2px solid #0d95e9;
+  outline-offset: -4px;
+  padding: 7px;
+}
+.playbtn_custum,
+.sendotp {
+  background: var(--btn-color) !important;
+  outline: 2px solid #fff;
+  outline-offset: -5px;
+  margin: auto;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.iosbtn,
+.pwabtn,
+.iosbtn:hover,
+.pwabtn:hover {
+  margin: auto;
+  padding: 8px 10px;
+  background: var(--background);
+  font-size: 14px;
+}
+button.iosbtn:active,
+button.iosbtn:focus,
+button.iosbtn:hover {
+  outline: 2px dotted #fff;
+  outline-offset: -5px;
+  background: var(--background);
+  margin: auto;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+.iosbtn,
+.pwabtn:active,
+.pwabtn:focus,
+.pwabtn:focus-visible {
+  outline: 2px dotted #fff;
+  outline-offset: -5px;
+  background: var(--background);
+  margin: auto;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+/* 
+.spinner-wrapper{
+    width: 100%;
+    height: 100vh;
+    background-color: white;
+    position: fixed;
+    top: 0;
+    overflow: hidden;
+    left: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+   */
+/* .mesh-loader {
+    overflow: hidden;
+    height: inherit;
+    width: inherit;
+  }
+  .mesh-loader .circle {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    background: linear-gradient(rgb(114 13 93), rgb(114 13 93));
+    border-radius: 50%;
+    margin: -15px;
+    -webkit-animation: mesh 3s ease-in-out infinite -1.5s;
+    animation: mesh 3s ease-in-out infinite -1.5s;
+  }
+  
+  .mesh-loader > div .circle:last-child {
+    -webkit-animation-delay: 0s;
+    animation-delay: 0s;
+  }
+  
+  .mesh-loader > div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+  }
+  
+  .mesh-loader > div:last-child {
+    -webkit-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+  }
+  
+  @-webkit-keyframes mesh {
+    0% {
+      -webkit-transform-origin: 50% -100%;
+      transform-origin: 50% -100%;
+      -webkit-transform: rotate(0);
+      transform: rotate(0);
+    }
+    50% {
+      -webkit-transform-origin: 50% -100%;
+      transform-origin: 50% -100%;
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+    50.1% {
+      -webkit-transform-origin: 50% 200%;
+      transform-origin: 50% 200%;
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform-origin: 50% 200%;
+      transform-origin: 50% 200%;
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  
+  @keyframes mesh {
+    0% {
+      -webkit-transform-origin: 50% -100%;
+      transform-origin: 50% -100%;
+      -webkit-transform: rotate(0);
+      transform: rotate(0);
+    }
+    50% {
+      -webkit-transform-origin: 50% -100%;
+      transform-origin: 50% -100%;
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+    50.1% {
+      -webkit-transform-origin: 50% 200%;
+      transform-origin: 50% 200%;
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform-origin: 50% 200%;
+      transform-origin: 50% 200%;
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  } */

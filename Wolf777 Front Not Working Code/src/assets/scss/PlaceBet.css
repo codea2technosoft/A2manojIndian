@@ -1,0 +1,124 @@
+.bet-slip {
+    max-width: 315px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    font-family: Arial, sans-serif;
+    width: 100%;
+}
+
+.bet-slip .history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.bet-slip .history-header{
+  background: #1a1a2e;
+
+}
+.bet-slip .history-header .title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  width: 100%;
+  color: #fff;
+  text-align: left;
+  padding: 6px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.bet-slip .history-header .clear-btn {
+  padding: 6px 12px;
+  background: #f1f1f1;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: 0.2s ease;
+}
+
+.bet-slip .history-header .clear-btn:hover {
+  background: #e0e0e0;
+}
+
+.bet-slip .empty-history {
+  padding: 15px;
+  text-align: center;
+  color: #888;
+  font-style: italic;
+}
+
+.bet-slip .history {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bet-slip .history .history-item {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  border: 1px solid #eee;
+}
+
+.bet-slip .history .history-item .bet-main-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.bet-slip .history .history-item .bet-main-info .team-name {
+  font-weight: 500;
+}
+
+.bet-slip .history .history-item .bet-main-info .bet-type {
+  font-weight: bold;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.bet-slip .history .history-item .bet-details {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 13px;
+  color: #666;
+}
+
+.bet-slip .history .history-item .bet-details .odds {
+  font-weight: bold;
+}
+
+.bet-slip .history .history-item .stake-info {
+  text-align: right;
+}
+
+.bet-slip .history .history-item .stake-info .stake {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.bet-slip .history .history-item.back {
+  background: #e6f7ff;
+  color: #0077cc;
+}
+
+.bet-slip .history .history-item.back .bet-type {
+  background: #0077cc;
+  color: #fff;
+}
+
+.bet-slip .history .history-item.lay {
+  background: #ffe6e6;
+  color: #cc0000;
+}
+
+.bet-slip .history .history-item.lay .bet-type {
+  background: #cc0000;
+  color: #fff;
+}

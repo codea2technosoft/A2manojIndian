@@ -1,0 +1,572 @@
+@import '../../assets/scss/Veriable.scss';
+
+.fillterbutton_all{
+  background: $greengradient;
+    color: #000000;
+    padding: 5px 12px;
+    border: 0px;
+    border-radius: 3px;
+    font-weight: 600;}
+.deposit-page {
+    padding: 10px;
+  /* Header Styles */
+  .page-header-container {
+    background: $whitecolor;
+    border-bottom: 1px solid #404040;
+  }
+
+
+
+  .back-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+  }
+
+  .back-btn:hover {
+    background: #404040;
+  }
+
+  .page-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  /* Main Container */
+  .header-content {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    background: $greengradient;
+
+    h1 {
+         margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #000000;
+    }
+  }
+
+  /* Card Styles */
+  .deposit-card,
+  .transaction-card {
+        background: #ffff;
+    border: 1px solid #404040;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .card-header-primary {
+    background: $allheader;
+    padding: 10px;
+    text-align: left;
+  }
+
+  .card-header-light {
+    background: #222837;
+    padding: 10px;
+
+    h2.card-title {
+      color: $whitecolor;
+      border-bottom: 0px;
+      font-size: 15px;
+
+    }
+  }
+
+  .card-title {
+       color: #fff;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .card-subtitle {
+     margin: 0;
+    opacity: 0.9;
+    color: #fff;
+    font-size: 13px;
+    margin-top: 8px;
+  }
+
+  .card-body {
+    padding: 15px;
+    text-align: left;
+  }
+
+  /* Form Sections */
+  .form-section {
+    margin-bottom: 2rem;
+  }
+
+  .section-title {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #000;
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: #000;
+    font-size: 0.95rem;
+  }
+
+  /* Amount Input */
+  .amount-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #404040;
+    border-radius: 5px;
+    background: #ffffff;
+    color: #000;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+  }
+
+  .amount-input:focus {
+    outline: none;
+    border-color: $secondcolor;
+    box-shadow: 0 0 0 3px rgba(78, 204, 163, 0.1);
+  }
+
+  /* Quick Amounts */
+  .quick-buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .quick-amount-btn {
+       padding: 9px;
+    border: 2px solid #000;
+    border-radius: 12px;
+    background: $allheader;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  // .quick-amount-btn:hover {
+  //   background: rgba(78, 204, 163, 0.1);
+  //   transform: translateY(-2px);
+  // }
+
+  .quick-amount-btn.active {
+    background: $secondcolor;
+    color: #ffffff;
+  }
+
+  /* Payment Methods */
+  .payment-methods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+  }
+
+  .method-card {
+    border: 2px solid #404040;
+    border-radius: 12px;
+    background: #1a1a1a;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 1rem;
+  }
+
+  .method-card:hover {
+    border-color: $secondcolor;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .method-card.active {
+    border-color: $secondcolor;
+    background: $primarycolor;
+  }
+
+  .method-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+  }
+
+  .method-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+  }
+
+  .method-name {
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  .check-icon {
+    margin-left: auto;
+    color: $secondcolor;
+  }
+
+  /* Payment Details */
+  .payment-details-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    flex-direction: column;
+    flex: 1 1;
+    width: 100%;
+  }
+
+  .detail-item {
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #000000;
+    border: 1px solid #404040;
+  }
+
+  .detail-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .detail-label {
+    color: #a0a0a0;
+    font-size: 0.875rem;
+    text-transform: capitalize;
+  }
+
+  .detail-value-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .detail-value {
+    color: #000000;
+    font-weight: 600;
+  }
+
+  .copy-btn {
+    background: #404040;
+    border: none;
+    border-radius: 6px;
+    color: #ffffff;
+    padding: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    width: 30px;
+  }
+
+  .copy-btn:hover {
+    background: $secondcolor;
+  }
+
+  /* QR Section */
+  .qr-section {
+    background: #1a1a1a;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    border: 1px solid #404040;
+  }
+
+  .qr-icon {
+    color: $secondcolor;
+    font-size: 2rem;
+  }
+
+  .qr-text {
+    color: #404040;
+    margin-bottom: 0;
+    font-size: 0.9rem;
+  }
+
+  .iamgebankqr {
+    height: 100%;
+
+    .qr-image {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  /* Upload Section */
+  .upload-area {
+    border: 2px dashed #404040;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #fff;
+  }
+
+  .upload-area:hover {
+    border-color: $secondcolor;
+    background: rgba(78, 204, 163, 0.05);
+  }
+
+  .file-input {
+    display: none;
+  }
+
+  .upload-icon {
+    color: #a0a0a0;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .upload-text {
+    color: #a0a0a0;
+    margin: 0;
+  }
+
+  .upload-success {
+    color: $secondcolor;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .success-alert {
+    background: rgba(78, 204, 163, 0.1);
+    border: 1px solid $secondcolor;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-top: 1rem;
+    color: $secondcolor;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .alert-icon {
+    font-size: 0.8rem;
+  }
+
+  /* Deposit Button */
+  .deposit-btn {
+        width: 100%;
+    padding: 10px;
+    background: $greengradient;
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+.table tr {
+  background: $allheader;
+  th {
+    background: transparent;
+    font-weight: 500;
+    font-size: 12px;
+    color: #fff;
+}
+}
+  .deposit-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(78, 204, 163, 0.3);
+  }
+
+  .deposit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .whatsapp-icon {
+    font-size: 1rem;
+  }
+
+  /* Transaction History */
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .transaction-table th {
+    background: $primarycolor;
+    padding: 8px;
+    text-align: left;
+    font-weight: 600;
+    color: #000;
+    font-size: 0.875rem;
+    border: 1px solid #000;
+  }
+
+  .transaction-table td {
+    border: 1px solid #000;
+    padding: 8px;
+    font-size: 0.875rem;
+  }
+
+  .date-cell {
+    color: #000;
+    white-space: nowrap;
+  }
+
+  .amount-cell {
+    color: $secondcolor;
+    font-weight: 600;
+  }
+
+  .status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .status-badge.success {
+    background: rgba(78, 204, 163, 0.2);
+    color: $secondcolor;
+  }
+
+  .status-badge.rejected {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+  }
+
+  .proof-link {
+    color: $secondcolor;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .proof-link:hover {
+    text-decoration: underline;
+  }
+
+  .remark-cell {
+    color: #a0a0a0;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .no-data {
+    text-align: center;
+    color: #a0a0a0;
+    padding: 2rem !important;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .page-container {
+      padding: 10px;
+    }
+
+    .width-100 .main-content {
+      padding: 0px;
+    }
+
+    .deposit-page .payment-details-grid {
+      padding: 6px;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    .card-header-primary,
+    .card-header-light {
+      padding: 1.25rem 1.5rem;
+    }
+
+    .payment-methods-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .quick-buttons-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .detail-content {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+    }
+
+    .detail-value-wrapper {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .transaction-table {
+      font-size: 0.8rem;
+    }
+
+    .transaction-table th,
+    .transaction-table td {
+      padding: 0.75rem 0.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .header-content {
+      padding: 0 0.5rem;
+    }
+
+    .page-title {
+      font-size: 1.25rem;
+    }
+
+    .card-body {
+      padding: 1rem;
+    }
+
+    .qr-section {
+      padding: 1.5rem;
+    }
+
+    .upload-area {
+      padding: 1.5rem;
+    }
+  }
+
+}
+
+body.dark-mode {
+  .deposit-page {
+    .form-label, .section-title {
+      color: #fff;
+    }
+
+    .quick-amount-btn {
+      background: #fff;
+      &.active{
+         background: #969595;
+        color: #000;
+      }
+    }
+
+  }
+}

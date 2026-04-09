@@ -1,0 +1,1365 @@
+.admin-panel {
+  display: flex;
+  height: 100vh;
+  background-color: #f0f0f0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
+/* Sidebar Styles */
+.tickets-sidebar {
+  width: 400px;
+  background: white;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.sidebar-header {
+  padding: 20px;
+  background: #00a884;
+  color: white;
+}
+
+.admin-info h2 {
+  margin: 0 0 5px 0;
+  font-size: 1.4rem;
+}
+
+.admin-name {
+  opacity: 0.9;
+  font-size: 0.9rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.connected .status-dot {
+  background: #4CAF50;
+}
+
+.disconnected .status-dot {
+  background: #ff4444;
+}
+
+.refresh-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Filters */
+.filters-section {
+  padding: 15px;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: none;
+  border-radius: 8px;
+  background: #f0f0f0;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.search-input:focus {
+  outline: none;
+  background: white;
+  box-shadow: 0 0 0 2px #00a884;
+}
+
+.status-filters {
+  display: flex;
+  gap: 5px;
+}
+
+.filter-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  background: white;
+  border-radius: 18px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+
+.filter-btn.active {
+  background: #00a884;
+  color: white;
+  border-color: #00a884;
+}
+
+/* Tickets List */
+.tickets-list {
+  flex: 1;
+  overflow-y: auto;
+  background: white;
+}
+
+.ticket-item {
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.ticket-item:hover {
+  background: #f5f5f5;
+}
+
+.ticket-item.active {
+  background: #e8f4f1;
+}
+
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.ticket-id {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.user-mobile {
+  color: #666;
+  font-size: 0.85rem;
+  margin-bottom: 5px;
+}
+
+.last-message {
+  color: #666;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status-badge {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.status-open {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-closed {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.unread-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #25d366;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+/* ✅ SIDEBAR STATS - BOTTOM */
+.sidebar-stats {
+  display: flex;
+  padding: 15px;
+  background: white;
+  border-top: 1px solid #e0e0e0;
+  gap: 10px;
+}
+
+.stat-item {
+  flex: 1;
+  text-align: center;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.stat-number {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #00a884;
+  display: block;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+/* Chat Container */
+.chat-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #e5ddd5;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+.chat-header {
+  padding: 10px 16px;
+  background: #f0f0f0;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #00a884;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.user-status {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.chat-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.close-ticket-btn, .reopen-ticket-btn, .logout-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.close-ticket-btn {
+  background: #ff4444;
+  color: white;
+}
+
+.reopen-ticket-btn {
+  background: #4CAF50;
+  color: white;
+}
+
+.logout-btn {
+  background: #666;
+  color: white;
+}
+
+/* Messages Container */
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.empty-chat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+.messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message {
+  display: flex;
+  max-width: 70%;
+}
+
+.message.sent {
+  align-self: flex-end;
+}
+
+.message.received {
+  align-self: flex-start;
+}
+
+.message-bubble {
+  padding: 8px 12px;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.message.sent .message-bubble {
+  background: #dcf8c6;
+  border-top-right-radius: 0;
+}
+
+.message.received .message-bubble {
+  background: white;
+  border-top-left-radius: 0;
+}
+
+.message-content {
+  margin-bottom: 4px;
+}
+
+.text-message {
+  margin: 0;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.message-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: #666;
+  justify-content: flex-end;
+}
+
+.message-status {
+  color: #4fc3f7;
+}
+
+/* Media Messages */
+.media-content {
+  margin: 5px 0;
+}
+
+.message-image {
+  max-width: 300px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.audio-player {
+  width: 250px;
+  height: 40px;
+}
+
+.file-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.file-icon {
+  font-size: 1.5rem;
+}
+
+.file-info {
+  flex: 1;
+}
+
+.file-name {
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.download-link {
+  color: #00a884;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.download-link:hover {
+  text-decoration: underline;
+}
+
+/* ✅ WHATSAPP STYLE INPUT CONTAINER */
+.input-container {
+  padding: 10px 16px;
+  background: #f0f0f0;
+  position: relative;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-action-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #666;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.input-action-btn:hover {
+  background: #e0e0e0;
+}
+
+.emoji-icon, .attachment-icon {
+  font-size: 1.2rem;
+}
+
+/* Text Input Wrapper */
+.text-input-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 24px;
+  padding: 2px;
+  border: 1px solid #e0e0e0;
+}
+
+.message-input {
+  flex: 1;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 24px;
+  outline: none;
+  font-size: 0.9rem;
+  background: transparent;
+}
+
+.message-input:disabled {
+  background: #f5f5f5;
+}
+
+/* ✅ EMOJI PICKER */
+.emoji-picker {
+  position: absolute;
+  bottom: 100%;
+  left: 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 12px;
+  z-index: 1000;
+  min-width: 280px;
+  border: 1px solid #e0e0e0;
+}
+
+.emoji-picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.emoji-picker-header span {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.close-emoji-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+}
+
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.emoji-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.emoji-btn:hover {
+  background: #f0f0f0;
+}
+
+/* ✅ ATTACHMENT MENU */
+.attachment-menu-dropdown {
+  position: absolute;
+  bottom: 100%;
+  left: 60px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 12px;
+  z-index: 1000;
+  min-width: 150px;
+  border: 1px solid #e0e0e0;
+}
+
+.attachment-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.attachment-option:hover {
+  background: #f0f0f0;
+}
+
+.attachment-icon {
+  font-size: 1.3rem;
+  width: 24px;
+  text-align: center;
+}
+
+.attachment-text {
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 500;
+}
+
+/* ✅ VOICE/SEND BUTTONS */
+.send-button, .voice-button {
+  background: #00a884;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: background 0.2s;
+  margin-left: 8px;
+}
+
+.send-button:hover:not(:disabled), .voice-button:hover:not(:disabled) {
+  background: #008f70;
+}
+
+.send-button:disabled, .voice-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.send-button svg, .voice-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Upload Indicator */
+.upload-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #fff3cd;
+  color: #856404;
+  font-size: 0.8rem;
+}
+
+.upload-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #856404;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* No Ticket Selected */
+.no-ticket-selected {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  color: #666;
+  background: white;
+}
+
+.welcome-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.no-ticket-selected h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.no-ticket-selected p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Image Modal */
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.close-btn {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.zoomed-image {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 8px;
+}
+
+/* Loading States */
+.loading-state, .empty-state {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Scrollbar Styling */
+.tickets-list::-webkit-scrollbar,
+.messages-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tickets-list::-webkit-scrollbar-track,
+.messages-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.tickets-list::-webkit-scrollbar-thumb,
+.messages-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.tickets-list::-webkit-scrollbar-thumb:hover,
+.messages-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Add these new styles to your existing CSS */
+
+/* ✅ FILE PREVIEW STYLES */
+.file-preview {
+  background: white;
+  border-radius: 12px;
+  margin: 0 16px 12px 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.preview-title {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.cancel-preview-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.cancel-preview-btn:hover {
+  background: #e0e0e0;
+}
+
+.preview-content {
+  padding: 16px;
+}
+
+.image-preview {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
+  display: block;
+  margin: 0 auto;
+}
+
+.document-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.doc-icon {
+  font-size: 2rem;
+}
+
+.doc-info {
+  flex: 1;
+}
+
+.doc-name {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+  word-break: break-all;
+}
+
+.doc-size {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+}
+
+.cancel-btn, .send-file-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.cancel-btn {
+  background: #f8f9fa;
+  color: #666;
+  border: 1px solid #e0e0e0;
+}
+
+.cancel-btn:hover {
+  background: #e9ecef;
+}
+
+.send-file-btn {
+  background: #00a884;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.send-file-btn:hover:not(:disabled) {
+  background: #008f70;
+}
+
+.send-file-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.upload-spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid white;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Disable input actions when file is selected */
+.input-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input-action-btn:disabled:hover {
+  background: none;
+}
+
+/* Update input container for file preview */
+.input-container {
+  padding: 12px 16px;
+  background: #f0f0f0;
+  position: relative;
+}
+
+/* Ensure proper spacing when file preview is shown */
+.chat-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #e5ddd5;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+/* Animation for file preview */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.file-preview {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Responsive design for file preview */
+@media (max-width: 768px) {
+  .file-preview {
+    margin: 0 8px 8px 8px;
+  }
+  
+  .preview-content {
+    padding: 12px;
+  }
+  
+  .image-preview {
+    max-height: 150px;
+  }
+}
+
+/* Add these new styles to your existing CSS */
+
+/* ✅ FIXED MESSAGE COUNT STYLES */
+.ticket-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.message-count {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+/* ✅ FILE PREVIEW STYLES */
+.file-preview {
+  background: white;
+  border-radius: 12px;
+  margin: 0 16px 12px 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.preview-title {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.cancel-preview-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.cancel-preview-btn:hover {
+  background: #e0e0e0;
+}
+
+.preview-content {
+  padding: 16px;
+}
+
+.image-preview {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
+  display: block;
+  margin: 0 auto;
+}
+
+.document-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.doc-icon {
+  font-size: 2rem;
+}
+
+.doc-info {
+  flex: 1;
+}
+
+.doc-name {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+  word-break: break-all;
+}
+
+.doc-size {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.preview-note {
+  padding: 12px 16px;
+  background: #e8f4f1;
+  border-top: 1px solid #00a884;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #008f70;
+}
+
+.upload-spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid white;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Media message styles with caption */
+.media-content .text-message {
+  margin-top: 8px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* Keep all your existing CSS styles from previous code */
+/* Keep all your existing CSS styles from previous code and add these new ones */
+
+/* ✅ DYNAMIC EMOJI PICKER STYLES */
+.emoji-picker-container {
+  position: absolute;
+  bottom: 100%;
+  left: 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 350px;
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+}
+
+.emoji-picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.emoji-picker-header span {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.close-emoji-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.close-emoji-btn:hover {
+  background: #e0e0e0;
+}
+
+.dynamic-emoji-picker {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Customize emoji-picker-react styles */
+.epr-main {
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.epr-header {
+  display: none !important;
+}
+
+.epr-search-container {
+  padding: 8px 12px !important;
+}
+
+.epr-body {
+  padding: 0 8px 8px 8px !important;
+}
+
+.quick-emojis-section {
+  padding: 12px 16px;
+  background: #f8f9fa;
+}
+
+.quick-emojis-label {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.quick-emojis-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.quick-emoji-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-emoji-btn:hover {
+  background: #e0e0e0;
+}
+
+/* Responsive design for emoji picker */
+@media (max-width: 768px) {
+  .emoji-picker-container {
+    min-width: 300px;
+    left: 8px;
+    right: 8px;
+  }
+  
+  .dynamic-emoji-picker {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .emoji-picker-container {
+    min-width: 280px;
+  }
+  
+  .quick-emojis-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.message-actions {
+  position: relative;
+  margin-left: 10px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.message:hover .message-actions {
+  opacity: 1;
+}
+
+.dots-menu-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.dots-menu-btn:hover {
+  background: #f0f0f0;
+}
+
+.message-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  min-width: 120px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background 0.2s;
+}
+
+.menu-item:hover {
+  background: #f5f5f5;
+}
+
+/* User info section in ticket list */
+.user-info-section {
+  margin: 8px 0;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 4px 0;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.user-id {
+  font-size: 12px;
+  color: #666;
+  background: #f0f0f0;
+  padding: 2px 6px;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+.ticket-type {
+  margin: 4px 0;
+}
+
+/* Type badges */
+.type-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.type-withdraw {
+  background: #fff0f0;
+  color: #d63031;
+  border: 1px solid #ff7675;
+}
+
+.type-deposit {
+  background: #f0fff4;
+  color: #00b894;
+  border: 1px solid #55efc4;
+}
+
+.type-technical {
+  background: #f0f8ff;
+  color: #0984e3;
+  border: 1px solid #74b9ff;
+}
+
+/* Chat header user meta */
+.user-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.user-meta span {
+  background: #f8f9fa;
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+/* Ticket item improvements */
+.ticket-item {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.ticket-item:hover {
+  background-color: #f8f9fa;
+}
+
+.ticket-item.active {
+  background-color: #e3f2fd;
+  border-left: 3px solid #2196f3;
+}
+
+/* Enhanced search functionality */
+.search-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #2196f3;
+}
+}

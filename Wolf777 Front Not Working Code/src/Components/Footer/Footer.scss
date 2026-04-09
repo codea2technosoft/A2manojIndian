@@ -1,0 +1,97 @@
+@import '../../assets/scss/Veriable.scss';
+.footer {
+  background-color: #1a1a2e;
+  color: white;
+  margin-top: auto;
+      position: fixed;
+    width: 100%;
+    bottom: 0px;
+    z-index: 1000;
+}
+.app-footer .mobile-menu ul li.active{
+  position: relative;
+  z-index: 1;
+}
+.app-footer .mobile-menu ul li.active:before {
+        content: "";
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    left: 0;
+    right: 0;
+    background: #ffb900;
+    z-index: -1;
+    
+}
+
+.app-footer .mobile-menu ul li.active a {
+ span, svg{
+   color: #fff;
+}
+}
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.footer-section h4 {
+  color: #4ecca3;
+  margin-bottom: 15px;
+}
+
+.footer-section ul {
+  list-style: none;
+}
+
+.footer-section ul li {
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.footer-section ul li:hover {
+  color: #4ecca3;
+}
+
+.footer-bottom {
+  border-top: 1px solid #16213e;
+  text-align: center;
+  font-size: 0.9em;
+  color: #aaa;
+  p{
+    margin-bottom: 0px;
+  }
+}
+
+.whatsappicon {
+  background-color: #25d366;
+  border-radius: 50px;
+  bottom: 40px;
+  box-shadow: 2px 2px 3px #999;
+  color: #000;
+  font-size: 15px;
+  height: 60px;
+  position: fixed;
+  right: 17px;
+  text-align: center;
+  width: 60px;
+  font-weight: 600;
+  z-index: 100;
+
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 4px;
+
+    svg {
+      font-size: 50px;
+      color: #fff;
+    }
+  }
+}

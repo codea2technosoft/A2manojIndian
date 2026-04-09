@@ -1,0 +1,109 @@
+@import "../../assets/scss/Veriable.scss";
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s;
+  z-index: 9999;
+
+  &.show {
+    opacity: 1;
+    visibility: visible;
+    display: block;
+  }
+}
+
+.sidebar-drawer {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 380px;
+  height: 100vh;
+    background: #333;
+      z-index: 9999;
+  transition: left 0.3s ease;
+  display: flex;
+  flex-direction: column;
+
+  &.open {
+    left: 0;
+  }
+}
+
+.sidebar-header {
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #fff;
+    background: $allheader;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: -18px;
+    right: 0px;
+    width: 150px;
+    // background: #fff;
+    height: 150px;
+    transform: rotate(45deg);
+  }
+
+  .navbar-logo {
+    z-index: 1;
+  }
+
+  img {
+    height: 35px;
+  }
+
+  button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 30px;
+  }
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+    //  background: linear-gradient(182deg, #5d4343, #5c1a02);
+
+  z-index: 1;
+
+  li a,
+  li.logout {
+       padding: 12px 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(139, 139, 139, 0.3803921569);
+    font-weight: 600;
+    font-size: 15px;
+    text-transform: uppercase;
+  }
+
+  li a:hover,
+  li.logout:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  li.logout {
+    color: #fff;
+  }
+}
+
+@media(max-width:991px) {
+  .sidebar-drawer {
+    width: 100%;
+  }
+}

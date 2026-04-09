@@ -1,0 +1,1479 @@
+@import url("https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+/* src/App.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Titillium Web", sans-serif;
+}
+
+body {
+  background-color: #f5f5f5;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Poppins", sans-serif;
+}
+.set-button-page {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+
+  .container {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 30px;
+
+    h1 {
+      color: #333;
+      font-size: 28px;
+      font-weight: 600;
+      margin: 0;
+    }
+  }
+
+  .button-values-section {
+    margin-bottom: 30px;
+
+    h2 {
+      color: #555;
+      font-size: 20px;
+      margin-bottom: 15px;
+      font-weight: 500;
+    }
+
+    .values-list {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 20px;
+
+      .values-header {
+        background: #f8f9fa;
+        padding: 12px 15px;
+        border-bottom: 1px solid #ddd;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .value-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        transition: background-color 0.2s;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        &:hover {
+          background: #f8f9fa;
+        }
+
+        .amount {
+          font-size: 16px;
+          color: #333;
+          font-weight: 500;
+        }
+
+        .remove-btn {
+          background: #dc3545;
+          color: white;
+          border: none;
+          border-radius: 50%;
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          font-size: 14px;
+          transition: background-color 0.2s;
+
+          &:hover:not(:disabled) {
+            background: #c82333;
+          }
+
+          &:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background: #0056b3;
+      }
+    }
+  }
+
+  .divider {
+    border: none;
+    border-top: 2px solid #eee;
+    margin: 30px 0;
+  }
+
+  .settings-section {
+    h3 {
+      color: #555;
+      font-size: 18px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .search-box {
+      margin-bottom: 25px;
+
+      .search-input {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+
+        &:focus {
+          outline: none;
+          border-color: #007bff;
+          box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+      }
+    }
+
+    .add-custom-section {
+      h4 {
+        color: #555;
+        font-size: 16px;
+        margin-bottom: 15px;
+        font-weight: 500;
+      }
+
+      .input-group {
+        display: flex;
+        gap: 10px;
+
+        .form-control {
+          flex: 1;
+          padding: 10px 15px;
+          border: 1px solid #ddd;
+          border-radius: 6px;
+          font-size: 14px;
+
+          &:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+          }
+        }
+
+        .btn-success {
+          background: #28a745;
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+          transition: background-color 0.2s;
+
+          &:hover {
+            background: #218838;
+          }
+        }
+      }
+    }
+  }
+
+  .loading {
+    text-align: center;
+    padding: 40px;
+    font-size: 16px;
+    color: #666;
+  }
+}
+a,
+a:hover {
+  text-decoration: none;
+}
+
+.table tr td, .table tr th {
+  padding: 10px;
+  white-space: nowrap;
+}
+
+.table tr td {
+  font-weight: 600;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.account_statement .card-header {
+  background: #1a1a2e;
+  text-align: left;
+}
+
+.account_statement .card-header label {
+  color: #fff;
+}
+
+.account_statement .card-header input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.account_statement .card-header .form-group {
+  width: 100%;
+}
+
+.account_statement .card-header .form-group select,
+.account_statement .card-header .form-group input[type="date"] {
+  background: transparent;
+  color: #fff;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.account_statement .card-header .form-group select::-ms-expand,
+.account_statement .card-header .form-group input[type="date"]::-ms-expand {
+  display: none;
+}
+
+.account_statement .card-header .form-group select:hover, .account_statement .card-header .form-group select:focus, .account_statement .card-header .form-group select:active,
+.account_statement .card-header .form-group input[type="date"]:hover,
+.account_statement .card-header .form-group input[type="date"]:focus,
+.account_statement .card-header .form-group input[type="date"]:active {
+  box-shadow: none;
+  outline: none;
+  color: #fff;
+}
+
+.account_statement .card-header .form-group select::placeholder,
+.account_statement .card-header .form-group input[type="date"]::placeholder {
+  color: #fff;
+  opacity: 0.7;
+}
+
+.account_statement .form-group.width_50 {
+  width: 48%;
+}
+
+.account_statement .form-group select option {
+  background: #1a1a2e;
+  color: #fff;
+}
+
+.account_statement .fillterbutton {
+  max-width: 85px;
+  border: none;
+  height: 40px;
+  width: 100%;
+  font-size: 19px;
+  min-width: 85px;
+  border-radius: 5px;
+}
+
+.account_statement .fillterbutton.gobutton {
+  background: #4ecca3;
+}
+
+.account_statement .fillterbutton.resetbutton {
+  background: #fff;
+}
+
+.account_statement .thead-dark tr th {
+  background: #1a1a2e;
+  color: #fff;
+}
+
+.account_statement .input-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.account_statement .input-icon input,
+.account_statement .input-icon select {
+  width: 100%;
+  padding-right: 2.2rem;
+  background: transparent;
+  color: #fff;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.account_statement .input-icon input::-ms-expand,
+.account_statement .input-icon select::-ms-expand {
+  display: none;
+}
+
+.account_statement .input-icon input:focus,
+.account_statement .input-icon select:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.account_statement .input-icon .input-icon-icon {
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.fancy-info p {
+  margin-bottom: 0px;
+  font-size: 13px;
+  padding: 1px 5px;
+  font-weight: 600;
+}
+
+.fancy-info p span {
+  color: #000;
+}
+
+.inplay_design .tabs_design .inplay_tabs button {
+  border: 1px solid #000;
+  outline: none;
+  box-shadow: none;
+  padding: 5px 30px;
+}
+
+.inplay_design .tabs_design .inplay_tabs.active button {
+  color: #fff;
+  background: #1a1a2e;
+}
+
+.inplay_design .highlight {
+  width: 100%;
+  background: #1a1a2e;
+  padding: 5px;
+  margin-top: 10px;
+}
+
+.inplay_design .highlight h3 {
+  color: #fff;
+  font-size: 15px;
+  margin-bottom: 0px;
+  text-align: left;
+  padding: 5px;
+}
+
+.homepageslider {
+  width: 100%;
+  height: 215px;
+}
+
+.homepageslider img {
+  width: 100%;
+  object-fit: cover;
+  height: 100%;
+}
+
+.main-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr 300px;
+  gap: 9px;
+  padding: 9px 0px;
+  flex: 1 1;
+}
+
+.bookmaker {
+  background: #faf8d8;
+}
+
+.bookmaker .table {
+  background: transparent !important;
+}
+
+.bookmaker .table thead tr th {
+  background: transparent !important;
+}
+
+.bookmaker .table .td-event-name {
+  background: transparent !important;
+}
+
+.bookmakerminmax {
+  position: absolute;
+  right: 10px;
+  top: 7px;
+}
+
+.tabs_homepage .tabdesignall {
+  border: 0px;
+  outline: none;
+  text-transform: capitalize;
+  box-shadow: none;
+  padding: 5px 15px;
+}
+
+.tabs_homepage .tabsbutton {
+  border: 0px;
+  outline: none;
+  box-shadow: none;
+  padding: 5px 5px 0px;
+  background: #1a1a2e;
+  color: #fff;
+  text-align: left;
+}
+
+.tabs_homepage .tabsbutton .tabdesignall {
+  border: 0px;
+  outline: none;
+  box-shadow: none;
+  text-transform: capitalize;
+  padding: 5px 15px;
+  background: transparent;
+  color: #fff;
+}
+
+.tabs_homepage .tabsbutton .tabdesignall.active {
+  border: 0px;
+  background: #4ecca3;
+  color: #fff;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.hightlight {
+  background: #4ecca3;
+  color: #1a1a2e;
+  padding: 5px;
+}
+
+.hightlight h3 {
+  font-size: 14px;
+  text-align: left;
+  margin-bottom: 0px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #fff;
+}
+
+.verticalmiddle {
+  vertical-align: middle;
+}
+
+.minmaxmarket {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.lay.backlay.lay_game,
+.back.backlay.lay_game {
+  border-radius: 0px;
+}
+
+.cricket_design .gamename_book a.match-name {
+  padding: 3px 10px;
+  background: #1a1a2e;
+  border-radius: 5px;
+  color: #fff;
+  width: max-content;
+  font-size: 13px;
+}
+
+.cricket_design .gamename_book a {
+  color: #000;
+  font-size: 20px;
+  padding-right: 5px;
+}
+
+.cricket_design .fancybetsportsbook .tabsfancy {
+  display: flex;
+  justify-content: start;
+  gap: 25px;
+}
+
+.cricket_design .fancybetsportsbook .tabsfancy .buttontabefancy {
+  border-radius: 5px;
+  background: tan;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  padding: 0 14px 0 8px;
+  cursor: pointer;
+  position: relative;
+  line-height: 30px;
+  font-size: 12px;
+  color: #fff;
+  z-index: 1;
+  float: left;
+  zoom: 1;
+  height: 30px;
+}
+
+.cricket_design .fancybetsportsbook .tabsfancy .buttontabefancy.fancybetbutton {
+  background: linear-gradient(180deg, #0a92a5 15%, #076875 100%);
+}
+
+.cricket_design .fancybetsportsbook .tabsfancy .buttontabefancy.fancybetbutton span {
+  background: #05bdd7;
+  position: absolute;
+  right: -20px;
+  top: 0px;
+  vertical-align: top;
+  height: 30px;
+  width: 30px;
+  clip-path: polygon(100% 100%, 79% 22%, 76% 15%, 74% 12%, 72% 9%, 68% 6%, 59% 3%, 78% 2%, 0% 0%, 0% 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  color: #fff;
+}
+
+.cricket_design .fancybetsportsbook .tabsfancy .buttontabefancy.sportsbookbutton {
+  background: linear-gradient(180deg, #f26d1c 15%, #d14100 100%);
+}
+
+.cricket_design .fancybetsportsbook .tabsfancy .buttontabefancy.sportsbookbutton span {
+  background: #ff8b54;
+  position: absolute;
+  right: -20px;
+  top: 0px;
+  vertical-align: top;
+  height: 30px;
+  width: 30px;
+  clip-path: polygon(100% 100%, 79% 22%, 76% 15%, 74% 12%, 72% 9%, 68% 6%, 59% 3%, 78% 2%, 0% 0%, 0% 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  color: #fff;
+}
+
+.cricket_design .fancybetsportsbook .fancybetcontent .headinggame {
+  background: #1a1a2e;
+}
+
+.cricket_design .fancybetsportsbook .fancybetcontent .headinggame .special_bets-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 0px;
+  list-style: none;
+  margin-bottom: 0px;
+  padding: 5px;
+  background: #1a1a2e;
+}
+
+.cricket_design .fancybetsportsbook .fancybetcontent .headinggame .special_bets-tab li {
+  color: #fff;
+  padding: 0px 15px;
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.cricket_design .fancybetsportsbook .fancybetcontent .headinggame .special_bets-tab li.select {
+  background: #4ecca3;
+  border-radius: 25px;
+}
+
+.cricket_design .suspend-bookmaker-external {
+  height: auto;
+  background: rgba(36, 58, 72, 0.4);
+  z-index: 5;
+  position: absolute;
+  width: 60%;
+  left: 40%;
+  text-align: center;
+  top: 0px;
+  bottom: 0px;
+}
+
+.cricket_design .suspend-bookmaker-external.suspended {
+  background: rgba(36, 58, 72, 0.4);
+  color: #ffffff;
+  border: 1px solid rgba(36, 58, 72, 0.4);
+}
+
+.cricket_design .suspend-bookmaker-external.active {
+  background: #d1e7dd;
+  color: #0f5132;
+  border: 1px solid #badbcc;
+}
+
+.cricket_design .matchoddsminmax {
+  gap: 3px 1px;
+  background: #bed5d8;
+  border-radius: 6px;
+}
+
+.cricket_design .card-matchodds {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.cricket_design .card-matchodds .match-odds {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  background: #1a1a2e;
+  padding: 5px;
+  border-top-right-radius: 10px;
+}
+
+.cricket_design .card-matchodds .match-odds svg {
+  color: #fff;
+}
+
+.cricket_design .card-matchodds .marketinfo {
+  margin-left: 8px;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.cricket_design .card-matchodds .marketinfo svg {
+  vertical-align: middle;
+}
+
+.cricket_design .card-matchodds .cashout-container {
+  flex: 1;
+  text-align: center;
+}
+
+.cricket_design .card-matchodds .matched-count {
+  font-size: 14px;
+  color: #555;
+  margin-right: 10px;
+}
+
+.cricket_design .card-matchodds .matched-count strong {
+  color: #000;
+}
+
+.cricket_design .hideDesktop {
+  display: none;
+}
+
+.cricket_design .custom-td {
+  background: linear-gradient(180deg, #beddf4 0%, #d4e8f8 100%);
+}
+
+.cricket_design .btn-cancel {
+  width: 100%;
+  background: #fff;
+  color: #1a1a2e;
+}
+
+.cricket_design .btn.btn-send {
+  width: 100%;
+  background: #1a1a2e;
+  color: #fff;
+}
+
+.cricket_design .betButtonPlus {
+  border-bottom-right-radius: 7px;
+  border-top-right-radius: 7px;
+  background-image: linear-gradient(-180deg, #fff 0, #eee 89%);
+  height: 40px;
+  width: 40px;
+  color: #1f72ac;
+  padding: 0px;
+  border: 1px solid #aaaaaa;
+  touch-action: manipulation;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  line-height: 40px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+
+.cricket_design .betButtonPlus .betButtonPlus_span {
+  font-size: 40px;
+  position: relative;
+  top: -5px;
+}
+
+.cricket_design .input-Betslip {
+  background: #ffffff;
+  border-top: 1px solid #aaaaaa;
+  border-bottom: 1px solid #aaaaaa;
+  border-left: 0px;
+  border-right: 0px;
+  width: 59%;
+  height: 40px !important;
+  color: #1e1e1e !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  border-radius: 0;
+}
+
+.cricket_design .stakeactionminus {
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 7px;
+  border-top-left-radius: 7px;
+  background-image: linear-gradient(-180deg, #fff 0, #eee 89%);
+  height: 40px;
+  width: 40px;
+  color: #1f72ac;
+  padding: 0px;
+  border: 1px solid #aaaaaa;
+  touch-action: manipulation;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  line-height: 40px;
+}
+
+.cricket_design .stakeactionminus .betButtonPlus_span {
+  font-size: 40px;
+  position: relative;
+  top: -5px;
+}
+
+.cricket_design .fancy-quick-btn {
+  background: #f9f9f9;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #1a1a2e !important;
+  font-weight: 400 !important;
+  line-height: 18px !important;
+  font-size: 14px !important;
+  height: 31px !important;
+  margin: 0 5px 0 0 !important;
+  text-align: center;
+  width: 100%;
+}
+
+.cricket_design .game_status_new {
+  position: relative;
+  cursor: pointer;
+  border-bottom: 1px solid #7e97a7;
+  border-top: 1px solid #7e97a7;
+}
+
+.cricket_design .game_sportbook {
+  font-weight: 700;
+  padding: 0 5px;
+  background: #1a1a2e;
+  color: #ffffff;
+  font-style: italic;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.cricket_design table thead tr th {
+  vertical-align: middle;
+  background: #f1f1f1;
+  text-align: center;
+  padding: 0px;
+}
+
+.cricket_design table thead tr th .backlay {
+  padding: 5px;
+}
+
+.cricket_design table tr td {
+  padding: 0px;
+  vertical-align: middle;
+}
+
+.cricket_design .add-pin svg {
+  height: 20px;
+  color: #7e97a7;
+}
+
+.cricket_design .match-name {
+  text-decoration: none !important;
+}
+
+.cricket_design .match-name span {
+  font-family: "Poppins", sans-serif;
+  text-decoration: none !important;
+  font-weight: 600;
+  color: #000000 !important;
+  cursor: pointer;
+  position: relative;
+  font-size: 14px;
+}
+
+.cricket_design .match-name span:hover {
+  text-decoration: none !important;
+}
+
+.cricket_design .match-name:hover {
+  text-decoration: none !important;
+}
+
+.cricket_design .in_play {
+  font-weight: 600;
+  margin-left: 10px;
+  transition: 0.4s ease-in;
+  animation: 1s infinite gamestatus;
+  font-size: 13px;
+}
+
+@keyframes gamestatus {
+  0% {
+    transform: scale(1);
+    color: red;
+  }
+  50% {
+    transform: scale(1.1);
+    color: green;
+  }
+  100% {
+    transform: scale(1);
+    color: red;
+  }
+}
+
+.cricket_design .td-event-name .eventname_design {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding: 0px 10px;
+}
+
+.cricket_design .count {
+  width: 10%;
+}
+
+.cricket_design .count .lay {
+  cursor: pointer;
+  user-select: none;
+  min-width: 100%;
+  display: block;
+  color: #1e1e1e;
+  text-align: center;
+  padding: 0px 10px;
+  font-weight: 700;
+  justify-content: center;
+  align-items: center;
+}
+
+.cricket_design .count .back {
+  cursor: pointer;
+  user-select: none;
+  min-width: 100%;
+  display: block;
+  color: #1e1e1e;
+  text-align: center;
+  padding: 0px 10px;
+  font-weight: 700;
+  justify-content: center;
+  align-items: center;
+}
+
+.lay.backlay {
+  background: #faa9ba;
+  border-top-right-radius: 10px;
+}
+
+.back.backlay {
+  border-top-left-radius: 10px;
+  background: #72bbef;
+}
+
+.bettinggrid .backvalue {
+  display: block;
+}
+
+.bettinggrid small {
+  font-weight: 400;
+}
+
+.back-0 {
+  background-color: #d7e8f4;
+  border-left-color: #fff;
+}
+
+.back-1 {
+  background-color: #b7d5eb;
+  border-left-color: #fff;
+}
+
+.back-2 {
+  background-color: #72bbef;
+  border-left-color: #fff;
+}
+
+.lay-0 {
+  background: #faa9ba;
+}
+
+.lay-1 {
+  background: #efd3d9;
+}
+
+.lay-2 {
+  background: #f6e6ea;
+}
+
+.gradientcolorback {
+  text-align: right;
+  background: linear-gradient(90deg, rgba(130, 183, 221, 0.15) 0, rgba(130, 183, 221, 0.8) 65%);
+  padding: 5px 20px 5px;
+}
+
+.gradientcolorlay {
+  padding: 5px 20px 5px;
+  text-align: left;
+  background: linear-gradient(270deg, rgba(231, 170, 184, 0.15) 5%, rgba(231, 170, 184, 0.8) 60%);
+}
+
+.team-width {
+  width: 40%;
+}
+
+.team-width.bookmakerNameRunner {
+  font-size: 12px;
+  padding: 3px 10px;
+  font-weight: 700;
+  border-top: none;
+  background: transparent;
+  vertical-align: middle;
+}
+
+.lay-gradient {
+  background: linear-gradient(270deg, rgba(231, 170, 184, 0.15) 5%, rgba(231, 170, 184, 0.8) 60%);
+  height: 46px;
+  display: flex;
+  margin: 0;
+  padding: 3px;
+}
+
+.lay-gradient dd {
+  flex: 1;
+  padding: 2px;
+  color: #59708d;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  margin: 0;
+  text-decoration: none;
+}
+
+.lay-gradient dd .match-inn-txt-top {
+  font-weight: 700;
+  font-size: 11px;
+  display: block;
+}
+
+.lay-gradient dd .amount {
+  display: block;
+  font-weight: 400;
+  font-size: 11px;
+  color: #a9616d;
+}
+
+.back-gradient {
+  background-image: linear-gradient(90deg, rgba(130, 183, 221, 0.15) 0, rgba(130, 183, 221, 0.8) 65%);
+  height: 46px;
+  display: flex;
+  margin: 0;
+  padding: 3px;
+}
+
+.back-gradient dd {
+  flex: 1;
+  padding: 2px;
+  color: #59708d;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  margin: 0;
+}
+
+.back-gradient dd .match-inn-txt-top {
+  font-weight: 700;
+  font-size: 11px;
+  display: block;
+}
+
+.back-gradient dd .amount {
+  display: block;
+  font-weight: 400;
+  font-size: 11px;
+  color: #a9616d;
+}
+
+.back-gradient .count:nth-child(3) {
+  display: flex;
+  /* needed for justify/align to work */
+  justify-content: center;
+  align-items: center;
+  width: calc(100% - 2px);
+  padding: 3px;
+  height: calc(100% - 2px);
+  padding: 0;
+  margin: 0;
+  background-color: #72bbef;
+  border: 1px solid #fff;
+  border-radius: 4px;
+  color: #000;
+}
+
+.back-gradient .count:nth-child(3) .amount,
+.back-gradient .count:nth-child(3) .match-inn-txt-top {
+  color: #000;
+  font-size: 11px;
+}
+
+.lay-gradient .count:nth-child(1) {
+  display: flex;
+  /* needed for justify/align to work */
+  justify-content: center;
+  align-items: center;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+  padding: 3px;
+  padding: 0;
+  margin: 0;
+  background-color: #faa9ba;
+  border: 1px solid #fff;
+  border-radius: 4px;
+  color: #000;
+}
+
+.lay-gradient .count:nth-child(1) .amount,
+.lay-gradient .count:nth-child(1) .match-inn-txt-top {
+  color: #000;
+  font-size: 11px;
+}
+
+/* Icon Button */
+.info-icon {
+  font-size: 32px;
+  color: #2563eb;
+  /* blue */
+  cursor: pointer;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 1000;
+  padding-top: 60px;
+  /* spacing from top */
+  animation: fadeIn 0.3s ease;
+  /* Modal Content */
+}
+
+.modal-overlay .modal-content {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  padding: 20px 24px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: slideDown 0.4s ease-out;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: #fff;
+}
+
+/* Close Button */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #555;
+}
+
+.modal-close:hover {
+  color: #000;
+}
+
+/* Betting Text */
+.info_betting p {
+  margin-bottom: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+}
+
+/* Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.crickethome .hideDesktop {
+  display: none;
+}
+
+.crickethome .custom-td {
+  background: linear-gradient(180deg, #beddf4 0%, #d4e8f8 100%);
+}
+
+.crickethome .btn-cancel {
+  width: 100%;
+  background: #fff;
+  color: #1a1a2e;
+}
+
+.crickethome .btn.btn-send {
+  width: 100%;
+  background: #1a1a2e;
+  color: #fff;
+}
+
+.crickethome .betButtonPlus {
+  border-bottom-right-radius: 7px;
+  border-top-right-radius: 7px;
+  background-image: linear-gradient(-180deg, #fff 0, #eee 89%);
+  height: 40px;
+  width: 40px;
+  color: #1f72ac;
+  padding: 0px;
+  border: 1px solid #aaaaaa;
+  touch-action: manipulation;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  line-height: 40px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+
+.crickethome .betButtonPlus .betButtonPlus_span {
+  font-size: 40px;
+  position: relative;
+  top: -5px;
+}
+
+.crickethome .input-Betslip {
+  background: #ffffff;
+  border-top: 1px solid #aaaaaa;
+  border-bottom: 1px solid #aaaaaa;
+  border-left: 0px;
+  border-right: 0px;
+  width: 59%;
+  height: 40px !important;
+  color: #1e1e1e !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  border-radius: 0;
+}
+
+.crickethome .stakeactionminus {
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 7px;
+  border-top-left-radius: 7px;
+  background-image: linear-gradient(-180deg, #fff 0, #eee 89%);
+  height: 40px;
+  width: 40px;
+  color: #1f72ac;
+  padding: 0px;
+  border: 1px solid #aaaaaa;
+  touch-action: manipulation;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  line-height: 40px;
+}
+
+.crickethome .stakeactionminus .betButtonPlus_span {
+  font-size: 40px;
+  position: relative;
+  top: -5px;
+}
+
+.crickethome .fancy-quick-btn {
+  background: #f9f9f9;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #1a1a2e !important;
+  font-weight: 400 !important;
+  line-height: 18px !important;
+  font-size: 14px !important;
+  height: 31px !important;
+  margin: 0 5px 0 0 !important;
+  text-align: center;
+  width: 100%;
+}
+
+.crickethome .game_status_new {
+  cursor: pointer;
+}
+
+.crickethome .game_sportbook {
+  font-weight: 700;
+  padding: 0 5px;
+  background: #1a1a2e;
+  color: #ffffff;
+  font-style: italic;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.crickethome table thead tr th {
+  background: #f1f1f1;
+  padding: 2px;
+  text-align: center;
+}
+
+.crickethome table tr td {
+  padding: 5px;
+}
+
+.crickethome .add-pin svg {
+  height: 20px;
+  color: #7e97a7;
+}
+
+.crickethome .match-name {
+  text-decoration: none !important;
+}
+
+.crickethome .match-name span {
+  font-family: "Poppins", sans-serif;
+  text-decoration: none !important;
+  font-weight: 500;
+  color: #2789ce !important;
+  cursor: pointer;
+  position: relative;
+  font-size: 14px;
+}
+
+.crickethome .match-name span:hover {
+  text-decoration: none !important;
+}
+
+.crickethome .match-name:hover {
+  text-decoration: none !important;
+}
+
+.crickethome .in_play {
+  font-weight: 600;
+  margin-left: 10px;
+  transition: 0.4s ease-in;
+  animation: 1s infinite gamestatus;
+  font-size: 13px;
+}
+
+@keyframes gamestatus {
+  0% {
+    transform: scale(1);
+    color: red;
+  }
+  50% {
+    transform: scale(1.1);
+    color: green;
+  }
+  100% {
+    transform: scale(1);
+    color: red;
+  }
+}
+
+.crickethome .count {
+  width: 122px;
+}
+
+.crickethome .count .lay {
+  cursor: pointer;
+  user-select: none;
+  background: #faa9ba;
+  min-width: 56px;
+  display: inline-block;
+  color: #1e1e1e;
+  text-align: center;
+  padding: 2px 10px;
+  font-weight: 700;
+  justify-content: center;
+  align-items: center;
+}
+
+.crickethome .count .back {
+  cursor: pointer;
+  user-select: none;
+  background: #72bbef;
+  min-width: 56px;
+  display: inline-block;
+  color: #1e1e1e;
+  text-align: center;
+  padding: 2px 10px;
+  font-weight: 700;
+  justify-content: center;
+  align-items: center;
+}
+
+.mobileshow {
+  display: none;
+}
+
+.boxshow {
+  display: block;
+}
+
+@media (max-width: 1024px) {
+  .crickethome thead {
+    display: none;
+  }
+  dd.boxhide,
+  .boxhide {
+    display: none;
+  }
+  .mobileshow {
+    display: block;
+  }
+  .main-layout.container-fluid,
+  .main-layout .container {
+    padding: 0px;
+    margin-bottom: 60px;
+  }
+  .main-content .container-fluid,
+  .main-content .container {
+    padding: 0px;
+    margin-bottom: 60px;
+  }
+  .main-layout {
+    grid-template-columns: 200px 1fr;
+  }
+  .main-layout > :last-child {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .hideMobile {
+    display: none;
+  }
+  .cricket_design .hideDesktop {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+  }
+  .cricket_design .hideDesktop .button_design_new_all {
+    width: 100%;
+  }
+  .cricket_design .suspend-bookmaker-external {
+    height: auto;
+    background: rgba(36, 58, 72, 0.4);
+    z-index: 5;
+    position: absolute;
+    width: 28%;
+    right: 0;
+    text-align: center;
+    left: auto;
+    top: 0px;
+    bottom: 0px;
+  }
+  .team-width {
+    width: 100%;
+  }
+  .gradientcolorlay,
+  .gradientcolorback {
+    text-align: center;
+    padding: 5px 0px 5px;
+  }
+  .main-content {
+    border-radius: 8px;
+    width: 100%;
+  }
+  .cricket_design .match-name span {
+    font-family: "Poppins", sans-serif;
+    text-decoration: none !important;
+    color: #000000 !important;
+    cursor: pointer;
+    position: relative;
+    font-size: 12px;
+    display: block;
+    font-weight: 500;
+  }
+  .cricket_design
+.fancybetsportsbook
+.fancybetcontent
+.headinggame
+.special_bets-tab
+li {
+    color: #fff;
+    padding: 0px 4px;
+    font-size: 10px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .cricket_design table thead tr th .backlay {
+    border-radius: 0px;
+  }
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+  .main-layout > :first-child {
+    display: none;
+  }
+}
