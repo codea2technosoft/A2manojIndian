@@ -402,7 +402,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
             {
               id: "inactive-users-list",
-              title: "Inactive User Lists",
+              title: "Inactive User List",
               path: "/inactive-users-list",
             },
 
@@ -411,6 +411,14 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
               title: "Blocked User Lists",
               path: "/blocked-users-list",
             },
+
+             {
+              id: "date-wise-users-list",
+              title: "Date Wise Users List",
+              path: "/date-wise-users-list",
+            },
+
+
 
 
 

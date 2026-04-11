@@ -67,6 +67,7 @@ import AllCreatedTicketSupport from "./Pages/ticketSupport/AllCreatedTicketSuppo
 import PlotLedger from "./Pages/WalletReport/PlotLedger.jsx";
 import UnitSQYDAdded from "./Pages/WalletReport/Unit_sqyd_added.jsx";
 import UnitSQYDLedger from "./Pages/WalletReport/UnitSQYDLedger.jsx";
+import BimaRegistrationForm from "./Pages/BimaRegistrationForm/BimaRegistrationForm.jsx";
 
 const App = () => {
   const [userType, setUserType] = useState(() => {
@@ -164,6 +165,16 @@ const App = () => {
             </Layout>
           }
         />
+
+        <Route
+          path="/bima-registration-form"
+          element={
+            <Layout userType={userType}>
+              <BimaRegistrationForm userType={userType} />
+            </Layout>
+          }
+        />
+
 
         <Route
           path="/my-profile"

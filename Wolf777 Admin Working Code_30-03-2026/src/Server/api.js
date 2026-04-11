@@ -54,6 +54,11 @@ export const ActiveEventList = (payload) => {
 //UserManagment//
 export const getAllUsersList = (params = {}) => API.get('/alluserslist', { params });
 
+//datewise users lists 10-04-2026
+export const getDateWiseAllUsersList = (params = {}) => API.get('/latest-users', { params });
+//ending
+
+
 export const createUser = (userData) => API.post('/create-user', userData);
 export const updateUser = (userId, userData) => API.put(`/users/${userId}`, userData);
 // export const updateUser = (userId, userData) => API.put(`/users/${userId}`, userData);

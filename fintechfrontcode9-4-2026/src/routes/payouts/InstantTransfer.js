@@ -366,13 +366,16 @@ function InstantTransfer() {
             key: 'bankDetails',
             render: (text, record) => (
                 <div>
-                    Account: {record.accountnumber}
+                     Benifical Name : {record.benificalname}
                     <br></br>
-                    Bank: {record.bankname}
+
+                    Account : {record.accountnumber}
                     <br></br>
-                    IFSC: {record.Ifsc}
+                    Bank : {record.bankname}
                     <br></br>
-                    Mode: {record.mode}
+                    IFSC : {record.Ifsc}
+                    <br></br>
+                    Mode : {record.mode}
                 </div>
             ),
         },
@@ -539,13 +542,35 @@ function InstantTransfer() {
                         label="Bank Account"
                         rules={[{ required: true, message: 'Please select a bank account' }]}
                     >
-                        <Select placeholder="Please Select Bank">
+                        {/* <Select placeholder="Please Select Bank">
                             {RecordsSuccessBankList.map((bank) => (
                                 <Select.Option key={bank.id} value={bank.id}>
                                     {bank.name}({bank.bank_name}/{bank.account_number})
                                 </Select.Option>
                             ))}
+                                
+                        </Select> */}
+
+                        <Select
+                            mode="single"
+                            placeholder="Please Select Bank"
+                            showSearch
+                            filterOption={(input, option) => {
+                                const label = option?.label || option?.children;
+                                return (label?.toString()?.toLowerCase() || '').includes(input?.toLowerCase() || '');
+                            }}
+                        >
+                            {RecordsSuccessBankList.map((bank) => (
+                                <Select.Option
+                                    key={bank.id}
+                                    value={bank.id}
+                                    label={`${bank.name}(${bank.bank_name}/${bank.account_number})`}
+                                >
+                                    {bank.name}({bank.bank_name}/{bank.account_number})
+                                </Select.Option>
+                            ))}
                         </Select>
+
                     </Form.Item>
 
                     <Form.Item

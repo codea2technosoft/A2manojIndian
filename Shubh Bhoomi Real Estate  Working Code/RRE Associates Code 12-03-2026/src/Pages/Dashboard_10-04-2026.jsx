@@ -81,13 +81,6 @@ const Dashboard = ({ userType }) => {
   const [lifetimeRewardsList, setLifetimeRewardsList] = useState([]);
   const [lifetimeEligibilityData, setLifetimeEligibilityData] = useState([]);
   const [loadingLifetimeRewards, setLoadingLifetimeRewards] = useState(false);
-  const [associateData, setAssociateData] = useState({
-    registrationDate: "2026-04-01", // Default date for testing
-    name: "",
-    mobile: "",
-    designation: ""
-  });
-
   const [loadingLifetimeEligibility, setLoadingLifetimeEligibility] =
     useState(false);
   const [designation, setDesignation] = useState("");
@@ -97,130 +90,6 @@ const Dashboard = ({ userType }) => {
     const designationData = localStorage.getItem("designation");
     setDesignation(designationData || "");
   }, []);
-
-
-  const fetchAssociateProfile = async () => {
-    try {
-      const token = getAuthToken();
-      console.log("Fetching associate profile...");
-
-      const response = await fetch(`${API_URL}/profile`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-      console.log("Associate Profile Response:", data);
-
-      if (data.status === "1" && data.data) {
-        // Date field se date pickup karo
-        const registrationDate = data.data.date || data.data.created_at || null;
-        console.log("Registration Date:", registrationDate);
-
-        setAssociateData({
-          registrationDate: registrationDate,
-          name: data.data.username || "",
-          mobile: data.data.mobile || "",
-          designation: data.data.designation || ""
-        });
-      } else {
-        console.log("No profile data found, using default");
-        // Agar API fail ho to default date use karo
-        setAssociateData({
-          registrationDate: "2026-04-01",
-          name: "",
-          mobile: "",
-          designation: ""
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching associate profile:", error);
-      // Error case mein bhi default date set karo
-      setAssociateData({
-        registrationDate: "2026-04-01",
-        name: "",
-        mobile: "",
-        designation: ""
-      });
-    }
-  };
-
-
-  const calculateDatesFromRegistration = (registrationDateStr) => {
-    console.log("Calculating dates from:", registrationDateStr);
-
-    if (!registrationDateStr) {
-      console.log("No registration date, using default");
-      // Default date use karo agar null hai
-      registrationDateStr = "2026-04-01";
-    }
-
-    // Parse the registration date
-    const regDate = new Date(registrationDateStr);
-    console.log("Parsed registration date:", regDate);
-
-    // Joining date
-    const joiningDate = new Date(regDate);
-
-    // Booking date = Registration date + 30 days
-    const bookingDate = new Date(regDate);
-    bookingDate.setDate(regDate.getDate() + 30);
-
-    // Closing date = Booking date + 30 days
-    const closingDate = new Date(bookingDate);
-    closingDate.setDate(bookingDate.getDate() + 30);
-
-    console.log("Joining Date:", joiningDate);
-    console.log("Booking Date:", bookingDate);
-    console.log("Closing Date:", closingDate);
-
-    return {
-      joiningDate,
-      bookingDate,
-      closingDate
-    };
-  };
-
-
-
-
-  // Add this function to calculate dates
-  const calculateDates = () => {
-    if (!associateData.registrationDate) return { bookingDate: null, closingDate: null };
-
-    const regDate = new Date(associateData.registrationDate);
-    const bookingDate = new Date(regDate);
-    bookingDate.setDate(regDate.getDate() + 30);
-
-    const closingDate = new Date(bookingDate);
-    closingDate.setDate(bookingDate.getDate() + 30);
-
-    return { bookingDate, closingDate };
-  };
-
-  // Add this function to format date as DD-MM-YY
-  const formatShortDate = (date) => {
-    if (!date) return "-";
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = String(date.getFullYear()).slice(-2);
-    return `${day}-${month}-${year}`;
-  };
-
-  // Call this in your existing useEffect (around line 350)
-  useEffect(() => {
-    fetchDashboardData();
-    fetchGiftList();
-    fetchTeamGiftList();
-    fetchLifetimeRewardsList();
-    fetchLifetimeRewardsEligibility();
-    fetchmyteamLinesSummaryAssociate();
-    fetchAssociateProfile(); // Add this line
-  }, []);
-
 
   const NoDataMessage = ({ message = "Sorry, no data found" }) => (
     <div className="text-center py-4 text-muted">
@@ -766,32 +635,17 @@ const Dashboard = ({ userType }) => {
       href: "/property-lead-list",
     },
 
-    // {
-    //   title: "Welcome Bonus",
-    //   icon: "FaGift",
-    //   image: designation === "Sr. Sales Associate" ? welcomeImg : runningHourse,
-    // },
-
-    // {
-    //   title: "Bima",
-    //   icon: "TbReceiptRupee",
-    //   image: designation === "Sr. Sales Associate" ? bimaImg : runningHourse,
-    // },
-
-
     {
       title: "Welcome Bonus",
       icon: "FaGift",
-      customContent: true, // Add flag for custom rendering
+      image: designation === "Sr. Sales Associate" ? welcomeImg : runningHourse,
     },
-
 
     {
       title: "Bima",
       icon: "TbReceiptRupee",
-      customContent: true,
+      image: designation === "Sr. Sales Associate" ? bimaImg : runningHourse,
     },
-
     // {
     //   title: "Total Loan Leads",
     //   value: (
@@ -870,7 +724,7 @@ const Dashboard = ({ userType }) => {
           style={{
             color:
               Number(dashboard.total_sqyd_channel_sales) === 0 ||
-                !dashboard.total_sqyd_channel_sales
+              !dashboard.total_sqyd_channel_sales
                 ? "red"
                 : "green",
           }}
@@ -954,7 +808,7 @@ const Dashboard = ({ userType }) => {
           style={{
             color:
               Number(dashboard.total_channel_sales_earning) === 0 ||
-                !dashboard.total_channel_sales_earning
+              !dashboard.total_channel_sales_earning
                 ? "red"
                 : "green",
           }}
@@ -1353,8 +1207,9 @@ const Dashboard = ({ userType }) => {
                     >
                       <div className="gift-step-content-wrapper">
                         <div
-                          className={`gift-step-marker ovel ${isCompleted ? "bg-success" : "bg-danger"
-                            }`}
+                          className={`gift-step-marker ovel ${
+                            isCompleted ? "bg-success" : "bg-danger"
+                          }`}
                         >
                           {isCompleted ? "Qualified" : "Unqualified"}
                         </div>
@@ -1628,7 +1483,7 @@ const Dashboard = ({ userType }) => {
                     currentTeamSqyd < giftSqyd &&
                     (index === 0 ||
                       currentTeamSqyd >=
-                      parseFloat(giftTeamList[index - 1]?.area_sqyd));
+                        parseFloat(giftTeamList[index - 1]?.area_sqyd));
                   const progressPercentage = Math.min(
                     100,
                     (currentTeamSqyd / giftSqyd) * 100,
@@ -1642,12 +1497,13 @@ const Dashboard = ({ userType }) => {
                       >
                         <div className="gift-step-content-wrapper">
                           <div
-                            className={`gift-step-marker ovel ${isCompleted
-                              ? "gift-step-marker-completed bg-success text-white"
-                              : isCurrent
-                                ? "gift-step-marker-current bg-danger text-white"
-                                : "bg-danger text-white"
-                              }`}
+                            className={`gift-step-marker ovel ${
+                              isCompleted
+                                ? "gift-step-marker-completed bg-success text-white"
+                                : isCurrent
+                                  ? "gift-step-marker-current bg-danger text-white"
+                                  : "bg-danger text-white"
+                            }`}
                           >
                             {isCompleted ? "Qualified" : "Unqualified"}
                           </div>
@@ -1783,8 +1639,8 @@ const Dashboard = ({ userType }) => {
     const currentSqyd =
       eligibilityData?.rewards && eligibilityData.rewards.length > 0
         ? Math.max(
-          ...eligibilityData.rewards.map((r) => parseFloat(r.totalArea || 0)),
-        )
+            ...eligibilityData.rewards.map((r) => parseFloat(r.totalArea || 0)),
+          )
         : 0;
 
     const maxSqyd =
@@ -1794,20 +1650,20 @@ const Dashboard = ({ userType }) => {
 
     const eligibleRewardAreas = eligibilityData?.rewards
       ? new Set(
-        eligibilityData.rewards.map((r) => parseFloat(r.reward.area_sqyd)),
-      )
+          eligibilityData.rewards.map((r) => parseFloat(r.reward.area_sqyd)),
+        )
       : new Set();
 
     const highestEligibleReward =
       eligibilityData?.rewards && eligibilityData.rewards.length > 0
         ? eligibilityData.rewards.reduce(
-          (max, reward) =>
-            parseFloat(reward.reward.area_sqyd) >
+            (max, reward) =>
+              parseFloat(reward.reward.area_sqyd) >
               parseFloat(max.reward.area_sqyd)
-              ? reward
-              : max,
-          eligibilityData.rewards[0],
-        )
+                ? reward
+                : max,
+            eligibilityData.rewards[0],
+          )
         : null;
 
     return (
@@ -1888,8 +1744,8 @@ const Dashboard = ({ userType }) => {
                   const matchingReward =
                     isEligible && eligibilityData?.rewards
                       ? eligibilityData.rewards.find(
-                        (r) => parseFloat(r.reward.area_sqyd) === rewardSqyd,
-                      )
+                          (r) => parseFloat(r.reward.area_sqyd) === rewardSqyd,
+                        )
                       : null;
 
                   return (
@@ -1926,12 +1782,13 @@ const Dashboard = ({ userType }) => {
                           </ul>
                         </div>
                         <div
-                          className={`gift-step-marker ovel ${isEligible
-                            ? "bg-success"
-                            : isCompleted
-                              ? "bg-warning"
-                              : "bg-danger"
-                            } text-white`}
+                          className={`gift-step-marker ovel ${
+                            isEligible
+                              ? "bg-success"
+                              : isCompleted
+                                ? "bg-warning"
+                                : "bg-danger"
+                          } text-white`}
                         >
                           {isEligible
                             ? "Eligible"
@@ -2475,162 +2332,10 @@ const Dashboard = ({ userType }) => {
       </div>
 
       {/* 2. Dashboard Cards Section */}
-      {/*<Row className="mt-4">
-        {dashboardData.length > 0 ? (
-          dashboardData.map((item, index) => {
-            const IconComponent = iconMap[item.icon];
-            return (
-              <Col key={index} xs={12} sm={6} md={4} lg={4}>
-                <div className="card bg_card_design">
-                  <Link to={item.href} className="text-decoration-none">
-                    <div className="card-body pr-0 gap-2 d-flex align-items-center justify-content-start">
-                      {IconComponent && (
-                        <div className="icon_dashboard">
-                          <IconComponent size={40} className="text-white" />
-                        </div>
-                      )}
-                      <div>
-                        <div className="card-title">{item.title}</div>
-                        <div className="card-text">
-                          {item.value
-                            ? item.value
-                            : item.image && (
-                              <img
-                                className="load_img hourse"
-                                src={item.image}
-                                alt="load-img"
-                              />
-                            )}
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                </div>
-              </Col>
-            );
-          })
-        ) : (
-          <NoDataMessage message="Sorry, no dashboard data found" />
-        )}
-      </Row>*/}
-
-
-      {/* 2. Dashboard Cards Section */}
       <Row className="mt-4">
         {dashboardData.length > 0 ? (
           dashboardData.map((item, index) => {
             const IconComponent = iconMap[item.icon];
-
-            // Welcome Bonus Card with dynamic dates
-            if (item.customContent && item.title === "Welcome Bonus") {
-              const { bookingDate, closingDate } = calculateDates();
-              const currentDate = new Date();
-              let status = "Processing";
-              let statusColor = "#ffc107"; // yellow/warning
-
-              if (closingDate && currentDate > closingDate) {
-                status = "success";
-                statusColor = "#28a745"; // green
-              } else if (bookingDate && currentDate > bookingDate) {
-                status = "processing";
-                statusColor = "#17a2b8"; // teal/blue
-              }
-
-              return (
-                <Col key={index} xs={12} sm={6} md={4} lg={4}>
-                  <div className="card bg_card_design welcome-bonus-card">
-                    <div className="card-body">
-                      <div className="d-flex align-items-center gap-2 mb-3">
-                        <div className="icon_dashboard">
-                          <FaGift size={40} className="text-white" />
-                        </div>
-                        <div className="card-title mb-0">{item.title}</div>
-                      </div>
-
-                      {/* Joining + Booking Section */}
-                      <div className="date-section mb-3">
-                        <div className="date-label">Joining + Booking</div>
-                        <div className="date-range">
-                          {associateData.registrationDate ? (
-                            <>
-                              {formatShortDate(new Date(associateData.registrationDate))} - {bookingDate ? formatShortDate(bookingDate) : "-"}
-                            </>
-                          ) : "-"}
-                        </div>
-                        <div className="status-badge" style={{ color: statusColor }}>
-                          {status}
-                        </div>
-                      </div>
-
-                      {/* Booking + Closing Section - Static as requested */}
-                      <div className="date-section">
-                        <div className="date-label">Booking + Closing</div>
-                        <div className="date-range">
-                          15-04-26 - 14-05-26
-                        </div>
-                        <div className="status-badge" style={{ color: "#28a745" }}>
-                          success
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Col>
-              );
-            }
-
-            // Bima Card - Same style as Welcome Bonus
-            // Bima Card - Click to open registration form
-            if (item.customContent && item.title === "Bima") {
-              const bimaStartDate = "01-04-26";
-              const bimaEndDate = "30-04-26";
-
-              const handleBimaClick = () => {
-                navigate("/bima-registration-form");
-              };
-
-              return (
-                <Col key={index} xs={12} sm={6} md={4} lg={4}>
-                  <div
-                    className="card bg_card_design welcome-bonus-card"
-                    style={{ cursor: "pointer" }}
-                    onClick={handleBimaClick}
-                  >
-                    <div className="card-body">
-                      <div className="d-flex align-items-center gap-2 mb-3">
-                        <div className="icon_dashboard">
-                          <TbReceiptRupee size={40} className="text-white" />
-                        </div>
-                        <div className="card-title mb-0">{item.title}</div>
-                      </div>
-
-                      {/* Bima Validity Section */}
-                      <div className="date-section mb-3">
-                        <div className="date-label">Policy Validity</div>
-                        <div className="date-range">
-                          {bimaStartDate} - {bimaEndDate}
-                        </div>
-                        <div className="status-badge" style={{ color: "#28a745" }}>
-                          Active
-                        </div>
-                      </div>
-
-                      {/* Bima Coverage Section */}
-                      <div className="date-section">
-                        <div className="date-label">Coverage Amount</div>
-                        <div className="date-range">
-                          ₹5,00,000
-                        </div>
-                        <div className="status-badge" style={{ color: "#17a2b8" }}>
-                          Click to Register
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Col>
-              );
-            }
-
-            // Regular card rendering
             return (
               <Col key={index} xs={12} sm={6} md={4} lg={4}>
                 <div className="card bg_card_design">
@@ -2647,12 +2352,12 @@ const Dashboard = ({ userType }) => {
                           {item.value
                             ? item.value
                             : item.image && (
-                              <img
-                                className="load_img hourse"
-                                src={item.image}
-                                alt="load-img"
-                              />
-                            )}
+                                <img
+                                  className="load_img hourse"
+                                  src={item.image}
+                                  alt="load-img"
+                                />
+                              )}
                         </div>
                       </div>
                     </div>

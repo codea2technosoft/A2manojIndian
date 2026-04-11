@@ -34,23 +34,24 @@ console.log("adminid", admin_id)
 
 const cardConfig = [
   // Deposit Cards
-
   {
     label: "Today Deposit",
     key: "todayDeposit",
     icon: <FaMoneyBillWave size={36} className="text-white" />,
   },
+
   {
-    label: "Month Deposit",
-    key: "monthlyDeposit",
+    label: "Total Users Wallet",
+    key: "totalUserCredit",
     icon: <FaMoneyBillWave size={36} className="text-white" />,
   },
+
   {
     label: "Total Deposit",
     key: "totalDeposit",
     icon: <FaMoneyBillWave size={36} className="text-white" />,
   },
-
+  
   // Withdraw Cards
   {
     label: "Today Withdraw",
@@ -58,93 +59,43 @@ const cardConfig = [
     icon: <FaMoneyBillWave size={36} className="text-white" />,
   },
   {
-    label: "Month Withdraw",
-    key: "monthlyWithdraw",
-    icon: <FaMoneyBillWave size={36} className="text-white" />,
-  },
-  {
     label: "Total Withdraw",
     key: "totalWithdraw",
     icon: <FaMoneyBillWave size={36} className="text-white" />,
   },
-
+  
   // User Stats Cards - ये नए जोड़े हैं
-  {
-    label: "Wallet Balance",
-    key: "totalUserCredit",
-    icon: <FaMoneyBillWave size={36} className="text-white" />,
-  },
-
   {
     label: "Total Users",
     key: "totalUsers",
-    route: "/users-list",
-    icon: <FaUsersIcon size={36} className="text-white" />,
-  },
-  {
-    label: "Today Users",
-    key: "todayUsers",
-    // route:"/users-list",
-    icon: <FaUsersIcon size={36} className="text-white" />,
-  },
-  {
-    label: "Month Users",
-    key: "monthlyUsers",
-    // route:"/users-list",
+    route:"/users-list",
     icon: <FaUsersIcon size={36} className="text-white" />,
   },
   {
     label: "Active Users",
     key: "activeUsers",
-    route: "/active-users-list",
+    route:"/active-users-list",
     icon: <FaUserCheck size={36} className="text-white" />,
   },
   {
     label: "Banned Users",
     key: "bannedUsers",
-    route: "/blocked-users-list",
+    route:"/blocked-users-list",
     icon: <FaUserSlash size={36} className="text-white" />,
   },
-
-
-
-  {
-    label: "Today Profit",
-    key: "todayProfit",
-    //route:"/active-users-list",
-    icon: <FaUserCheck size={36} className="text-white" />,
-  },
-
-  {
-    label: "Monthly Profit",
-    key: "monthlyProfit",
-    // route:"/users-list",
-    icon: <FaUsersIcon size={36} className="text-white" />,
-  },
-
-  {
-    label: "Total Profit",
-    key: "totalProfit",
-    //route:"/blocked-users-list",
-    icon: <FaUserSlash size={36} className="text-white" />,
-  },
-
-
-
-
-
+  
   // Sports Details
-  // {
-  //   label: "Sport's Details",
-  //   key: "sportsDetails",
-  //   showCount: false,
-  //   icon: <FaGamepad size={36} className="text-white" />,
-  //   modalLinks: [
-  //     { label: "Active Games", route: "/inplay_game", icon: <FaGamepad size={16} /> },
-  //     { label: "Complete Games", route: "/completed_game", icon: <FaCheckCircle size={16} /> },
-  //   ],
-  // },
-
+  {
+    label: "Sport's Details",
+    key: "sportsDetails",
+    showCount: false,
+    icon: <FaGamepad size={36} className="text-white" />,
+    modalLinks: [
+      { label: "Active Games", route: "/inplay_game", icon: <FaGamepad size={16} /> },
+      { label: "Complete Games", route: "/completed_game", icon: <FaCheckCircle size={16} /> },
+    ],
+  },
+  
   // Settings & Logout
   {
     label: "Settings",
@@ -158,7 +109,6 @@ const cardConfig = [
     key: "logout",
     icon: <FaSignOutAlt size={36} className="text-white" />,
   },
-
 ];
 
 /* ---------- Global Modal ---------- */
@@ -240,7 +190,7 @@ export default function Dashboard() {
   const sportId = searchParams.get('sportId');
   const seriesId = searchParams.get('seriesId');
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     fetchDashboardData();
   }, []);
@@ -289,11 +239,11 @@ export default function Dashboard() {
       setLoading(true);
 
       const response = await getDashboardSummary(admin_id);
-
+      
       if (response?.data?.success) {
         // सीधे data ऑब्जेक्ट को counts में सेट करें
         setCounts(response.data.data);
-
+        
         // अगर admin_profile और role_2_count अलग API से आते हैं तो
         // उनके लिए अलग सेटअप रखें
         if (response.data.data.admin_profile) {
@@ -411,7 +361,7 @@ export default function Dashboard() {
       fetchEvents(page, pagination.itemsPerPage);
     }
   };
-
+  
   const getPageNumbers = () => {
     const pageNumbers = [];
     const maxVisiblePages = 2;
@@ -535,29 +485,22 @@ export default function Dashboard() {
               <div className="card-body d-flex align-items-center justify-content-between">
                 <div>
                   <h6 className="mb-1 text-white">{item.label}</h6>
-
+                  
                   {/* Deposit/Withdraw cards - with ₹ symbol */}
-                  {(item.key === "totalUserCredit" ||
-                    item.key === "todayDeposit" ||
-                    item.key === "totalDeposit" ||
-                    item.key === "monthlyDeposit" ||
-                    item.key === "todayWithdraw" ||
-                    item.key === "monthlyWithdraw" ||
+                  {(item.key === "todayDeposit" || 
+                    item.key === "totalDeposit" || 
+                    item.key === "totalUserCredit" || 
+                    item.key === "todayWithdraw" || 
                     item.key === "totalWithdraw") && (
-                      <h4 className="text-white mt-2">₹{formatCurrency(counts?.[item.key] ?? 0)}</h4>
-                    )}
-
+                    <h4 className="text-white mt-2">₹{formatCurrency(counts?.[item.key] ?? 0)}</h4>
+                  )}
+                  
                   {/* User stats cards - without ₹ symbol */}
-                  {(item.key === "totalUsers" ||
-                    item.key === "todayUsers" ||
-                    item.key === "monthlyUsers" ||
-                    item.key === "activeUsers" ||
-                    item.key === "totalProfit" ||
-                    item.key === "todayProfit" ||
-                    item.key === "monthlyProfit" ||
+                  {(item.key === "totalUsers" || 
+                    item.key === "activeUsers" || 
                     item.key === "bannedUsers") && (
-                      <h4 className="text-white mt-2">{formatNumber(counts?.[item.key] ?? 0)}</h4>
-                    )}
+                    <h4 className="text-white mt-2">{formatNumber(counts?.[item.key] ?? 0)}</h4>
+                  )}
                 </div>
                 {item.icon}
               </div>
@@ -586,16 +529,16 @@ export default function Dashboard() {
           );
         })}
       </div>
-
-      <GlobalModal
-        open={openModal}
-        showCount={showModalCount}
-        title={modalTitle}
-        links={modalLinks}
-        counts={counts}
-        onClose={() => setOpenModal(false)}
+      
+      <GlobalModal 
+        open={openModal} 
+        showCount={showModalCount} 
+        title={modalTitle} 
+        links={modalLinks} 
+        counts={counts} 
+        onClose={() => setOpenModal(false)} 
       />
-
+      
       <div className="mt-2 activematch">
         <div className="title_all">All Active Match</div>
         <div className="table-responsive">

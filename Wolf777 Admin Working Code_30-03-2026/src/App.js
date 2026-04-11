@@ -23,6 +23,7 @@ import NotesList from "./Pages/User/UserNoteList.jsx";
 import LoginHistory from "./Pages/User/loginHistory";
 import UsersWalletBalance from "./Pages/User/UsersWalletBalance";
 import UsersList from "./Pages/User/UsersList";
+import DateWiseUsersList from "./Pages/User/DateWiseUsersList";
 import ActiveUsersList from "./Pages/User/ActiveUsersList";
 import DeletedUsers from "./Pages/User/DeletedUsers.jsx";
 import InactiveUsersList from "./Pages/User/InactiveUsersList";
@@ -823,6 +824,13 @@ const App = () => {
           path="/users-list"
           element={<ProtectedRoute element={UsersList} path="/users-list" />}
         />
+
+
+         <Route
+          path="/date-wise-users-list"
+          element={<ProtectedRoute element={DateWiseUsersList} path="/date-wise-users-list" />}
+        />
+
 
         <Route
           path="/active-users-list"

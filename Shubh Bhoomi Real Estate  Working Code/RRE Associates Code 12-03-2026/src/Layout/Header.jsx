@@ -623,7 +623,7 @@ function Header({ onToggleSidebar }) {
                       src={`${profileImage}${profile.profile}`}
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = {DummyUser};
+                        e.target.src = { DummyUser };
                       }}
                       alt="Profile"
                       className="rounded-circle"
@@ -753,8 +753,9 @@ function Header({ onToggleSidebar }) {
           </div>
         </div>
 
-        <marquee className="header_marquee">{siteSettings?.rre_screen_message
-        }</marquee>
+        <marquee className="header_marquee">
+          <strong>{siteSettings?.rre_screen_message}</strong>
+        </marquee>
 
       </div>
       {/* {showModal && (
