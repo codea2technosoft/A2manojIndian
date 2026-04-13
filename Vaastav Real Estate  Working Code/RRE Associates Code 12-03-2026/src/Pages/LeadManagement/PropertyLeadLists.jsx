@@ -390,9 +390,17 @@ function PropertyLeadLists() {
             <div className="titlepage">
               <h3>Property Leads</h3>
             </div>
+ <div className="d-md-block d-lg-block d-xl-block d-block d-sm-block">
+                <button
+                  type="button"
+                  className="toggle-filter-btn"
+                  onClick={toggleFilter}
+                >
+                  {showFilter ? <MdFilterAltOff /> : <MdFilterListAlt />}
+                </button>
+              </div>
 
-
-            {!isDesktop && (
+            {/* {!isDesktop && (
               <div className="d-md-block d-lg-block d-xl-none d-block d-sm-block">
                 <button
                   type="button"
@@ -402,8 +410,8 @@ function PropertyLeadLists() {
                   {showFilter ? <MdFilterAltOff /> : <MdFilterListAlt />}
                 </button>
               </div>
-            )}
-            <div className="d-md-none d-lg-none d-xl-block d-none d-sm-none">
+            )} */}
+            {/* <div className="d-md-none d-lg-none d-xl-block d-none d-sm-none">
               <div className="d-flex gap-2">
                 <div className="form_design">
                   <input
@@ -488,13 +496,13 @@ function PropertyLeadLists() {
                   </button>
                 </div>
               </div>
-            </div>
+            </div> */}
 
           </div>
         </div>
         <div className="card-body">
           {showFilter && (
-            <div className=" d-lg-block d-xl-none">
+            <div className=" d-lg-block d-xl-block">
      <div className="d-flex fillter_input gap-2">
                 <div className="form_design">
                   <input
@@ -590,7 +598,32 @@ function PropertyLeadLists() {
               <p className="mt-3">Loading my properties leads...</p>
             </div>
           ) : users.length === 0 ? (
-            <p className="text-center text-danger fw-bold">No data found!</p>
+           <div className="table-responsive">
+                <Table bordered>
+                  <thead className="table-dark">
+                    <tr>
+                      <th>#</th>
+                      <th>Lead ID</th>
+                      <th>Name</th>
+                      <th>Mobile</th>
+                      <th>Income Source</th>
+                      <th>Project Name</th>
+                      <th>Block Name</th>
+                      <th>Unit Name</th>
+                      <th>Lead Date</th>
+                      <th>Status</th>
+                      <th>Remark</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                      <tr>
+                        <td colSpan={12}> <p className="text-center text-danger fw-bold">No data found!</p></td>
+                      </tr>
+                  </tbody>
+                  </Table>
+                  </div>
           ) : (
             <>
               <div className="table-responsive">

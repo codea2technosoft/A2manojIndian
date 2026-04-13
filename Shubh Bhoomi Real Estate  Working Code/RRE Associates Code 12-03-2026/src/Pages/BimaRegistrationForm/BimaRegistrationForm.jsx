@@ -571,7 +571,7 @@ function BimaRegistrationForm() {
                         disabled
                       />
                       <Form.Control.Feedback type="invalid">
-                        {errors.email}
+                        {errors.email}  
                       </Form.Control.Feedback>
                     </Form.Group>
                   </Col>
@@ -614,7 +614,7 @@ function BimaRegistrationForm() {
                   </Col>
                 </Row>
 
-                <h5 className="mb-3 mt-4 text-primary">KYC Details</h5>
+                <h5 className="mb-3 mt-4 text-dark">KYC Details</h5>
                 <Row>
                   <Col md={6}>
                     <Form.Group className="mb-3">
@@ -655,7 +655,7 @@ function BimaRegistrationForm() {
                   </Col>
                 </Row>
 
-                <h5 className="mb-3 mt-4 text-primary">Address Details</h5>
+                <h5 className="mb-3 mt-4 text-dark">Address Details</h5>
                 <Row>
                   <Col md={12}>
                     <Form.Group className="mb-3">
@@ -738,7 +738,7 @@ function BimaRegistrationForm() {
                   </Col>
                 </Row>
 
-                <h5 className="mb-3 mt-4 text-primary">Nominee Details</h5>
+                <h5 className="mb-3 mt-4 text-dark">Nominee Details</h5>
                 <Row>
                   <Col md={4}>
                     <Form.Group className="mb-3">
@@ -791,7 +791,7 @@ function BimaRegistrationForm() {
                   </Col>
                 </Row>
 
-                <h5 className="mb-3 mt-4 text-primary">Insurance Details</h5>
+                <h5 className="mb-3 mt-4 text-dark">Insurance Details</h5>
                 <Row>
                   <Col md={6}>
                     <Form.Group className="mb-3">
@@ -810,7 +810,7 @@ function BimaRegistrationForm() {
                   </Col>
                 </Row>
 
-                <h5 className="mb-3 mt-4 text-primary">Document Uploads</h5>
+                <h5 className="mb-3 mt-4 text-dark">Document Uploads</h5>
                 <Row>
                   {/* PAN Card Image */}
                   <Col md={6} lg={4}>

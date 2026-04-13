@@ -42,12 +42,12 @@ function MyAssociates() {
   const getAuthToken = () => localStorage.getItem("token");
 
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1200);
-  
-const [showFilter, setShowFilter] = useState(false); // default hidden
 
-const toggleFilter = () => {
-setShowFilter(prev => !prev);
-};
+  const [showFilter, setShowFilter] = useState(false); // default hidden
+
+  const toggleFilter = () => {
+    setShowFilter(prev => !prev);
+  };
 
   useEffect(() => {
     // Function to check screen width
@@ -151,7 +151,7 @@ setShowFilter(prev => !prev);
               <h3>My Associates</h3>
             </div>
 
-            {!isDesktop && (
+            {/* {!isDesktop && (
             <div className="d-md-block d-lg-block d-xl-none d-block d-sm-block">
               <button
                 type="button"
@@ -161,9 +161,17 @@ setShowFilter(prev => !prev);
                 {showFilter ? <MdFilterAltOff /> : <MdFilterListAlt />}
               </button>
             </div>
-            )}
-            
-            <div className="d-lg-none d-xl-block d-none">
+            )} */}
+            <div className="d-md-block d-lg-block d-xl-block d-block d-sm-block">
+              <button
+                type="button"
+                className="toggle-filter-btn"
+                onClick={toggleFilter}
+              >
+                {showFilter ? <MdFilterAltOff /> : <MdFilterListAlt />}
+              </button>
+            </div>
+            {/* <div className="d-lg-none d-xl-none d-none">
               <div className="d-flex  gap-2">
               <div className="form_design">
                 <input
@@ -184,12 +192,12 @@ setShowFilter(prev => !prev);
                 </select>
               </div>
             </div>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="card-body">
-           {showFilter && (
-              <div className="d-flex gap-2 mb-2">
+          {showFilter && (
+            <div className="d-flex gap-2 mb-2">
               <div className="form_design w-100">
                 <input
                   type="text"
@@ -208,8 +216,8 @@ setShowFilter(prev => !prev);
                   <option value="inactive">Inactive</option>
                 </select>
               </div>
-            </div> 
-            )
+            </div>
+          )
           }
           {/* <Form.Group controlId="search" className="mb-4">
         <Form.Control
@@ -226,7 +234,33 @@ setShowFilter(prev => !prev);
               <p className="mt-3">Loading my Associates...</p>
             </div>
           ) : users.length === 0 ? (
-            <p className="text-center text-danger fw-bold">No data found!</p>
+            <div className="table-responsive">
+              <Table bordered>
+                <thead className="table-dark">
+                  <tr>
+                     <th>#</th>
+                      <th>Name</th>
+                      <th>Mobile</th>
+                      <th>Type</th>
+                      <th>KYC Status</th>
+                      <th>Parent Name</th>
+                      <th>Parent ID</th>
+                      <th>Status</th>
+                      <th>Joining Date</th>
+                      <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colSpan={10}><p className="text-center text-danger fw-bold">
+                      {searchTerm.level
+                        ? `No data found for Level ${searchTerm.level}`
+                        : "No data found!"}
+                    </p></td>
+                  </tr>
+                </tbody>
+              </Table>
+            </div>
           ) : (
             <>
               <div className="table-responsive">
@@ -256,10 +290,10 @@ setShowFilter(prev => !prev);
                         <td>
                           <span
                             className={`badge ${user.kyc?.toLowerCase() === "success"
-                                ? "bg-success"
-                                : user.kyc?.toLowerCase() === "pending"
-                                  ? "bg-warning text-white"
-                                  : "bg-custum"
+                              ? "bg-success"
+                              : user.kyc?.toLowerCase() === "pending"
+                                ? "bg-warning text-white"
+                                : "bg-custum"
                               }`}
                           >
                             {user.kyc?.toLowerCase() === "success"
@@ -351,7 +385,7 @@ setShowFilter(prev => !prev);
 
       {/* Modal */}
       {selectedUser && (
-        <Modal show={showModal}  size="lg"  className="modalcontent" onHide={handleCloseModal} centered>
+        <Modal show={showModal} size="lg" className="modalcontent" onHide={handleCloseModal} centered>
           <div className="d-flex justify-content-between header_modal_design">
             <h3>My Associates Details</h3>
             <Modal.Header closeButton>
@@ -361,150 +395,150 @@ setShowFilter(prev => !prev);
           <Modal.Body className="text-center">
             <div className="associatedetails">
               <div className="profileimage">
-                 <img
-                src={
-                  selectedUser.profile &&
-                    selectedUser.profile !== "null" &&
-                    selectedUser.profile !== ""
-                    ? `${API_URL}/${selectedUser.profile}`
-                    : "/assets/images/dummy_profile.png"
-                }
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "/assets/images/dummy_profile.png";
-                }}
-                alt="User Profile"
-                className="rounded-circle mb-4"
-              
-              />
+                <img
+                  src={
+                    selectedUser.profile &&
+                      selectedUser.profile !== "null" &&
+                      selectedUser.profile !== ""
+                      ? `${API_URL}/${selectedUser.profile}`
+                      : "/assets/images/dummy_profile.png"
+                  }
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "/assets/images/dummy_profile.png";
+                  }}
+                  alt="User Profile"
+                  className="rounded-circle mb-4"
+
+                />
               </div>
 
               <div className="text-start">
                 <div className="row">
                   <div className="col-md-6 col-12 col-lg-4">
-                      <div className="form-group form_modal">
-                        <label htmlFor="">Name</label>
-                        <input type="text" value={toSentenceCase(selectedUser.username)} disabled />
-                      </div>
+                    <div className="form-group form_modal">
+                      <label htmlFor="">Name</label>
+                      <input type="text" value={toSentenceCase(selectedUser.username)} disabled />
+                    </div>
                   </div>
                   <div className="col-md-6 col-12 col-lg-4">
                     <div className="form-group form_modal">
-                        <label htmlFor="">Mobile</label>
-                        <input type="text" value={selectedUser.mobile} disabled />
-                      </div>
+                      <label htmlFor="">Mobile</label>
+                      <input type="text" value={selectedUser.mobile} disabled />
+                    </div>
                   </div>
                   <div className="col-md-6 col-12 col-lg-4">
                     <div className="form-group form_modal">
-                        <label htmlFor="">Email</label>
-                        <input type="text" value={selectedUser.email || "-"} disabled />
-                      </div>
-                  </div>
-                  <div className="col-md-6 col-12 col-lg-4">
-                     <div className="form-group form_modal">
-                        <label htmlFor="">Address</label>
-                        <input type="text" value={toSentenceCase(selectedUser.address || "-")} disabled />
-                      </div>
-                    
-                  </div>
-                  <div className="col-md-6 col-12 col-lg-4">
-                     <div className="form-group form_modal">
-                        <label htmlFor="">Status</label>
-                        <input type="text" value={toSentenceCase(selectedUser.status)} disabled />
-                      </div>
-                  </div>
-                  <div className="col-md-6 col-12 col-lg-4">
-                     <div className="form-group form_modal">
-                        <label htmlFor="">DOB</label>
-                        <input type="text" value={formatDate(selectedUser.dob)} disabled />
-                      </div>
+                      <label htmlFor="">Email</label>
+                      <input type="text" value={selectedUser.email || "-"} disabled />
+                    </div>
                   </div>
                   <div className="col-md-6 col-12 col-lg-4">
                     <div className="form-group form_modal">
-                        <label htmlFor="">Aadhar</label>
-                        <input type="text" value={selectedUser.adhar_number} disabled />
-                      </div>
+                      <label htmlFor="">Address</label>
+                      <input type="text" value={toSentenceCase(selectedUser.address || "-")} disabled />
+                    </div>
+
                   </div>
                   <div className="col-md-6 col-12 col-lg-4">
                     <div className="form-group form_modal">
-                        <label htmlFor="">PAN</label>
-                        <input type="text" value={selectedUser.pan_number} disabled />
-                      </div>
-                  </div>
-                  <div className="col-md-6 col-12 col-lg-4">
-                     <div className="form-group form_modal">
-                        <label htmlFor="">KYC</label>
-                        <input type="text" value={toSentenceCase(selectedUser.kyc)} disabled />
-                      </div>
+                      <label htmlFor="">Status</label>
+                      <input type="text" value={toSentenceCase(selectedUser.status)} disabled />
+                    </div>
                   </div>
                   <div className="col-md-6 col-12 col-lg-4">
                     <div className="form-group form_modal">
-                        <label htmlFor="">Parent Name</label>
-                        <input type="text" value={selectedUser.parent_name} disabled />
-                      </div>
-                  </div>
-                  <div className="col-md-6 col-12 col-lg-4">
-                        <div className="form-group form_modal">
-                        <label htmlFor="">Parent ID</label>
-                        <input type="text" value={selectedUser.parent_id || "-"} disabled />
-                      </div>
-                  </div>
-                  <div className="col-md-6 col-12 col-lg-4">
-                       <div className="form-group form_modal">
-                        <label htmlFor="">Register By</label>
-                        <input type="text" value={selectedUser.register_by || "-"} disabled />
-                      </div>
-                   
-                  </div>
-                  <div className="col-md-6 col-12 col-lg-4">
-                     <div className="form-group form_modal">
-                        <label htmlFor="">User Type</label>
-                        <input type="text" value= {toSentenceCase(selectedUser.user_type)} disabled />
-                      </div>                   
-                  </div>
-                  <div className="col-md-6 col-12 col-lg-4">
-                     <div className="form-group form_modal">
-                        <label htmlFor="">City</label>
-                        <input type="text" value={selectedUser.city.name} disabled />
-                      </div> 
-                  </div>
-                  <div className="col-md-6 col-12 col-lg-4">
-                     <div className="form-group form_modal">
-                        <label htmlFor="">Area</label>
-                        <input type="text" value={selectedUser.area} disabled />
-                      </div> 
+                      <label htmlFor="">DOB</label>
+                      <input type="text" value={formatDate(selectedUser.dob)} disabled />
+                    </div>
                   </div>
                   <div className="col-md-6 col-12 col-lg-4">
                     <div className="form-group form_modal">
-                        <label htmlFor="">PinCode</label>
-                        <input type="text" value= {selectedUser.pincode} disabled />
-                      </div> 
-                  </div>
-                  <div className="col-md-6 col-12 col-lg-4">
-                      <div className="form-group form_modal">
-                        <label htmlFor="">Whatsapp No</label>
-                        <input type="text" value={selectedUser.whatsapp_number} disabled />
-                      </div>
+                      <label htmlFor="">Aadhar</label>
+                      <input type="text" value={selectedUser.adhar_number} disabled />
+                    </div>
                   </div>
                   <div className="col-md-6 col-12 col-lg-4">
                     <div className="form-group form_modal">
-                        <label htmlFor="">Marriage Date</label>
-                        <input type="text" value={formatDate(selectedUser.marriage_anniversary_date)} disabled />
-                      </div>
-                    
+                      <label htmlFor="">PAN</label>
+                      <input type="text" value={selectedUser.pan_number} disabled />
+                    </div>
                   </div>
                   <div className="col-md-6 col-12 col-lg-4">
-                      <div className="form-group form_modal">
-                        <label htmlFor="">RERA Number</label>
-                        <input type="text" value={selectedUser.rera_number || "-"} disabled />
-                      </div>
-                    
+                    <div className="form-group form_modal">
+                      <label htmlFor="">KYC</label>
+                      <input type="text" value={toSentenceCase(selectedUser.kyc)} disabled />
+                    </div>
                   </div>
-                   <div className="col-md-6 col-12 col-lg-4">
-                   <div className="form-group form_modal">
-                        <label htmlFor="">First Time Password Change</label>
-                        <input type="text" value={selectedUser.first_time_password_change?.toUpperCase() || "-"} disabled />
-                      </div>
-                   
+                  <div className="col-md-6 col-12 col-lg-4">
+                    <div className="form-group form_modal">
+                      <label htmlFor="">Parent Name</label>
+                      <input type="text" value={selectedUser.parent_name} disabled />
+                    </div>
+                  </div>
+                  <div className="col-md-6 col-12 col-lg-4">
+                    <div className="form-group form_modal">
+                      <label htmlFor="">Parent ID</label>
+                      <input type="text" value={selectedUser.parent_id || "-"} disabled />
+                    </div>
+                  </div>
+                  <div className="col-md-6 col-12 col-lg-4">
+                    <div className="form-group form_modal">
+                      <label htmlFor="">Register By</label>
+                      <input type="text" value={selectedUser.register_by || "-"} disabled />
+                    </div>
+
+                  </div>
+                  <div className="col-md-6 col-12 col-lg-4">
+                    <div className="form-group form_modal">
+                      <label htmlFor="">User Type</label>
+                      <input type="text" value={toSentenceCase(selectedUser.user_type)} disabled />
+                    </div>
+                  </div>
+                  <div className="col-md-6 col-12 col-lg-4">
+                    <div className="form-group form_modal">
+                      <label htmlFor="">City</label>
+                      <input type="text" value={selectedUser.city.name} disabled />
+                    </div>
+                  </div>
+                  <div className="col-md-6 col-12 col-lg-4">
+                    <div className="form-group form_modal">
+                      <label htmlFor="">Area</label>
+                      <input type="text" value={selectedUser.area} disabled />
+                    </div>
+                  </div>
+                  <div className="col-md-6 col-12 col-lg-4">
+                    <div className="form-group form_modal">
+                      <label htmlFor="">PinCode</label>
+                      <input type="text" value={selectedUser.pincode} disabled />
+                    </div>
+                  </div>
+                  <div className="col-md-6 col-12 col-lg-4">
+                    <div className="form-group form_modal">
+                      <label htmlFor="">Whatsapp No</label>
+                      <input type="text" value={selectedUser.whatsapp_number} disabled />
+                    </div>
+                  </div>
+                  <div className="col-md-6 col-12 col-lg-4">
+                    <div className="form-group form_modal">
+                      <label htmlFor="">Marriage Date</label>
+                      <input type="text" value={formatDate(selectedUser.marriage_anniversary_date)} disabled />
+                    </div>
+
+                  </div>
+                  <div className="col-md-6 col-12 col-lg-4">
+                    <div className="form-group form_modal">
+                      <label htmlFor="">RERA Number</label>
+                      <input type="text" value={selectedUser.rera_number || "-"} disabled />
+                    </div>
+
+                  </div>
+                  <div className="col-md-6 col-12 col-lg-4">
+                    <div className="form-group form_modal">
+                      <label htmlFor="">First Time Password Change</label>
+                      <input type="text" value={selectedUser.first_time_password_change?.toUpperCase() || "-"} disabled />
+                    </div>
+
                   </div>
                 </div>
               </div>

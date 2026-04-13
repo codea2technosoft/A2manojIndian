@@ -145,7 +145,27 @@ function NotificationsLists() {
             {loading ? (
               <p>Loading notifications...</p>
             ) : leads.length === 0 ? (
-              <p>No notification found.</p>
+              <div className="table-responsive">
+                 <Table striped bordered hover responsive>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Lead ID</th>
+                      <th>Type</th>
+                      <th>Status</th>
+                      <th>Action By</th>
+                      <th>Date Time</th>
+                      <th>Message</th>
+                      <th>Remark</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                         <td colSpan={8} className="text-center">No Data Found </td>
+                      </tr>
+                  </tbody>
+                </Table>
+               </div>
             ) : (
               <>
                <div className="table-responsive">

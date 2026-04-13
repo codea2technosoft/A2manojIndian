@@ -185,7 +185,16 @@ function AllProjectList() {
             <div className="titlepage">
               <h3>All Project List</h3>
             </div>
-            {!isDesktop && (
+              <div className="d-md-block d-lg-block d-xl-block d-block d-sm-block">
+                <button
+                  type="button"
+                  className="toggle-filter-btn"
+                  onClick={toggleFilter}
+                >
+                  {showFilter ? <MdFilterAltOff /> : <MdFilterListAlt />}
+                </button>
+              </div>
+            {/* {!isDesktop && (
               <div className="d-md-block d-lg-block d-xl-none d-block d-sm-block">
                 <button
                   type="button"
@@ -195,8 +204,8 @@ function AllProjectList() {
                   {showFilter ? <MdFilterAltOff /> : <MdFilterListAlt />}
                 </button>
               </div>
-            )}
-            <div className="d-md-none d-lg-none d-xl-block d-none d-sm-none">
+            )} */}
+            <div className="d-md-none d-lg-none d-xl-none d-none d-sm-none">
               <div className="d-flex gap-2">
                 <div className="form-design">
                   <input
@@ -233,7 +242,7 @@ function AllProjectList() {
         </div>
         <div className="card-body">
           {showFilter && (
-            <div className=" d-lg-block d-xl-none">
+            <div className=" d-lg-block d-xl-block">
               <div className="d-flex gap-2 mb-2">
                 <div className="form-design w-100">
                   <input

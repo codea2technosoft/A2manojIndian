@@ -98,157 +98,157 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
     {
       section: "Menu",
       items: [
-        // {
-        //   id: "dashboard",
-        //   title: "Dashboard",
-        //   href: "/dashboard",
-        //   icon: (
-        //     <svg
-        //       width="24"
-        //       height="24"
-        //       viewBox="0 0 24 24"
-        //       fill="none"
-        //       stroke="currentColor"
-        //       strokeWidth="2"
-        //     >
-        //       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-        //       <polyline points="9 22 9 12 15 12 15 22"></polyline>
-        //     </svg>
-        //   ),
-        // },
+        {
+          id: "dashboard",
+          title: "Dashboard",
+          href: "/dashboard",
+          icon: (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+          ),
+        },
 
-        // {
-        //   id: "Account",
-        //   title: "Bank Account",
-        //   dropdown: true,
-        //   icon: (
-        //     <svg
-        //       width="24"
-        //       height="24"
-        //       viewBox="0 0 24 24"
-        //       fill="none"
-        //       stroke="currentColor"
-        //       strokeWidth="2"
-        //     >
-        //       <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-        //       <path d="M16 3h-8v4h8V3z"></path>
-        //     </svg>
-        //   ),
-        //   children: [
-        //     {
-        //       id: "Account List",
-        //       title: "Bank Account List",
-        //       href: "/account-list",
-        //     },
-        //     {
-        //       id: "WithdrawalRequest",
-        //       title: "Withdrawal Request",
-        //       href: "/add-withdrawal-request",
-        //     },
+        {
+          id: "Account",
+          title: "Bank Account",
+          dropdown: true,
+          icon: (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 3h-8v4h8V3z"></path>
+            </svg>
+          ),
+          children: [
+            {
+              id: "Account List",
+              title: "Bank Account List",
+              href: "/account-list",
+            },
+            {
+              id: "WithdrawalRequest",
+              title: "Withdrawal Request",
+              href: "/add-withdrawal-request",
+            },
 
-        //     {
-        //       id: "withdrawalhistory",
-        //       title: "Withdrawal History",
-        //       href: "/withdrawal-history",
-        //     },
+            {
+              id: "withdrawalhistory",
+              title: "Withdrawal History",
+              href: "/withdrawal-history",
+            },
 
-        //     {
-        //       id: "tdsreport",
-        //       title: "TDS Report",
-        //       href: "/get-tsd-report-for-associate",
-        //     },
-
-
-
-        //   ],
-        // },
+            {
+              id: "tdsreport",
+              title: "TDS Report",
+              href: "/get-tsd-report-for-associate",
+            },
 
 
+
+          ],
+        },
 
 
 
 
-        // {
-        //   id: "wallet_ledger",
-        //   title: "Wallet ledger",
-        //   dropdown: true,
-        //   icon: (
-        //     <svg
-        //       width="24"
-        //       height="24"
-        //       viewBox="0 0 24 24"
-        //       fill="none"
-        //       stroke="currentColor"
-        //       strokeWidth="2"
-        //     >
-        //       <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-        //       <path d="M16 3h-8v4h8V3z"></path>
-        //     </svg>
-        //   ),
-        //   children: [
 
 
-        //     {
-        //       id: "walletledger",
-        //       title: "Wallet Ledger",
-        //       href: "/user-wallet-report",
-        //     },
-        //     // { id: "PlotLedger", title: "Unit Ledger", href: "/admin-plot-ledger", checked: false },
-        //     { id: "unitsqyd_added", title: "Unit SQYD Added", href: "/unit-sqyd-added", checked: false },
-        //     { id: "unit_sqyd_ledger", title: "Unit SQYD Ledger", href: "/unit-sqyd-ledger", checked: false },
+        {
+          id: "wallet_ledger",
+          title: "Wallet ledger",
+          dropdown: true,
+          icon: (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 3h-8v4h8V3z"></path>
+            </svg>
+          ),
+          children: [
 
 
-        //   ],
-        // },
+            {
+              id: "walletledger",
+              title: "Wallet Ledger",
+              href: "/user-wallet-report",
+            },
+            // { id: "PlotLedger", title: "Unit Ledger", href: "/admin-plot-ledger", checked: false },
+            { id: "unitsqyd_added", title: "Unit SQYD Added", href: "/unit-sqyd-added", checked: false },
+            { id: "unit_sqyd_ledger", title: "Unit SQYD Ledger", href: "/unit-sqyd-ledger", checked: false },
 
 
-        // {
-        //   id: "myteam",
-        //   title: "My Team",
-        //   dropdown: true,
-        //   icon: (
-        //     <svg
-        //       width="24"
-        //       height="24"
-        //       viewBox="0 0 24 24"
-        //       fill="none"
-        //       stroke="currentColor"
-        //       strokeWidth="2"
-        //     >
-        //       <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-        //       <path d="M16 3h-8v4h8V3z"></path>
-        //     </svg>
-        //   ),
-        //   children: [
+          ],
+        },
 
-        //     ...(userType !== "channel"
-        //       ? [
-        //         {
-        //           id: "my-associates",
-        //           title: "Direct All Associates",
-        //           href: "/my-associates",
-        //         },
-        //       ]
-        //       : []),
 
-        //     {
-        //       id: "all-channel-list",
-        //       title: "Direct All Channel Partners",
-        //       href: "/all-channel-list",
-        //     },
+        {
+          id: "myteam",
+          title: "My Team",
+          dropdown: true,
+          icon: (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 3h-8v4h8V3z"></path>
+            </svg>
+          ),
+          children: [
 
-        //     {
-        //       id: "myteam",
-        //       title: "My Teams",
-        //       href: "/my-team",
-        //     },
-        //     {
-        //       id: "levelwiselead",
-        //       title: "Level Wise Team",
-        //       href: "/levelwise",
-        //     },
-        //   ],
-        // },
+            ...(userType !== "channel"
+              ? [
+                {
+                  id: "my-associates",
+                  title: "Direct All Associates",
+                  href: "/my-associates",
+                },
+              ]
+              : []),
+
+            {
+              id: "all-channel-list",
+              title: "Direct All Channel Partners",
+              href: "/all-channel-list",
+            },
+
+            {
+              id: "myteam",
+              title: "My Teams",
+              href: "/my-team",
+            },
+            {
+              id: "levelwiselead",
+              title: "Level Wise Team",
+              href: "/levelwise",
+            },
+          ],
+        },
 
 
 
@@ -345,63 +345,63 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
 
 
-        // ...(userType !== "channel"
-        //   ? [
-        //       {
-        //         id: "my-associates",
-        //         title: "Direct Associates",
-        //         dropdown: true,
-        //         icon: (
-        //           <svg
-        //             width="24"
-        //             height="24"
-        //             viewBox="0 0 24 24"
-        //             fill="none"
-        //             stroke="currentColor"
-        //             strokeWidth="2"
-        //           >
-        //             <path d="M17 21v-2a4 4 0 0 0-3-3.87" />
-        //             <path d="M7 21v-2a4 4 0 0 1 3-3.87" />
-        //             <circle cx="12" cy="7" r="4" />
-        //           </svg>
-        //         ),
-        //         children: [
-        //           {
-        //             id: "my-associates",
-        //             title: "Direct All Associates",
-        //             href: "/my-associates",
-        //           },
-        //         ],
-        //       },
-        //     ]
-        //   : []),
+        ...(userType !== "channel"
+          ? [
+              {
+                id: "my-associates",
+                title: "Direct Associates",
+                dropdown: true,
+                icon: (
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M17 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M7 21v-2a4 4 0 0 1 3-3.87" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                ),
+                children: [
+                  {
+                    id: "my-associates",
+                    title: "Direct All Associates",
+                    href: "/my-associates",
+                  },
+                ],
+              },
+            ]
+          : []),
 
-        // {
-        //   id: "projectChannel",
-        //   title: "Direct Channel Partners",
-        //   dropdown: true,
-        //   icon: (
-        //     <svg
-        //       width="24"
-        //       height="24"
-        //       viewBox="0 0 24 24"
-        //       fill="none"
-        //       stroke="currentColor"
-        //       strokeWidth="2"
-        //     >
-        //       <path d="M17 21v-2a4 4 0 0 0-3-3.87" />
-        //       <path d="M7 21v-2a4 4 0 0 1 3-3.87" />
-        //       <circle cx="12" cy="7" r="4" />
-        //     </svg>
-        //   ),
-        //   children: [
-        //     {
-        //       id: "all-channel-list",
-        //       title: "Direct All Channel Partners",
-        //       href: "/all-channel-list",
-        //     },
-        //   ],
-        // },
+        {
+          id: "projectChannel",
+          title: "Direct Channel Partners",
+          dropdown: true,
+          icon: (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M17 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M7 21v-2a4 4 0 0 1 3-3.87" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          ),
+          children: [
+            {
+              id: "all-channel-list",
+              title: "Direct All Channel Partners",
+              href: "/all-channel-list",
+            },
+          ],
+        },
 
         {
           id: "Lead_Management",
@@ -452,200 +452,200 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         },
 
 
-        // {
-        //   id: "Visit_List",
-        //   title: "Visit List",
-        //   dropdown: true,
-        //   icon: (
-        //     <svg
-        //       width="24"
-        //       height="24"
-        //       viewBox="0 0 24 24"
-        //       fill="none"
-        //       stroke="currentColor"
-        //       strokeWidth="2"
-        //     >
-        //       <path d="M17 21v-2a4 4 0 0 0-3-3.87" />
-        //       <path d="M7 21v-2a4 4 0 0 1 3-3.87" />
-        //       <circle cx="12" cy="7" r="4" />
-        //     </svg>
-        //   ),
-        //   children: [
-        //     {
-        //       id: "visit-list",
-        //       title: "Visit List",
-        //       href: "/visiting-listings",
-        //     },
-        //   ],
-        // },
+        {
+          id: "Visit_List",
+          title: "Visit List",
+          dropdown: true,
+          icon: (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M17 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M7 21v-2a4 4 0 0 1 3-3.87" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          ),
+          children: [
+            {
+              id: "visit-list",
+              title: "Visit List",
+              href: "/visiting-listings",
+            },
+          ],
+        },
 
 
 
 
 
-        // {
-        //   id: "RRRulesBooks",
-        //   title: "Rules Book",
-        //   icon: (
-        //     <svg
-        //       width="24"
-        //       height="24"
-        //       viewBox="0 0 24 24"
-        //       fill="none"
-        //       stroke="currentColor"
-        //       strokeWidth="2"
-        //     >
-        //       <path d="M17 21v-2a4 4 0 0 0-3-3.87" />
-        //       <path d="M7 21v-2a4 4 0 0 1 3-3.87" />
-        //       <circle cx="12" cy="7" r="4" />
-        //     </svg>
-        //   ),
-        //   href: "/rr-rules-book",
-        // },
+        {
+          id: "RRRulesBooks",
+          title: "Rules Book",
+          icon: (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M17 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M7 21v-2a4 4 0 0 1 3-3.87" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          ),
+          href: "/rr-rules-book",
+        },
 
 
-        // {
-        //           id: "income Managment",
-        //           title: "Income Management",
-        //           dropdown: true,
-        //           icon: <FaWallet />,
-        //           checked: false,
-        //           children: [
-        //             { id: "property_income_list", title: "Property Income List", href: "/property-income-list", checked: false },
-        //             { id: "child-commission", title: "Child Commission", href: "/child-commission", checked: false },
+        {
+                  id: "income Managment",
+                  title: "Income Management",
+                  dropdown: true,
+                  icon: <FaWallet />,
+                  checked: false,
+                  children: [
+                    { id: "property_income_list", title: "Property Income List", href: "/property-income-list", checked: false },
+                    { id: "child-commission", title: "Child Commission", href: "/child-commission", checked: false },
 
-        //           ]
-        //         },
-
-
-        //           {
-        //           id: "self gifts lists",
-        //           title: "Gifts Management",
-        //           dropdown: true,
-        //           icon: <FaWallet />,
-        //           checked: false,
-        //           children: [
-        //             { id: "self_gifts_lists", title: "Self Gifts Lists", href: "/self-gifts-lists", checked: false },
+                  ]
+                },
 
 
-        //           ]
-        //         },
-
-        //          {
-        //           id: "advance-payments-to-associates",
-        //           title: "Advance Payments",
-        //           dropdown: true,
-        //           icon: <FaWallet />,
-        //           checked: false,
-        //           children: [
-        //             { id: "advance-payments-to-associates", title: "Advance Payments", href: "/advance-payment-history", checked: false },
+                  {
+                  id: "self gifts lists",
+                  title: "Gifts Management",
+                  dropdown: true,
+                  icon: <FaWallet />,
+                  checked: false,
+                  children: [
+                    { id: "self_gifts_lists", title: "Self Gifts Lists", href: "/self-gifts-lists", checked: false },
 
 
-        //           ]
-        //         },
+                  ]
+                },
+
+                 {
+                  id: "advance-payments-to-associates",
+                  title: "Advance Payments",
+                  dropdown: true,
+                  icon: <FaWallet />,
+                  checked: false,
+                  children: [
+                    { id: "advance-payments-to-associates", title: "Advance Payments", href: "/advance-payment-history", checked: false },
 
 
-
-        // ...(userType !== "channel"
-        //   ? [
-        //     // {
-        //     //   id: "income Managment",
-        //     //   title: "Income Management",
-        //     //   dropdown: true,
-        //     //   icon: <FaWallet />,
-        //     //   checked: false,
-        //     //   children: [
-        //     //     {
-        //     //       id: "property_income_list",
-        //     //       title: "Property Income List",
-        //     //       href: "/property-income-list",
-        //     //       checked: false,
-        //     //     },
-        //     //     {
-        //     //       id: "child-commission",
-        //     //       title: "Child Commission",
-        //     //       href: "/child-commission",
-        //     //       checked: false,
-        //     //     },
-        //     //   ],
-        //     // },
-        //     {
-        //       id: "self gifts lists",
-        //       // title: "Self / Team Gifts SQYD",
-        //       title: "Gifts Sales",
-        //       dropdown: true,
-        //       icon: <FaWallet />,
-        //       checked: false,
-        //       children: [
-        //         {
-        //           id: "self_gifts_lists",
-        //           title: "Gifts Sales",
-        //           // title: "Self / Team Gifts Lists",
-        //           href: "/self-gifts-lists",
-        //           checked: false,
-        //         },
-        //       ],
-        //     },
-
-        //     // {
-        //     //   id: "property-awards-winner-histories",
-        //     //   title: "Self / Team Offers",
-        //     //   dropdown: true,
-        //     //   icon: <FaWallet />,
-        //     //   checked: false,
-        //     //   children: [
-        //     //     {
-        //     //       id: "property-awards-winner-histories",
-        //     //       title: "View Running Winner",
-        //     //       href: "/property-awards-winners-histories",
-        //     //       checked: false,
-        //     //     },
-        //     //     { id: "property-awards-winners-histories", title: "View Distributed Lists", href: "#", checked: false },
-        //     //   ],
-        //     // },
-
-        //     {
-        //       id: "ticket_support",
-        //       title: "Ticket Support",
-        //       dropdown: true,
-        //       icon: <MdSupportAgent />,
-        //       checked: false,
-        //       children: [
-        //         {
-        //           id: "create_ticket_support",
-        //           title: "Create Ticket Support",
-        //           href: "/create-ticket-support",
-        //           checked: false,
-        //         },
-        //         {
-        //           id: "ticket_support_list",
-        //           title: "Ticket Support List",
-        //           href: "/created-ticket-support-list",
-        //           checked: false,
-        //         },
-        //       ],
-        //     },
-
-        //     {
-        //       id: "advance-payments-to-associates",
-        //       title: "Advance Payments",
-        //       dropdown: true,
-        //       icon: <FaWallet />,
-        //       checked: false,
-        //       children: [
-        //         {
-        //           id: "advance-payments-to-associates",
-        //           title: "Advance Payments",
-        //           href: "/advance-payment-history",
-        //           checked: false,
-        //         },
-        //       ],
-        //     }
+                  ]
+                },
 
 
 
-        //   ]
-        //   : []),
+        ...(userType !== "channel"
+          ? [
+            // {
+            //   id: "income Managment",
+            //   title: "Income Management",
+            //   dropdown: true,
+            //   icon: <FaWallet />,
+            //   checked: false,
+            //   children: [
+            //     {
+            //       id: "property_income_list",
+            //       title: "Property Income List",
+            //       href: "/property-income-list",
+            //       checked: false,
+            //     },
+            //     {
+            //       id: "child-commission",
+            //       title: "Child Commission",
+            //       href: "/child-commission",
+            //       checked: false,
+            //     },
+            //   ],
+            // },
+            {
+              id: "self gifts lists",
+              // title: "Self / Team Gifts SQYD",
+              title: "Gifts Sales",
+              dropdown: true,
+              icon: <FaWallet />,
+              checked: false,
+              children: [
+                {
+                  id: "self_gifts_lists",
+                  title: "Gifts Sales",
+                  // title: "Self / Team Gifts Lists",
+                  href: "/self-gifts-lists",
+                  checked: false,
+                },
+              ],
+            },
+
+            // {
+            //   id: "property-awards-winner-histories",
+            //   title: "Self / Team Offers",
+            //   dropdown: true,
+            //   icon: <FaWallet />,
+            //   checked: false,
+            //   children: [
+            //     {
+            //       id: "property-awards-winner-histories",
+            //       title: "View Running Winner",
+            //       href: "/property-awards-winners-histories",
+            //       checked: false,
+            //     },
+            //     { id: "property-awards-winners-histories", title: "View Distributed Lists", href: "#", checked: false },
+            //   ],
+            // },
+
+            {
+              id: "ticket_support",
+              title: "Ticket Support",
+              dropdown: true,
+              icon: <MdSupportAgent />,
+              checked: false,
+              children: [
+                {
+                  id: "create_ticket_support",
+                  title: "Create Ticket Support",
+                  href: "/create-ticket-support",
+                  checked: false,
+                },
+                {
+                  id: "ticket_support_list",
+                  title: "Ticket Support List",
+                  href: "/created-ticket-support-list",
+                  checked: false,
+                },
+              ],
+            },
+
+            {
+              id: "advance-payments-to-associates",
+              title: "Advance Payments",
+              dropdown: true,
+              icon: <FaWallet />,
+              checked: false,
+              children: [
+                {
+                  id: "advance-payments-to-associates",
+                  title: "Advance Payments",
+                  href: "/advance-payment-history",
+                  checked: false,
+                },
+              ],
+            }
+
+
+
+          ]
+          : []),
 
 
 

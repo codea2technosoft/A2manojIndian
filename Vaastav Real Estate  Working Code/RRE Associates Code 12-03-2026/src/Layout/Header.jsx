@@ -9,6 +9,7 @@ import { Form, Button, Alert, Card, Container } from "react-bootstrap";
 import Referandearn from "../assets/images/referandearn_icon.png";
 import wallet from "../assets/images/wallet.png";
 import bell from "../assets/images/bell.png";
+import refer from "../assets/images/refer.png";
 
 const profileImage = `${process.env.REACT_APP_IMAGE_API_URL}/uploads/profile/`;
 const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
@@ -430,14 +431,17 @@ function Header({ onToggleSidebar }) {
         className="text-decoration-none ms-2 d-inline-flex align-items-center"
       >
         <span className="refer-alert-glow">
-          <div className="referandearn_icob">
+          {/* <div className="referandearn_icob">
             <img src={Referandearn} alt="Referandearn" />
-          </div>
+          </div> */}
           <div className="referdetailscontent">
-            <p className="card bg-success text-white p-2">
+            {/*
+                        <p className="card bg-success text-white p-2">
               Share Your Referral Link
-              {/* Share Your Referral Link <span>Get Your Link Now!</span> */}
+               Share Your Referral Link <span>Get Your Link Now!</span>
             </p>
+            */}
+            <img src={refer} alt="refer"/>
           </div>
         </span>
       </Link>
@@ -546,7 +550,7 @@ function Header({ onToggleSidebar }) {
               <div className="d-flex align-items-center flex-wrap gap-2">
                 {/* {getKycBadge()} */}
                 {getReferAndEarnBadge()}
-                {yourstatus()}
+                {/* {yourstatus()} */}
 
                 <div className="wallet">
                   <div className="">
@@ -559,7 +563,7 @@ function Header({ onToggleSidebar }) {
                           <img src={wallet} alt="wallet" />
                         </div>
                         <div className="text-dark">
-                          <div className="referdetailscontent text-center">
+                          <div className="text-start">
                             <p className="mb-1">Wallet Amount</p>
                             <h3 className="m-0 fw-normal text-success">
                               ₹&nbsp;
@@ -679,14 +683,14 @@ function Header({ onToggleSidebar }) {
                   <RiVerifiedBadgeLine /> KYC
                 </Link> */}
 
-                  {(kycStatus === "pending" || kycStatus === "reject") && (
+                  {/* {(kycStatus === "pending" || kycStatus === "reject") && (
                     <Link
                       to="/complete-kyc"
                       className="dropdown-item flex items-center gap-2"
                     >
                       <RiVerifiedBadgeLine /> KYC
                     </Link>
-                  )}
+                  )} */}
 
                   <Link
                     to="/chnage-password"
@@ -716,8 +720,9 @@ function Header({ onToggleSidebar }) {
 
         <div className="mobile_show">
           <div className="d-flex align-items-center flex-wrap gap-2">
-            {getKycBadgemobile()}
+            {/* {getKycBadgemobile()}  */}
             {getReferAndEarnBadge()}
+            {yourstatus()}
             <div className="wallet">
               <div>
                 <div className="credit_amount">
@@ -731,7 +736,7 @@ function Header({ onToggleSidebar }) {
 
 
                     <div className="text-dark">
-                      <div className="referdetailscontent text-center">
+                      <div className="text-start">
                         <p className="mb-1 fw-semibold">Wallet Amount</p>
                         <h3 className="m-0 fw-bold text-success">
                           ₹&nbsp;

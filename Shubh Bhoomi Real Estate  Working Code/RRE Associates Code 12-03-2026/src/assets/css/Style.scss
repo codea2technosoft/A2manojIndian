@@ -2406,7 +2406,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .btn-secondary {
-  background: $edit-bg;
+  background: #7e1422;
   color: $white-color;
 }
 
@@ -2682,7 +2682,7 @@ textarea {
       font-weight: 500;
       margin-bottom: 0px;
       padding: 1px;
-      white-space: nowrap;
+      // white-space: nowrap;
     }
   }
 
@@ -4470,7 +4470,7 @@ body.dark-theme .dropdown-item:hover {
   }
 
   .minheight {
-    padding-top: 150px;
+    padding-top: 170px;
   }
 
   .button_block,
@@ -5382,5 +5382,11 @@ $withdraw-bg: #dc3545;
 
   @media screen and (max-width: 991px) {
     font-size: 12px;
+  }
+}
+.referdetailscontent{
+  width: 100px;
+  img{
+    width: 100%;
   }
 }

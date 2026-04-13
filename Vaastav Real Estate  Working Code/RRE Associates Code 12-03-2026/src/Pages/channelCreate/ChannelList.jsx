@@ -242,9 +242,25 @@ function ChannelList() {
             <div className="titlepage">
               <h3>All Channel Partner List</h3>
             </div>
-
-
-            {!isDesktop && (
+<div className="d-flex gap-2">
+  
+ <div className="d-md-block d-lg-block d-xl-block d-block d-sm-block">
+                <button
+                  type="button"
+                  className="toggle-filter-btn"
+                  onClick={toggleFilter}
+                >
+                  {showFilter ? <MdFilterAltOff /> : <MdFilterListAlt />}
+                </button>
+              </div>
+               <button
+                  onClick={handleCreateClick}
+                  className="btn btn-success d-inline-flex align-items-center"
+                >
+                  <FaPlus className="me-2" /> Create Channel Partner
+                </button>
+</div>
+            {/* {!isDesktop && (
               <div className="d-md-block d-lg-block d-xl-none d-block d-sm-block">
                 <button
                   type="button"
@@ -254,43 +270,43 @@ function ChannelList() {
                   {showFilter ? <MdFilterAltOff /> : <MdFilterListAlt />}
                 </button>
               </div>
-            )}
+            )} */}
 
-            <div className="d-md-none d-lg-none d-xl-block d-none d-sm-none">
-              <div className="d-flex gap-2">
-                <div className="form_design">
-                  <input
-                    type="text"
-                    placeholder="Name OR Mobile"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-                <div className="form_design">
-                  <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
+              {/* <div className="d-md-none d-lg-none d-xl-block d-none d-sm-none">
+                <div className="d-flex gap-2">
+                  <div className="form_design">
+                    <input
+                      type="text"
+                      placeholder="Name OR Mobile"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+                  <div className="form_design">
+                    <select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                    >
+                      <option value="">All Status</option>
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                    </select>
+                  </div>
+                  <button
+                    onClick={handleCreateClick}
+                    className="btn btn-success d-inline-flex align-items-center"
                   >
-                    <option value="">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
+                    <FaPlus className="me-2" /> Create Channel Partner
+                  </button>
                 </div>
-                <button
-                  onClick={handleCreateClick}
-                  className="btn btn-success d-inline-flex align-items-center"
-                >
-                  <FaPlus className="me-2" /> Create Channel Partner
-                </button>
-              </div>
-            </div>
+              </div> */}
 
 
           </div>
         </div>
         <div className="card-body">
           {showFilter && (
-            <div className=" d-lg-block d-xl-none">
+            <div className=" d-lg-block d-xl-block">
               <div className="d-flex fillter_input gap-2">
                 <div className="form_design">
                   <input
@@ -310,12 +326,7 @@ function ChannelList() {
                     <option value="inactive">Inactive</option>
                   </select>
                 </div>
-                <button
-                  onClick={handleCreateClick}
-                  className="btn btn-success d-inline-flex align-items-center"
-                >
-                  <FaPlus className="me-2" /> Create Channel Partner
-                </button>
+               
               </div>
             </div>
           )}

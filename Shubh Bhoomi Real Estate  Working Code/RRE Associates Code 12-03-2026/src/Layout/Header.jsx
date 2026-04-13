@@ -5,6 +5,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { FiUser } from "react-icons/fi";
 import User from "../assets/images/user.jpg"
 import DummyUser from "../assets/images/dummy_profile.png"
+import refral from "../assets/images/refral.png"
 import { RiVerifiedBadgeLine, RiLogoutBoxRLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { Form, Button, Alert, Card, Container } from "react-bootstrap";
@@ -432,14 +433,15 @@ function Header({ onToggleSidebar }) {
         className="text-decoration-none ms-2 d-inline-flex align-items-center"
       >
         <span className="refer-alert-glow">
-          <div className="referandearn_icob">
+          {/* <div className="referandearn_icob">
             <img src={Referandearn} alt="Referandearn" />
-          </div>
+          </div> */}
           <div className="referdetailscontent">
-            <p className="card bg-info text-white p-2">
+            <img src={refral} alt="refral" />
+            {/* <p className="card bg-info text-white p-2">
               Share Your Referral Link
-              {/* Share Your Referral Link <span>Get Your Link Now!</span> */}
-            </p>
+              Share Your Referral Link <span>Get Your Link Now!</span>
+            </p> */}
           </div>
         </span>
       </Link>
@@ -559,7 +561,7 @@ function Header({ onToggleSidebar }) {
                           <img src={wallet} alt="wallet" />
                         </div>
                         <div className="text-dark">
-                          <div className="referdetailscontent text-center">
+                          <div className="text-start">
                             <p className="mb-1">Wallet Amount</p>
                             <h3 className="m-0 fw-normal text-success">
                               ₹&nbsp;
@@ -719,8 +721,9 @@ function Header({ onToggleSidebar }) {
 
         <div className="mobile_show">
           <div className="d-flex align-items-center flex-wrap gap-2">
-            {getKycBadgemobile()}
+            {/* {getKycBadgemobile()} */}
             {getReferAndEarnBadge()}
+             {yourstatus()}
             <div className="wallet">
               <div>
                 <div className="credit_amount">
@@ -734,7 +737,7 @@ function Header({ onToggleSidebar }) {
 
 
                     <div className="text-dark">
-                      <div className="referdetailscontent text-center">
+                      <div className="text-start">
                         <p className="mb-1 fw-semibold">Wallet Amount</p>
                         <h3 className="m-0 fw-bold text-success">
                           ₹&nbsp;

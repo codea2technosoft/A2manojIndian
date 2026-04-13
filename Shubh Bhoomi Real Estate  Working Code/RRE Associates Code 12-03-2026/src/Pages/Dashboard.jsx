@@ -779,18 +779,7 @@ const Dashboard = ({ userType }) => {
     // },
 
 
-    {
-      title: "Welcome Bonus",
-      icon: "FaGift",
-      customContent: true, // Add flag for custom rendering
-    },
-
-
-    {
-      title: "Bima",
-      icon: "TbReceiptRupee",
-      customContent: true,
-    },
+  
 
     // {
     //   title: "Total Loan Leads",
@@ -1062,6 +1051,18 @@ const Dashboard = ({ userType }) => {
       ),
       icon: "CiLineHeight",
       href: "/third-line",
+    },
+      {
+      title: "Welcome Bonus",
+      icon: "FaGift",
+      customContent: true, // Add flag for custom rendering
+    },
+
+
+    {
+      title: "Bima",
+      icon: "TbReceiptRupee",
+      customContent: true,
     },
   ];
 

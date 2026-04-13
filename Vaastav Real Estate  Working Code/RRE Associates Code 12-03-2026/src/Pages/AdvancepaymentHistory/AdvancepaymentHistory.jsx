@@ -12,7 +12,7 @@ function AdvancepaymentHistory() {
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState({ amount: "", type: "" });
   const [showFilter, setShowFilter] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1199);
+  // const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1440);
   const token = localStorage.getItem("token");
 
   const pageLimit = 10;
@@ -28,12 +28,12 @@ function AdvancepaymentHistory() {
   // Handle screen resize
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1199) {
-        setIsDesktop(true);
-        setShowFilter(true);
-      } else {
-        setIsDesktop(false);
+      if (window.innerWidth >= 1440) {
+        // setIsDesktop(true);
         setShowFilter(false);
+      } else {
+        // setIsDesktop(false);
+        setShowFilter(true);
       }
     };
 
@@ -154,14 +154,14 @@ function AdvancepaymentHistory() {
             <h3>Advance Payments</h3>
 
             {/* Toggle Filter Button for Mobile */}
-            {!isDesktop && (
-              <button type="button" className="toggle-filter-btn" onClick={toggleFilter}>
-                {showFilter ? <MdFilterAltOff /> : <MdFilterListAlt />}
-              </button>
-            )}
+            <button type="button" className="toggle-filter-btn" onClick={toggleFilter}>
+              {showFilter ? <MdFilterAltOff /> : <MdFilterListAlt />}
+            </button>
+            {/* {!isDesktop && (
+            )} */}
 
             {/* Search Form for Desktop */}
-            {isDesktop && (
+            {/* {isDesktop && (
               <form onSubmit={handleSearch} className="d-flex gap-2 align-items-center form_design " >
                 <input
                   type="text"
@@ -179,12 +179,12 @@ function AdvancepaymentHistory() {
                 />
                 <button type="submit" className="submit_button">Search</button>
               </form>
-            )}
+            )} */}
           </div>
 
           <div className="card-body">
             {/* Filter Panel for Mobile */}
-            {showFilter && !isDesktop && (
+            {showFilter &&(
               <form onSubmit={handleSearch} className="d-flex gap-2 align-items-center mb-3">
                 <input
                   type="text"

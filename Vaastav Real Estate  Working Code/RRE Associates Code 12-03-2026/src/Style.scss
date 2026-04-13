@@ -51,6 +51,12 @@ body {
     background: transparent;
     color: #fff;
 }
+.referdetailscontent {
+    width: 150px;
+    img{
+      width: 100%;
+    }
+}
 .table thead {
     position: -webkit-sticky;
     position: sticky;
@@ -2663,7 +2669,7 @@ textarea {
       font-weight: 500;
       margin-bottom: 0px;
       padding: 1px;
-      white-space: nowrap;
+      // white-space: nowrap;
     }
   }
 
@@ -5322,4 +5328,9 @@ $withdraw-bg: #dc3545;
   @media screen and (max-width:991px) {
     font-size: 12px;
   }
+}
+@media(max-width:991px){
+  .referdetailscontent {
+    width: 90px;
+}
 }

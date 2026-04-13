@@ -20,7 +20,7 @@ function GiftSelfToAssociateList() {
     totalItems: 0,
     limit: 20,
   });
-const [isFilterActive, setIsFilterActive] = useState(false);
+  const [isFilterActive, setIsFilterActive] = useState(false);
   const handleToggle = () => {
     setIsFilterActive(!isFilterActive);
   };
@@ -111,7 +111,7 @@ const [isFilterActive, setIsFilterActive] = useState(false);
     let pages = [];
     const totalPagesToShow = 7;
     const sidePages = 2;
-    
+
     if (pagination.totalPages <= totalPagesToShow) {
       for (let i = 1; i <= pagination.totalPages; i++) {
         pages.push(i);
@@ -144,157 +144,157 @@ const [isFilterActive, setIsFilterActive] = useState(false);
   };
 
   return (
-  <div className="padding_15"> 
-       <div className="card">
-      <div className="card-header">
-        <div className="d-flex justify-content-between align-items-center">
+    <div className="padding_15">
+      <div className="card">
+        <div className="card-header">
+          <div className="d-flex justify-content-between align-items-center">
 
-          <div className="titlepage">
-            <h3 className="mb-0">Gift Sales Details</h3>
+            <div className="titlepage">
+              <h3 className="mb-0">Gift Sales Details</h3>
+
+            </div>
+            <div className="d-block d-md-block">
+
+              <button
+                className={`filter-toggle-btn toggle-filter-btn ${isFilterActive ? "active" : ""}`}
+                onClick={handleToggle}
+              >
+                {isFilterActive ? (
+                  <>
+                    <MdFilterAltOff />
+                  </>
+                ) : (
+                  <>
+                    <MdFilterAlt />
+                  </>
+                )}
+              </button>
+            </div>
+            {/* <Form onSubmit={handleFilterSubmit} className="d-flex gap-2">
+              <Form.Control
+                type="text"
+                name="mobile"
+                className="fillter_input"
+                value={filters.mobile}
+                onChange={handleFilterChange}
+                placeholder="Search by Mobile"
+              />
+              <Form.Control
+                type="text"
+                name="bysqrt"
+                className="fillter_input"
+                value={filters.bysqrt}
+                onChange={handleFilterChange}
+                placeholder="Search by SQYD"
+              />
+              <Button variant="primary" type="submit">
+                Search
+              </Button>
+            </Form> */}
 
           </div>
-          <div className="d-block d-md-none">
 
-            <button
-              className={`filter-toggle-btn ${isFilterActive ? "active" : ""}`}
-              onClick={handleToggle}
-            >
-              {isFilterActive ? (
-                <>
-                  <MdFilterAltOff />
-                </>
-              ) : (
-                <>
-                  <MdFilterAlt />
-                </>
-              )}
-            </button>
-          </div>
-<Form onSubmit={handleFilterSubmit} className="d-flex gap-2">
-          <Form.Control
-            type="text"
-            name="mobile"
-            className="fillter_input"
-            value={filters.mobile}
-            onChange={handleFilterChange}
-            placeholder="Search by Mobile"
-          />
-          <Form.Control
-            type="text"
-            name="bysqrt"
-            className="fillter_input"
-            value={filters.bysqrt}
-            onChange={handleFilterChange}
-            placeholder="Search by SQYD"
-          />
-          <Button variant="primary" type="submit">
-            Search
-          </Button>
-        </Form>
-          
         </div>
 
-      </div>
 
 
+        <div className="card-body">
+          {isFilterActive && (
 
-      <div className="card-body">
-         {isFilterActive && (
 
-
-<Form onSubmit={handleFilterSubmit} className="d-flex gap-2">
-          <Form.Control
-            type="text"
-            name="mobile"
-            value={filters.mobile}
-            onChange={handleFilterChange}
-            placeholder="Search by Mobile"
-          />
-          <Form.Control
-            type="text"
-            name="bysqrt"
-            value={filters.bysqrt}
-            onChange={handleFilterChange}
-            placeholder="Search by SQYD"
-          />
-          <Button variant="primary" type="submit">
-            Search
-          </Button>
-        </Form>
-           )}
-        {loading ? (
-          <div className="text-center my-5">
-            <Spinner animation="border" />
-            <p className="mt-2">Loading data...</p>
-          </div>
-        ) : (
-          <>
-            <Table striped bordered hover responsive>
-              <thead>
-                <tr>
-                  <th>#</th>
+            <Form onSubmit={handleFilterSubmit} className="d-flex gap-2">
+              <Form.Control
+                type="text"
+                name="mobile"
+                value={filters.mobile}
+                onChange={handleFilterChange}
+                placeholder="Search by Mobile"
+              />
+              <Form.Control
+                type="text"
+                name="bysqrt"
+                value={filters.bysqrt}
+                onChange={handleFilterChange}
+                placeholder="Search by SQYD"
+              />
+              <Button variant="primary" type="submit">
+                Search
+              </Button>
+            </Form>
+          )}
+          {loading ? (
+            <div className="text-center my-5">
+              <Spinner animation="border" />
+              <p className="mt-2">Loading data...</p>
+            </div>
+          ) : (
+            <>
+              <Table striped bordered hover responsive>
+                <thead>
+                  <tr>
+                    <th>#</th>
                     <th>Name</th>
-                  <th>Mobile</th>
-                
-                  <th>Gifted SQYD</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.length > 0 ? (
-                  data.map((item, index) => (
-                    <tr key={item.user_id || index}>
-                      <td>{(pagination.currentPage - 1) * pagination.limit + index + 1}</td>
-                      <td>{item.username || "N/A"}</td>
-                      <td>{item.mobile || "N/A"}</td>
-                      
-                      <td>{item.buysqrt || "N/A"}</td>
-                      <td>
-                        {item.date
-                          ? new Date(item.date).toLocaleDateString("en-GB")
-                          : "N/A"}
+                    <th>Mobile</th>
+
+                    <th>Gifted SQYD</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.length > 0 ? (
+                    data.map((item, index) => (
+                      <tr key={item.user_id || index}>
+                        <td>{(pagination.currentPage - 1) * pagination.limit + index + 1}</td>
+                        <td>{item.username || "N/A"}</td>
+                        <td>{item.mobile || "N/A"}</td>
+
+                        <td>{item.buysqrt || "N/A"}</td>
+                        <td>
+                          {item.date
+                            ? new Date(item.date).toLocaleDateString("en-GB")
+                            : "N/A"}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="4" className="text-center">
+                        No records found.
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="4" className="text-center">
-                      No records found.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
+                  )}
+                </tbody>
 
-            </Table>
+              </Table>
 
-            {pagination.totalPages > 1 && (
-              <Pagination className="justify-content-center">
-                <Pagination.Prev
-                  onClick={() => handlePageChange(pagination.currentPage - 1)}
-                  disabled={pagination.currentPage === 1}
-                />
-                {getPaginationGroup().map((item, index) => (
-                  <Pagination.Item
-                    key={index}
-                    active={item === pagination.currentPage}
-                    onClick={() => typeof item === 'number' ? handlePageChange(item) : null}
-                    disabled={item === '...'}
-                    style={{ cursor: item === '...' ? 'default' : 'pointer' }}
-                  >
-                    {item}
-                  </Pagination.Item>
-                ))}
-                <Pagination.Next
-                  onClick={() => handlePageChange(pagination.currentPage + 1)}
-                  disabled={pagination.currentPage === pagination.totalPages}
-                />
-              </Pagination>
-            )}
-          </>
-        )}
+              {pagination.totalPages > 1 && (
+                <Pagination className="justify-content-center">
+                  <Pagination.Prev
+                    onClick={() => handlePageChange(pagination.currentPage - 1)}
+                    disabled={pagination.currentPage === 1}
+                  />
+                  {getPaginationGroup().map((item, index) => (
+                    <Pagination.Item
+                      key={index}
+                      active={item === pagination.currentPage}
+                      onClick={() => typeof item === 'number' ? handlePageChange(item) : null}
+                      disabled={item === '...'}
+                      style={{ cursor: item === '...' ? 'default' : 'pointer' }}
+                    >
+                      {item}
+                    </Pagination.Item>
+                  ))}
+                  <Pagination.Next
+                    onClick={() => handlePageChange(pagination.currentPage + 1)}
+                    disabled={pagination.currentPage === pagination.totalPages}
+                  />
+                </Pagination>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
-  </div>
   );
 }
 
