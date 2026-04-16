@@ -48,6 +48,9 @@ function InActiveAssociateList() {
   const searchTimeoutRef = useRef(null);
   const [exporting, setExporting] = useState(false);
   const [searchMobile, setSearchMobile] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  
   const [editFormData, setEditFormData] = useState({
     id: "",
     username: "",
@@ -85,7 +88,13 @@ function InActiveAssociateList() {
     return localStorage.getItem("token");
   };
 
-  const fetchAssociates = async (page = 1, name = "", location = "") => {
+  const fetchAssociates = async (
+    page = 1, 
+    name = "", 
+    location = "",
+    from_date = "",
+    to_date = ""
+  ) => {
     setLoading(true);
     setError(null);
     try {
@@ -102,6 +111,8 @@ function InActiveAssociateList() {
       let url = `${API_URL}/Associate-list-inactive?page=${page}&limit=10`;
       if (name) url += `&mobile=${name}`;
       if (location) url += `&parent_id=${location}`;
+      if (from_date) url += `&from_date=${from_date}`;
+      if (to_date) url += `&to_date=${to_date}`;
 
       const response = await fetch(url, {
         method: "GET",
@@ -148,6 +159,7 @@ function InActiveAssociateList() {
   };
 
   const exportAllToExcel = async () => {
+    setExporting(true);
     try {
       const token = getAuthToken();
       if (!token) {
@@ -155,7 +167,14 @@ function InActiveAssociateList() {
         return;
       }
 
-      let url = `${API_URL}/inactive-associate-excel-download`;
+      let url = `${API_URL}/Associate-excel-download`;
+      const params = new URLSearchParams();
+      if (fromDate) params.append('from_date', fromDate);
+      if (toDate) params.append('to_date', toDate);
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
+
       const response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -171,12 +190,18 @@ function InActiveAssociateList() {
       const csvData = await response.text();
       const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
       const link = document.createElement("a");
+      let fileName = `inactive_associates_${Date.now()}`;
+      if (fromDate) fileName += `_from_${fromDate}`;
+      if (toDate) fileName += `_to_${toDate}`;
+      fileName += `.csv`;
       link.href = URL.createObjectURL(blob);
-      link.setAttribute("download", `associates_${Date.now()}.csv`);
+      link.setAttribute("download", fileName);
       link.click();
     } catch (error) {
       console.error("CSV Export Error:", error);
       alert("Export Failed! Try again");
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -420,6 +445,7 @@ function InActiveAssociateList() {
       },
     );
   };
+  
   const [isFilterActive, setIsFilterActive] = useState(false);
   const handleToggle = () => {
     setIsFilterActive(!isFilterActive);
@@ -450,16 +476,26 @@ function InActiveAssociateList() {
     setSearchLocation(e.target.value);
   };
 
+  const handleFromDateChange = (e) => {
+    setFromDate(e.target.value);
+  };
+
+  const handleToDateChange = (e) => {
+    setToDate(e.target.value);
+  };
+
   const handleSearchClick = () => {
     setCurrentPage(1);
-    fetchAssociates(1, searchName.trim(), searchLocation.trim());
+    fetchAssociates(1, searchName.trim(), searchLocation.trim(), fromDate, toDate);
   };
 
   const handleClearSearch = () => {
     setSearchName("");
     setSearchLocation("");
+    setFromDate("");
+    setToDate("");
     setCurrentPage(1);
-    fetchAssociates(1, "", "");
+    fetchAssociates(1, "", "", "", "");
   };
 
   const handleDeleteAssociate = async (associateId, associateName) => {
@@ -562,7 +598,7 @@ function InActiveAssociateList() {
                           role="status"
                           aria-hidden="true"
                         ></span>
-                        Exporting All...
+                        Exporting...
                       </>
                     ) : (
                       "Export"
@@ -620,11 +656,37 @@ function InActiveAssociateList() {
                 />
               </div>
 
-              <button className="btn btn-primary" onClick={handleSearchClick}>
-                Search
-              </button>
+              <div className="form-group w-100" id="fromDate">
+                <input
+                  type="date"
+                  placeholder="From Date"
+                  value={fromDate}
+                  onChange={handleFromDateChange}
+                  className="form-control"
+                />
+              </div>
+
+              <div className="form-group w-100" id="toDate">
+                <input
+                  type="date"
+                  placeholder="To Date"
+                  value={toDate}
+                  onChange={handleToDateChange}
+                  className="form-control"
+                />
+              </div>
+
+              <div className="d-flex gap-2">
+                <button className="btn btn-primary" onClick={handleSearchClick}>
+                  Search
+                </button>
+                <button className="btn btn-secondary" onClick={handleClearSearch}>
+                  Clear
+                </button>
+              </div>
             </div>
           )}
+          
           <div className="table-responsive">
             <Table bordered>
               <thead className="bg-primary text-white">
@@ -717,22 +779,22 @@ function InActiveAssociateList() {
                             aria-labelledby="dropdownMenuButton"
                           >
                             <li className="dropdown-item">
-                              {/* <button
+                              <button
                                 className="btn view_btn btn-sm"
                                 onClick={() => handleViewAssociate(associate.id)}
                                 title="View Project Details"
                               >
                                 <FaEye /> View
-                              </button> */}
+                              </button>
                             </li>
                             <li className="dropdown-item">
-                              {/* <button
+                              <button
                                 className="btn view_btn btn-sm"
                                 title="View Project Details"
                                 onClick={() => handleEditAssociate(associate.id)}
                               >
                                 <FaEdit /> Edit
-                              </button> */}
+                              </button>
                             </li>
                             <li className="dropdown-item">
                               <button
@@ -784,16 +846,6 @@ function InActiveAssociateList() {
                             </li>
 
                             <li className="dropdown-item">
-                              {/* <a
-                                href={`https://dashboard.rajasthanirealestates.in/login?mobile=${associate.mobile}&pssword=${associate.password}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="btn view_btn btn-sm"
-                                title="View Project Details"
-                              >
-                                <FaEdit /> Login
-                              </a> */}
-
                               <a
                                 href={`${process.env.REACT_APP_API_ASSCIATELOGIN_URL}/login?mobile=${associate.mobile}&pssword=${associate.password}`}
                                 target="_blank"
@@ -821,7 +873,7 @@ function InActiveAssociateList() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="text-center">
+                    <td colSpan="10" className="text-center">
                       No associates found.
                     </td>
                   </tr>
@@ -995,19 +1047,6 @@ function InActiveAssociateList() {
                   />
                 </Form.Group>
               </Col>
-
-              {/* <Col md={6}>
-                <Form.Group className="mb-3" controlId="editParentId">
-                  <Form.Label>Parent Id</Form.Label>
-                  <Form.Control
-                    type="tel"
-                    name="parent_id"
-                    value={editFormData.parent_id}
-                    maxLength="10"
-                    onChange={handleEditFormChange}
-                  />
-                </Form.Group>
-              </Col> */}
             </Row>
             <Button
               variant="primary"

@@ -29,13 +29,13 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
     {
       section: "Menu",
       items: [
-        // {
-        //   id: "dashboard",
-        //   title: "Dashboard",
-        //   href: "/dashboard",
-        //   icon: <LuLayoutDashboard />,
-        //   checked: true
-        // },
+        {
+          id: "dashboard",
+          title: "Dashboard",
+          href: "/dashboard",
+          icon: <LuLayoutDashboard />,
+          checked: true
+        },
 
         // {
         //   id: "AccountReport",
@@ -45,37 +45,37 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
         //   checked: true
         // },
 
-        // {
-        //   id: "AccountReport",
-        //   title: "Accounts Report",
-        //   dropdown: true,
-        //   icon: <LuLayoutDashboard />,
-        //   checked: false,
-        //   children: [
-        //     { id: "AccountReports", title: "Accounts Report", href: "/account-report", checked: false },
-        //     { id: "CRSettleReports", title: "TDS CR Settle Reports", href: "/cr-settle-reports", checked: false },
-        //     { id: "DRSettleReports", title: "TDS DR Settle Reports", href: "/dr-settle-reports", checked: false },
+        {
+          id: "AccountReport",
+          title: "Accounts Report",
+          dropdown: true,
+          icon: <LuLayoutDashboard />,
+          checked: false,
+          children: [
+            { id: "AccountReports", title: "Accounts Report", href: "/account-report", checked: false },
+            { id: "CRSettleReports", title: "TDS CR Settle Reports", href: "/cr-settle-reports", checked: false },
+            { id: "DRSettleReports", title: "TDS DR Settle Reports", href: "/dr-settle-reports", checked: false },
 
-        //   ]
-        // },
+          ]
+        },
 
 
 
-        // {
-        //   id: "WalletLedger",
-        //   title: "Wallet Ledger",
-        //   dropdown: true,
-        //   icon: <LuLayoutDashboard />,
-        //   checked: false,
-        //   children: [
-        //     { id: "WalletLedger", title: "Wallet Ledger", href: "/admin-wallet-report", checked: false },
-        //     { id: "projectledger", title: "Project Ledger", href: "/admin-project-wise-ledger", checked: false },
-        //     { id: "PlotLedger", title: "Unit Ledger", href: "/admin-plot-ledger", checked: false },
-        //     { id: "unitsqyd_added", title: "Unit SQYD Added", href: "/unit-sqyd-added", checked: false },
-        //     { id: "unit_sqyd_ledger", title: "Unit SQYD Ledger", href: "/unit-sqyd-ledger", checked: false },
+        {
+          id: "WalletLedger",
+          title: "Wallet Ledger",
+          dropdown: true,
+          icon: <LuLayoutDashboard />,
+          checked: false,
+          children: [
+            { id: "WalletLedger", title: "Wallet Ledger", href: "/admin-wallet-report", checked: false },
+            { id: "projectledger", title: "Project Ledger", href: "/admin-project-wise-ledger", checked: false },
+            { id: "PlotLedger", title: "Unit Ledger", href: "/admin-plot-ledger", checked: false },
+            { id: "unitsqyd_added", title: "Unit SQYD Added", href: "/unit-sqyd-added", checked: false },
+            { id: "unit_sqyd_ledger", title: "Unit SQYD Ledger", href: "/unit-sqyd-ledger", checked: false },
 
-        //   ]
-        // },
+          ]
+        },
 
 
         //  {
@@ -88,18 +88,18 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
 
 
 
-        // {
-        //   id: "subadminManagement",
-        //   title: "Subadmin",
-        //   dropdown: true,
-        //   icon: <RiGroupLine />,
-        //   checked: false,
-        //   children: [
-        //     { id: "create-subadmin", title: "Create Subadmin", href: "/create-subadmin", checked: false },
-        //     { id: "all-subadmin", title: "All Subadmin", href: "/allsubadmin", checked: false },
-        //     // { id: "subadmin-permission", title: "Permission Management", href: "/subadmin-permission", checked: false }
-        //   ]
-        // },
+        {
+          id: "subadminManagement",
+          title: "Subadmin",
+          dropdown: true,
+          icon: <RiGroupLine />,
+          checked: false,
+          children: [
+            { id: "create-subadmin", title: "Create Subadmin", href: "/create-subadmin", checked: false },
+            { id: "all-subadmin", title: "All Subadmin", href: "/allsubadmin", checked: false },
+            // { id: "subadmin-permission", title: "Permission Management", href: "/subadmin-permission", checked: false }
+          ]
+        },
         {
           id: "projectManagement",
           title: "Project",
@@ -202,103 +202,103 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
         
 
 
-        // {
-        //   id: "expensesmanagement ",
-        //   title: "Expense Management",
-        //   dropdown: true,
-        //   icon: <FaMoneyCheckAlt />,
-        //   checked: false,
-        //   children: [
-        //     { id: "category_list", title: "Category List", href: "/category-list", checked: false },
-        //     { id: "bank_account_list", title: "Bank Account List", href: "/bank-account-list", checked: false },
+        {
+          id: "expensesmanagement ",
+          title: "Expense Management",
+          dropdown: true,
+          icon: <FaMoneyCheckAlt />,
+          checked: false,
+          children: [
+            { id: "category_list", title: "Category List", href: "/category-list", checked: false },
+            { id: "bank_account_list", title: "Bank Account List", href: "/bank-account-list", checked: false },
 
-        //     { id: "add_expense", title: "Add Expense", href: "/expence-add", checked: false },
+            { id: "add_expense", title: "Add Expense", href: "/expence-add", checked: false },
 
-        //     { id: "cr_dr_ledger_report", title: "CR DR Ledger Report", href: "/expenses-list", checked: false },
-        //     { id: "expenses_date_wise", title: "Datewise CR DR Ledger Report", href: "/expenses-date-wise", checked: false },
+            { id: "cr_dr_ledger_report", title: "CR DR Ledger Report", href: "/expenses-list", checked: false },
+            { id: "expenses_date_wise", title: "Datewise CR DR Ledger Report", href: "/expenses-date-wise", checked: false },
 
-        //     { id: "tds_report", title: "TDS Report", href: "/tds-report", checked: false },
+            { id: "tds_report", title: "TDS Report", href: "/tds-report", checked: false },
 
-        //     //  { id: "advance_payment",  title: "Advance Payment", href: "/advance-payment", checked: false },
-        //     //  { id: "add_advance_payment",  title: "Add Advance Payment", href: "/add-advance-payment", checked: false },
-        //   ]
-        // },
-
-
-
-        // {
-        //   id: "visitmanagement ",
-        //   title: "Visit Report",
-        //   dropdown: true,
-        //   icon: <MdOutlineLocationOn />,
-        //   checked: false,
-        //   children: [
-        //     { id: "visit_list", title: "Visit List", href: "/visit-list", checked: false },
-        //     { id: "visit_date_wise", title: "Visit Date-wise", href: "/visit-date-wise", checked: false },
-        //   ]
-        // },
+            //  { id: "advance_payment",  title: "Advance Payment", href: "/advance-payment", checked: false },
+            //  { id: "add_advance_payment",  title: "Add Advance Payment", href: "/add-advance-payment", checked: false },
+          ]
+        },
 
 
-        // {
-        //   id: "accountmanagement ",
-        //   title: "Bank Account",
-        //   dropdown: true,
-        //   icon: <IoIosGitNetwork />,
-        //   checked: false,
-        //   children: [
-        //     { id: "account_list", title: "Pending Account", href: "/account-list", checked: false },
-        //     { id: "account_list_status", title: "Success/Reject", href: "/account-list-status", checked: false },
-        //   ]
-        // },
+
+        {
+          id: "visitmanagement ",
+          title: "Visit Report",
+          dropdown: true,
+          icon: <MdOutlineLocationOn />,
+          checked: false,
+          children: [
+            { id: "visit_list", title: "Visit List", href: "/visit-list", checked: false },
+            { id: "visit_date_wise", title: "Visit Date-wise", href: "/visit-date-wise", checked: false },
+          ]
+        },
 
 
-        // {
-        //   id: "Withdrawmanagement ",
-        //   title: "Withdrawal",
-        //   dropdown: true,
-        //   icon: <FaWallet />,
-        //   checked: false,
-        //   children: [
-        //     { id: "withdrawal_list", title: "Commission Pending", href: "/withdrawal-list", checked: false },
-        //     // { id: "withdrawal_list_status", title: "Success/Reject", href: "/withdrawal-list-status", checked: false },
-
-        //     { id: "withdrawal_success_list_status", title: "Commission Paid", href: "/withdrawal-success-list-status", checked: false },
-
-        //     { id: "withdrawal-rejected-list-status", title: "Commission Rejected", href: "/withdrawal-rejected-list-status", checked: false },
-
-        //   ]
-        // },
+        {
+          id: "accountmanagement ",
+          title: "Bank Account",
+          dropdown: true,
+          icon: <IoIosGitNetwork />,
+          checked: false,
+          children: [
+            { id: "account_list", title: "Pending Account", href: "/account-list", checked: false },
+            { id: "account_list_status", title: "Success/Reject", href: "/account-list-status", checked: false },
+          ]
+        },
 
 
-        // {
-        //   id: "HomeLoanIncomeList",
-        //   title: "Income Plan",
-        //   dropdown: true,
-        //   icon: <FaWallet />,
-        //   checked: false,
-        //   children: [
-        //     { id: "income_list", title: "Loan 1", href: "/income-list", checked: false },
-        //     { id: "personal_income_list", title: "Loan 2", href: "/personal-income-list", checked: false },
-        //     { id: "product_income_list", title: "Property", href: "/product-income-list", checked: false },
-        //   ]
-        // },
+        {
+          id: "Withdrawmanagement ",
+          title: "Withdrawal",
+          dropdown: true,
+          icon: <FaWallet />,
+          checked: false,
+          children: [
+            { id: "withdrawal_list", title: "Commission Pending", href: "/withdrawal-list", checked: false },
+            // { id: "withdrawal_list_status", title: "Success/Reject", href: "/withdrawal-list-status", checked: false },
+
+            { id: "withdrawal_success_list_status", title: "Commission Paid", href: "/withdrawal-success-list-status", checked: false },
+
+            { id: "withdrawal-rejected-list-status", title: "Commission Rejected", href: "/withdrawal-rejected-list-status", checked: false },
+
+          ]
+        },
 
 
-        // {
-        //   id: "bookingmanagement",
-        //   title: "Booking Management",
-        //   dropdown: true,
-        //   icon: <FaWallet />,
-        //   checked: false,
-        //   children: [
-        //     { id: "pending_booking_list", title: "Pending Booking", href: "/pending-booking", checked: false },
-        //     { id: "booked_pending_booking_list", title: "Booked Pending", href: "/booked-pending-booking", checked: false },
-        //     { id: "ongoing_booking_list", title: "Ongoing Booking", href: "/ongoing-booking", checked: false },
-        //     { id: "complete_booking_list", title: "Complete Booking", href: "/complete-booking", checked: false },
-        //     { id: "cancel_booking_list", title: "Cancel Booking", href: "/cancel-booking", checked: false },
+        {
+          id: "HomeLoanIncomeList",
+          title: "Income Plan",
+          dropdown: true,
+          icon: <FaWallet />,
+          checked: false,
+          children: [
+            { id: "income_list", title: "Loan 1", href: "/income-list", checked: false },
+            { id: "personal_income_list", title: "Loan 2", href: "/personal-income-list", checked: false },
+            { id: "product_income_list", title: "Property", href: "/product-income-list", checked: false },
+          ]
+        },
 
-        //   ]
-        // },
+
+        {
+          id: "bookingmanagement",
+          title: "Booking Management",
+          dropdown: true,
+          icon: <FaWallet />,
+          checked: false,
+          children: [
+            { id: "pending_booking_list", title: "Pending Booking", href: "/pending-booking", checked: false },
+            { id: "booked_pending_booking_list", title: "Booked Pending", href: "/booked-pending-booking", checked: false },
+            { id: "ongoing_booking_list", title: "Ongoing Booking", href: "/ongoing-booking", checked: false },
+            { id: "complete_booking_list", title: "Complete Booking", href: "/complete-booking", checked: false },
+            { id: "cancel_booking_list", title: "Cancel Booking", href: "/cancel-booking", checked: false },
+
+          ]
+        },
 
         // {
         //   id: "income Managment",
@@ -313,92 +313,92 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
         //   ]
         // },
 
-        // {
-        //   id: "Self Gifts",
-        //   title: "Self / Team Gift SQYD",
-        //   dropdown: true,
-        //   icon: <FaWallet />,
-        //   checked: false,
-        //   children: [
-        //     { id: "self-gifts", title: "Assign Self Gifts", href: "/self-gifts", checked: false },
+        {
+          id: "Self Gifts",
+          title: "Self / Team Gift SQYD",
+          dropdown: true,
+          icon: <FaWallet />,
+          checked: false,
+          children: [
+            { id: "self-gifts", title: "Assign Self Gifts", href: "/self-gifts", checked: false },
 
 
-        //     { id: "giftselfassociatelist", title: "Self Gift List", href: "/gift-self-associate-list", checked: false },
+            { id: "giftselfassociatelist", title: "Self Gift List", href: "/gift-self-associate-list", checked: false },
 
-        //     { id: "assign-self-gifts", title: "Assign Team Gifts", href: "/assign-team-self-gifts", checked: false },
+            { id: "assign-self-gifts", title: "Assign Team Gifts", href: "/assign-team-self-gifts", checked: false },
 
-        //     { id: "teamselfgiftslists", title: "Team Gift List", href: "/team-self-gifts-lists", checked: false },
-        //   ]
-        // },
-
-
-
-        // {
-        //   id: "offersgiftsmanagement",
-        //   title: "Offers Management",
-        //   // title: "Team / Self Offers",
-        //   dropdown: true,
-        //   icon: <TbWorldWww />,
-        //   checked: false,
-        //   children: [
-        //     { id: "all-offer-gifts", title: "Upload New Offers", href: "/all-offer-gifts", checked: false },
-        //     // { id: "property-awards-self-winners-histories", title: "Self Winner Lists", href: "/property-awards-self-winners-histories", checked: false },
-        //     // { id: "property-awards-team-winners-histories", title: "Team Winner Lists", href: "/property-awards-team-winners-histories", checked: false },
-
-        //     { id: "monthly-or-special-self-offers-lists", title: "Self Offers Winners", href: "/monthly-or-special-self-offers-lists", checked: false },
-
-        //     { id: "monthly-or-special-customers-offers-lists", title: "Customers Offers Winners", href: "/monthly-or-special-customers-offers-lists", checked: false },
+            { id: "teamselfgiftslists", title: "Team Gift List", href: "/team-self-gifts-lists", checked: false },
+          ]
+        },
 
 
 
+        {
+          id: "offersgiftsmanagement",
+          title: "Offers Management",
+          // title: "Team / Self Offers",
+          dropdown: true,
+          icon: <TbWorldWww />,
+          checked: false,
+          children: [
+            { id: "all-offer-gifts", title: "Upload New Offers", href: "/all-offer-gifts", checked: false },
+            // { id: "property-awards-self-winners-histories", title: "Self Winner Lists", href: "/property-awards-self-winners-histories", checked: false },
+            // { id: "property-awards-team-winners-histories", title: "Team Winner Lists", href: "/property-awards-team-winners-histories", checked: false },
 
-        //     { id: "monthly-or-special-team-offers-lists", title: "Team Offers Winners", href: "/monthly-or-special-team-offers-lists", checked: false },
+            { id: "monthly-or-special-self-offers-lists", title: "Self Offers Winners", href: "/monthly-or-special-self-offers-lists", checked: false },
 
-
-
-        //     // { id: "property-awards-winners-histories", title: "View Distributed Lists", href: "#", checked: false },
-
-        //   ]
-        // },
-
-
-
-        // {
-        //   id: "Rewards",
-        //   title: "Royalty Management",
-        //   // title: "Team / Self Offers",
-        //   dropdown: true,
-        //   icon: <TbWorldWww />,
-        //   checked: false,
-        //   children: [
-        //     { id: "mentor-royalty-rewards-lists", title: "Mentor Royalty", href: "/mentor-royalty-rewards-lists", checked: false },
-
-        //     { id: "voice-president-rewards-lists", title: "Voice President", href: "/voice-president-rewards-lists", checked: false },
-
-        //     { id: "senior-voice-president-rewards-lists", title: "Sr.Voice President", href: "/senior-voice-president-rewards-lists", checked: false },
-
-        //     { id: "president-fund-rewards-lists", title: "President Funds", href: "/president-fund-rewards-lists", checked: false },
-
-        //     { id: "president-level-fund-rewards-lists", title: "President Level Funds", href: "/president-level-fund-rewards-lists", checked: false },
-
-        //   ]
-        // },
+            { id: "monthly-or-special-customers-offers-lists", title: "Customers Offers Winners", href: "/monthly-or-special-customers-offers-lists", checked: false },
 
 
-        // {
-        //   id: "lifeTimeRewards",
-        //   title: "Life Time Rewards",
-        //   dropdown: true,
-        //   icon: <TbWorldWww />,
-        //   checked: false,
-        //   children: [
-        //     { id: "add-new-offer-gifts", title: "Upload LifeTime Rewards", href: "/upload-lifetime-rewards", checked: false },
 
-        //     { id: "all-lifetime-rewards-lists", title: "LifeTime Rewards Lists", href: "/all-lifetime-rewards-lists", checked: false },
 
-        //     { id: "life-time-rewards-winner-lists", title: "LifeTime Rewards Winner Lists", href: "/life-time-rewards-winner-lists", checked: false },
-        //   ]
-        // },
+            { id: "monthly-or-special-team-offers-lists", title: "Team Offers Winners", href: "/monthly-or-special-team-offers-lists", checked: false },
+
+
+
+            // { id: "property-awards-winners-histories", title: "View Distributed Lists", href: "#", checked: false },
+
+          ]
+        },
+
+
+
+        {
+          id: "Rewards",
+          title: "Royalty Management",
+          // title: "Team / Self Offers",
+          dropdown: true,
+          icon: <TbWorldWww />,
+          checked: false,
+          children: [
+            { id: "mentor-royalty-rewards-lists", title: "Mentor Royalty", href: "/mentor-royalty-rewards-lists", checked: false },
+
+            { id: "voice-president-rewards-lists", title: "Voice President", href: "/voice-president-rewards-lists", checked: false },
+
+            { id: "senior-voice-president-rewards-lists", title: "Sr.Voice President", href: "/senior-voice-president-rewards-lists", checked: false },
+
+            { id: "president-fund-rewards-lists", title: "President Funds", href: "/president-fund-rewards-lists", checked: false },
+
+            { id: "president-level-fund-rewards-lists", title: "President Level Funds", href: "/president-level-fund-rewards-lists", checked: false },
+
+          ]
+        },
+
+
+        {
+          id: "lifeTimeRewards",
+          title: "Life Time Rewards",
+          dropdown: true,
+          icon: <TbWorldWww />,
+          checked: false,
+          children: [
+            { id: "add-new-offer-gifts", title: "Upload LifeTime Rewards", href: "/upload-lifetime-rewards", checked: false },
+
+            { id: "all-lifetime-rewards-lists", title: "LifeTime Rewards Lists", href: "/all-lifetime-rewards-lists", checked: false },
+
+            { id: "life-time-rewards-winner-lists", title: "LifeTime Rewards Winner Lists", href: "/life-time-rewards-winner-lists", checked: false },
+          ]
+        },
 
 
         {

@@ -182,14 +182,14 @@ function CreateProject() {
     if (!description.trim()) newErrors.description = "Description is required.";
     if (!legality.trim()) newErrors.legality = "Approved Authority details are required.";
     if (!projectStatus.trim()) newErrors.projectStatus = "Project Status is required.";
-    if (!businessVolume.trim()) newErrors.businessVolume = "Business Volume is required.";
+    // if (!businessVolume.trim()) newErrors.businessVolume = "Business Volume is required.";
     if (!city) newErrors.city = "City is required.";
     if (!state) newErrors.state = "State is required.";
     if (!landmark.trim()) newErrors.landmark = "Landmark is required.";
     if (amenities.length === 0) newErrors.amenities = "At least one amenity must be selected.";
     // if (propertyChainPapers.length === 0) newErrors.propertyChainPapers = "At least one property chain paper (PDF) is required.";
     if (keyTransports.length === 0) newErrors.keyTransports = "At least one Key Transport entry is required.";
-    if (youtubeLink.length === 0) newErrors.youtubeLink = " Youtube Link is required.";
+    // if (youtubeLink.length === 0) newErrors.youtubeLink = " Youtube Link is required.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -518,7 +518,7 @@ function CreateProject() {
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3" controlId="businessVolume">
-                    <Form.Label>Business Volume(%) <span className="text-danger">*</span></Form.Label>
+                    <Form.Label>Business Volume(%)</Form.Label>
                     <Form.Control
                       type="number"
                       value={businessVolume}
@@ -886,7 +886,7 @@ function CreateProject() {
 
 
               <Form.Group className="mb-3" controlId="youtubelink">
-                <Form.Label>Youtube Link <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Youtube Link </Form.Label>
                 <Form.Control
                  type="text"
                   value={youtubeLink}

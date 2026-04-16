@@ -69,8 +69,8 @@ const Login = () => {
           },
           didClose: () => {
             //navigate("/dashboard");
-            window.location.href = "/all-associate-list";
-            // window.location.href = "/dashboard";
+            //window.location.href = "/all-associate-list";
+            window.location.href = "/dashboard";
           },
         });
 

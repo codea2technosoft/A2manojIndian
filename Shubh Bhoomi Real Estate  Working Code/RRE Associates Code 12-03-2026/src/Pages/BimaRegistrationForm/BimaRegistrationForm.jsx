@@ -504,11 +504,11 @@ function BimaRegistrationForm() {
   }
 
   return (
-    <div className="padding_15">
+    <div className="mt-3">
       <div className="row">
         <div className="col-md-12 col-12 col-sm-12">
           <div className="card">
-            <div className="card-header bg-gradientcolor">
+            <div className="card-header">
               <div className="d-flex align-items-center justify-content-between">
                 <div className="titlepage">
                   <h3>
@@ -516,14 +516,14 @@ function BimaRegistrationForm() {
                     Bima (Insurance) Registration Form
                   </h3>
                 </div>
-                <Button variant="secondary" onClick={() => navigate(-1)}>
+                <Button variant="primary" onClick={() => navigate(-1)}>
                   <FaArrowLeft className="me-1" /> Back
                 </Button>
               </div>
             </div>
             <div className="card-body">
               <Form onSubmit={handleSubmit}>
-                <h5 className="mb-3 text-primary">Personal Details</h5>
+                <h5 className="mb-3 text-dark fw-bold">Personal Details</h5>
                 <Row>
                   <Col md={6}>
                     <Form.Group className="mb-3">
@@ -614,7 +614,7 @@ function BimaRegistrationForm() {
                   </Col>
                 </Row>
 
-                <h5 className="mb-3 mt-4 text-dark">KYC Details</h5>
+                <h5 className="mb-3 mt-4 text-dark fw-bold">KYC Details</h5>
                 <Row>
                   <Col md={6}>
                     <Form.Group className="mb-3">
@@ -655,7 +655,7 @@ function BimaRegistrationForm() {
                   </Col>
                 </Row>
 
-                <h5 className="mb-3 mt-4 text-dark">Address Details</h5>
+                <h5 className="mb-3 mt-4 text-dark fw-bold">Address Details</h5>
                 <Row>
                   <Col md={12}>
                     <Form.Group className="mb-3">
@@ -738,7 +738,7 @@ function BimaRegistrationForm() {
                   </Col>
                 </Row>
 
-                <h5 className="mb-3 mt-4 text-dark">Nominee Details</h5>
+                <h5 className="mb-3 mt-4 text-dark fw-bold">Nominee Details</h5>
                 <Row>
                   <Col md={4}>
                     <Form.Group className="mb-3">
@@ -791,7 +791,7 @@ function BimaRegistrationForm() {
                   </Col>
                 </Row>
 
-                <h5 className="mb-3 mt-4 text-dark">Insurance Details</h5>
+                <h5 className="mb-3 mt-4 text-dark fw-bold">Insurance Details</h5>
                 <Row>
                   <Col md={6}>
                     <Form.Group className="mb-3">
@@ -810,7 +810,7 @@ function BimaRegistrationForm() {
                   </Col>
                 </Row>
 
-                <h5 className="mb-3 mt-4 text-dark">Document Uploads</h5>
+                <h5 className="mb-3 mt-4 text-dark fw-bold">Document Uploads</h5>
                 <Row>
                   {/* PAN Card Image */}
                   <Col md={6} lg={4}>
@@ -1003,12 +1003,12 @@ function BimaRegistrationForm() {
                   </Col>
                 </Row>
 
-                <div className="text-center mt-4">
+                <div className="d-flex gap-2 justify-content-center">
                   <Button type="submit" variant="primary" size="lg" disabled={loading}>
                     {loading ? <Spinner as="span" animation="border" size="sm" /> : <FaUpload className="me-2" />}
                     {loading ? " Submitting..." : " Submit Registration"}
                   </Button>
-                  <Button type="button" variant="secondary" size="lg" className="ms-3" onClick={() => navigate(-1)}>
+                  <Button type="button" variant="primary" size="lg" className="ms-3" onClick={() => navigate(-1)}>
                     Cancel
                   </Button>
                 </div>

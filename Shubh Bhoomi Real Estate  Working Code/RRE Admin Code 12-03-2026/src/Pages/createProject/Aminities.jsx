@@ -243,7 +243,7 @@ function Aminities() {
             {error && <div className="alert alert-danger">{error}</div>}
             <div className="w-100">
               <label htmlFor="amenityName" className="form-label">
-                Amenity Name
+                Amenity Name<span className="text-danger">*</span>
               </label>
               <input
                 type="text"
@@ -259,7 +259,7 @@ function Aminities() {
             </div>
             <div className="w-100">
               <label htmlFor="amenityImage" className="form-label">
-                Amenity Image
+                Amenity Image<span className="text-danger">*</span>
               </label>
               <input
                 type="file"
@@ -281,7 +281,7 @@ function Aminities() {
                   ? "Saving..."
                   : formData.id
                     ? "Update Amenity"
-                    : "Create Amenity"}
+                    : "Submit Amenity"}
               </button>
             </div>
             {formData.id && (

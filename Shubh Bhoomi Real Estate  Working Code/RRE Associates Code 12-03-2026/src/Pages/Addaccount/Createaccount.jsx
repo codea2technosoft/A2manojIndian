@@ -23,10 +23,18 @@ function CreateBankAccount() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
+    setFormData({
+      ...formData,
+      [name]: name === "ifsc_code" ? value.toUpperCase() : value,
+    });
+
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: null }));
     }
   };
+
+
+
 
   const validateForm = () => {
     let newErrors = {};
@@ -47,7 +55,7 @@ function CreateBankAccount() {
     }
 
 
-    
+
     if (!/^\d+$/.test(formData.account_number)) {
       newErrors.account_number = "Account Number must be numeric.";
       isValid = false;
@@ -112,7 +120,7 @@ function CreateBankAccount() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-    
+
 
     setLoading(true);
     try {
@@ -174,6 +182,8 @@ function CreateBankAccount() {
     }
   };
 
+
+
   return (
     <div className="padding_15">
       <div className="card">
@@ -222,7 +232,7 @@ function CreateBankAccount() {
 
 
 
-                 <Col md={6}>
+              <Col md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label>Bank Branch Name <span className="text-danger">*</span></Form.Label>
                   <Form.Control
@@ -272,8 +282,11 @@ function CreateBankAccount() {
                     type="text"
                     name="ifsc_code"
                     value={formData.ifsc_code}
-                    placeholder=" Enter IFSC Code Like :  SBIN0007587"
-                    onChange={handleChange}
+                    placeholder=" Enter IFSC Code Like : SBIN0007587"
+                    onChange={(e) => {
+                      const value = e.target.value.toUpperCase();
+                      setFormData({ ...formData, ifsc_code: value });
+                    }}
                     isInvalid={!!errors.ifsc_code}
                   />
                   <Form.Control.Feedback type="invalid">

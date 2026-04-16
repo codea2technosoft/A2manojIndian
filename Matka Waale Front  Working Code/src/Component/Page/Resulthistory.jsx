@@ -1,20 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { PoweroffOutlined } from "@ant-design/icons";
-import { Button, DatePicker, Space } from "antd";
-import Table from "react-bootstrap/Table";
 
 export default function Resulthistory() {
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
-    // Simulate loading for 2 seconds
-    const timer = setTimeout(() => {
+    const fallback = setTimeout(() => {
       setIsLoading(false);
-    }, 1000);
+    }, 10000);
 
-    return () => clearTimeout(timer);
+    return () => clearTimeout(fallback);
   }, []);
-
   return (
     <>
       {isLoading && (
@@ -23,13 +17,24 @@ export default function Resulthistory() {
         </div>
       )}
       {!isLoading && (
-        <section id="Help" className="margin-bottom-88">
-          {/* Your iframe code here */}
-          <iframe
-            src={`https://matkawaale.com/api/app_result.php`}
-            style={{ width: "100%", height: "1500px" }}
-            className="resulthistorydesign"
-          />
+        <section id="Help" className='margin-bottom-88'>
+          <div className='margin-bottom-88 mb-0'>
+            <div className="pb-4">
+              <iframe
+                src="https://matkawaale.com/api/app_result.php"
+                style={{
+                  width: "100%",
+                  height: "1500px",
+                  visibility: isLoading ? "hidden" : "visible",
+                }}
+                onLoad={() => {
+                  console.log("iframe loaded");
+                  setIsLoading(false);
+                }}
+
+              />
+            </div>
+          </div>
         </section>
       )}
     </>

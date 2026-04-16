@@ -67,6 +67,10 @@ function AllAssociateList() {
     confirmAction: null,
   });
 
+  // New state for date range filter
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+
   // New state for current parent ID
   const [currentParentId, setCurrentParentId] = useState("");
 
@@ -135,6 +139,8 @@ function AllAssociateList() {
     username = "",
     mobile = "",
     location = "",
+    from_date = "",
+    to_date = "",
   ) => {
     setError(null);
     try {
@@ -152,6 +158,8 @@ function AllAssociateList() {
       if (username) url += `&username=${username}`;
       if (mobile) url += `&mobile=${mobile}`;
       if (location) url += `&parent_id=${location}`;
+      if (from_date) url += `&from_date=${from_date}`;
+      if (to_date) url += `&to_date=${to_date}`;
 
       const response = await fetch(url, {
         method: "GET",
@@ -200,62 +208,6 @@ function AllAssociateList() {
     setCurrentPage(pageNumber);
   };
 
-  // const exportAllToExcel = async () => {
-  //   setExporting(true);
-  //   try {
-  //     const token = getAuthToken();
-  //     if (!token) {
-  //       showCustomMessageModal("Authentication Error", "Authentication token not found. Please log in.", "error");
-  //       return;
-  //     }
-
-  //     let url = `${API_URL}/Associate-excel-download`;
-  //     if (searchMobile) url += `&mobile=${searchMobile}`;
-  //     if (searchName) url += `&name=${searchName}`;
-  //     if (searchLocation) url += `&parent_id=${searchLocation}`;
-
-  //     const response = await fetch(url, {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-
-  //     if (!response.ok) {
-  //       const errorData = await response.json();
-  //       showCustomMessageModal("Error", errorData.message || "Failed to fetch associates.", "error");
-  //       return;
-  //     }
-
-  //     const data = await response.json();
-  //     const allAssociates = data.data || [];
-  //     const worksheet = XLSX.utils.json_to_sheet(allAssociates.map(associate => ({
-  //       "SL No.": allAssociates.indexOf(associate) + 1,
-  //       "ID": associate.id,
-  //       "Name": associate.username,
-  //       "Mobile": associate.mobile,
-  //       "KYC Status": associate.kyc,
-  //       "Parent Name": associate.parent_name,
-  //       "Parent ID": associate.parent_id,
-  //       "Status": associate.status,
-  //       "Date of Joining": associate.date,
-  //       "Email": associate.email,
-  //       "WhatsApp": associate.whatsapp_number
-  //     })));
-
-  //     const workbook = XLSX.utils.book_new();
-  //     XLSX.utils.book_append_sheet(workbook, worksheet, "Associates");
-  //     XLSX.writeFile(workbook, `All_Associates_${new Date().toISOString().split('T')[0]}.xlsx`);
-
-  //   } catch (err) {
-  //     console.error("Export error:", err);
-  //     showCustomMessageModal("Error", "Failed to export associates.", "error");
-  //   } finally {
-  //     setExporting(false);
-  //   }
-  // };
-
   const exportAllToExcel = async () => {
     try {
       const token = getAuthToken();
@@ -265,6 +217,11 @@ function AllAssociateList() {
       }
 
       let url = `${API_URL}/Associate-excel-download`;
+      
+      // Add date filters to export if they exist
+      if (fromDate) url += `?from_date=${fromDate}`;
+      if (toDate) url += `${fromDate ? '&' : '?'}to_date=${toDate}`;
+      
       const response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -565,6 +522,15 @@ function AllAssociateList() {
     setSearchLocation(e.target.value);
   };
 
+  // New handlers for date range
+  const handleFromDateChange = (e) => {
+    setFromDate(e.target.value);
+  };
+
+  const handleToDateChange = (e) => {
+    setToDate(e.target.value);
+  };
+
   const handleSearchClick = () => {
     setCurrentPage(1);
     fetchAssociates(
@@ -572,6 +538,8 @@ function AllAssociateList() {
       searchName.trim(),
       searchMobile.trim(),
       searchLocation.trim(),
+      fromDate,
+      toDate,
     );
   };
 
@@ -579,8 +547,10 @@ function AllAssociateList() {
     setSearchName("");
     setSearchMobile("");
     setSearchLocation("");
+    setFromDate("");
+    setToDate("");
     setCurrentPage(1);
-    fetchAssociates(1, "", "");
+    fetchAssociates(1, "", "", "", "", "");
   };
 
   const handleDeleteAssociate = async (associateId, associateName) => {
@@ -729,12 +699,6 @@ function AllAssociateList() {
                 )}
               </button>
             </div>
-
-            {/* <div className="d-flex">
-              <Link to="/create-associate" className="btn btn-success d-inline-flex align-items-center">
-                <FaPlus className="me-2" /> Create New Associate
-              </Link>
-            </div> */}
           </div>
         </div>
 
@@ -771,9 +735,33 @@ function AllAssociateList() {
                 />
               </div>
 
+              {/* Date Range Filters - New Addition */}
+              <div className="form-group w-100" id="fromDate">
+                <input
+                  type="date"
+                  placeholder="From Date"
+                  value={fromDate}
+                  onChange={handleFromDateChange}
+                  className="form-control"
+                />
+              </div>
+
+              <div className="form-group w-100" id="toDate">
+                <input
+                  type="date"
+                  placeholder="To Date"
+                  value={toDate}
+                  onChange={handleToDateChange}
+                  className="form-control"
+                />
+              </div>
+
               <div className="d-flex gap-2 justify-content-end">
                 <button className="btn btn-primary" onClick={handleSearchClick}>
                   Search
+                </button>
+                <button className="btn btn-secondary" onClick={handleClearSearch}>
+                  Clear
                 </button>
               </div>
             </div>
@@ -797,10 +785,6 @@ function AllAssociateList() {
                   <th>Self Gift Sqyd</th>
                   <th>Team Gift Sqyd</th>
                   <th>Total Sqyd</th>
-                  {/* <th>Sold SQYD</th>
-                  <th>Reward Qualify</th>
-                  <th>Royalty Qualify</th>
-                  <th>Advance Payment</th> */}
                   <th>Status</th>
                   <th>Date Of Joining</th>
                   <th>Action</th>
@@ -811,49 +795,32 @@ function AllAssociateList() {
                   associates.map((associate, i) => (
                     <tr key={associate.id}>
                       <td>{(currentPage - 1) * 10 + i + 1}</td>
-                      {/* <td>
-                         {associate.username.charAt(0).toUpperCase() + associate.username.slice(1).toLowerCase()}
-</td>
-
-                      <td>{associate.mobile}</td>
-                      <td>{associate.password}</td>
-                      <td>{associate.kyc.charAt(0).toUpperCase() + associate.kyc.slice(1).toLowerCase()}</td>
-                      <td>{associate.parent_name.charAt(0).toUpperCase()+associate.parent_name }</td> */}
-
                       <td>
                         {associate.username
                           ? associate.username.charAt(0).toUpperCase() +
                             associate.username.slice(1).toLowerCase()
                           : ""}
                       </td>
-
                       <td>{associate.mobile || "NA"}</td>
                       <td>{associate.password || "NA"}</td>
-
                       <td>
                         {associate.kyc
                           ? associate.kyc.charAt(0).toUpperCase() +
                             associate.kyc.slice(1).toLowerCase()
                           : ""}
                       </td>
-
                       <td>
                         {associate.parent_name
                           ? associate.parent_name.charAt(0).toUpperCase() +
                             associate.parent_name.slice(1)
                           : "NA"}
                       </td>
-
                       <td>{associate.parent_id}</td>
                       <td>{associate.self_sqyd || 0.0}</td>
                       <td>{associate.team_sqyd || 0.0}</td>
                       <td>{associate.self_gift_sqyd || 0.0}</td>
                       <td>{associate.team_gift_sqyd || 0.0}</td>
                       <td>{associate.total_sqyd || 0.0}</td>
-                      {/* <td>{associate.buysqrt || 0.00}</td>
-                      <td>{associate.parent_id}</td>
-                      <td>{associate.parent_id}</td>
-                      <td>{associate.advance_payment || 0.00}</td> */}
                       <td>
                         <span
                           className={`badge ${
@@ -882,24 +849,6 @@ function AllAssociateList() {
                             aria-labelledby="dropdownMenuButton"
                           >
                             <li className="dropdown-item">
-                              {/* <button
-                                className="btn view_btn btn-sm"
-                                onClick={() => handleViewAssociate(associate.id)}
-                                title="View Project Details"
-                              >
-                                <FaEye /> View
-                              </button> */}
-                            </li>
-                            <li className="dropdown-item">
-                              {/* <button
-                                className="btn view_btn btn-sm"
-                                title="View Project Details"
-                                onClick={() => handleEditAssociate(associate.id)}
-                              >
-                                <FaEdit /> Edit
-                              </button> */}
-                            </li>
-                            <li className="dropdown-item">
                               <button
                                 variant={
                                   associate.status === "active"
@@ -926,7 +875,6 @@ function AllAssociateList() {
                               </button>
                             </li>
 
-                            {/* Add Delete Option Here */}
                             <li className="dropdown-item">
                               <button
                                 className="btn btn-sm text-danger"
@@ -950,16 +898,6 @@ function AllAssociateList() {
 
                             {associate.status !== "inactive" && (
                               <li className="dropdown-item">
-                                {/*<a
-                                    href={`https://dashboard.rajasthanirealestates.in/login?mobile=${associate.mobile}&pssword=${associate.password}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="btn view_btn btn-sm"
-                                    title="View Project Details"
-                                  >
-                                    <FaEdit /> Login
-                                  </a>*/}
-
                                 <a
                                   href={`${process.env.REACT_APP_API_ASSCIATELOGIN_URL}/login?mobile=${associate.mobile}&pssword=${associate.password}`}
                                   target="_blank"
@@ -988,7 +926,7 @@ function AllAssociateList() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="text-center">
+                    <td colSpan="15" className="text-center">
                       No associates found.
                     </td>
                   </tr>
@@ -1176,7 +1114,6 @@ function AllAssociateList() {
                 </Form.Group>
               </Col>
 
-              {/* Current Parent ID Display */}
               <Col md={6}>
                 <Form.Group className="mb-3" controlId="currentParentId">
                   <Form.Label>Old Parent ID (From History)</Form.Label>

@@ -144,7 +144,7 @@ function AllPlotList() {
         showCustomMessageModal(
           "Error",
           err.message ||
-            "An unexpected error occurred while fetching projects for edit.",
+          "An unexpected error occurred while fetching projects for edit.",
           "error",
         );
       } finally {
@@ -199,7 +199,7 @@ function AllPlotList() {
           showCustomMessageModal(
             "Error",
             err.message ||
-              "An unexpected error occurred while fetching blocks for edit.",
+            "An unexpected error occurred while fetching blocks for edit.",
             "error",
           );
           setBlocksForEdit([]);
@@ -346,7 +346,7 @@ function AllPlotList() {
       showCustomMessageModal(
         "Error",
         err.message ||
-          "An unexpected error occurred while fetching unit details.",
+        "An unexpected error occurred while fetching unit details.",
         "error",
       );
     } finally {
@@ -408,7 +408,7 @@ function AllPlotList() {
       showCustomMessageModal(
         "Error",
         err.message ||
-          "An unexpected error occurred while fetching Units for editing.",
+        "An unexpected error occurred while fetching Units for editing.",
         "error",
       );
     } finally {
@@ -558,7 +558,7 @@ function AllPlotList() {
           showCustomMessageModal(
             "Error",
             err.message ||
-              "An unexpected error occurred while updating plot status.",
+            "An unexpected error occurred while updating plot status.",
             "error",
           );
         } finally {
@@ -762,7 +762,7 @@ function AllPlotList() {
     <div className="userlist mt-2">
       <div className="card">
         <div className="card-header">
-          <div className="d-flex align-items-center justify-content-between">
+          <div className="d-flex align-items-center justify-content-between flex-wrap-mobile gap-2">
             <div className="titlepage">
               <h3>All Unit List</h3>
             </div>
@@ -793,10 +793,19 @@ function AllPlotList() {
 
               <div className="createnewadmin">
                 <Link
+                  to="/create-plot-manual"
+                  className="btn btn-success d-flex align-items-center"
+                >
+                  <FaPlus className="me-2" /> Manual Add
+                </Link>
+              </div>
+
+              <div className="createnewadmin">
+                <Link
                   to="/create-plot"
                   className="btn btn-success d-flex align-items-center"
                 >
-                  <FaPlus className="me-2" /> Add
+                  <FaPlus className="me-2" /> Upload CSV
                 </Link>
               </div>
               <div className="d-flex gap-2">
@@ -886,7 +895,7 @@ function AllPlotList() {
                   <th>Unit Size</th>
                   <th>Unit Area SQMT</th>
                   <th>Unit Area(SQYD)</th>
-                  <th>PLC Percentage</th>
+                  <th>PLC (%)</th>
                   <th>Unit Rate(Per SQYd Rate)</th>
                   <th>Unit Price</th>
                   <th>Date</th>
@@ -912,17 +921,22 @@ function AllPlotList() {
                       <td>{plot.rate || "0.00"}</td>
                       <td>{plot.unit_price || "0.00"}</td>
                       <td>
-                        {plot.date && !isNaN(new Date(plot.date).getTime())
-                          ? new Date(plot.date).toLocaleDateString("en-GB")
+                        {plot.date
+                          ? (() => {
+                            const [day, month, year] = plot.date.split("-");
+                            const formattedDate = new Date(`${year}-${month}-${day}`);
+                            return !isNaN(formattedDate)
+                              ? formattedDate.toLocaleDateString("en-GB")
+                              : "NA";
+                          })()
                           : "NA"}
                       </td>
                       <td>
                         <span
-                          className={`badge ${
-                            plot.status === "available"
+                          className={`badge ${plot.status === "available"
                               ? "bg-success"
                               : "bg-danger"
-                          }`}
+                            }`}
                         >
                           {plot.status}
                         </span>
@@ -1134,21 +1148,20 @@ function AllPlotList() {
                     <th>Date</th>
                     <td>
                       {selectedPlot.date &&
-                      !isNaN(new Date(selectedPlot.date).getTime())
+                        !isNaN(new Date(selectedPlot.date).getTime())
                         ? new Date(selectedPlot.date).toLocaleDateString(
-                            "en-GB",
-                          )
+                          "en-GB",
+                        )
                         : "NA"}
                     </td>
 
                     <th>Status</th>
                     <td>
                       <span
-                        className={`badge ${
-                          selectedPlot.status === "available"
+                        className={`badge ${selectedPlot.status === "available"
                             ? "bg-success"
                             : "bg-danger"
-                        }`}
+                          }`}
                       >
                         {selectedPlot.status}
                       </span>

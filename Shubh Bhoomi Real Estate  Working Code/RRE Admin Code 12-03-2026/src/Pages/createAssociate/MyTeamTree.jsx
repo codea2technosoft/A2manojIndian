@@ -2,36 +2,36 @@ import React, { useState, useEffect, useRef } from "react";
 import { Card, Spinner } from "react-bootstrap";
 import axios from "axios";
 import Swal from "sweetalert2";
- 
+
 const API_URL = process.env.REACT_APP_API_URL;
- 
+
 function MyTeamTree() {
   const [mobile, setMobile] = useState("");
   const [loading, setLoading] = useState(false);
   const [treeData, setTreeData] = useState(null);
   const [showTree, setShowTree] = useState(false);
   const treeRef = useRef(null);
- 
+
   const getAuthToken = () => localStorage.getItem("token");
- 
+
   const fetchTreeData = async (e) => {
     e.preventDefault();
     if (!mobile) {
       Swal.fire("Missing Input", "Please enter a mobile number", "warning");
       return;
     }
- 
+
     setLoading(true);
     setTreeData(null);
     setShowTree(false);
- 
+
     try {
       const token = getAuthToken();
       const response = await axios.get(
         `${API_URL}/myteam-tree?mobile=${mobile}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
- 
+
       if (response.data.status === "1") {
         const formattedTree = {
           name: `${response.data.parent_mobile}`,
@@ -51,42 +51,56 @@ function MyTeamTree() {
       setLoading(false);
     }
   };
- 
+
   const buildTreeStructure = (nodes) =>
     nodes.map((node) => ({
       name: `${node.username} (${node.mobile})`,
       role: node.user_type,
       level: node.level,
       kyc: node.kyc,
+      status: node.status,
       date: node.date,
       expanded: false,
       children: buildTreeStructure(node.children || []),
     }));
- 
+
   const toggleNode = (node) => {
     node.expanded = !node.expanded;
     setTreeData({ ...treeData });
   };
- 
+
   const renderTree = (node, isRoot = false) => (
     <li key={node.name}>
       <span>
         <strong>{node.name}</strong>
         <br />
-        <small>Role: {node.role}</small>
+        <small className="text-capitalize">Role: {node.role}</small>
         {!isRoot && (
           <>
             <br />
             <small>Level: {node.level}</small>
             {/* <br />
             <small>KYC: {node.kyc}</small>*/}
-            <br /> 
+            {/* <br />  */}
 
-             <small>SQYD: {node.buysqrt || "0.00"}</small>
             <br />
 
-            
+            <small>SQYD: {node.buysqrt || "0.00"}</small>
+            <br />
+
+
             <small>DOR: {node.date}</small>
+            <br />
+            <small>
+              Associate Status :{" "}
+              <div className="d-inline text-capitalize"
+                style={{
+                  color: node.status === "success" ? "green" : "red",
+                }}
+              >
+                {node.status}
+              </div>
+            </small>
           </>
         )}
         {node.children && node.children.length > 0 && (
@@ -99,13 +113,13 @@ function MyTeamTree() {
           </button>
         )}
       </span>
- 
+
       {node.expanded && node.children?.length > 0 && (
         <ul>{node.children.map((child) => renderTree(child))}</ul>
       )}
     </li>
   );
- 
+
   // ✅ Center tree only once after it is first shown
   useEffect(() => {
     if (showTree && treeData && treeRef.current) {
@@ -119,7 +133,7 @@ function MyTeamTree() {
       }, 300);
     }
   }, [showTree]);
- 
+
   return (
     <div className="padding_15">
       <div className="row justify-content-center">
@@ -157,7 +171,7 @@ function MyTeamTree() {
                   </div>
                 </div>
               </form>
- 
+
               {showTree && treeData && (
                 <div className="tree-wrapper" ref={treeRef}>
                   <ul className="tree">{renderTree(treeData, true)}</ul>
@@ -167,10 +181,10 @@ function MyTeamTree() {
           </Card>
         </div>
       </div>
- 
-     
+
+
     </div>
   );
 }
- 
+
 export default MyTeamTree;

@@ -52,7 +52,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
           checked: true
         },
 
-        
+
         // {
         //   id: "AccountReport",
         //   title: "Accounts Report",
@@ -88,7 +88,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
           ]
         },
 
-         //  {
+        //  {
         //   id: "WalletLedger",
         //   title: "Wallet Ledger",
         //   href: "/admin-wallet-report",
@@ -105,7 +105,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
           children: [
             { id: "create-subadmin", title: "Create Subadmin", href: "/create-subadmin", checked: false },
             { id: "all-subadmin", title: "All Subadmin", href: "/allsubadmin", checked: false },
-             // { id: "subadmin-permission", title: "Permission Management", href: "/subadmin-permission", checked: false }
+            // { id: "subadmin-permission", title: "Permission Management", href: "/subadmin-permission", checked: false }
           ]
         },
         {
@@ -154,10 +154,13 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
             { id: "all-associate-inactive-list", title: "Inactive Associate", href: "/all-associate-inactive-list", checked: false },
             { id: "my-team-tree-admin", title: "Team Tree", href: "/my-team-tree-admin", checked: false },
             { id: "myteam-parent-chain-upline", title: "Parent Chain", href: "/myteam-parent-chain-upline", checked: false },
-            { id: "download-my-11level-team-data-in-excel", title: "Download My11Level Team", href: "/download-my-11level-team-data-in-excel", checked: false },
+            { id: "download-my-11level-team-data-in-excel", title: "My11Level Team", href: "/download-my-11level-team-data-in-excel", checked: false },
             { id: "associates-birthday-lists", title: "Birthday Lists", href: "/associates-birthday-lists", checked: false },
             { id: "associates-anniversary-lists", title: "Anniversary Lists", href: "/associates-anniversary-lists", checked: false },
             { id: "associates-designation-lists", title: "Designation Lists", href: "/associates-designation-lists", checked: false },
+            { id: "associates-bima-achiever-lists", title: "Bima Achiever Lists", href: "/associates-bima-achiever-lists", checked: false },
+
+
           ]
         },
         {

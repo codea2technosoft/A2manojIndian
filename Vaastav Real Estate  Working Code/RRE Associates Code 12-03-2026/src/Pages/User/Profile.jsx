@@ -20,6 +20,7 @@ const Profile = () => {
   const [showModal, setShowModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
+  const [selectedFileType, setSelectedFileType] = useState("");
 
   const validateAadhaar = (aadhaar) => {
     const regex = /^[2-9]{1}[0-9]{11}$/;
@@ -29,6 +30,36 @@ const Profile = () => {
   const validatePAN = (pan) => {
     const regex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
     return regex.test(pan);
+  };
+
+  // File validation function
+  const validateFile = (file) => {
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'application/pdf'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    
+    if (!allowedTypes.includes(file.type)) {
+      Swal.fire("Error", "Only PNG, JPG, JPEG, WEBP images and PDF files are allowed!", "error");
+      return false;
+    }
+    
+    if (file.size > maxSize) {
+      Swal.fire("Error", "File size should be less than 5MB!", "error");
+      return false;
+    }
+    
+    return true;
+  };
+
+  // Check if file is PDF
+  const isPDF = (filename) => {
+    if (!filename) return false;
+    return filename.toLowerCase().endsWith('.pdf');
+  };
+
+  // Get file extension
+  const getFileExtension = (filename) => {
+    if (!filename) return '';
+    return filename.split('.').pop().toLowerCase();
   };
 
   const [editForm, setEditForm] = useState({
@@ -46,7 +77,7 @@ const Profile = () => {
     pan_number: "",
     adhar_number: "",
     pincode: "",
-    adhar_front_image: null,
+    adhar_fornt_image: null,
     adhar_back_image: null,
     pan_card_image: null,
   });
@@ -136,10 +167,16 @@ const Profile = () => {
   const handleFileChange = (e, fieldName) => {
     const file = e.target.files[0];
     if (file) {
-      setEditForm({
-        ...editForm,
-        [fieldName]: file,
-      });
+      // Validate file before setting
+      if (validateFile(file)) {
+        setEditForm({
+          ...editForm,
+          [fieldName]: file,
+        });
+      } else {
+        // Clear the file input
+        e.target.value = '';
+      }
     }
   };
 
@@ -167,9 +204,9 @@ const Profile = () => {
     formData.append('adhar_number', editForm.adhar_number || '');
     formData.append('pincode', editForm.pincode || '');
 
-    // Add image files if they exist
-    if (editForm.adhar_front_image instanceof File) {
-      formData.append('adhar_front_image', editForm.adhar_front_image);
+    // Add image files if they exist and are valid
+    if (editForm.adhar_fornt_image instanceof File) {
+      formData.append('adhar_fornt_image', editForm.adhar_fornt_image);
     }
     if (editForm.adhar_back_image instanceof File) {
       formData.append('adhar_back_image', editForm.adhar_back_image);
@@ -226,9 +263,55 @@ const Profile = () => {
       .padStart(2, "0")}-${d.getFullYear()}`;
   };
 
-  const openImageModal = (imageUrl) => {
-    setSelectedImage(imageUrl);
+  const openFileModal = (fileUrl, filename) => {
+    setSelectedImage(fileUrl);
+    setSelectedFileType(isPDF(filename) ? 'pdf' : 'image');
     setShowImageModal(true);
+  };
+
+  // Render document preview based on file type
+  const renderDocumentPreview = (fileUrl, filename) => {
+    if (!fileUrl) return null;
+    
+    if (isPDF(filename)) {
+      return (
+        <div 
+          className="document-preview mb-2 pdf-preview"
+          style={{ cursor: "pointer" }}
+          onClick={() => openFileModal(fileUrl, filename)}
+        >
+          <div className="pdf-icon-container text-center">
+            <img 
+              src="/assets/images/pdf-icon.png" 
+              alt="PDF Icon"
+              style={{ width: "80px", height: "80px", objectFit: "contain" }}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "https://cdn-icons-png.flaticon.com/512/337/337946.png";
+              }}
+            />
+            <p className="mt-2 mb-0 small">View PDF</p>
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div className="document-preview mb-2">
+          <img
+            src={fileUrl}
+            alt="Document"
+            className="img-fluid rounded"
+            style={{
+              minHeight: "120px",
+              maxHeight: "120px",
+              objectFit: "contain",
+              cursor: "pointer"
+            }}
+            onClick={() => openFileModal(fileUrl, filename)}
+          />
+        </div>
+      );
+    }
   };
 
   if (loading)
@@ -302,11 +385,17 @@ const Profile = () => {
                       <input
                         type="file"
                         id="fileUpload"
-                        accept="image/*"
+                        accept="image/png, image/jpeg, image/jpg, image/webp"
                         style={{ display: "none" }}
                         onChange={async (e) => {
                           const file = e.target.files[0];
                           if (!file) return;
+
+                          // Validate profile image
+                          if (!validateFile(file)) {
+                            e.target.value = '';
+                            return;
+                          }
 
                           try {
                             const token = localStorage.getItem("token");
@@ -488,27 +577,14 @@ const Profile = () => {
                       <div className="card document-card">
                         <div className="card-body text-center p-2">
                           <h6 className="card-title">Aadhar Front</h6>
-                          {profile?.adhar_front_image ? (
-                            <>
-                              <div className="document-preview mb-2">
-                                <img
-                                  src={`${profileImage}${profile.adhar_front_image}`}
-                                  alt="Aadhar Front"
-                                  className="img-fluid rounded"
-                                  style={{
-                                    minHeight: "120px",
-                                    maxHeight: "120px",
-                                    objectFit: "contain",
-                                    cursor: "pointer"
-                                  }}
-                                  onClick={() => openImageModal(`${profileImage}${profile.adhar_front_image}`)}
-                                />
-                              </div>
-
-                            </>
+                          {profile?.adhar_fornt_image ? (
+                            renderDocumentPreview(
+                              `${profileImage}${profile.adhar_fornt_image}`,
+                              profile.adhar_fornt_image
+                            )
                           ) : (
                             <div className="text-muted">
-                              <p>No image uploaded</p>
+                              <p>No document uploaded</p>
                             </div>
                           )}
                         </div>
@@ -521,26 +597,13 @@ const Profile = () => {
                         <div className="card-body text-center p-2">
                           <h6 className="card-title">Aadhar Back</h6>
                           {profile?.adhar_back_image ? (
-                            <>
-                              <div className="document-preview mb-2">
-                                <img
-                                  src={`${profileImage}${profile.adhar_back_image}`}
-                                  alt="Aadhar Back"
-                                  className="img-fluid rounded"
-                                  style={{
-                                    minHeight: "120px",
-                                    maxHeight: "120px",
-                                    objectFit: "contain",
-                                    cursor: "pointer"
-                                  }}
-                                  onClick={() => openImageModal(`${profileImage}${profile.adhar_back_image}`)}
-                                />
-                              </div>
-
-                            </>
+                            renderDocumentPreview(
+                              `${profileImage}${profile.adhar_back_image}`,
+                              profile.adhar_back_image
+                            )
                           ) : (
                             <div className="text-muted">
-                              <p>No image uploaded</p>
+                              <p>No document uploaded</p>
                             </div>
                           )}
                         </div>
@@ -553,26 +616,13 @@ const Profile = () => {
                         <div className="card-body text-center p-2">
                           <h6 className="card-title">PAN Card</h6>
                           {profile?.pan_card_image ? (
-                            <>
-                              <div className="document-preview mb-2">
-                                <img
-                                  src={`${profileImage}${profile.pan_card_image}`}
-                                  alt="PAN Card"
-                                  className="img-fluid rounded"
-                                  style={{
-                                    minHeight: "120px",
-                                    maxHeight: "120px",
-                                    objectFit: "contain",
-                                    cursor: "pointer"
-                                  }}
-                                  onClick={() => openImageModal(`${profileImage}${profile.pan_card_image}`)}
-                                />
-                              </div>
-
-                            </>
+                            renderDocumentPreview(
+                              `${profileImage}${profile.pan_card_image}`,
+                              profile.pan_card_image
+                            )
                           ) : (
                             <div className="text-muted">
-                              <p>No image uploaded</p>
+                              <p>No document uploaded</p>
                             </div>
                           )}
                         </div>
@@ -587,16 +637,18 @@ const Profile = () => {
       </div>
 
 
-      {/* Image Preview Modal */}
+      {/* File Preview Modal - Supports both Images and PDFs */}
       {showImageModal && (
         <div
           className="modal fade show"
           style={{ display: "block", backgroundColor: "rgba(0,0,0,0.8)" }}
         >
-          <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-dialog modal-dialog-centered modal-lg">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Documents Preview</h5>
+                <h5 className="modal-title">
+                  {selectedFileType === 'pdf' ? 'PDF Preview' : 'Document Preview'}
+                </h5>
                 <button
                   type="button"
                   className="btn-close"
@@ -605,12 +657,44 @@ const Profile = () => {
               </div>
 
               <div className="modal-body text-center">
-                <img
-                  src={selectedImage}
-                  alt="Full View"
-                  className="img-fluid"
-                  style={{ maxHeight: "80vh" }}
-                />
+                {selectedFileType === 'pdf' ? (
+                  <iframe
+                    src={selectedImage}
+                    title="PDF Preview"
+                    style={{
+                      width: "100%",
+                      height: "70vh",
+                      border: "none"
+                    }}
+                  >
+                    This browser does not support PDF preview. Please download the PDF to view it.
+                  </iframe>
+                ) : (
+                  <img
+                    src={selectedImage}
+                    alt="Full View"
+                    className="img-fluid"
+                    style={{ maxHeight: "80vh" }}
+                  />
+                )}
+              </div>
+              
+              <div className="modal-footer">
+                <a
+                  href={selectedImage}
+                  download
+                  className="btn btn-primary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Download {selectedFileType === 'pdf' ? 'PDF' : 'Image'}
+                </a>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowImageModal(false)}
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>
@@ -853,45 +937,35 @@ const Profile = () => {
                     {/* Aadhar Front Image */}
                     <div className="col-md-4 col-12">
                       <div className="mb-2">
-                        <label className="form-label">Aadhar Front Image</label>
+                        <label className="form-label">Aadhar Front Document</label>
                         <div className="d-flex align-items-center gap-2">
                           <input
                             type="file"
-                            accept="image/*"
+                            accept="image/png, image/jpeg, image/jpg, image/webp, application/pdf"
                             className="form-control"
-                            onChange={(e) => handleFileChange(e, 'adhar_front_image')}
+                            onChange={(e) => handleFileChange(e, 'adhar_fornt_image')}
                           />
-                          {editForm.adhar_front_image && (
+                          {editForm.adhar_fornt_image && (
                             <span className="text-success">✓ Selected</span>
                           )}
                         </div>
-                        <img
-                          src={`${profileImage}${profile.adhar_front_image}`}
-                          alt="Aadhar Front"
-                          className="img-fluid rounded my-1"
-                          style={{
-                            minHeight: "120px",
-                            maxHeight: "120px",
-                            objectFit: "contain",
-                            cursor: "pointer"
-                          }}
-
-                          onClick={() => {
-                            setSelectedImage(`${profileImage}${profile.adhar_front_image}`);
-                            setShowImageModal(true);
-                          }}
-                        />
+                        {profile?.adhar_fornt_image && (
+                          renderDocumentPreview(
+                            `${profileImage}${profile.adhar_fornt_image}`,
+                            profile.adhar_fornt_image
+                          )
+                        )}
                       </div>
                     </div>
 
                     {/* Aadhar Back Image */}
                     <div className="col-md-4 col-12">
                       <div className="mb-2">
-                        <label className="form-label">Aadhar Back Image</label>
+                        <label className="form-label">Aadhar Back Document</label>
                         <div className="d-flex align-items-center gap-2">
                           <input
                             type="file"
-                            accept="image/*"
+                            accept="image/png, image/jpeg, image/jpg, image/webp, application/pdf"
                             className="form-control"
                             onChange={(e) => handleFileChange(e, 'adhar_back_image')}
                           />
@@ -899,36 +973,23 @@ const Profile = () => {
                             <span className="text-success">✓ Selected</span>
                           )}
                         </div>
-
-
-                        <img
-                          src={`${profileImage}${profile.adhar_back_image}`}
-                          alt="Aadhar Front"
-                          className="img-fluid rounded my-1"
-                          style={{
-                            minHeight: "120px",
-                            maxHeight: "120px",
-                            objectFit: "contain",
-                            cursor: "pointer"
-                          }}
-
-                          onClick={() => {
-                            setSelectedImage(`${profileImage}${profile.adhar_back_image}`);
-                            setShowImageModal(true);
-                          }}
-                        />
-
+                        {profile?.adhar_back_image && (
+                          renderDocumentPreview(
+                            `${profileImage}${profile.adhar_back_image}`,
+                            profile.adhar_back_image
+                          )
+                        )}
                       </div>
                     </div>
 
                     {/* PAN Card Image */}
                     <div className="col-md-4 col-12">
                       <div className="mb-2">
-                        <label className="form-label">PAN Card Image</label>
+                        <label className="form-label">PAN Card Document</label>
                         <div className="d-flex align-items-center gap-2">
                           <input
                             type="file"
-                            accept="image/*"
+                            accept="image/png, image/jpeg, image/jpg, image/webp, application/pdf"
                             className="form-control"
                             onChange={(e) => handleFileChange(e, 'pan_card_image')}
                           />
@@ -936,24 +997,12 @@ const Profile = () => {
                             <span className="text-success">✓ Selected</span>
                           )}
                         </div>
-
-
-                        <img
-                          src={`${profileImage}${profile.pan_card_image}`}
-                          alt="Aadhar Front"
-                          className="img-fluid rounded my-1"
-                          style={{
-                            minHeight: "120px",
-                            maxHeight: "120px",
-                            objectFit: "contain",
-                            cursor: "pointer"
-                          }}
-                          onClick={() => {
-                            setSelectedImage(`${profileImage}${profile.pan_card_image}`);
-                            setShowImageModal(true);
-                          }}
-                        />
-
+                        {profile?.pan_card_image && (
+                          renderDocumentPreview(
+                            `${profileImage}${profile.pan_card_image}`,
+                            profile.pan_card_image
+                          )
+                        )}
                       </div>
                     </div>
 

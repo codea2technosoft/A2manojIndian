@@ -51,6 +51,8 @@ function AllAssociateList() {
   const [searchName, setSearchName] = useState("");
   const [searchMobile, setSearchMobile] = useState("");
   const [searchLocation, setSearchLocation] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
   const [exporting, setExporting] = useState(false);
   const searchTimeoutRef = useRef(null);
 
@@ -225,6 +227,8 @@ function AllAssociateList() {
     username = "",
     mobile = "",
     location = "",
+    from_date = "",
+    to_date = "",
   ) => {
     setError(null);
     try {
@@ -242,6 +246,8 @@ function AllAssociateList() {
       if (username) url += `&username=${username}`;
       if (mobile) url += `&mobile=${mobile}`;
       if (location) url += `&parent_id=${location}`;
+      if (from_date) url += `&from_date=${from_date}`;
+      if (to_date) url += `&to_date=${to_date}`;
 
       const response = await fetch(url, {
         method: "GET",
@@ -289,6 +295,7 @@ function AllAssociateList() {
   };
 
   const exportAllToExcel = async () => {
+    setExporting(true);
     try {
       const token = getAuthToken();
       if (!token) {
@@ -297,6 +304,13 @@ function AllAssociateList() {
       }
 
       let url = `${API_URL}/Associate-excel-download`;
+      const params = new URLSearchParams();
+      if (fromDate) params.append('from_date', fromDate);
+      if (toDate) params.append('to_date', toDate);
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
+
       const response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -312,49 +326,20 @@ function AllAssociateList() {
       const csvData = await response.text();
       const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
       const link = document.createElement("a");
+      let fileName = `associates_${Date.now()}`;
+      if (fromDate) fileName += `_from_${fromDate}`;
+      if (toDate) fileName += `_to_${toDate}`;
+      fileName += `.csv`;
       link.href = URL.createObjectURL(blob);
-      link.setAttribute("download", `associates_${Date.now()}.csv`);
+      link.setAttribute("download", fileName);
       link.click();
     } catch (error) {
       console.error("CSV Export Error:", error);
       alert("Export Failed! Try again");
+    } finally {
+      setExporting(false);
     }
   };
-
-  // const handleViewAssociate = async (associateId) => {
-  //   setLoading(true);
-  //   setError(null);
-  //   try {
-  //     const token = getAuthToken();
-  //     if (!token) {
-  //       showCustomMessageModal("Authentication Error", "Authentication token not found. Please log in.", "error");
-  //       throw new Error("Authentication token not found. Please log in.");
-  //     }
-
-  //     const response = await fetch(`${API_URL}/Associate-view`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       body: JSON.stringify({ id: associateId }),
-  //     });
-
-  //     if (!response.ok) {
-  //       const errorData = await response.json();
-  //       showCustomMessageModal("Error", errorData.message || "Failed to fetch associate details.", "error");
-  //       throw new Error(errorData.message || "Failed to fetch associate details.");
-  //     }
-
-  //     const data = await response.json();
-  //     setSelectedAssociate(data.data);
-  //     setShowViewModal(true);
-  //   } catch (err) {
-  //     console.error("View associate error:", err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleViewAssociate = async (associateId) => {
     setLoading(true);
@@ -394,7 +379,6 @@ function AllAssociateList() {
       const data = await response.json();
       setSelectedAssociate(data.data);
 
-      // ✅ अगर state ID है तो cities fetch करें
       if (data.data?.state) {
         await fetchCities(data.data.state);
       }
@@ -406,67 +390,6 @@ function AllAssociateList() {
       setLoading(false);
     }
   };
-
-  // const handleEditAssociate = async (associateId) => {
-  //   setLoading(true);
-  //   setError(null);
-  //   try {
-  //     const token = getAuthToken();
-  //     if (!token) {
-  //       throw new Error("Authentication token not found. Please log in.");
-  //     }
-
-  //     const response = await fetch(`${API_URL}/Associate-view`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       body: JSON.stringify({ id: associateId }),
-  //     });
-
-  //     if (!response.ok) {
-  //       const errorData = await response.json();
-  //       showCustomMessageModal("Error", errorData.message || "Failed to fetch associate for editing.", "error");
-  //       throw new Error(errorData.message || "Failed to fetch associate for editing.");
-  //     }
-
-  //     const data = await response.json();
-  //     const associateData = data.data;
-  //     setSelectedAssociate(associateData);
-
-  //     const currentParent = await fetchCurrentParentId(associateData.id);
-  //     setCurrentParentId(currentParent || "");
-
-  //     setEditFormData({
-  //       id: associateData.id || "",
-  //       username: associateData.username || "",
-  //       email: associateData.email || "",
-  //       mobile: associateData.mobile || "",
-  //       whatsapp_number: associateData.whatsapp_number || "",
-  //       parent_id: associateData.parent_id || "",
-  //       state: associateData.state?.id || "",
-  //       city: associateData.city?.id || "",
-  //       area: associateData.area || "",
-  //       dob: associateData.dob || "",
-  //       marriage_anniversary_date: associateData.marriage_anniversary_date || "",
-  //       rera_number: associateData.rera_number || "",
-  //       address: associateData.address || "",
-  //       pincode: associateData.pincode || "",
-  //       pan_number: associateData.pan_number || "",
-  //       adhar_number: associateData.adhar_number || "",
-  //       adhar_front_image: null,
-  //       adhar_back_image: null,
-  //       pan_card_image: null,
-  //     });
-
-  //     setShowEditModal(true);
-  //   } catch (err) {
-  //     console.error("Edit associate error:", err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleEditAssociate = async (associateId) => {
     setLoading(true);
@@ -505,7 +428,6 @@ function AllAssociateList() {
       const currentParent = await fetchCurrentParentId(associateData.id);
       setCurrentParentId(currentParent || "");
 
-      // ✅ यहाँ state और city को Number में convert करें
       const stateId = associateData.state ? Number(associateData.state) : "";
       const cityId = associateData.city ? Number(associateData.city) : "";
 
@@ -516,8 +438,8 @@ function AllAssociateList() {
         mobile: associateData.mobile || "",
         whatsapp_number: associateData.whatsapp_number || "",
         parent_id: associateData.parent_id || "",
-        state: stateId, // ✅ Number में
-        city: cityId, // ✅ Number में
+        state: stateId,
+        city: cityId,
         area: associateData.area || "",
         dob: associateData.dob || "",
         marriage_anniversary_date:
@@ -532,7 +454,6 @@ function AllAssociateList() {
         pan_card_image: null,
       });
 
-      // ✅ state set होने के बाद cities fetch करें
       if (stateId) {
         await fetchCities(stateId);
       }
@@ -563,78 +484,6 @@ function AllAssociateList() {
     }
   };
 
-  // const handleUpdateAssociate = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setError(null);
-
-  //   try {
-  //     const token = getAuthToken();
-  //     if (!token) {
-  //       showCustomMessageModal("Authentication Error", "Authentication token not found. Please log in.", "error");
-  //       throw new Error("Authentication token not found. Please log in.");
-  //     }
-
-  //     const formData = new FormData();
-
-  //     // Append all fields
-  //     formData.append('id', editFormData.id);
-  //     formData.append('username', editFormData.username || '');
-  //     formData.append('email', editFormData.email || '');
-  //     formData.append('mobile', editFormData.mobile || '');
-  //     formData.append('whatsapp_number', editFormData.whatsapp_number || '');
-  //     formData.append('parent_id', editFormData.parent_id || '');
-  //     formData.append('state', editFormData.state || '');
-  //     formData.append('city', editFormData.city || '');
-  //     formData.append('area', editFormData.area || '');
-  //     formData.append('dob', editFormData.dob || '');
-  //     formData.append('marriage_anniversary_date', editFormData.marriage_anniversary_date || '');
-  //     formData.append('rera_number', editFormData.rera_number || '');
-  //     formData.append('address', editFormData.address || '');
-  //     formData.append('pincode', editFormData.pincode || '');
-  //     formData.append('pan_number', editFormData.pan_number || '');
-  //     formData.append('adhar_number', editFormData.adhar_number || '');
-
-  //     // Append images if they are new files
-  //     if (editFormData.adhar_front_image instanceof File) {
-  //       formData.append('adhar_front_image', editFormData.adhar_front_image);
-  //     }
-  //     if (editFormData.adhar_back_image instanceof File) {
-  //       formData.append('adhar_back_image', editFormData.adhar_back_image);
-  //     }
-  //     if (editFormData.pan_card_image instanceof File) {
-  //       formData.append('pan_card_image', editFormData.pan_card_image);
-  //     }
-
-  //     const response = await fetch(`${API_URL}/Associate-update`, {
-  //       method: "POST",
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       body: formData,
-  //     });
-
-  //     if (!response.ok) {
-  //       const errorData = await response.json();
-  //       showCustomMessageModal("Error", errorData.message || "Failed to update associate.", "error");
-  //       throw new Error(errorData.message || "Failed to update associate.");
-  //     }
-
-  //     const result = await response.json();
-  //     if (result.success == '1') {
-  //       showCustomMessageModal("Success", "Associate has been updated successfully!", "success");
-  //       setShowEditModal(false);
-  //       fetchAssociates(currentPage);
-  //     } else {
-  //       showCustomMessageModal("Error", result.message || "Something went wrong", "error");
-  //     }
-  //   } catch (err) {
-  //     console.error("Update associate error:", err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleUpdateAssociate = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -648,7 +497,6 @@ function AllAssociateList() {
 
       const formData = new FormData();
 
-      // ✅ ID form-data mein bhej
       formData.append("id", editFormData.id);
       formData.append("username", editFormData.username || "");
       formData.append("email", editFormData.email || "");
@@ -669,7 +517,6 @@ function AllAssociateList() {
       formData.append("pan_number", editFormData.pan_number || "");
       formData.append("adhar_number", editFormData.adhar_number || "");
 
-      // ✅ Files
       if (editFormData.adhar_fornt_image instanceof File) {
         formData.append("adhar_fornt_image", editFormData.adhar_fornt_image);
       }
@@ -680,7 +527,6 @@ function AllAssociateList() {
         formData.append("pan_card_image", editFormData.pan_card_image);
       }
 
-      // ✅ URL - Bilkul profile-update jaisa, koi :id nahi
       const response = await fetch(`${API_URL}/Associate-update`, {
         method: "POST",
         headers: {
@@ -823,6 +669,14 @@ function AllAssociateList() {
     setSearchLocation(e.target.value);
   };
 
+  const handleFromDateChange = (e) => {
+    setFromDate(e.target.value);
+  };
+
+  const handleToDateChange = (e) => {
+    setToDate(e.target.value);
+  };
+
   const handleSearchClick = () => {
     setCurrentPage(1);
     fetchAssociates(
@@ -830,7 +684,19 @@ function AllAssociateList() {
       searchName.trim(),
       searchMobile.trim(),
       searchLocation.trim(),
+      fromDate,
+      toDate,
     );
+  };
+
+  const handleClearSearch = () => {
+    setSearchName("");
+    setSearchMobile("");
+    setSearchLocation("");
+    setFromDate("");
+    setToDate("");
+    setCurrentPage(1);
+    fetchAssociates(1, "", "", "", "", "");
   };
 
   const handleDeleteAssociate = async (associateId, associateName) => {
@@ -934,7 +800,7 @@ function AllAssociateList() {
                             role="status"
                             aria-hidden="true"
                           ></span>
-                          Exporting All...
+                          Exporting...
                         </>
                       ) : (
                         "Export"
@@ -1008,9 +874,34 @@ function AllAssociateList() {
                 />
               </div>
 
-              <button className="btn btn-primary" onClick={handleSearchClick}>
-                Search
-              </button>
+              <div className="form-group w-100" id="fromDate">
+                <input
+                  type="date"
+                  placeholder="From Date"
+                  value={fromDate}
+                  onChange={handleFromDateChange}
+                  className="form-control"
+                />
+              </div>
+
+              <div className="form-group w-100" id="toDate">
+                <input
+                  type="date"
+                  placeholder="To Date"
+                  value={toDate}
+                  onChange={handleToDateChange}
+                  className="form-control"
+                />
+              </div>
+
+              <div className="d-flex gap-2">
+                <button className="btn btn-primary" onClick={handleSearchClick}>
+                  Search
+                </button>
+                <button className="btn btn-secondary" onClick={handleClearSearch}>
+                  Clear
+                </button>
+              </div>
             </div>
           )}
 
@@ -1375,7 +1266,7 @@ function AllAssociateList() {
                             }}
                             onClick={() =>
                               window.open(
-                                `${process.env.profileImage}/${selectedAssociate.adhar_fornt_image}`,
+                                `${profileImage}${selectedAssociate.adhar_fornt_image}`,
                                 "_blank",
                               )
                             }
@@ -1397,7 +1288,7 @@ function AllAssociateList() {
                             }}
                             onClick={() =>
                               window.open(
-                                `${process.env.profileImage}/${selectedAssociate.adhar_back_image}`,
+                                `${profileImage}${selectedAssociate.adhar_back_image}`,
                                 "_blank",
                               )
                             }
@@ -1419,7 +1310,7 @@ function AllAssociateList() {
                             }}
                             onClick={() =>
                               window.open(
-                                `${process.env.profileImage}/${selectedAssociate.pan_card_image}`,
+                                `${profileImage}${selectedAssociate.pan_card_image}`,
                                 "_blank",
                               )
                             }
@@ -1692,42 +1583,6 @@ function AllAssociateList() {
 
             <hr />
             <h5>Document Images</h5>
-
-            {/* <Row>
-              <Col md={4}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Aadhar Front Image</Form.Label>
-                  <Form.Control type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'adhar_front_image')} />
-                  {selectedAssociate?.adhar_front_image && !(editFormData.adhar_front_image instanceof File) && (
-                    <div className="mt-2">
-                      <img src={`${profileImage}${selectedAssociate.adhar_front_image}`} alt="Aadhar Front" style={{ width: '100px', cursor: 'pointer' }} className="img-thumbnail" onClick={() => openImageModal(`${profileImage}${selectedAssociate.adhar_front_image}`)} />
-                    </div>
-                  )}
-                </Form.Group>
-              </Col>
-              <Col md={4}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Aadhar Back Image</Form.Label>
-                  <Form.Control type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'adhar_back_image')} />
-                  {selectedAssociate?.adhar_back_image && !(editFormData.adhar_back_image instanceof File) && (
-                    <div className="mt-2">
-                      <img src={`${profileImage}${selectedAssociate.adhar_back_image}`} alt="Aadhar Back" style={{ width: '100px', cursor: 'pointer' }} className="img-thumbnail" onClick={() => openImageModal(`${profileImage}${selectedAssociate.adhar_back_image}`)} />
-                    </div>
-                  )}
-                </Form.Group>
-              </Col>
-              <Col md={4}>
-                <Form.Group className="mb-3">
-                  <Form.Label>PAN Card Image</Form.Label>
-                  <Form.Control type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'pan_card_image')} />
-                  {selectedAssociate?.pan_card_image && !(editFormData.pan_card_image instanceof File) && (
-                    <div className="mt-2">
-                      <img src={`${profileImage}${selectedAssociate.pan_card_image}`} alt="PAN Card" style={{ width: '100px', cursor: 'pointer' }} className="img-thumbnail" onClick={() => openImageModal(`${profileImage}${selectedAssociate.pan_card_image}`)} />
-                    </div>
-                  )}
-                </Form.Group>
-              </Col>
-            </Row> */}
 
             <Row>
               <Col md={4}>

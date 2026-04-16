@@ -64,7 +64,7 @@ label {
 }
 
 .giffimage {
-  width: 20px;
+  width: 40px;
 
   img {
     width: 100%;
@@ -2606,6 +2606,11 @@ p {
   -ms-transition: 0.5s linear ease-in-out;
   -o-transition: 0.5s linear ease-in-out;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
 }
 
 .marketresultnumber {
@@ -2665,9 +2670,10 @@ p {
 }
 
 .marketnamelist h3 {
-  font-weight: 500;
+  font-weight: 700;
   text-align: center;
-  font-size: 16px;
+  letter-spacing: 1px;
+  font-size: 20px;
   color: $colorsec;
   margin-bottom: 0px;
 }
@@ -4086,12 +4092,11 @@ p {
 
 .loadernew2 {
   background-image: url(../src/assets/img/preloader.gif);
-  background-size: contain;
-  width: 25%;
-  height: 25%;
+  background-size: auto;
+  width: 100%;
+  background-position: center;
+  height: 100%;
   background-repeat: no-repeat;
-  display: flex;
-  justify-content: center;
 }
 
 //************************************************ history end************************************************************
@@ -4682,5 +4687,35 @@ $bp-tablet: 767px;
   .pm-link-text {
     font-size: 18px;
     color: beige;
+  }
+}
+
+.game-load-btn-open {
+  padding: 8px 15px;
+  line-height: normal;
+  background: linear-gradient(120deg, #d049b7, #6f0dff);
+  border: 1px solid;
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+
+  &:hover {
+    background: $pinkcolor;
+  }
+
+  @media screen and (max-width:768px) {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+}
+
+.headingdesignnew {
+  h1 {
+    background: linear-gradient(45deg, #9d00ff, #5a00ff);
+    font-size: 22px;
+    outline: 2px solid #fff;
+    margin-bottom: 0px;
+    outline-offset: -5px;
   }
 }

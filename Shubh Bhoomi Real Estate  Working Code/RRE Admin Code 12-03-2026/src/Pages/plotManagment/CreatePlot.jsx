@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import callingleads from "../../assets/images/plot_creation_format.csv";
 import { FaFileDownload } from "react-icons/fa";
+import { IoMdArrowRoundBack } from "react-icons/io";
+
 const API_URL = process.env.REACT_APP_API_URL;
 
 function CreatePlot() {
@@ -318,7 +320,14 @@ function CreatePlot() {
                 </div>
 
 
-                <div className="d-flex justify-content-between">
+                <div className="d-flex justify-content-between gap-2">
+                  <button
+                    className="btn btn-primary d-flex gap-1"
+                    onClick={() => navigate(-1)}
+                  >
+                    <IoMdArrowRoundBack />
+                    Back
+                  </button>
                   <OverlayTrigger
                     placement="top"
                     overlay={<Tooltip>Download Unit Creation CSV Format</Tooltip>}

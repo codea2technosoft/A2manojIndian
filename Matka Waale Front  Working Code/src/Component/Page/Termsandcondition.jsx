@@ -7,7 +7,7 @@ export default function Termsandcondition() {
 
        setIsLoading(false);
  
-   }, []); // Empty dependency array ensures the effect runs once after initial render
+   }, []); 
  
   return (
    <>

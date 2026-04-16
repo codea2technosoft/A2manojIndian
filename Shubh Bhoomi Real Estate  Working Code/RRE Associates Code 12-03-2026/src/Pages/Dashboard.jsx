@@ -34,7 +34,8 @@ import { CiLineHeight } from "react-icons/ci";
 import { BiSolidBuildingHouse } from "react-icons/bi";
 import runningHourse from "../assets/images/hourse.gif";
 import welcomeImg from "../assets/images/bonus.webp";
-import bimaImg from "../assets/images/bima.png";
+import bimaActiveImg from "../assets/images/bima.png";
+ import bimaSuccessImg from "../assets/images/claimed.webp";
 
 const iconMap = {
   BiSolidBuildingHouse,
@@ -269,6 +270,10 @@ const Dashboard = ({ userType }) => {
     total_loan_earning: 0,
     total_achieved_buy_sqrt: 0,
     total_propertyEarning: 0,
+    bimaStatus: {  // Add this
+      activeStatus: false,
+      successStatus: false
+    }
   });
 
   const [giftList, setGiftList] = useState([]);
@@ -345,6 +350,7 @@ const Dashboard = ({ userType }) => {
           total_propertyEarning: parseFloat(
             data.total_propertyEarning?.[0]?.total || 0,
           ),
+          bimaStatus: data.bimaStatus || { activeStatus: false, successStatus: false } // Add this lin
         });
       } else {
         setDashboard({
@@ -368,6 +374,7 @@ const Dashboard = ({ userType }) => {
           total_channel_sales_earning: 0,
           total_loan_earning: 0,
           total_propertyEarning: 0,
+          bimaStatus: { activeStatus: false, successStatus: false } // Add this line
         });
       }
     } catch (error) {
@@ -393,6 +400,7 @@ const Dashboard = ({ userType }) => {
         total_channel_sales_earning: 0,
         total_loan_earning: 0,
         total_propertyEarning: 0,
+        bimaStatus: { activeStatus: false, successStatus: false } // Add this line
       });
     }
   };
@@ -779,7 +787,7 @@ const Dashboard = ({ userType }) => {
     // },
 
 
-  
+
 
     // {
     //   title: "Total Loan Leads",
@@ -1052,10 +1060,10 @@ const Dashboard = ({ userType }) => {
       icon: "CiLineHeight",
       href: "/third-line",
     },
-      {
+    {
       title: "Welcome Bonus",
       icon: "FaGift",
-      customContent: true, // Add flag for custom rendering
+      customContent: true,
     },
 
 
@@ -2538,91 +2546,200 @@ const Dashboard = ({ userType }) => {
               }
 
               return (
-                <Col key={index} xs={12} sm={6} md={4} lg={4}>
+                <Col key={index} xs={12} sm={6} md={6} lg={6}>
                   <div className="card bg_card_design welcome-bonus-card">
                     <div className="card-body">
-                      <div className="d-flex align-items-center gap-2 mb-3">
+                      <div className="d-flex align-items-center gap-2 gap-md-4">
                         <div className="icon_dashboard">
                           <FaGift size={40} className="text-white" />
                         </div>
-                        <div className="card-title mb-0">{item.title}</div>
+                        <div className="d-flex align-items-start justify-content-between flex-column">
+                          <div className="card-title mb-0">{item.title}</div>
+                          <div className="d-flex gap-2 gap-md-5 align-items-center justify-content-between">
+                            <div className="date-section">
+                              <div className="date-label">Joining + Booking</div>
+                              <div className="date-range">
+                                {associateData.registrationDate ? (
+                                  <>
+                                    {formatShortDate(new Date(associateData.registrationDate))} - {bookingDate ? formatShortDate(bookingDate) : "-"}
+                                  </>
+                                ) : "-"}
+                              </div>
+                              <div className="status-badge" style={{ color: statusColor }}>
+                                {status}
+                              </div>
+                            </div>
+
+                            <div className="date-section">
+                              <div className="date-label">Booking + Closing</div>
+                              <div className="date-range">
+                                15-04-26 - 14-05-26
+                              </div>
+                              <div className="status-badge" style={{ color: "#28a745" }}>
+                                success
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
 
-                      {/* Joining + Booking Section */}
-                      <div className="date-section mb-3">
-                        <div className="date-label">Joining + Booking</div>
-                        <div className="date-range">
-                          {associateData.registrationDate ? (
-                            <>
-                              {formatShortDate(new Date(associateData.registrationDate))} - {bookingDate ? formatShortDate(bookingDate) : "-"}
-                            </>
-                          ) : "-"}
-                        </div>
-                        <div className="status-badge" style={{ color: statusColor }}>
-                          {status}
-                        </div>
-                      </div>
 
-                      {/* Booking + Closing Section - Static as requested */}
-                      <div className="date-section">
-                        <div className="date-label">Booking + Closing</div>
-                        <div className="date-range">
-                          15-04-26 - 14-05-26
-                        </div>
-                        <div className="status-badge" style={{ color: "#28a745" }}>
-                          success
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </Col>
               );
             }
 
-            // Bima Card - Same style as Welcome Bonus
             // Bima Card - Click to open registration form
+            // Bima Card - Based on API status
+            // if (item.customContent && item.title === "Bima") {
+            //   const { activeStatus, successStatus } = dashboard.bimaStatus;
+
+            //   // Determine status text and color
+            //   let statusText = "Inactive";
+            //   let statusColor = "#dc3545"; // red
+            //   let canRegister = false;
+            //    let bimaImage = runningHourse; 
+
+            //   if (activeStatus === true && successStatus === true) {
+            //     statusText = "Success";
+            //     statusColor = "#28a745"; // green
+            //      <div className="icon_dashboard bg_running">
+            //               {/* <TbReceiptRupee size={40} className="text-white" /> */}
+            //               <img src={runningHourse} alt="running horse" className="load_img hourse"/>
+            //             </div>
+            //     canRegister = false;
+            //   } else if (activeStatus === true && successStatus === false) {
+            //     statusText = "Active";
+            //     statusColor = "#28a745"; // green
+            //     canRegister = true;
+            //      <div className="icon_dashboard bg_running">
+            //               {/* <TbReceiptRupee size={40} className="text-white" /> */}
+            //               <img src={runningHourse} alt="running horse" className="load_img hourse"/>
+            //             </div>
+            //   } else {
+            //     statusText = "Inactive";
+            //     statusColor = "#dc3545"; // red
+            //     canRegister = false;
+
+            //      <div className="icon_dashboard bg_running">
+            //               {/* <TbReceiptRupee size={40} className="text-white" /> */}
+            //               <img src={runningHourse} alt="running horse" className="load_img hourse"/>
+            //             </div>
+            //   }
+
+            //   const handleBimaClick = () => {
+            //     if (canRegister) {
+            //       navigate("/bima-registration-form");
+            //     }
+            //   };
+
+            //   return (
+            //     <Col key={index} xs={12} sm={6} md={6} lg={6}>
+            //       <div
+            //         className="card bg_card_design welcome-bonus-card"
+            //         style={{ cursor: canRegister ? "pointer" : "default" }}
+            //         onClick={handleBimaClick}
+            //       >
+            //         <div className="card-body">
+            //           <div className="d-flex align-items-center gap-2 gap-md-4">
+            //            {}
+            //             <div className="d-flex align-items-start justify-content-between flex-column w-100">
+            //               <div className="card-title mb-0">{item.title}</div>
+            //               <div className="d-flex justify-content-between align-items-center w-100 mt-2">
+            //                 <div style={{ color: statusColor, fontSize: "18px", fontWeight: "bold" }}>
+            //                   {statusText}
+            //                 </div>
+            //                 {canRegister && (
+            //                   <div className="register-text" style={{ color: "#17a2b8", fontSize: "14px" }}>
+            //                     Click to Register
+            //                   </div>
+            //                 )}
+            //                 {!canRegister && statusText === "Success" && (
+            //                   <div className="register-text" style={{ color: "#28a745", fontSize: "14px" }}>
+            //                     Claimed
+            //                   </div>
+            //                 )}
+            //                 {!canRegister && statusText === "Inactive" && (
+            //                   <div className="register-text" style={{ color: "#dc3545", fontSize: "14px" }}>
+            //                     Registration Not Available
+            //                   </div>
+            //                 )}
+            //               </div>
+            //             </div>
+            //           </div>
+            //         </div>
+            //       </div>
+            //     </Col>
+            //   );
+            // }
+
             if (item.customContent && item.title === "Bima") {
-              const bimaStartDate = "01-04-26";
-              const bimaEndDate = "30-04-26";
+              const { activeStatus, successStatus } = dashboard.bimaStatus;
+
+              // Determine status text and color
+              let statusText = "Inactive";
+              let statusColor = "#dc3545"; // red
+              let canRegister = false;
+              let bimaImage = runningHourse; // default image
+
+              if (activeStatus === true && successStatus === true) {
+                statusText = "Success";
+                statusColor = "#28a745"; // green
+                canRegister = false;
+                bimaImage = bimaSuccessImg; // Success image
+              } else if (activeStatus === true && successStatus === false) {
+                statusText = "Active";
+                statusColor = "#28a745"; // green
+                canRegister = true;
+                bimaImage = bimaActiveImg; // Active image
+              } else {
+                statusText = "Inactive";
+                statusColor = "#dc3545"; // red
+                canRegister = false;
+                bimaImage = runningHourse; // Inactive image
+              }
 
               const handleBimaClick = () => {
-                navigate("/bima-registration-form");
+                if (canRegister) {
+                  navigate("/bima-registration-form");
+                }
               };
 
               return (
-                <Col key={index} xs={12} sm={6} md={4} lg={4}>
+                <Col key={index} xs={12} sm={6} md={6} lg={6}>
                   <div
                     className="card bg_card_design welcome-bonus-card"
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: canRegister ? "pointer" : "default" }}
                     onClick={handleBimaClick}
                   >
                     <div className="card-body">
-                      <div className="d-flex align-items-center gap-2 mb-3">
-                        <div className="icon_dashboard">
-                          <TbReceiptRupee size={40} className="text-white" />
+                      <div className="d-flex align-items-center gap-2 gap-md-4">
+                        <div className="icon_dashboard bg_running">
+                          <img src={bimaImage} alt="bima" className="load_img hourse" />
                         </div>
-                        <div className="card-title mb-0">{item.title}</div>
-                      </div>
-
-                      {/* Bima Validity Section */}
-                      <div className="date-section mb-3">
-                        <div className="date-label">Policy Validity</div>
-                        <div className="date-range">
-                          {bimaStartDate} - {bimaEndDate}
-                        </div>
-                        <div className="status-badge" style={{ color: "#28a745" }}>
-                          Active
-                        </div>
-                      </div>
-
-                      {/* Bima Coverage Section */}
-                      <div className="date-section">
-                        <div className="date-label">Coverage Amount</div>
-                        <div className="date-range">
-                          ₹5,00,000
-                        </div>
-                        <div className="status-badge" style={{ color: "#17a2b8" }}>
-                          Click to Register
+                        <div className="d-flex align-items-start justify-content-between flex-column w-100">
+                          <div className="card-title mb-0">{item.title}</div>
+                          <div className="d-flex justify-content-between align-items-center w-100 mt-2">
+                            <div className="fw-bold" style={{ color: statusColor, fontSize: "18px" }}>
+                              {statusText}
+                            </div>
+                            {canRegister && (
+                              <div className="register-text" style={{ color: "#17a2b8", fontSize: "14px" }}>
+                                Click to Register
+                              </div>
+                            )}
+                            {!canRegister && statusText === "Success" && (
+                              <div className="register-text" style={{ color: "#28a745", fontSize: "14px" }}>
+                                Claimed
+                              </div>
+                            )}
+                            {!canRegister && statusText === "Inactive" && (
+                              <div className="register-text" style={{ color: "#dc3545", fontSize: "14px" }}>
+                                Not Available
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>

@@ -144,12 +144,10 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.4),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent);
   animation: shimmer 2s infinite;
 }
 
@@ -404,6 +402,7 @@ body {
 }
 
 @keyframes pulse {
+
   0%,
   100% {
     transform: scale(1.1);
@@ -971,6 +970,7 @@ thead th.headinglevel {
 }
 
 .idcard_new_design {
+
   /* Idcard.css */
   .idcard-container {
     padding: 20px;
@@ -1235,13 +1235,11 @@ thead th.headinglevel {
   .idcard-barcode-lines {
     width: 100%;
     height: 20px;
-    background-image: repeating-linear-gradient(
-      90deg,
-      black 0px,
-      black 1px,
-      transparent 1px,
-      transparent 3px
-    );
+    background-image: repeating-linear-gradient(90deg,
+        black 0px,
+        black 1px,
+        transparent 1px,
+        transparent 3px);
     margin-bottom: 3px;
   }
 
@@ -1356,6 +1354,7 @@ thead th.headinglevel {
   }
 
   .image_youtube {
+
     &::before,
     &::after {
       content: "";
@@ -1419,6 +1418,7 @@ thead th.headinglevel {
 }
 
 table {
+
   th,
   td {
     white-space: nowrap;
@@ -2642,6 +2642,7 @@ textarea {
   .form-group,
   .form_design,
   .form-design {
+
     select,
     input {
       border: 1px solid $white-color;
@@ -3951,14 +3952,23 @@ label {
   }
 }
 
+.register-text{
+  font-weight: 600;
+}
+
 .load_img {
   width: 50px;
   height: auto;
   object-fit: contain;
   max-height: 44px;
+
   &.hourse {
     transform: scaleX(-1);
   }
+}
+
+.bg_running{
+  background: linear-gradient(45deg, #78afb5, #ffffff);
 }
 
 .ml-auto {
@@ -4550,6 +4560,32 @@ body.dark-theme .dropdown-item:hover {
 .overlaysidebar,
 .closebutton {
   display: none;
+}
+
+.date-section {
+  font-size: 14px;
+
+  .date-label {
+    font-weight: 600;
+  }
+
+  .date-range {
+    font-size: 13px;
+  }
+
+  .status-badge {
+    padding: 0;
+  }
+
+  @media (max-width: 576px) {
+    .date-label {
+      font-size: 13px;
+    }
+
+    .date-range {
+      font-size: 11px;
+    }
+  }
 }
 
 // table button  start
@@ -5307,8 +5343,8 @@ $withdraw-bg: #dc3545;
   top: -0.55em;
 }
 
-.tree > li:before,
-.tree > li > span:before {
+.tree>li:before,
+.tree>li>span:before {
   outline: none;
 }
 
@@ -5347,6 +5383,7 @@ $withdraw-bg: #dc3545;
   word-break: break-word;
   color: #0c0c0c;
   box-shadow: 1px 2px 6px rgb(10 129 189 / 49%);
+
   .leg_content {
     margin: 0;
     padding-left: 5px;
@@ -5354,10 +5391,12 @@ $withdraw-bg: #dc3545;
     gap: 4px;
     display: flex;
     flex-direction: column;
+
     li {
       display: flex;
       justify-content: space-between;
       align-items: center;
+
       .text_leg {
         background: $gradientcolor;
         font-weight: bold;
@@ -5366,8 +5405,9 @@ $withdraw-bg: #dc3545;
         min-width: 48px;
         padding: 2px 5px;
       }
-      .status{
-         min-width: 52px;
+
+      .status {
+        min-width: 52px;
       }
     }
   }
@@ -5384,9 +5424,11 @@ $withdraw-bg: #dc3545;
     font-size: 12px;
   }
 }
-.referdetailscontent{
+
+.referdetailscontent {
   width: 100px;
-  img{
+
+  img {
     width: 100%;
   }
 }

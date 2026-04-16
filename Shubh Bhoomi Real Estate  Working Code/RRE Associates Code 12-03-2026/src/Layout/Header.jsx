@@ -683,7 +683,7 @@ function Header({ onToggleSidebar }) {
                 >
                   <RiVerifiedBadgeLine /> KYC
                 </Link> */}
-
+                  {/* 
                   {(kycStatus === "pending" || kycStatus === "reject") && (
                     <Link
                       to="/complete-kyc"
@@ -691,7 +691,7 @@ function Header({ onToggleSidebar }) {
                     >
                       <RiVerifiedBadgeLine /> KYC
                     </Link>
-                  )}
+                  )} */}
 
                   <Link
                     to="/chnage-password"
@@ -723,7 +723,7 @@ function Header({ onToggleSidebar }) {
           <div className="d-flex align-items-center flex-wrap gap-2">
             {/* {getKycBadgemobile()} */}
             {getReferAndEarnBadge()}
-             {yourstatus()}
+            {yourstatus()}
             <div className="wallet">
               <div>
                 <div className="credit_amount">

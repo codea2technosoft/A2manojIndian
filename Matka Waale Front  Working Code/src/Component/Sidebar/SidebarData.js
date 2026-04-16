@@ -123,6 +123,7 @@ const Sidebardata = [
     ownclass: "d-flex align-items-center link-page navlink-design",
   },
 
+
   {
     title: "Terms And Condtion",
     path: "/Termsandcondition",

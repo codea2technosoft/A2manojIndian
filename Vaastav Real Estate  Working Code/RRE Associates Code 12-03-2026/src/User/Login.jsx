@@ -57,8 +57,8 @@ const Login = () => {
               showConfirmButton: false,
               timerProgressBar: true,
             }).then(() => {
-              window.location.href = "/my-team";
-              // window.location.href = "/dashboard";
+              //window.location.href = "/my-team";
+               window.location.href = "/dashboard";
             });
 
             setError({});
@@ -85,8 +85,8 @@ const Login = () => {
 
     if (isLoggedIn === "true" && token) {
       // ✅ Already logged in, redirect to dashboard
-      navigate("/my-team");
-      //navigate("/dashboard");
+     // navigate("/my-team");
+      navigate("/dashboard");
     }
   }, []);
   
@@ -176,8 +176,8 @@ const Login = () => {
           showConfirmButton: false,
           timerProgressBar: true,
         }).then(() => {
-          window.location.href = "/my-team";
-          // /window.location.href = "/dashboard";
+          //window.location.href = "/my-team";
+          window.location.href = "/dashboard";
         });
 
         setError({});

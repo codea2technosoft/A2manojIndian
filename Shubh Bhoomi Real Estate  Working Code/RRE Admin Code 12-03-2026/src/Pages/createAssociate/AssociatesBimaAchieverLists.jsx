@@ -6,7 +6,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const API_URL = process.env.REACT_APP_API_URL;
-function AssociatesAnniversaryLists() {
+function AssociatesBimaAchieverLists() {
   const [anniversarys, setAnniversary] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,7 +20,9 @@ function AssociatesAnniversaryLists() {
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [downloading, setDownloading] = useState(false);
-
+  const [nameFilter, setNameFilter] = useState("");
+  const [mobileFilter, setMobileFilter] = useState("");
+  const [parentIdFilter, setParentIdFilter] = useState("");
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [messageModalContent, setMessageModalContent] = useState({
     title: "",
@@ -69,7 +71,6 @@ function AssociatesAnniversaryLists() {
       const match = dateStr.match(format);
       if (match) {
         const [, part1, part2, part3] = match;
-
         if (part3 && part3.length === 4) {
           if (part1.length === 4) {
             return new Date(parseInt(part1), parseInt(part2) - 1, parseInt(part3));
@@ -88,29 +89,23 @@ function AssociatesAnniversaryLists() {
   const formatDateForDisplay = (dateStr) => {
     const date = parseDateFromString(dateStr);
     if (!date) return dateStr;
-
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
-
     return `${month}-${day}`;
   };
   
   const getMonthDayFromDate = (dateStr) => {
     const date = parseDateFromString(dateStr);
     if (!date) return "";
-
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
-
     return `${day}-${month}`;
   };
   
   const validateDateInput = (input) => {
     const regex = /^(\d{2})-(\d{2})$/;
     const match = input.match(regex);
-
     if (!match) return false;
-
     const day = parseInt(match[1]);
     const month = parseInt(match[2]);
     if (month < 1 || month > 12) return false;
@@ -122,7 +117,7 @@ function AssociatesAnniversaryLists() {
   };
 
   const buildUrlWithFilters = (page = 1, limit = null) => {
-    let url = `${API_URL}/anniversary-list-associate?page=${page}`;
+    let url = `${API_URL}/associates-bima-achiever-lists?page=${page}`;
     
     if (limit) {
       url += `&limit=${limit}`;
@@ -145,6 +140,17 @@ function AssociatesAnniversaryLists() {
       const formattedTo = formatFullDateForAPI(toDate);
       url += `&to_date=${formattedTo}`;
     }
+    if (nameFilter && nameFilter.trim()) {
+      url += `&name=${encodeURIComponent(nameFilter.trim())}`;
+    }
+    
+    if (mobileFilter && mobileFilter.trim()) {
+      url += `&mobile=${encodeURIComponent(mobileFilter.trim())}`;
+    }
+    
+    if (parentIdFilter && parentIdFilter.trim()) {
+      url += `&parent_id=${encodeURIComponent(parentIdFilter.trim())}`;
+    }
     
     return url;
   };
@@ -166,7 +172,6 @@ function AssociatesAnniversaryLists() {
 
       const url = buildUrlWithFilters(page);
       console.log("Fetching URL:", url);
-
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -192,7 +197,6 @@ function AssociatesAnniversaryLists() {
         );
         throw new Error(errorData.message || "Failed to fetch anniversary list.");
       }
-
       const data = await response.json();
       console.log("API Response:", data);
 
@@ -232,7 +236,7 @@ function AssociatesAnniversaryLists() {
         return;
       }
 
-      let url = `${API_URL}/anniversary-list-associate?page=1&limit=10000`;
+      let url = `${API_URL}/associates-bima-achiever-lists?page=1&limit=10000`;
       
       if (filterInput && validateDateInput(filterInput)) {
         url += `&date=${filterInput}`;
@@ -248,6 +252,19 @@ function AssociatesAnniversaryLists() {
       if (toDate) {
         const formattedTo = formatFullDateForAPI(toDate);
         url += `&to_date=${formattedTo}`;
+      }
+      
+      // Add new filters to download
+      if (nameFilter && nameFilter.trim()) {
+        url += `&name=${encodeURIComponent(nameFilter.trim())}`;
+      }
+      
+      if (mobileFilter && mobileFilter.trim()) {
+        url += `&mobile=${encodeURIComponent(mobileFilter.trim())}`;
+      }
+      
+      if (parentIdFilter && parentIdFilter.trim()) {
+        url += `&parent_id=${encodeURIComponent(parentIdFilter.trim())}`;
       }
 
       console.log("Download URL:", url);
@@ -270,25 +287,23 @@ function AssociatesAnniversaryLists() {
         const headers = [
           "Name",
           "Mobile",
-          "Anniversary Date (DD-MM)",
           "Parent Name",
           "Parent Mobile",
+          "Area Sqyd",
         ];
         
         const csvRows = [];
         csvRows.push(headers.join(","));
         
         data.data.forEach((person, index) => {
-          const anniversaryDate = person.marriage_anniversary_date 
-            ? `${String(new Date(person.marriage_anniversary_date).getDate()).padStart(2, '0')}-${new Date(person.marriage_anniversary_date).toLocaleString('default', { month: 'long' })}`
-            : "-";
           
           const row = [
             `"${(person.username || "-").replace(/"/g, '""')}"`,
             `"${(person.mobile || "-").replace(/"/g, '""')}"`,
-            `"${anniversaryDate}"`,
+          
             `"${(person.parent_username || "-").replace(/"/g, '""')}"`,
             `"${(person.parent_mobile || "-").replace(/"/g, '""')}"`,
+            `"${(person.area || "-").replace(/"/g, '""')}"`,
           ];
           csvRows.push(row.join(","));
         });
@@ -299,9 +314,12 @@ function AssociatesAnniversaryLists() {
         const downloadUrl = URL.createObjectURL(blob);
         
         let filterText = "";
-        if (filterInput) filterText = `_anniversary_${filterInput}`;
+        if (filterInput) filterText += `_anniversary_${filterInput}`;
         if (fromDate) filterText += `_from_${formatFullDateForAPI(fromDate)}`;
         if (toDate) filterText += `_to_${formatFullDateForAPI(toDate)}`;
+        if (nameFilter) filterText += `_name_${nameFilter}`;
+        if (mobileFilter) filterText += `_mobile_${mobileFilter}`;
+        if (parentIdFilter) filterText += `_parent_${parentIdFilter}`;
         
         const filename = `associates_anniversary_list${filterText}_${new Date().toISOString().split('T')[0]}.csv`;
         link.setAttribute("href", downloadUrl);
@@ -355,6 +373,9 @@ function AssociatesAnniversaryLists() {
     setFilterInput("");
     setFromDate(null);
     setToDate(null);
+    setNameFilter("");
+    setMobileFilter("");
+    setParentIdFilter("");
     setCurrentPage(1);
     fetchAnniversaryList(1);
   };
@@ -422,7 +443,7 @@ function AssociatesAnniversaryLists() {
         <div className="card-header">
           <div className="d-flex align-items-center justify-content-between">
             <div className="titlepage">
-              <h3>Associates Anniversary Lists</h3>
+              <h3>Associates Bima Achiever Lists</h3>
             </div>
             <div className="d-flex gap-2">
               <button
@@ -437,63 +458,85 @@ function AssociatesAnniversaryLists() {
 
         <div className="card-body">
           {isFilterActive && (
-            <div className="d-flex gap-3 mb-3 flex-wrap align-items-end">
-              {/* <div className="form-group" style={{ flex: "1", minWidth: "200px" }}>
-                <label className="form-label">Anniversary Date (DD-MM)</label>
-                <div className="input-group">
+            <div className="mb-3">
+              <div className="row g-3">
+                <div className="col-md-3">
+                  <label className="form-label">From Date</label>
                   <DatePicker
-                    selected={searchDate}
-                    onChange={handleDateChange}
-                    dateFormat="dd-MM"
+                    selected={fromDate}
+                    onChange={(date) => setFromDate(date)}
+                    dateFormat="yyyy-MM-dd"
+                    className="form-control"
+                    placeholderText="Select from date"
                     showMonthDropdown
                     showYearDropdown
                     dropdownMode="select"
-                    customInput={<CustomDateInput />}
-                    placeholderText="DD-MM (e.g., 15-02)"
-                    openToDate={new Date()}
-                    yearDropdownItemNumber={30}
-                    scrollableYearDropdown
                   />
                 </div>
-              </div> */}
 
-              <div className="form-group" style={{ flex: "1", minWidth: "200px" }}>
-                <label className="form-label">From Date</label>
-                <DatePicker
-                  selected={fromDate}
-                  onChange={(date) => setFromDate(date)}
-                  dateFormat="yyyy-MM-dd"
-                  className="form-control"
-                  placeholderText="Select from date"
-                  showMonthDropdown
-                  showYearDropdown
-                  dropdownMode="select"
-                />
-              </div>
+                <div className="col-md-3">
+                  <label className="form-label">To Date</label>
+                  <DatePicker
+                    selected={toDate}
+                    onChange={(date) => setToDate(date)}
+                    dateFormat="yyyy-MM-dd"
+                    className="form-control"
+                    placeholderText="Select to date"
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                  />
+                </div>
 
-              <div className="form-group" style={{ flex: "1", minWidth: "200px" }}>
-                <label className="form-label">To Date</label>
-                <DatePicker
-                  selected={toDate}
-                  onChange={(date) => setToDate(date)}
-                  dateFormat="yyyy-MM-dd"
-                  className="form-control"
-                  placeholderText="Select to date"
-                  showMonthDropdown
-                  showYearDropdown
-                  dropdownMode="select"
-                />
-              </div>
+                <div className="col-md-3">
+                  <label className="form-label">Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={nameFilter}
+                    onChange={(e) => setNameFilter(e.target.value)}
+                    placeholder="Search by name"
+                  />
+                </div>
 
-              <div className="d-flex gap-2">
-                <button className="btn btn-primary" onClick={handleSearchClick}>
-                  Search
-                </button>
+                <div className="col-md-3">
+                  <label className="form-label">Mobile</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={mobileFilter}
+                    onChange={(e) => setMobileFilter(e.target.value)}
+                    placeholder="Search by mobile number"
+                  />
+                </div>
 
-                <button className="btn btn-success" onClick={handleDownloadCSV} disabled={downloading}>
-                  <FaDownload className="me-2" />
-                  {downloading ? "Downloading..." : "Download CSV"}
-                </button>
+                <div className="col-md-3">
+                  <label className="form-label">Parent ID</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={parentIdFilter}
+                    onChange={(e) => setParentIdFilter(e.target.value)}
+                    placeholder="Search by parent ID"
+                  />
+                </div>
+
+                <div className="col-md-12">
+                  <div className="d-flex gap-2">
+                    <button className="btn btn-primary" onClick={handleSearchClick}>
+                      Search
+                    </button>
+                    
+                    <button className="btn btn-secondary" onClick={handleClearSearch}>
+                      Clear All Filters
+                    </button>
+
+                    <button className="btn btn-success" onClick={handleDownloadCSV} disabled={downloading}>
+                      <FaDownload className="me-2" />
+                      {downloading ? "Downloading..." : "Download CSV"}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -503,9 +546,15 @@ function AssociatesAnniversaryLists() {
               <div>
                 <h5>Total Records: {totalRecords}</h5>
               </div>
-              {(filterInput || fromDate || toDate) && (
+              {(filterInput || fromDate || toDate || nameFilter || mobileFilter || parentIdFilter) && (
                 <div className="text-info">
                   <small>Filtered data showing {totalRecords} records</small>
+                  <button 
+                    className="btn btn-sm btn-link" 
+                    onClick={handleClearSearch}
+                  >
+                    Clear filters
+                  </button>
                 </div>
               )}
             </div>
@@ -518,9 +567,10 @@ function AssociatesAnniversaryLists() {
                   <th>#</th>
                   <th>Name</th>
                   <th>Mobile</th>
-                  <th>Anniversary (DD-MM-YYYY)</th>
                   <th>Parent Name</th>
                   <th>Parent Mobile</th>
+                  <th>Parent ID</th>
+                   <th>Area SQYD</th>
                 </tr>
               </thead>
               <tbody>
@@ -530,31 +580,18 @@ function AssociatesAnniversaryLists() {
                       <td>{(currentPage - 1) * perPage + index + 1}</td>
                       <td>{person.username || "-"}</td>
                       <td>{person.mobile || "-"}</td>
-                      {/* <td>
-                        {person.marriage_anniversary_date
-                          ? `${String(new Date(person.marriage_anniversary_date).getDate()).padStart(2, '0')}-${new Date(person.marriage_anniversary_date).toLocaleString('default', { month: 'long' })}`
-                          : "-"}
-                      </td> */}
-
-                      <td>
-                        {person.marriage_anniversary_date && !isNaN(new Date(person.marriage_anniversary_date))
-                          ? (() => {
-                            const d = new Date(person.marriage_anniversary_date);
-                            return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
-                          })()
-                          : "-"}
-                      </td>
-
                       <td>{person.parent_username || "-"}</td>
                       <td>{person.parent_mobile || "-"}</td>
+                      <td>{person.parent_id || "-"}</td>
+                      <td>{person.area || "0.00"}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="text-center">
-                      {(filterInput || searchDate || fromDate || toDate) ?
-                        `No anniversaries found for selected filters` :
-                        "No anniversary records found."}
+                    <td colSpan="7" className="text-center">
+                      {(filterInput || searchDate || fromDate || toDate || nameFilter || mobileFilter || parentIdFilter) ?
+                        `No records found for selected filters` :
+                        "No records found."}
                     </td>
                   </tr>
                 )}
@@ -566,7 +603,7 @@ function AssociatesAnniversaryLists() {
             <div className="d-flex justify-content-between align-items-center mt-3 gap-2 flex-wrap-mobile">
               <div className="text-muted">
                 Showing {(currentPage - 1) * perPage + 1} to{" "}
-                {Math.min(currentPage * perPage, totalRecords)} of {totalRecords} anniversaries
+                {Math.min(currentPage * perPage, totalRecords)} of {totalRecords} records
               </div>
               <div>
                 <Pagination>
@@ -654,4 +691,4 @@ function AssociatesAnniversaryLists() {
   );
 }
 
-export default AssociatesAnniversaryLists;
+export default AssociatesBimaAchieverLists;

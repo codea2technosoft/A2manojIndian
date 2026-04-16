@@ -41,14 +41,14 @@ function AssociatesBirthdayLists() {
   const getAuthToken = () => {
     return localStorage.getItem("token");
   };
-  
+
   const formatDateForAPI = (date) => {
     if (!date) return "";
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     return `${day}-${month}`;
   };
-  
+
   const formatFullDateForAPI = (date) => {
     if (!date) return "";
     const year = date.getFullYear();
@@ -56,7 +56,7 @@ function AssociatesBirthdayLists() {
     const day = date.getDate().toString().padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
-  
+
   const parseDateFromString = (dateStr) => {
     if (!dateStr) return null;
     const formats = [
@@ -84,7 +84,7 @@ function AssociatesBirthdayLists() {
 
     return null;
   };
-  
+
   const formatDateForDisplay = (dateStr) => {
     const date = parseDateFromString(dateStr);
     if (!date) return dateStr;
@@ -123,29 +123,29 @@ function AssociatesBirthdayLists() {
 
   const buildUrlWithFilters = (page = 1, limit = null) => {
     let url = `${API_URL}/birthday-list-associate?page=${page}`;
-    
+
     if (limit) {
       url += `&limit=${limit}`;
     } else {
       url += `&limit=${perPage}`;
     }
-    
+
     if (filterInput && validateDateInput(filterInput)) {
       url += `&date=${filterInput}`;
     } else if (searchDate) {
       url += `&date=${formatDateForAPI(searchDate)}`;
     }
-    
+
     if (fromDate) {
       const formattedFrom = formatFullDateForAPI(fromDate);
       url += `&from_date=${formattedFrom}`;
     }
-    
+
     if (toDate) {
       const formattedTo = formatFullDateForAPI(toDate);
       url += `&to_date=${formattedTo}`;
     }
-    
+
     return url;
   };
 
@@ -163,7 +163,7 @@ function AssociatesBirthdayLists() {
         );
         throw new Error("Authentication token not found. Please log in.");
       }
-      
+
       const url = buildUrlWithFilters(page);
       console.log("Fetching URL:", url);
 
@@ -233,18 +233,18 @@ function AssociatesBirthdayLists() {
       }
 
       let url = `${API_URL}/birthday-list-associate?page=1&limit=10000`;
-      
+
       if (filterInput && validateDateInput(filterInput)) {
         url += `&date=${filterInput}`;
       } else if (searchDate) {
         url += `&date=${formatDateForAPI(searchDate)}`;
       }
-      
+
       if (fromDate) {
         const formattedFrom = formatFullDateForAPI(fromDate);
         url += `&from_date=${formattedFrom}`;
       }
-      
+
       if (toDate) {
         const formattedTo = formatFullDateForAPI(toDate);
         url += `&to_date=${formattedTo}`;
@@ -265,7 +265,7 @@ function AssociatesBirthdayLists() {
       }
 
       const data = await response.json();
-      
+
       if (data.success === "1" && data.data && data.data.length > 0) {
         const headers = [
           "Name",
@@ -274,15 +274,15 @@ function AssociatesBirthdayLists() {
           "Parent Name",
           "Parent Mobile",
         ];
-        
+
         const csvRows = [];
         csvRows.push(headers.join(","));
-        
+
         data.data.forEach((person, index) => {
-          const dob = person.dob 
+          const dob = person.dob
             ? `${String(new Date(person.dob).getDate()).padStart(2, '0')}-${new Date(person.dob).toLocaleString('default', { month: 'long' })}`
             : "-";
-          
+
           const row = [
             `"${(person.username || "-").replace(/"/g, '""')}"`,
             `"${(person.mobile || "-").replace(/"/g, '""')}"`,
@@ -292,17 +292,17 @@ function AssociatesBirthdayLists() {
           ];
           csvRows.push(row.join(","));
         });
-        
+
         const csvContent = csvRows.join("\n");
         const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
         const link = document.createElement("a");
         const downloadUrl = URL.createObjectURL(blob);
-        
+
         let filterText = "";
         if (filterInput) filterText = `_birth_${filterInput}`;
         if (fromDate) filterText += `_from_${formatFullDateForAPI(fromDate)}`;
         if (toDate) filterText += `_to_${formatFullDateForAPI(toDate)}`;
-        
+
         const filename = `associates_birthday_list${filterText}_${new Date().toISOString().split('T')[0]}.csv`;
         link.setAttribute("href", downloadUrl);
         link.setAttribute("download", filename);
@@ -310,7 +310,7 @@ function AssociatesBirthdayLists() {
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(downloadUrl);
-        
+
         showCustomMessageModal(
           "Success",
           `Successfully downloaded ${data.data.length} filtered records!`,
@@ -382,7 +382,7 @@ function AssociatesBirthdayLists() {
       setSearchDate(null);
     }
   };
-  
+
   const CustomDateInput = React.forwardRef(({ value, onClick }, ref) => (
     <div className="input-group">
       <input
@@ -518,7 +518,7 @@ function AssociatesBirthdayLists() {
                   <th>#</th>
                   <th>Name</th>
                   <th>Mobile</th>
-                  <th>Birthday (MM-DD)</th>
+                  <th>Birthday (DD-mm-YYYY)</th>
                   <th>Parent Name</th>
                   <th>Parent Mobile</th>
                 </tr>
@@ -531,8 +531,11 @@ function AssociatesBirthdayLists() {
                       <td>{person.username || "-"}</td>
                       <td>{person.mobile || "-"}</td>
                       <td>
-                        {person.dob
-                          ? `${String(new Date(person.dob).getDate()).padStart(2, '0')}-${new Date(person.dob).toLocaleString('default', { month: 'long' })}`
+                        {person.dob && !isNaN(new Date(person.dob))
+                          ? (() => {
+                            const d = new Date(person.dob);
+                            return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
+                          })()
                           : "-"}
                       </td>
                       <td>{person.parent_username || "-"}</td>
@@ -610,7 +613,7 @@ function AssociatesBirthdayLists() {
           )}
         </div>
       </div>
-      
+
       {showMessageModal && (
         <div
           className="modal d-block"

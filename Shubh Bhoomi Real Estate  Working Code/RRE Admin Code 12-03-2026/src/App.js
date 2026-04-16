@@ -20,6 +20,7 @@ import BlockLists from "./Pages/createProject/BlockList";
 import ActiveBlockLists from "./Pages/createProject/ActiveBlockList";
 import InActiveBlockLists from "./Pages/createProject/InActiveBlockList"
 import CreatePlot from "./Pages/plotManagment/CreatePlot"
+import CreatePlotManual from "./Pages/plotManagment/CreatePlot_Manual"
 import AllPlotLists from "./Pages/plotManagment/AllPlotList"
 import ActivePlotLists from "./Pages/plotManagment/ActivePlotList"
 import InActivePlotLists from "./Pages/plotManagment/InActivePlotList"
@@ -179,6 +180,7 @@ import AssociatesAnniversaryLists from "./Pages/createAssociate/AssociatesAnnive
 import AssociatesDesignationLists from "./Pages/createAssociate/AssociatesDesignationLists.jsx";
 import FinalPLReportDetailsLists from "./Pages/expensesManagment/FinalPLReportDetailsLists";
 import TodayAssociateList from "./Pages/createAssociate/TodayAssociateList";
+import AssociatesBimaAchieverLists from "./Pages/createAssociate/AssociatesBimaAchieverLists";
 import TodayChannelList from "./Pages/channelCreate/TodayChannelList";
 import HomeDashboard from "./Pages/HomeDashboard";
 
@@ -196,161 +198,161 @@ const App = () => {
   const [permissions, setPermissions] = useState([]);
 
   const permissionRouteMap = {
-  "dashboard": "/dashboard",
-  "homedashboard": "/homedashboard",
-  "my-team-tree-admin": "/my-team-tree-admin",
-  "myteam-parent-chain-upline": "/myteam-parent-chain-upline",
-  "download-my-11level-team-data-in-excel": "/download-my-11level-team-data-in-excel",
-  "account-report": "/account-report",
-  "create-subadmin": "/create-subadmin",
-  "all-subadmin": "/allsubadmin",
-  "subadmin-permission": "/subadmin-permission",
-  "all-project": "/all-project",
-  "active-project": "/active-project",
-  "inactive-project": "/inactive-project",
-  "all-block-list": "/all-block-list",
-  "active-block-list": "/active-block-list",
-  "inactive-block-list": "/inactive-block-list",
-  "all-Plot": "/all-plot",
-  "active-plot-list": "/active-plot-list",
-  "inactive-plot-list": "/inactive-plot-list",
-  "all-associate-list": "/all-associate-list",
-  "all-associate-active-list": "/all-associate-active-list",
-  "all-associate-inactive-list": "/all-associate-inactive-list",
-  "all-channel-list": "/all-channel-list",
-  "all-channel-active-list": "/all-channel-active-list",
-  "all-channel-inactive-list": "/all-channel-inactive-list",
-  "banner-list": "/banner-list",
-  "gallery-list": "/gallery-list",
-  "web-settings": "/web-settings",
-  "blogs": "/blogs",
-  "blog-list": "/blog-list",
-  "testimonial": "/testimonial",
-  "testimonial-list": "/testimonial-list",
-  "aminities-list": "/aminities-list",
-  "document-upload": "/document-upload",
-  "team-list": "/team-list",
-  "assign-property-lead-to-subadmin": "/assign-property-lead-to-subadmin",
-  "assign-property-loan-lead-to-subadmin": "/assign-property-loan-lead-to-subadmin",
-  "upload-property-lead-csv": "/upload-property-lead-csv",
-  "upload-property-loan-lead-csv": "/upload-property-loan-lead-csv",
-  "lead-list": "/lead-list",
-  "loan-list": "/loan-list",
-  "calling-remark-history": "/calling-remark-history",
-  "calling-lead-report": "/calling-lead-report",
-  "create-project": "/create-project",
-  "create-block": "/create-block",
-  "create-plot": "/create-plot",
-  "category-list": "/category-list",
-  "bank-account-list": "/bank-account-list",
-  "property-income-list": "/property-income-list",
-  "property-income-unit-is-not-sold-list": "/property-income-unit-is-not-sold-list",
-  "expence-add": "/expence-add",
-  "expenses-list": "/expenses-list",
-  "expenses-date-wise": "/expenses-date-wise",
-  "tds-report": "/tds-report",
-  "visit-list": "/visit-list",
-  "visit-date-wise": "/visit-date-wise",
-  "account-list": "/account-list",
-  "account-list-status": "/account-list-status",
-  "withdrawal-list": "/withdrawal-list",
-  "withdrawal-success-list-status": "/withdrawal-success-list-status",
-  "withdrawal-rejected-list-status": "/withdrawal-rejected-list-status",
-  "income-list": "/income-list",
-  "personal-income-list": "/personal-income-list",
-  "product-income-list": "/product-income-list",
-  "pending-booking": "/pending-booking",
-  "booked-pending-booking": "/booked-pending-booking",
-  "ongoing-booking": "/ongoing-booking",
-  "cancel-booking": "/cancel-booking",
-  "self-gifts": "/self-gifts",
-  "gift-self-associate-list": "/gift-self-associate-list",
-  "assign-team-self-gifts": "/assign-team-self-gifts",
-  "team-self-gifts-lists": "/team-self-gifts-lists",
-  "all-offer-gifts": "/all-offer-gifts",
-  "monthly-or-special-self-offers-lists": "/monthly-or-special-self-offers-lists",
-  "monthly-or-special-customers-offers-lists": "/monthly-or-special-customers-offers-lists",
-  "monthly-or-special-team-offers-lists": "/monthly-or-special-team-offers-lists",
-  "mentor-royalty-rewards-lists": "/mentor-royalty-rewards-lists",
-  "voice-president-rewards-lists": "/voice-president-rewards-lists",
-  "senior-voice-president-rewards-lists": "/senior-voice-president-rewards-lists",
-  "president-fund-rewards-lists": "/president-fund-rewards-lists",
-  "president-level-fund-rewards-lists": "/president-level-fund-rewards-lists",
-  "upload-lifetime-rewards": "/upload-lifetime-rewards",
-  "all-lifetime-rewards-lists": "/all-lifetime-rewards-lists",
-  "life-time-rewards-winner-lists": "/life-time-rewards-winner-lists",
-  "admin-wallet-report": "/admin-wallet-report",
-  "admin-project-wise-ledger": "/admin-project-wise-ledger",
-  "admin-plot-ledger": "/admin-plot-ledger",
-  "unit-sqyd-added": "/unit-sqyd-added",
-  "unit-sqyd-ledger": "/unit-sqyd-ledger",
-  "final-pl-report-details-lists": "/final-pl-report-details-lists",
-  "cr-settle-reports": "/cr-settle-reports",
-  "dr-settle-reports": "/dr-settle-reports",
-  "tds-cr-report": "/tds-cr-report",
-  "tds-dr-report": "/tds-dr-report",
-  "associates-birthday-lists": "/associates-birthday-lists",
-  "associates-anniversary-lists": "/associates-anniversary-lists",
-  "associates-designation-lists": "/associates-designation-lists",
-  "today-associate-list": "/today-associate-list",
-  "today-channel-list": "/today-channel-list",
-  "myteam-child-chain-down-line-details": "/myteam-child-chain-down-line-details",
-  "parent-commission": "/parent-commission",
-  "convert-calling-lead": "/convert-calling-lead",
-  "lead-remarks": "/lead-remarks",
-  "loan-remarks": "/loan-remarks",
-  "expenses-by-date": "/expenses-by-date",
-  "visit-by-date": "/visit-by-date",
-  "cash-credit-list": "/cash-credit-list",
-  "online-credit-list": "/online-credit-list",
-  "total-credit-list": "/total-credit-list",
-  "cash-debit-list": "/cash-debit-list",
-  "online-debit-list": "/online-debit-list",
-  "total-debit-list": "/total-debit-list",
-  "cash-balance-list": "/cash-balance-list",
-  "online-balance-list": "/online-balance-list",
-  "total-balance-list": "/total-balance-list",
-  "wallet-balance": "/wallet-balance",
-  "withdrawal-wallet-balance": "/withdrawal-wallet-balance",
-  "success-wallet-balance": "/success-wallet-balance",
-  "tds-balance": "/tds-balance",
-  "monthly-reward-balance": "/monthly-reward-balance",
-  "lifetime-reward-balance": "/lifetime-reward-balance",
-  "royalty-balance": "/royalty-balance",
-  "parent-unitis-notsold": "/parent-unitis-notsold",
-  "blocked-inactive-associates-commissions": "/blocked-inactive-associates-commissions",
-  "create-associate-by-uploading-csv": "/create-associate-by-uploading-csv",
-  "create-project-by-uploading-csv": "/create-project-by-uploading-csv",
-  "create-lead-by-uploading-csv": "/create-lead-by-uploading-csv",
-  "create-bloks-by-uploading-csv": "/create-bloks-by-uploading-csv",
-  "add-new-offer-gifts": "/add-new-offer-gifts",
-  "life-time-rewards-winner-lists-details": "/life-time-rewards-winner-lists-details",
-  "mentor-royalty-rewards-details": "/mentor-royalty-rewards-details",
-  "voice-president-rewards-details": "/voice-president-rewards-details",
-  "senior-voice-president-rewards-details": "/senior-voice-president-rewards-details",
-  "president-fund-rewards-lists-details": "/president-fund-rewards-lists-details",
-  "president-level-fund-rewards-lists-details": "/president-level-fund-rewards-lists-details",
-  "complete-booking": "/complete-booking",
-  "add-advance-payment": "/add-advance-payment",
-  "add-document": "/add-document",
-  "notification-list": "/notification-list",
-  "add-category": "/add-category",
-  "add-bankaccount": "/add-bankaccount",
-  "create-lead": "/create-lead",
-  "calling-create-lead": "/calling-create-lead",
-  "create-loan": "/create-loan",
-  "create-user": "/create-user",
-  "all-users": "/all-users",
-  "active-users": "/active-users",
-  "inactive-users": "/inactive-users",
-  "user/login-user-list": "/user/login-user-list",
-  "banner": "/banner",
-  "gallery": "/gallery",
-  "create-channel": "/create-channel",
-  "create-associate": "/create-associate",
-  "upload-property-lead-csv": "/upload-property-lead-csv",
-  "upload-property-loan-lead-csv": "/upload-property-loan-lead-csv",
-};
+    "dashboard": "/dashboard",
+    "homedashboard": "/homedashboard",
+    "my-team-tree-admin": "/my-team-tree-admin",
+    "myteam-parent-chain-upline": "/myteam-parent-chain-upline",
+    "download-my-11level-team-data-in-excel": "/download-my-11level-team-data-in-excel",
+    "account-report": "/account-report",
+    "create-subadmin": "/create-subadmin",
+    "all-subadmin": "/allsubadmin",
+    "subadmin-permission": "/subadmin-permission",
+    "all-project": "/all-project",
+    "active-project": "/active-project",
+    "inactive-project": "/inactive-project",
+    "all-block-list": "/all-block-list",
+    "active-block-list": "/active-block-list",
+    "inactive-block-list": "/inactive-block-list",
+    "all-Plot": "/all-plot",
+    "active-plot-list": "/active-plot-list",
+    "inactive-plot-list": "/inactive-plot-list",
+    "all-associate-list": "/all-associate-list",
+    "all-associate-active-list": "/all-associate-active-list",
+    "all-associate-inactive-list": "/all-associate-inactive-list",
+    "all-channel-list": "/all-channel-list",
+    "all-channel-active-list": "/all-channel-active-list",
+    "all-channel-inactive-list": "/all-channel-inactive-list",
+    "banner-list": "/banner-list",
+    "gallery-list": "/gallery-list",
+    "web-settings": "/web-settings",
+    "blogs": "/blogs",
+    "blog-list": "/blog-list",
+    "testimonial": "/testimonial",
+    "testimonial-list": "/testimonial-list",
+    "aminities-list": "/aminities-list",
+    "document-upload": "/document-upload",
+    "team-list": "/team-list",
+    "assign-property-lead-to-subadmin": "/assign-property-lead-to-subadmin",
+    "assign-property-loan-lead-to-subadmin": "/assign-property-loan-lead-to-subadmin",
+    "upload-property-lead-csv": "/upload-property-lead-csv",
+    "upload-property-loan-lead-csv": "/upload-property-loan-lead-csv",
+    "lead-list": "/lead-list",
+    "loan-list": "/loan-list",
+    "calling-remark-history": "/calling-remark-history",
+    "calling-lead-report": "/calling-lead-report",
+    "create-project": "/create-project",
+    "create-block": "/create-block",
+    "create-plot": "/create-plot",
+    "category-list": "/category-list",
+    "bank-account-list": "/bank-account-list",
+    "property-income-list": "/property-income-list",
+    "property-income-unit-is-not-sold-list": "/property-income-unit-is-not-sold-list",
+    "expence-add": "/expence-add",
+    "expenses-list": "/expenses-list",
+    "expenses-date-wise": "/expenses-date-wise",
+    "tds-report": "/tds-report",
+    "visit-list": "/visit-list",
+    "visit-date-wise": "/visit-date-wise",
+    "account-list": "/account-list",
+    "account-list-status": "/account-list-status",
+    "withdrawal-list": "/withdrawal-list",
+    "withdrawal-success-list-status": "/withdrawal-success-list-status",
+    "withdrawal-rejected-list-status": "/withdrawal-rejected-list-status",
+    "income-list": "/income-list",
+    "personal-income-list": "/personal-income-list",
+    "product-income-list": "/product-income-list",
+    "pending-booking": "/pending-booking",
+    "booked-pending-booking": "/booked-pending-booking",
+    "ongoing-booking": "/ongoing-booking",
+    "cancel-booking": "/cancel-booking",
+    "self-gifts": "/self-gifts",
+    "gift-self-associate-list": "/gift-self-associate-list",
+    "assign-team-self-gifts": "/assign-team-self-gifts",
+    "team-self-gifts-lists": "/team-self-gifts-lists",
+    "all-offer-gifts": "/all-offer-gifts",
+    "monthly-or-special-self-offers-lists": "/monthly-or-special-self-offers-lists",
+    "monthly-or-special-customers-offers-lists": "/monthly-or-special-customers-offers-lists",
+    "monthly-or-special-team-offers-lists": "/monthly-or-special-team-offers-lists",
+    "mentor-royalty-rewards-lists": "/mentor-royalty-rewards-lists",
+    "voice-president-rewards-lists": "/voice-president-rewards-lists",
+    "senior-voice-president-rewards-lists": "/senior-voice-president-rewards-lists",
+    "president-fund-rewards-lists": "/president-fund-rewards-lists",
+    "president-level-fund-rewards-lists": "/president-level-fund-rewards-lists",
+    "upload-lifetime-rewards": "/upload-lifetime-rewards",
+    "all-lifetime-rewards-lists": "/all-lifetime-rewards-lists",
+    "life-time-rewards-winner-lists": "/life-time-rewards-winner-lists",
+    "admin-wallet-report": "/admin-wallet-report",
+    "admin-project-wise-ledger": "/admin-project-wise-ledger",
+    "admin-plot-ledger": "/admin-plot-ledger",
+    "unit-sqyd-added": "/unit-sqyd-added",
+    "unit-sqyd-ledger": "/unit-sqyd-ledger",
+    "final-pl-report-details-lists": "/final-pl-report-details-lists",
+    "cr-settle-reports": "/cr-settle-reports",
+    "dr-settle-reports": "/dr-settle-reports",
+    "tds-cr-report": "/tds-cr-report",
+    "tds-dr-report": "/tds-dr-report",
+    "associates-birthday-lists": "/associates-birthday-lists",
+    "associates-anniversary-lists": "/associates-anniversary-lists",
+    "associates-designation-lists": "/associates-designation-lists",
+    "today-associate-list": "/today-associate-list",
+    "today-channel-list": "/today-channel-list",
+    "myteam-child-chain-down-line-details": "/myteam-child-chain-down-line-details",
+    "parent-commission": "/parent-commission",
+    "convert-calling-lead": "/convert-calling-lead",
+    "lead-remarks": "/lead-remarks",
+    "loan-remarks": "/loan-remarks",
+    "expenses-by-date": "/expenses-by-date",
+    "visit-by-date": "/visit-by-date",
+    "cash-credit-list": "/cash-credit-list",
+    "online-credit-list": "/online-credit-list",
+    "total-credit-list": "/total-credit-list",
+    "cash-debit-list": "/cash-debit-list",
+    "online-debit-list": "/online-debit-list",
+    "total-debit-list": "/total-debit-list",
+    "cash-balance-list": "/cash-balance-list",
+    "online-balance-list": "/online-balance-list",
+    "total-balance-list": "/total-balance-list",
+    "wallet-balance": "/wallet-balance",
+    "withdrawal-wallet-balance": "/withdrawal-wallet-balance",
+    "success-wallet-balance": "/success-wallet-balance",
+    "tds-balance": "/tds-balance",
+    "monthly-reward-balance": "/monthly-reward-balance",
+    "lifetime-reward-balance": "/lifetime-reward-balance",
+    "royalty-balance": "/royalty-balance",
+    "parent-unitis-notsold": "/parent-unitis-notsold",
+    "blocked-inactive-associates-commissions": "/blocked-inactive-associates-commissions",
+    "create-associate-by-uploading-csv": "/create-associate-by-uploading-csv",
+    "create-project-by-uploading-csv": "/create-project-by-uploading-csv",
+    "create-lead-by-uploading-csv": "/create-lead-by-uploading-csv",
+    "create-bloks-by-uploading-csv": "/create-bloks-by-uploading-csv",
+    "add-new-offer-gifts": "/add-new-offer-gifts",
+    "life-time-rewards-winner-lists-details": "/life-time-rewards-winner-lists-details",
+    "mentor-royalty-rewards-details": "/mentor-royalty-rewards-details",
+    "voice-president-rewards-details": "/voice-president-rewards-details",
+    "senior-voice-president-rewards-details": "/senior-voice-president-rewards-details",
+    "president-fund-rewards-lists-details": "/president-fund-rewards-lists-details",
+    "president-level-fund-rewards-lists-details": "/president-level-fund-rewards-lists-details",
+    "complete-booking": "/complete-booking",
+    "add-advance-payment": "/add-advance-payment",
+    "add-document": "/add-document",
+    "notification-list": "/notification-list",
+    "add-category": "/add-category",
+    "add-bankaccount": "/add-bankaccount",
+    "create-lead": "/create-lead",
+    "calling-create-lead": "/calling-create-lead",
+    "create-loan": "/create-loan",
+    "create-user": "/create-user",
+    "all-users": "/all-users",
+    "active-users": "/active-users",
+    "inactive-users": "/inactive-users",
+    "user/login-user-list": "/user/login-user-list",
+    "banner": "/banner",
+    "gallery": "/gallery",
+    "create-channel": "/create-channel",
+    "create-associate": "/create-associate",
+    "upload-property-lead-csv": "/upload-property-lead-csv",
+    "upload-property-loan-lead-csv": "/upload-property-loan-lead-csv",
+  };
 
 
 
@@ -512,21 +514,21 @@ const App = () => {
         <Route path="/dashboard" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions} > <Dashboard /> </Layout></PrivateRoute>} />
 
         {/* 🔴 CHANGE 2: HomeDashboard route uncomment karo */}
-        <Route 
-          path="/homedashboard" 
+        <Route
+          path="/homedashboard"
           element={
             <PrivateRoute allowedRoutes={permissions}>
               <Layout userType={userTypeState} permissions={permissions}>
                 <HomeDashboard />
               </Layout>
             </PrivateRoute>
-          } 
+          }
         />
 
         <Route path="/account-report" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions} > <AccountReport /> </Layout></PrivateRoute>} />
 
 
-             <Route path="/final-pl-report-details-lists" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions} > <FinalPLReportDetailsLists /> </Layout></PrivateRoute>} />
+        <Route path="/final-pl-report-details-lists" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions} > <FinalPLReportDetailsLists /> </Layout></PrivateRoute>} />
 
 
 
@@ -548,6 +550,7 @@ const App = () => {
         <Route path="/inactive-block-list" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <InActiveBlockLists /> </Layout></PrivateRoute>} />
 
         <Route path="/create-plot" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <CreatePlot /> </Layout></PrivateRoute>} />
+        <Route path="/create-plot-manual" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <CreatePlotManual /> </Layout></PrivateRoute>} />
         <Route path="/all-plot" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AllPlotLists /> </Layout></PrivateRoute>} />
         <Route path="/active-plot-list" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <ActivePlotLists /> </Layout></PrivateRoute>} />
         <Route path="/inactive-plot-list" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <InActivePlotLists /> </Layout></PrivateRoute>} />
@@ -783,13 +786,13 @@ const App = () => {
         <Route path="/parent-unitis-notsold/:id" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <ParentUnitisnotsoldePage /> </Layout></PrivateRoute>} />
 
         <Route path="/property-income-unit-is-not-sold-list" element={<PrivateRoute allowedRoutes={permissions}>
-        <Layout userType={userTypeState} permissions={permissions}> 
-        <ALLPropertyUnitisnotsoldLists /> </Layout></PrivateRoute>} />
+          <Layout userType={userTypeState} permissions={permissions}>
+            <ALLPropertyUnitisnotsoldLists /> </Layout></PrivateRoute>} />
 
 
-         <Route path="/blocked-inactive-associates-commissions" element={<PrivateRoute allowedRoutes={permissions}>
-        <Layout userType={userTypeState} permissions={permissions}> 
-        <BlockedInactiveAssociatesCommissions /> </Layout></PrivateRoute>} />
+        <Route path="/blocked-inactive-associates-commissions" element={<PrivateRoute allowedRoutes={permissions}>
+          <Layout userType={userTypeState} permissions={permissions}>
+            <BlockedInactiveAssociatesCommissions /> </Layout></PrivateRoute>} />
 
 
 
@@ -805,14 +808,14 @@ const App = () => {
 
         <Route path="/admin-plot-ledger" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <PlotLedger /> </Layout></PrivateRoute>} />
 
-        <Route path="/admin-project-wise-ledger" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <ProjectWiseLedger/> </Layout></PrivateRoute>} />
-        
+        <Route path="/admin-project-wise-ledger" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <ProjectWiseLedger /> </Layout></PrivateRoute>} />
 
 
-         <Route path="/unit-sqyd-added" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <UnitSQYDAdded /> </Layout></PrivateRoute>} />
+
+        <Route path="/unit-sqyd-added" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <UnitSQYDAdded /> </Layout></PrivateRoute>} />
 
 
-          <Route path="/unit-sqyd-ledger" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <UnitSQYDLedger /> </Layout></PrivateRoute>} />
+        <Route path="/unit-sqyd-ledger" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <UnitSQYDLedger /> </Layout></PrivateRoute>} />
 
 
 
@@ -822,24 +825,26 @@ const App = () => {
         <Route path="/dr-settle-reports" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <TdsSellteDRList /> </Layout></PrivateRoute>} />
 
 
-         <Route path="/associates-birthday-lists" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AssociatesBirthdayLists /> </Layout></PrivateRoute>} />
+        <Route path="/associates-birthday-lists" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AssociatesBirthdayLists /> </Layout></PrivateRoute>} />
 
 
 
-          <Route path="/associates-anniversary-lists" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AssociatesAnniversaryLists /> </Layout></PrivateRoute>} />
+        <Route path="/associates-anniversary-lists" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AssociatesAnniversaryLists /> </Layout></PrivateRoute>} />
 
 
-           <Route path="/associates-designation-lists" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AssociatesDesignationLists /> </Layout></PrivateRoute>} />
+        <Route path="/associates-designation-lists" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AssociatesDesignationLists /> </Layout></PrivateRoute>} />
 
 
 
 
-         <Route path="/today-associate-list" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <TodayAssociateList /> </Layout></PrivateRoute>} />
+        <Route path="/today-associate-list" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <TodayAssociateList /> </Layout></PrivateRoute>} />
 
 
-           <Route path="/today-channel-list" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <TodayChannelList /> </Layout></PrivateRoute>} />
+        <Route path="/today-channel-list" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <TodayChannelList /> </Layout></PrivateRoute>} />
 
-           
+
+        <Route path="/associates-bima-achiever-lists" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AssociatesBimaAchieverLists /> </Layout></PrivateRoute>} />
+
 
 
       </Routes>

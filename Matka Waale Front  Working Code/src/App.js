@@ -46,6 +46,8 @@ import Header from ".././src/Component/Header/Header";
 import Footer from ".././src/Component/Footer";
 import CreateAccount from "./Component/Login/CreateAccount";
 import HistoryPending from "./Component/Page/History_pending";
+ import GameLoad from "./Component/Page/GameLoad";
+//import GameLoad from "./components/GameLoad"; // Sahi path do
 
 // const RouteChangeHandler = ({ loaduser1 }) => {
 //   const location = useLocation();
@@ -226,6 +228,16 @@ function App() {
               </>
             }
           />
+          <Route
+            path="/game-load/:market_id/:user_id"
+            element={
+              <>
+                <Header />
+                <GameLoad />
+              </>
+            }
+          />
+
           <Route
             path="/Resulthistory"
             element={

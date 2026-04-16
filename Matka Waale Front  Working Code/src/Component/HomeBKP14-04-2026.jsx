@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 // import marketnamedata from './MarketNamedata';
 import * as Icon from "react-bootstrap-icons";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Carousel } from "antd";
 import chaticon from "../assets/img/chaticon.png";
 import withdrawchat from "../assets/img/withdrawchat.png";
@@ -33,7 +33,6 @@ export default function Home() {
   const [harapRate, setharapRate] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [data, setData] = useState("Your data here");
-  const navigate = useNavigate();
   const clearData = () => {
     setData("");
   };
@@ -194,23 +193,6 @@ export default function Home() {
   const handleClick = (id, name) => {
     window.location.href = `/Playgame?id=${id}&name=${name}`;
   };
-
-  // Game Load function - Newly added
-  // const handleGameLoad = (market_name, user_id) => {
-  //   console.log("Button clicked - Market:", market_name, "User:", user_id);
-  //   const encodedMarketName = encodeURIComponent(market_name);
-  //   // Navigate to route
-  //   navigate(`/game-load/${encodedMarketName}/${user_id}`);
-  // };
-
-  const handleGameLoad = (market_id, user_id) => {
-    console.log("Market ID:", market_id);
-    console.log("User ID:", user_id);
-
-    // Market ID direct use karo (already clean hai)
-    navigate(`/game-load/${market_id}/${user_id}`);
-  };
-
 
   const loaduser1 = async () => {
     const user_id = localStorage.getItem("userid");
@@ -544,7 +526,7 @@ export default function Home() {
                 <td className="width_25 border-radius">Today Result</td>
               </tr>
             </thead>
-           </table> */}
+          </table> */}
           <div className="flex_all_new">
             {usersdata &&
               usersdata.map((user) =>
@@ -617,19 +599,6 @@ export default function Home() {
 
                 </div> */}
                     </div>
-                    {/* Game Load Button - Added for open market */}
-                    <button
-                      className="game-load-btn-open"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        const loginUserId = localStorage.getItem("userid");
-                        // Yahan user.market_id bhejo, market_name nahi
-                        handleGameLoad(user.market_id, loginUserId);
-                      }}
-                      
-                    >
-                      Game Load
-                    </button>
                   </div>
                 ) : (
                   <div className="market">
@@ -694,17 +663,6 @@ export default function Home() {
 
                 </div> */}
                     </div>
-                    {/* Game Load Button - Added for closed market */}
-                    <button
-                      className="game-load-btn-open"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        const loginUserId = localStorage.getItem("userid");
-                        handleGameLoad(user.market_id, loginUserId);
-                      }}
-                    >
-                      Game Load
-                    </button>
                   </div>
                 )
               )}
