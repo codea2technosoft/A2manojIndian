@@ -107,10 +107,6 @@ import LifeTimeRewardsManagement from "./Pages/LifeTimeRewards/AllLifetimeReward
 import AddsLifeTimeRewards from "./Pages/LifeTimeRewards/AddsLifeTimeRewards.jsx";
 import AllLifetimeRewardsWinnerLists from "./Pages/LifeTimeRewards/AllLifetimeRewardsWinnerLists.jsx";
 
-
-// import ProprtyAwardsSelfWinnerHistories from "./Pages/ProprtyAwardsWinnerHistories/ProprtySelfAwardsWinner.jsx";
-// import ProprtyAwardsTeamWinnerHistories from "./Pages/ProprtyAwardsWinnerHistories/ProprtyTeamAwardsWinner.jsx";
-
 import RewardsMentorRoyalty from "./Pages/GiftsOfferManagement/RewardsMentorRoyalty.jsx";
 import MentorRoyaltyDetails from "./Pages/GiftsOfferManagement/MentorRoyaltyDetails.jsx";
 
