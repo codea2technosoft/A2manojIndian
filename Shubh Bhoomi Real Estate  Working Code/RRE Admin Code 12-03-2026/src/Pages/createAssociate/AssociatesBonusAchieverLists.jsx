@@ -6,7 +6,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const API_URL = process.env.REACT_APP_API_URL;
-function AssociatesBimaAchieverLists() {
+function AssociatesBonusAchieverLists() {
   const [anniversarys, setAnniversary] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -117,7 +117,7 @@ function AssociatesBimaAchieverLists() {
   };
 
   const buildUrlWithFilters = (page = 1, limit = null) => {
-    let url = `${API_URL}/user-bima-list?page=${page}`;
+    let url = `${API_URL}/user-bonus-reward-list?page=${page}`;
 
     if (limit) {
       url += `&limit=${limit}`;
@@ -236,7 +236,7 @@ function AssociatesBimaAchieverLists() {
         return;
       }
 
-      let url = `${API_URL}/user-bima-list-download?page=1&limit=10000`;
+      let url = `${API_URL}/user-bonus-reward-list-download?page=1&limit=10000`;
 
       if (filterInput && validateDateInput(filterInput)) {
         url += `&date=${filterInput}`;
@@ -443,7 +443,7 @@ function AssociatesBimaAchieverLists() {
         <div className="card-header">
           <div className="d-flex align-items-center justify-content-between">
             <div className="titlepage">
-              <h3>Associates Bima Achiever Lists</h3>
+              <h3>Associates Bonus Achiever Lists</h3>
             </div>
             <div className="d-flex gap-2">
               <button
@@ -567,14 +567,15 @@ function AssociatesBimaAchieverLists() {
                   <th>#</th>
                   <th>Name</th>
                   <th>Mobile</th>
-                  <th>Parent ID</th>
+                  <th>Joining Date</th>
                   <th>Lead Date</th>
+                  <th>Approved date</th>
                   <th>Lead Customer Name</th>
                   <th>Lead Mobile</th>
                   <th>Project Name</th>
-                  <th>Block Name</th>
                   <th>Plot Name</th>
                   <th>Bonus Amount</th>
+                  <th>Bonus Type</th>
                 </tr>
               </thead>
               <tbody>
@@ -584,18 +585,24 @@ function AssociatesBimaAchieverLists() {
                       <td>{(currentPage - 1) * perPage + index + 1}</td>
                       <td>{person.user_name || "-"}</td>
                       <td>{person.user_mobile || "-"}</td>
-                      <td>{person.parent_id || "-"}</td>
+                      <td>{person.joining_date ? new Date(person.joining_date).toLocaleDateString("en-GB")
+                        : "-"}</td>
+                      <td>{person.leaddate ? new Date(person.leaddate).toLocaleDateString("en-GB")
+                        : "-"}</td>
+                      <td>{person.leadapprove_date ? new Date(person.leadapprove_date).toLocaleDateString("en-GB")
+                        : "-"}</td>
+                      <td>{person.lead_customer_name || "-"}</td>
+                      <td>{person.lead_mobile || "-"}</td>
+                      <td>{person.project_name || "-"}</td>
+                      <td>{person.plot_name || "-"}</td>
+                      <td>{person.bonus_amount || "-"}</td>
                       <td>
-                        {person.status_date
-                          ? new Date(person.status_date).toLocaleDateString("en-GB")
+                        {person.bonus_type
+                          ? person.bonus_type
+                            .replace(/_/g, " ")
+                            .replace(/^./, (str) => str.toUpperCase())
                           : "-"}
                       </td>
-                      <td>{person.customer_name || "-"}</td>
-                      <td>{person.customer_mobile || "-"}</td>
-                      <td>{person.name || "-"}</td>
-                      <td>{person.colony_name || "-"}</td>
-                      <td>{person.plot_shop_villa_no || "-"}</td>
-                      <td>{person.gross_payout || "-"}</td>
                     </tr>
                   ))
                 ) : (
@@ -703,4 +710,4 @@ function AssociatesBimaAchieverLists() {
   );
 }
 
-export default AssociatesBimaAchieverLists;
+export default AssociatesBonusAchieverLists;

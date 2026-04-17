@@ -181,6 +181,7 @@ import AssociatesDesignationLists from "./Pages/createAssociate/AssociatesDesign
 import FinalPLReportDetailsLists from "./Pages/expensesManagment/FinalPLReportDetailsLists";
 import TodayAssociateList from "./Pages/createAssociate/TodayAssociateList";
 import AssociatesBimaAchieverLists from "./Pages/createAssociate/AssociatesBimaAchieverLists";
+import AssociatesBonusAchieverLists from "./Pages/createAssociate/AssociatesBonusAchieverLists";
 import TodayChannelList from "./Pages/channelCreate/TodayChannelList";
 import HomeDashboard from "./Pages/HomeDashboard";
 
@@ -844,6 +845,12 @@ const App = () => {
 
 
         <Route path="/associates-bima-achiever-lists" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AssociatesBimaAchieverLists /> </Layout></PrivateRoute>} />
+
+
+
+
+
+        <Route path="/associates-bonus-reward-list" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AssociatesBonusAchieverLists /> </Layout></PrivateRoute>} />
 
 
 

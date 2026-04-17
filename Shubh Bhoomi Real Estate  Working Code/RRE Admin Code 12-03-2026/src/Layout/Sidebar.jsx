@@ -160,6 +160,9 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
             { id: "associates-designation-lists", title: "Designation Lists", href: "/associates-designation-lists", checked: false },
             { id: "associates-bima-achiever-lists", title: "Bima Achiever Lists", href: "/associates-bima-achiever-lists", checked: false },
 
+            { id: "associates-bonus-reward-list", title: "Bonus Achiever Lists", href: "/associates-bonus-reward-list", checked: false },
+
+
 
           ]
         },

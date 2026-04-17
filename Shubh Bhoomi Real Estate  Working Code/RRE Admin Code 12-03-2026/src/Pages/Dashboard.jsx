@@ -11,6 +11,7 @@ import { GiPodiumWinner } from "react-icons/gi";
 import { HiMiniCubeTransparent } from "react-icons/hi2";
 import { GoProjectRoadmap } from "react-icons/go";
 import { Container, Row, Col, Card, Modal, Button } from "react-bootstrap";
+import { LiaGiftSolid } from "react-icons/lia";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -32,6 +33,7 @@ const iconMap = {
   MdSettings: MdSettings,
   MdAssignmentTurnedIn: MdAssignmentTurnedIn,
   GoProjectRoadmap: GoProjectRoadmap,
+  LiaGiftSolid
 };
 
 const Dashboard = () => {
@@ -136,6 +138,12 @@ const Dashboard = () => {
           { title: "Today Property Lead", value: rawData.TodayPropertyLead?.[0]?.total || 0, icon: "GoProjectRoadmap", color: "primary"},
           { title: "Total Loan Lead", value: rawData.TotalLoanLead?.[0]?.total || 0, icon: "PiListNumbersFill", color: "primary"},
           { title: "Today Loan Lead", value: rawData.TodayLoanLead?.[0]?.total || 0, icon: "PiListNumbersFill", color: "primary"},
+
+          { title: "Total Bonus Achiever", value: rawData.totalBonusCount?.[0]?.total || 0, icon: "LiaGiftSolid", color: "primary",  link:"/associates-bonus-reward-list"},
+
+           { title: "Total Bima Achiever", value: rawData.totalBimaCount?.[0]?.total || 0, icon: "LiaGiftSolid", color: "primary",  link:"/associates-bima-achiever-lists"},
+
+
         ];
 
         setDashboardData(transformedData);
