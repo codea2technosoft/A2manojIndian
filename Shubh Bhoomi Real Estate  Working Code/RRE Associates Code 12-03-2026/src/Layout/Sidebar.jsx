@@ -165,6 +165,22 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
 
 
+        {
+          id: "bima_achiever_lists",
+          title: "Bima Achievers",
+          dropdown: true,
+          icon: <MdSupportAgent />,
+          checked: false,
+          children: [
+            {
+              id: "bima_achiever_lists",
+              title: "Bima Achievers",
+              href: "/associates-bima-achiever-lists",
+              checked: false,
+            },
+
+          ],
+        },
 
 
 
@@ -483,21 +499,21 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         {
           id: "RRRulesBooks",
           title: "Docoments",
-          icon:  <FaBook />,
+          icon: <FaBook />,
           href: "/rr-rules-book",
           dropdown: true,
-              children: [
-                {
-                  id: "upload_rre_plans_pdf",
-                  title: "Plan PDF",
-                  href: "/plan-PDF",
-                },
-                {
-                  id: "RRRulesBooks",
-                  title: "Rules Book",
-                  href: "/rr-rules-book",
-                },
-              ],
+          children: [
+            {
+              id: "upload_rre_plans_pdf",
+              title: "Plan PDF",
+              href: "/plan-PDF",
+            },
+            {
+              id: "RRRulesBooks",
+              title: "Rules Book",
+              href: "/rr-rules-book",
+            },
+          ],
         },
 
 

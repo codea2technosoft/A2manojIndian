@@ -537,12 +537,7 @@ function AssociatesAnniversaryLists() {
                       </td> */}
 
                       <td>
-                        {person.marriage_anniversary_date && !isNaN(new Date(person.marriage_anniversary_date))
-                          ? (() => {
-                            const d = new Date(person.marriage_anniversary_date);
-                            return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
-                          })()
-                          : "-"}
+                        {person.marriage_anniversary_date || "-"}
                       </td>
 
                       <td>{person.parent_username || "-"}</td>

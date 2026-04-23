@@ -68,6 +68,7 @@ import PlotLedger from "./Pages/WalletReport/PlotLedger.jsx";
 import UnitSQYDAdded from "./Pages/WalletReport/Unit_sqyd_added.jsx";
 import UnitSQYDLedger from "./Pages/WalletReport/UnitSQYDLedger.jsx";
 import BimaRegistrationForm from "./Pages/BimaRegistrationForm/BimaRegistrationForm.jsx";
+import AssociatesBimaAchieverLists from "./Pages/BimaRegistrationForm/AssociatesBimaAchieverLists.jsx";
 
 const App = () => {
   const [userType, setUserType] = useState(() => {
@@ -679,6 +680,19 @@ const App = () => {
             </Layout>
           }
         />
+
+
+   <Route
+          path="/associates-bima-achiever-lists" 
+          element={
+            <Layout userType={userType} mobile={mobile}>
+              <AssociatesBimaAchieverLists />
+            </Layout>
+          }
+        />
+
+
+        
 
 
 

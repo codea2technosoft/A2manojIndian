@@ -118,13 +118,13 @@ function AssociatesDesignationLists() {
 
   const buildUrlWithFilters = (page = 1, limit = null) => {
     let url = `${API_URL}/designation-list-associate?page=${page}`;
-    
+
     if (limit) {
       url += `&limit=${limit}`;
     } else {
       url += `&limit=${perPage}`;
     }
-    
+
     if (filterDesignation) {
       url += `&designation=${encodeURIComponent(filterDesignation)}`;
     }
@@ -146,7 +146,7 @@ function AssociatesDesignationLists() {
       const formattedDate = formatDateForAPI(filterToDate);
       url += `&to_date=${encodeURIComponent(formattedDate)}`;
     }
-    
+
     return url;
   };
 
@@ -234,7 +234,7 @@ function AssociatesDesignationLists() {
       }
 
       let url = `${API_URL}/designation-list-associate?page=1&limit=10000`;
-      
+
       if (filterDesignation) {
         url += `&designation=${encodeURIComponent(filterDesignation)}`;
       }
@@ -272,7 +272,7 @@ function AssociatesDesignationLists() {
       }
 
       const data = await response.json();
-      
+
       if (data.success === "1" && data.data && data.data.length > 0) {
         const headers = [
           "Name",
@@ -283,15 +283,15 @@ function AssociatesDesignationLists() {
           "Parent Name",
           "Parent Mobile",
         ];
-        
+
         const csvRows = [];
         csvRows.push(headers.join(","));
-        
+
         data.data.forEach((person, index) => {
           const achieveDate = person.buysqrt_updated_at || person.updated_at
             ? formatDateForDisplay(person.buysqrt_updated_at || person.updated_at)
             : "-";
-          
+
           const row = [
             `"${(person.username || "-").replace(/"/g, '""')}"`,
             `"${(person.mobile || "-").replace(/"/g, '""')}"`,
@@ -303,19 +303,19 @@ function AssociatesDesignationLists() {
           ];
           csvRows.push(row.join(","));
         });
-        
+
         const csvContent = csvRows.join("\n");
         const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
         const link = document.createElement("a");
         const downloadUrl = URL.createObjectURL(blob);
-        
+
         let filterText = "";
         if (filterDesignation) filterText += `_${filterDesignation}`;
         if (filterMinBuySQFT) filterText += `_min_${filterMinBuySQFT}`;
         if (filterMaxBuySQFT) filterText += `_max_${filterMaxBuySQFT}`;
         if (filterFromDate) filterText += `_from_${formatDateForAPI(filterFromDate)}`;
         if (filterToDate) filterText += `_to_${formatDateForAPI(filterToDate)}`;
-        
+
         const filename = `associates_designation_list${filterText}_${new Date().toISOString().split('T')[0]}.csv`;
         link.setAttribute("href", downloadUrl);
         link.setAttribute("download", filename);
@@ -323,7 +323,7 @@ function AssociatesDesignationLists() {
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(downloadUrl);
-        
+
         showCustomMessageModal(
           "Success",
           `Successfully downloaded ${data.data.length} filtered records!`,
@@ -573,15 +573,25 @@ function AssociatesDesignationLists() {
             <div className="filter-section mb-2">
               <div className="row g-3 align-items-md-end">
                 <div className="col-md-4">
-                  <div className="form-group">
+                  <div className="form-group" style={{ flex: "1", minWidth: "200px" }}>
                     <label className="form-label">Designation</label>
-                    <input
-                      type="text"
+                    <select
                       className="form-control"
                       value={filterDesignation}
                       onChange={(e) => setFilterDesignation(e.target.value)}
-                      placeholder="Enter designation"
-                    />
+                    >
+                      <option value="">All Designations</option>
+                      <option value="Associate">Associate</option>
+                      <option value="Team Leader">Team Leader</option>
+                      <option value="Real Estate Manager">Real Estate Manager</option>
+                      <option value="Business Promoter (BDP)">Business Promoter (BDP)</option>
+                      <option value="Regional Sales Promoter">Regional Sales Promoter</option>
+                      <option value="National Sales Promoter">National Sales Promoter</option>
+                      <option value="Sr National Sales Promoter">Sr National Sales Promoter</option>
+                      <option value="Vice President">Vice President</option>
+                      <option value="Sr Vice President">Sr Vice President</option>
+                      <option value="President">President</option>
+                    </select>
                   </div>
                 </div>
 
@@ -676,12 +686,21 @@ function AssociatesDesignationLists() {
                     Clear
                   </button>
                 </div> */}
-<div className="col-md-2">
-                 <button className="btn btn-success" onClick={handleDownloadCSV} disabled={downloading}>
+                  
+
+                   <div className="col-md-2">
+                <button className="btn btn-primary" onClick={handleSearchClick}>
+                    Search
+                  </button>
+                </div>
+
+
+                <div className="col-md-2">
+                  <button className="btn btn-success" onClick={handleDownloadCSV} disabled={downloading}>
                     <FaDownload className="me-2" />
                     {downloading ? "Downloading..." : "Download CSV"}
                   </button>
-              </div>
+                </div>
               </div>
             </div>
           )}

@@ -541,145 +541,145 @@ export default function Wallet() {
 
 
   const handleWithdrawal = async () => {
-  try {
-    setLoadingbutton(true);
-    const errors = [];
-    setInputError(false);
-    setBankNameError(false);
-    setAccountHolderNameError(false);
-    setAccountNumberError(false);
-    setIfscCodeError(false);
-    setupiidError(false);
-    setotpError(false);
+    try {
+      setLoadingbutton(true);
+      const errors = [];
+      setInputError(false);
+      setBankNameError(false);
+      setAccountHolderNameError(false);
+      setAccountNumberError(false);
+      setIfscCodeError(false);
+      setupiidError(false);
+      setotpError(false);
 
-    const amountPattern = /^\d+(\.\d{1,2})?$/;
-    const bankNamePattern = /^[A-Za-z\s]+$/;
-    const accountHolderNamePattern = /^[A-Za-z\s]+$/;
-    const accountNumberPattern = /^\d+$/;
-    const ifscCodePattern = /^[A-Za-z\s\d]+$/;
+      const amountPattern = /^\d+(\.\d{1,2})?$/;
+      const bankNamePattern = /^[A-Za-z\s]+$/;
+      const accountHolderNamePattern = /^[A-Za-z\s]+$/;
+      const accountNumberPattern = /^\d+$/;
+      const ifscCodePattern = /^[A-Za-z\s\d]+$/;
 
-    // Amount validation - FIX: Check for minimum amount
-    if (!inputValue || inputValue.trim() === "") {
-      setInputError(true);
-      errors.push("Please enter an amount");
-    } else if (!inputValue.match(amountPattern)) {
-      setInputError(true);
-      errors.push("Please enter a valid amount (e.g., 500 or 500.00)");
-    } else if (parseInt(inputValue) < 1) {
-      setInputError(true);
-      errors.push("Insufficient Balance. Please Enter A Lower Withdrawal Amount And Then Try !!!");
-    }
-
-    if (!bankName.match(bankNamePattern)) {
-      setBankNameError(true);
-      errors.push("Please enter a valid bank name (letters and spaces only)");
-    }
-
-    if (!accountNumber.match(accountNumberPattern)) {
-      setAccountNumberError(true);
-      errors.push("Please enter a valid account number (8-18 digits)");
-    }
-    
-    if (!upi_id || !upi_id.includes("@")) {
-      setupiidError(true);
-      errors.push("Please enter valid UPI ID (example: 9876543210@paytm)");
-    }
-    
-    if (WithdrawOtp == "yes") {
-      if (!otp) {
-        setotpError(true);
-        errors.push("Please enter a Valid OTP");
+      // Amount validation - FIX: Check for minimum amount
+      if (!inputValue || inputValue.trim() === "") {
+        setInputError(true);
+        errors.push("Please enter an amount");
+      } else if (!inputValue.match(amountPattern)) {
+        setInputError(true);
+        errors.push("Please enter a valid amount (e.g., 500 or 500.00)");
+      } else if (parseInt(inputValue) < 1) {
+        setInputError(true);
+        errors.push("Insufficient Balance. Please Enter A Lower Withdrawal Amount And Then Try !!!");
       }
-    } else {
-      setotp("0000");
-    }
 
-    if (!accountHolderName.match(accountHolderNamePattern)) {
-      setAccountHolderNameError(true);
-      errors.push(
-        "Please enter a valid account holder name (letters and spaces only)",
-      );
-    }
+      if (!bankName.match(bankNamePattern)) {
+        setBankNameError(true);
+        errors.push("Please enter a valid bank name (letters and spaces only)");
+      }
 
-    if (!ifscCode.match(ifscCodePattern)) {
-      setIfscCodeError(true);
-      errors.push("Please enter a valid IFSC code (e.g., ABCD1234567)");
-    }
-    
-    if (errors.length > 0) {
-      const errorMessage = errors.join("\n");
-      console.error(errorMessage);
-      
-      // Show Sweet Alert for first error
+      if (!accountNumber.match(accountNumberPattern)) {
+        setAccountNumberError(true);
+        errors.push("Please enter a valid account number (8-18 digits)");
+      }
+
+      if (!upi_id || !upi_id.includes("@")) {
+        setupiidError(true);
+        errors.push("Please enter valid UPI ID (example: 9876543210@paytm)");
+      }
+
+      if (WithdrawOtp == "yes") {
+        if (!otp) {
+          setotpError(true);
+          errors.push("Please enter a Valid OTP");
+        }
+      } else {
+        setotp("0000");
+      }
+
+      if (!accountHolderName.match(accountHolderNamePattern)) {
+        setAccountHolderNameError(true);
+        errors.push(
+          "Please enter a valid account holder name (letters and spaces only)",
+        );
+      }
+
+      if (!ifscCode.match(ifscCodePattern)) {
+        setIfscCodeError(true);
+        errors.push("Please enter a valid IFSC code (e.g., ABCD1234567)");
+      }
+
+      if (errors.length > 0) {
+        const errorMessage = errors.join("\n");
+        console.error(errorMessage);
+
+        // Show Sweet Alert for first error
+        Swal.fire({
+          title: "Error!",
+          text: errors[0],
+          icon: "error",
+          timer: 10000,
+          showConfirmButton: true,
+        });
+        return;
+      }
+
+      const user_id = localStorage.getItem("userid");
+      const dev_id = localStorage.getItem("dev_id");
+      const requestData = {
+        app_id: process.env.REACT_APP_API_ID,
+        user_id: user_id,
+        amount: parseInt(inputValue),
+        account_holder: accountHolderName,
+        bank_name: bankName,
+        upi_id: upi_id,
+        account_number: accountNumber,
+        ifsc_code: ifscCode,
+        otp: otp,
+      };
+
+      const url = `${process.env.REACT_APP_API_URL_NODE}deduct-withdrawweb`;
+      const config = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      };
+
+      const response = await fetch(url, config);
+      const data = await response.json();
+      if (data.success == 1) {
+        setLoading3(false);
+        setIsButtonDisabled(true);
+        Swal.fire({
+          title: "Success!",
+          text: data.message,
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        }).then((result) => {
+          navigate(0);
+        });
+      } else {
+        Swal.fire({
+          title: "Error!",
+          text: data.message,
+          icon: "error",
+          timer: 5000,
+          showConfirmButton: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error handling withdrawal:", error);
       Swal.fire({
         title: "Error!",
-        text: errors[0],
-        icon: "error",
-        timer: 10000,
-        showConfirmButton: true,
-      });
-      return;
-    }
-
-    const user_id = localStorage.getItem("userid");
-    const dev_id = localStorage.getItem("dev_id");
-    const requestData = {
-      app_id: process.env.REACT_APP_API_ID,
-      user_id: user_id,
-      amount: parseInt(inputValue),
-      account_holder: accountHolderName,
-      bank_name: bankName,
-      upi_id: upi_id,
-      account_number: accountNumber,
-      ifsc_code: ifscCode,
-      otp: otp,
-    };
-
-    const url = `${process.env.REACT_APP_API_URL_NODE}deduct-withdrawweb`;
-    const config = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestData),
-    };
-
-    const response = await fetch(url, config);
-    const data = await response.json();
-    if (data.success == 1) {
-      setLoading3(false);
-      setIsButtonDisabled(true);
-      Swal.fire({
-        title: "Success!",
-        text: data.message,
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false,
-      }).then((result) => {
-        navigate(0);
-      });
-    } else {
-      Swal.fire({
-        title: "Error!",
-        text: data.message,
+        text: "Something went wrong. Please try again.",
         icon: "error",
         timer: 5000,
         showConfirmButton: true,
       });
+    } finally {
+      setLoadingbutton(false);
     }
-  } catch (error) {
-    console.error("Error handling withdrawal:", error);
-    Swal.fire({
-      title: "Error!",
-      text: "Something went wrong. Please try again.",
-      icon: "error",
-      timer: 5000,
-      showConfirmButton: true,
-    });
-  } finally {
-    setLoadingbutton(false);
-  }
-};
+  };
   const handleButtonClick = (amount) => {
     setInputValue(amount);
   };
@@ -898,7 +898,7 @@ export default function Wallet() {
         onOk={handleOk}
         className="model-transferpoint"
         onCancel={handleCancel}
-        footer={(_, {}) => (
+        footer={(_, { }) => (
           <>
             <div>
               <Button
@@ -936,9 +936,8 @@ export default function Wallet() {
           value={mobilnumber}
           onChange={OnnumberChange}
           type="number"
-          className={`form-control ${
-            mobilnumbererror ? "is-invalid" : ""
-          } mb-2`}
+          className={`form-control ${mobilnumbererror ? "is-invalid" : ""
+            } mb-2`}
         />
         {mobilnumbererror && (
           <div className="invalid-feedback">Please enter a valid Number</div>
@@ -1127,9 +1126,8 @@ export default function Wallet() {
                             users &&
                             users.map((values, index) => {
                               const dateTime = new Date(values.datetime);
-                              const formattedDate = `${dateTime.getDate()}-${
-                                dateTime.getMonth() + 1
-                              }-${dateTime.getFullYear()} ${dateTime.getHours()}:${dateTime.getMinutes()}`;
+                              const formattedDate = `${dateTime.getDate()}-${dateTime.getMonth() + 1
+                                }-${dateTime.getFullYear()} ${dateTime.getHours()}:${dateTime.getMinutes()}`;
                               return (
                                 <tr key={index}>
                                   <td>{index + 1}</td>
@@ -1194,9 +1192,8 @@ export default function Wallet() {
                           type="Number"
                           value={inputValue}
                           onChange={(e) => setInputValue(e.target.value)}
-                          className={`form-control ${
-                            inputError ? "is-invalid" : ""
-                          } addamountinput`}
+                          className={`form-control ${inputError ? "is-invalid" : ""
+                            } addamountinput`}
                           placeholder="Withdraw"
                         />
                         {inputError && (
@@ -1293,9 +1290,8 @@ export default function Wallet() {
                                   setShowList(true);
                                 }}
                                 onClick={fetchBankData}
-                                className={`form-control ${
-                                  bankNameError ? "is-invalid" : ""
-                                }`}
+                                className={`form-control ${bankNameError ? "is-invalid" : ""
+                                  }`}
                               />
                               {bankList &&
                                 Array.isArray(bankList) &&
@@ -1344,9 +1340,8 @@ export default function Wallet() {
                                   setAccountHolderName(e.target.value)
                                 }
                                 readOnly
-                                className={`form-control ${
-                                  accountHolderNameError ? "is-invalid" : ""
-                                }`}
+                                className={`form-control ${accountHolderNameError ? "is-invalid" : ""
+                                  }`}
                               />
                               {accountHolderNameError && (
                                 <div className="invalid-feedback">
@@ -1373,10 +1368,9 @@ export default function Wallet() {
                                   const limitedInput = input.slice(0, 18);
                                   setAccountNumber(limitedInput);
                                 }}
-                                readOnly
-                                className={`form-control ${
-                                  accountNumberError ? "is-invalid" : ""
-                                }`}
+                                 readOnly
+                                className={`form-control ${accountNumberError ? "is-invalid" : ""
+                                  }`}
                               />
                               {accountNumberError && (
                                 <div className="invalid-feedback">
@@ -1395,24 +1389,25 @@ export default function Wallet() {
                                 { type: "string" },
                               ]}
                             >
+                              {/* <Input
+                                type="text"
+                                placeholder="IFSC Code"
+                                value={ifscCode}
+                                onChange={(e) => {
+                                  let value = e.target.value.toUpperCase();
+                                  value = value.replace(/[^A-Z0-9]/g, "");
+                                  value = value.slice(0, 11);
+
+                                  setIfscCode(value);
+                                }}
+                                className={`form-control ${ifscCodeError ? "is-invalid" : ""}`}
+                              /> */}
                               <Input
                                 type="text"
                                 placeholder="IFSC Code"
-                                value={ifscCode || ifscCodeBank}
-                                onChange={(e) => {
-                                  const input = e.target.value.replace(
-                                    /[^a-zA-Z0-9]/g,
-                                    "",
-                                  );
-                                  const limitedInput = input.slice(0, 20);
-                                  const upperCaseInput =
-                                    limitedInput.toUpperCase();
-                                  setIfscCode(upperCaseInput);
-                                }}
-                                readOnly
-                                className={`form-control ${
-                                  ifscCodeError ? "is-invalid" : ""
-                                }`}
+                                value={ifscCode}
+                                onChange={(e) => setIfscCode(e.target.value)}
+                                className={`form-control ${ifscCodeError ? "is-invalid" : ""}`}
                               />
                               {ifscCodeError && (
                                 <div className="invalid-feedback">
@@ -1437,9 +1432,8 @@ export default function Wallet() {
                                 onChange={(e) => {
                                   setupi_id(e.target.value);
                                 }}
-                                className={`form-control ${
-                                  upiidError ? "is-invalid" : ""
-                                }`}
+                                className={`form-control ${upiidError ? "is-invalid" : ""
+                                  }`}
                               />
                               {upiidError && (
                                 <div className="invalid-feedback">
@@ -1463,9 +1457,8 @@ export default function Wallet() {
                                       const limitedInput = input.slice(0, 30);
                                       setotp(limitedInput);
                                     }}
-                                    className={`form-control ${
-                                      otpError ? "is-invalid" : ""
-                                    }`}
+                                    className={`form-control ${otpError ? "is-invalid" : ""
+                                      }`}
                                   />
                                   <Button
                                     disabled={isButtonDisabled}
@@ -1554,9 +1547,8 @@ export default function Wallet() {
                             user &&
                             user.map((value, index) => {
                               const dateTime = new Date(value.created_at);
-                              const formattedDate = `${dateTime.getDate()}-${
-                                dateTime.getMonth() + 1
-                              }-${dateTime.getFullYear()} ${dateTime.getHours()}:${dateTime.getMinutes()}`;
+                              const formattedDate = `${dateTime.getDate()}-${dateTime.getMonth() + 1
+                                }-${dateTime.getFullYear()} ${dateTime.getHours()}:${dateTime.getMinutes()}`;
                               return (
                                 <tr>
                                   <td>{index + 1}</td>

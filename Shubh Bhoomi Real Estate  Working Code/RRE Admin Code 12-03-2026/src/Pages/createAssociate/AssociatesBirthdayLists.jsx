@@ -518,7 +518,7 @@ function AssociatesBirthdayLists() {
                   <th>#</th>
                   <th>Name</th>
                   <th>Mobile</th>
-                  <th>Birthday (DD-mm-YYYY)</th>
+                  <th>Birthday (DD-MM-YYYY)</th>
                   <th>Parent Name</th>
                   <th>Parent Mobile</th>
                 </tr>
@@ -531,12 +531,7 @@ function AssociatesBirthdayLists() {
                       <td>{person.username || "-"}</td>
                       <td>{person.mobile || "-"}</td>
                       <td>
-                        {person.dob && !isNaN(new Date(person.dob))
-                          ? (() => {
-                            const d = new Date(person.dob);
-                            return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
-                          })()
-                          : "-"}
+                        {person.dob ||"-"}
                       </td>
                       <td>{person.parent_username || "-"}</td>
                       <td>{person.parent_mobile || "-"}</td>

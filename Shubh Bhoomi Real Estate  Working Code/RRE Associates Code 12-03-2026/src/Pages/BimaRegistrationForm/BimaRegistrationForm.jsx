@@ -375,7 +375,7 @@ function BimaRegistrationForm() {
     if (!files.pan_image && !existingImages.pan_image) newErrors.pan_image = "PAN card image is required";
     if (!files.aadhar_front_image && !existingImages.aadhar_front_image) newErrors.aadhar_front_image = "Aadhar front image is required";
     if (!files.aadhar_back_image && !existingImages.aadhar_back_image) newErrors.aadhar_back_image = "Aadhar back image is required";
-    if (!files.profile_photo && !existingImages.profile_photo) newErrors.profile_photo = "Profile photo is required";
+    // if (!files.profile_photo && !existingImages.profile_photo) newErrors.profile_photo = "Profile photo is required";
 
     setErrors(newErrors);
     const isValid = Object.keys(newErrors).length === 0;
@@ -791,7 +791,7 @@ function BimaRegistrationForm() {
                   </Col>
                 </Row>
 
-                <h5 className="mb-3 mt-4 text-dark fw-bold">Insurance Details</h5>
+                {/* <h5 className="mb-3 mt-4 text-dark fw-bold">Insurance Details</h5>
                 <Row>
                   <Col md={6}>
                     <Form.Group className="mb-3">
@@ -808,7 +808,7 @@ function BimaRegistrationForm() {
                       </Form.Select>
                     </Form.Group>
                   </Col>
-                </Row>
+                </Row> */}
 
                 <h5 className="mb-3 mt-4 text-dark fw-bold">Document Uploads</h5>
                 <Row>
@@ -945,7 +945,7 @@ function BimaRegistrationForm() {
                   </Col>
 
                   {/* Profile Photo */}
-                  <Col md={6} lg={4}>
+                  {/* <Col md={6} lg={4}>
                     <Form.Group className="mb-3">
                       <Form.Label>Profile Photo <span className="text-danger">*</span></Form.Label>
                       <Form.Control
@@ -959,8 +959,6 @@ function BimaRegistrationForm() {
                         {errors.profile_photo}
                       </Form.Control.Feedback>
                       <Form.Text className="text-muted">JPEG or PNG (Max 5MB)</Form.Text>
-                      
-                      {/* Show existing profile image */}
                       {existingImages.profile_photo && !filePreviews.profile_photo && (
                         <div className="mt-2">
                           <img
@@ -979,8 +977,6 @@ function BimaRegistrationForm() {
                           <p className="text-success mt-1 small">Current Profile Photo</p>
                         </div>
                       )}
-                      
-                      {/* Show preview for newly uploaded file */}
                       {filePreviews.profile_photo && (
                         <div className="mt-2">
                           <img
@@ -1000,7 +996,7 @@ function BimaRegistrationForm() {
                         </div>
                       )}
                     </Form.Group>
-                  </Col>
+                  </Col> */}
                 </Row>
 
                 <div className="d-flex gap-2 justify-content-center">

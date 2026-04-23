@@ -416,9 +416,8 @@ export default function AddBank() {
                             placeholder="Bank Name"
                             value={bankName}
                             onChange={(e) => setBankName(e.target.value)}
-                            className={`form-control ${
-                              bankNameError ? "is-invalid" : ""
-                            }`}
+                            className={`form-control ${bankNameError ? "is-invalid" : ""
+                              }`}
                           />
                           {bankNameError && (
                             <div className="invalid-feedback">
@@ -440,9 +439,8 @@ export default function AddBank() {
                             onChange={(e) =>
                               setAccountHolderName(e.target.value)
                             }
-                            className={`form-control ${
-                              accountHolderNameError ? "is-invalid" : ""
-                            }`}
+                            className={`form-control ${accountHolderNameError ? "is-invalid" : ""
+                              }`}
                           />
                         </Form.Item>
                       </Col>
@@ -463,9 +461,8 @@ export default function AddBank() {
                                 e.target.value.replace(/\D/g, ""),
                               )
                             }
-                            className={`form-control ${
-                              accountNumberError ? "is-invalid" : ""
-                            }`}
+                            className={`form-control ${accountNumberError ? "is-invalid" : ""
+                              }`}
                           />
                         </Form.Item>
                       </Col>
@@ -484,9 +481,8 @@ export default function AddBank() {
                                 e.target.value.replace(/\D/g, ""),
                               )
                             }
-                            className={`form-control ${
-                              confirmAccountNumberError ? "is-invalid" : ""
-                            }`}
+                            className={`form-control ${confirmAccountNumberError ? "is-invalid" : ""
+                              }`}
                           />
                         </Form.Item>
                       </Col>
@@ -498,7 +494,16 @@ export default function AddBank() {
                           label="IFSC Code"
                           rules={[{ required: true }]}
                         >
+
                           <Input
+                            type="text"
+                            placeholder="IFSC Code"
+                            value={ifscCode}
+                            onChange={(e) => setIfscCode(e.target.value)}
+                            className={`form-control ${ifscCodeError ? "is-invalid" : ""}`}
+                          />
+
+                          {/* <Input
                             type="text"
                             placeholder="IFSC Code"
                             value={ifscCode}
@@ -508,7 +513,7 @@ export default function AddBank() {
                             className={`form-control ${
                               ifscCodeError ? "is-invalid" : ""
                             }`}
-                          />
+                          /> */}
                         </Form.Item>
                       </Col>
                       <Col span={24}>
@@ -523,9 +528,8 @@ export default function AddBank() {
                             onChange={(e) =>
                               setupiid(e.target.value.toUpperCase())
                             }
-                            className={`form-control ${
-                              upiidError ? "is-invalid" : ""
-                            }`}
+                            className={`form-control ${upiidError ? "is-invalid" : ""
+                              }`}
                           />
                           {upiidError && (
                             <div className="invalid-feedback">
@@ -545,9 +549,8 @@ export default function AddBank() {
                                 onChange={(e) =>
                                   setotp(e.target.value.replace(/\D/g, ""))
                                 }
-                                className={`form-control ${
-                                  otpError ? "is-invalid" : ""
-                                }`}
+                                className={`form-control ${otpError ? "is-invalid" : ""
+                                  }`}
                               />
                               <Button
                                 disabled={isButtonDisabled}
