@@ -37,28 +37,18 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
           checked: true
         },
 
-        // {
-        //   id: "AccountReport",
-        //   title: "Accounts Report",
-        //   href: "/account-report",
-        //   icon: <LuLayoutDashboard />,
-        //   checked: true
-        // },
-
         {
-          id: "AccountReport",
-          title: "Accounts Report",
+          id: "subadminManagement",
+          title: "Subadmin",
           dropdown: true,
-          icon: <LuLayoutDashboard />,
+          icon: <RiGroupLine />,
           checked: false,
           children: [
-            { id: "AccountReports", title: "Accounts Report", href: "/account-report", checked: false },
-            { id: "CRSettleReports", title: "TDS CR Settle Reports", href: "/cr-settle-reports", checked: false },
-            { id: "DRSettleReports", title: "TDS DR Settle Reports", href: "/dr-settle-reports", checked: false },
-
+            // { id: "create-subadmin", title: "Create Subadmin", href: "/create-subadmin", checked: false },
+            { id: "all-subadmin", title: "Subadmin Lists", href: "/allsubadmin", checked: false },
+            // { id: "subadmin-permission", title: "Permission Management", href: "/subadmin-permission", checked: false }
           ]
         },
-
 
 
         {
@@ -78,6 +68,35 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
         },
 
 
+        // {
+        //   id: "AccountReport",
+        //   title: "Accounts Report",
+        //   href: "/account-report",
+        //   icon: <LuLayoutDashboard />,
+        //   checked: true
+        // },
+
+
+
+        {
+          id: "AccountReport",
+          title: "Accounts Report",
+          dropdown: true,
+          icon: <LuLayoutDashboard />,
+          checked: false,
+          children: [
+            { id: "AccountReports", title: "Accounts Report", href: "/account-report", checked: false },
+            { id: "CRSettleReports", title: "TDS CR Settle Reports", href: "/cr-settle-reports", checked: false },
+            { id: "DRSettleReports", title: "TDS DR Settle Reports", href: "/dr-settle-reports", checked: false },
+
+          ]
+        },
+
+
+
+
+
+
         //  {
         //   id: "WalletLedger",
         //   title: "Wallet Ledger",
@@ -88,61 +107,26 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
 
 
 
-        {
-          id: "subadminManagement",
-          title: "Subadmin",
-          dropdown: true,
-          icon: <RiGroupLine />,
-          checked: false,
-          children: [
-            { id: "create-subadmin", title: "Create Subadmin", href: "/create-subadmin", checked: false },
-            { id: "all-subadmin", title: "All Subadmin", href: "/allsubadmin", checked: false },
-            // { id: "subadmin-permission", title: "Permission Management", href: "/subadmin-permission", checked: false }
-          ]
-        },
-        {
-          id: "projectManagement",
-          title: "Project",
-          dropdown: true,
-          icon: <GoProjectRoadmap />,
-          checked: false,
-          children: [
 
-             { id: "create-project-category", title: "Create Project Category", href: "/create-project-category", checked: false },
 
-            { id: "created-project-category-list", title: "Project Category Lists", href: "/created-project-category-list", checked: false },
-
-            { id: "all-project", title: "All Project", href: "/all-project", checked: false },
-            { id: "active-project", title: "Show Project", href: "/active-project", checked: false },
-            { id: "inactive-project", title: "Hide Project", href: "/inactive-project", checked: false },
-            { id: "aminities-list", title: "Amenities", href: "/aminities-list", checked: false },
-
-            { id: "all-block-list", title: "All Block", href: "/all-block-list", checked: false },
-            { id: "active-block-list", title: "Active Block", href: "/active-block-list", checked: false },
-            { id: "inactive-block-list", title: "Inactive Block", href: "/inactive-block-list", checked: false },
-            { id: "all-Plot", title: "All Unit", href: "/all-plot", checked: false },
-            { id: "active-plot-list", title: "Available Unit", href: "/active-plot-list", checked: false },
-            { id: "inactive-plot-list", title: "Sold Unit", href: "/inactive-plot-list", checked: false }
-          ]
-        },
 
         {
           id: "projectAssociate",
-          title: "Associate",
+          title: "Associates",
           dropdown: true,
           icon: <FaUserTie />,
           checked: false,
           children: [
-            { id: "all-associate-list", title: "All Associate List", href: "/all-associate-list", checked: false },
+            { id: "all-associate-list", title: "Associate Lists", href: "/all-associate-list", checked: false },
 
 
-            { id: "all-associate-active-list", title: "Active Associate", href: "/all-associate-active-list", checked: false },
-            { id: "all-associate-inactive-list", title: "Inactive Associate", href: "/all-associate-inactive-list", checked: false },
+            { id: "all-associate-active-list", title: "Active Associates", href: "/all-associate-active-list", checked: false },
+            { id: "all-associate-inactive-list", title: "Inactive Associates", href: "/all-associate-inactive-list", checked: false },
 
 
 
 
-            { id: "my-team-tree-admin", title: "Team Tree", href: "/my-team-tree-admin", checked: false },
+            { id: "my-team-tree-admin", title: "Team Trees", href: "/my-team-tree-admin", checked: false },
 
             { id: "myteam-parent-chain-upline", title: "Parent Chain", href: "/myteam-parent-chain-upline", checked: false },
 
@@ -163,6 +147,33 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
           ]
         },
 
+        {
+          id: "projectManagement",
+          title: "Projects",
+          dropdown: true,
+          icon: <GoProjectRoadmap />,
+          checked: false,
+          children: [
+
+            //  { id: "create-project-category", title: "Project Categories", href: "/create-project-category", checked: false },
+
+            { id: "created-project-category-list", title: "Categories List", href: "/created-project-category-list", checked: false },
+
+            { id: "all-project", title: "All Project", href: "/all-project", checked: false },
+            { id: "active-project", title: "Show Project", href: "/active-project", checked: false },
+            { id: "inactive-project", title: "Hide Project", href: "/inactive-project", checked: false },
+            { id: "aminities-list", title: "Amenities", href: "/aminities-list", checked: false },
+
+            { id: "all-block-list", title: "All Blocks", href: "/all-block-list", checked: false },
+            { id: "active-block-list", title: "Active Blocks", href: "/active-block-list", checked: false },
+            { id: "inactive-block-list", title: "Inactive Blocks", href: "/inactive-block-list", checked: false },
+            { id: "all-Plot", title: "All Units", href: "/all-plot", checked: false },
+            { id: "active-plot-list", title: "Available Units", href: "/active-plot-list", checked: false },
+            { id: "inactive-plot-list", title: "Sold Units", href: "/inactive-plot-list", checked: false }
+          ]
+        },
+
+
         // {
         //   id: "projectChannel",
         //   title: "Channel Partner",
@@ -179,7 +190,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
 
         {
           id: "leadManagment",
-          title: "Lead Managment",
+          title: "Leads",
           dropdown: true,
           icon: <GoProjectRoadmap />,
           checked: false,
@@ -199,12 +210,12 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
 
 
 
-        
+
 
 
         {
           id: "expensesmanagement ",
-          title: "Expense Management",
+          title: "Expenses List",
           dropdown: true,
           icon: <FaMoneyCheckAlt />,
           checked: false,
@@ -226,17 +237,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
 
 
 
-        {
-          id: "visitmanagement ",
-          title: "Visit Report",
-          dropdown: true,
-          icon: <MdOutlineLocationOn />,
-          checked: false,
-          children: [
-            { id: "visit_list", title: "Visit List", href: "/visit-list", checked: false },
-            { id: "visit_date_wise", title: "Visit Date-wise", href: "/visit-date-wise", checked: false },
-          ]
-        },
+
 
 
         {
@@ -268,6 +269,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
 
           ]
         },
+        
 
 
         {
@@ -300,20 +302,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
           ]
         },
 
-        // {
-        //   id: "income Managment",
-        //   title: "Income Management",
-        //   dropdown: true,
-        //   icon: <FaWallet />,
-        //   checked: false,
-        //   children: [
-        //     { id: "property_income_list", title: " Property Income Approved Leads", href: "/property-income-list", checked: false },
-
-        //     { id: "property_income_unit_is_not_sold_list", title: "Unit is Not Sold", href: "/property-income-unit-is-not-sold-list", checked: false },
-        //   ]
-        // },
-
-        {
+         {
           id: "Self Gifts",
           title: "Self / Team Gift SQYD",
           dropdown: true,
@@ -399,8 +388,34 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
             { id: "life-time-rewards-winner-lists", title: "LifeTime Rewards Winner Lists", href: "/life-time-rewards-winner-lists", checked: false },
           ]
         },
+        
 
+        // {
+        //   id: "income Managment",
+        //   title: "Income Management",
+        //   dropdown: true,
+        //   icon: <FaWallet />,
+        //   checked: false,
+        //   children: [
+        //     { id: "property_income_list", title: " Property Income Approved Leads", href: "/property-income-list", checked: false },
 
+        //     { id: "property_income_unit_is_not_sold_list", title: "Unit is Not Sold", href: "/property-income-unit-is-not-sold-list", checked: false },
+        //   ]
+        // },
+
+       
+
+        {
+          id: "visitmanagement ",
+          title: "Visit Report",
+          dropdown: true,
+          icon: <MdOutlineLocationOn />,
+          checked: false,
+          children: [
+            { id: "visit_list", title: "Visit List", href: "/visit-list", checked: false },
+            { id: "visit_date_wise", title: "Visit Date-wise", href: "/visit-date-wise", checked: false },
+          ]
+        },
         {
           id: "settingManagement",
           title: "General Settings",

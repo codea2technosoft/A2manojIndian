@@ -1,0 +1,52 @@
+@import '../variables.scss';
+
+.plan-header-row {
+    height: 60px;
+    align-items: center;
+}
+
+.plan-name {
+    text-align: center;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.feature-group-title {
+    background-color: $gray-color-2;
+    padding: 16px 0px 16px 16px;
+
+    .ant-typography {
+        margin-bottom: 0 !important;
+    }
+}
+
+.feature-subgroup-title {
+    font-weight: 600;
+    padding-left: 16px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.feature-row {
+    height: 60px;
+    align-items: center;
+
+    .ant-col:first-child {
+        padding-left: 16px;
+    }
+}
+
+.feature-row--subgroup {
+    .ant-col:first-child {
+        padding-left: 32px !important;
+    }
+}
+
+.feature-cell--center {
+    text-align: center;
+}
+
+.feature-row--even {
+    background-color: #f4f5f7;
+}

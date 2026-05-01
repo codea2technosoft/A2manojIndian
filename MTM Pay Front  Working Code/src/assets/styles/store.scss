@@ -1,0 +1,31 @@
+@import './variables.scss';
+
+.card-selectable {
+    cursor: pointer;
+
+    img {
+        height: 40px;
+        width: auto;
+        object-fit: contain;
+    }
+}
+
+.card-selectable.active {
+    background-color: $primary-color-1;
+    border: solid 2px $primary-color;
+}
+
+.view-store-icon {
+    margin-bottom: -5px;
+}
+
+.store-detail__status-content {
+    width: 90%;
+
+    .store-detail__status-text {
+        width: calc(100% - 75px);
+        margin-left: 12px;
+        // background-color: red;
+    }
+}
+

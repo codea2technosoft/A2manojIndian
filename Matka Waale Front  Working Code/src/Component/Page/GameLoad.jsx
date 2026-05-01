@@ -4,11 +4,11 @@ import { useParams } from "react-router-dom";
 export default function GameLoad() {
   const [isLoading, setIsLoading] = useState(true);
   const [gameLoadUrl, setGameLoadUrl] = useState("");
-  const { market_id, user_id } = useParams();
+  const { market_id, user_id,market_result } = useParams();
 
   useEffect(() => {
     if (market_id && user_id) {
-      const url = `https://admin.matkawaale.com/gameload-userwise-front/${market_id}/${user_id}`;
+      const url = `https://admin.matkawaale.com/gameload-userwise-front/${market_id}/${user_id}/${market_result}`;
       setGameLoadUrl(url);
     } else {
       setIsLoading(false);

@@ -12,16 +12,20 @@ function CreatePlot() {
     project_name: "",
     block_id: "",
     block_name: "",
-    property_type: "", // Renamed from resgistry_patta
+    property_type: "",
     plot_shop_villa_no: "",
-    plot_size: "", // Keep as string for "50x40" format
-    // plot_sqyd: "",
+    plot_size: "",
     plot_rate: "",
     plot_address: "",
     status: "available",
     plc_percentage: "",
-    resgistry_date: "", // Initialize resgistry_date
-    plot_hold: "", // Initialize plot_hold
+    resgistry_date: "",
+    plot_hold: "",
+    north: "",
+    south: "",
+    east: "",
+    west: "",
+    area_sqyd: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -53,7 +57,7 @@ function CreatePlot() {
     return localStorage.getItem("token");
   };
 
-  // Effect to fetch projects list
+
   useEffect(() => {
     const fetchProjectsList = async () => {
       setLoading(true);
@@ -103,7 +107,7 @@ function CreatePlot() {
     fetchProjectsList();
   }, []);
 
-  // Effect to fetch blocks list based on selected project
+
   useEffect(() => {
     const fetchBlocksList = async () => {
       if (formData.project_id) {
@@ -135,7 +139,7 @@ function CreatePlot() {
               errorData.message || "Failed to fetch blocks.",
               "error"
             );
-            setBlocks([]); // Clear blocks on error
+            setBlocks([]);
             return;
           }
 
@@ -148,7 +152,7 @@ function CreatePlot() {
             err.message || "An unexpected error occurred while fetching blocks.",
             "error"
           );
-          setBlocks([]); // Clear blocks on error
+          setBlocks([]);
         } finally {
           setLoading(false);
         }
@@ -161,6 +165,24 @@ function CreatePlot() {
     fetchBlocksList();
   }, [formData.project_id]);
 
+
+  useEffect(() => {
+    const { north, south, east, west } = formData;
+
+    if (north && south && east && west) {
+      const avgLength = (parseFloat(north) + parseFloat(south)) / 2;
+      const avgWidth = (parseFloat(east) + parseFloat(west)) / 2;
+
+      const areaSqFt = avgLength * avgWidth;
+      const areaSqYd = (areaSqFt / 9).toFixed(2);
+
+      setFormData(prev => ({
+        ...prev,
+        area_sqyd: areaSqYd
+      }));
+    }
+  }, [formData.north, formData.south, formData.east, formData.west]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -172,8 +194,8 @@ function CreatePlot() {
           (proj) => proj.id.toString() === value
         );
         newData.project_name = selectedProjectObj ? selectedProjectObj.name : "";
-        newData.block_id = ""; // Reset block when project changes
-        newData.block_name = ""; // Reset block name
+        newData.block_id = "";
+        newData.block_name = "";
         setSelectedProjectCommissionData(selectedProjectObj || null);
       } else if (name === "block_id") {
         const selectedBlockObj = blocks.find(
@@ -181,12 +203,6 @@ function CreatePlot() {
         );
         newData.block_name = selectedBlockObj ? selectedBlockObj.name : "";
       }
-
-      // Handle numerical inputs for plot_sqyd and plot_rate
-      // if (name === "plot_sqyd" || name === "plot_rate") {
-      //   newData[name] = value === "" ? "" : parseFloat(value);
-      // }
-
       return newData;
     });
 
@@ -204,11 +220,8 @@ function CreatePlot() {
 
     const directRequiredFields = [
       "project_id",
-      "block_id",
-      "property_type", // Now checking property_type
+      "property_type",
       "plot_shop_villa_no",
-      "plot_size",
-      // "plot_sqyd",
       "plot_rate",
       "plot_address",
       "road_size",
@@ -228,12 +241,6 @@ function CreatePlot() {
       }
     });
 
-    // Specific validation for plot_sqyd and plot_rate to be positive numbers
-    // if (formData.plot_sqyd !== "" && (isNaN(formData.plot_sqyd) || parseFloat(formData.plot_sqyd) <= 0)) {
-    //   newErrors.plot_sqyd = "Area Sq. Yd. must be a positive number.";
-    //   isValid = false;
-    // }
-
     if (formData.plot_rate !== "" && (isNaN(formData.plot_rate) || parseFloat(formData.plot_rate) <= 0)) {
       newErrors.plot_rate = "Rate must be a positive number.";
       isValid = false;
@@ -247,30 +254,14 @@ function CreatePlot() {
         newErrors.project_id || "Selected project name could not be determined.";
       isValid = false;
     }
+
     if (
-      formData.block_id &&
-      (!formData.block_name || !formData.block_name.trim())
+      !(formData.north && formData.south && formData.east && formData.west) &&
+      !formData.area_sqyd
     ) {
-      newErrors.block_id =
-        newErrors.block_id || "Selected block name could not be determined.";
+      newErrors.area_sqyd = "Enter directions OR manual area";
       isValid = false;
     }
-
-
-    const dimensionPattern = /^\s*(\d+)\s*[xX]\s*(\d+)\s*$/;
-    const dimensionFields = ["plot_size"];
-
-    dimensionFields.forEach((field) => {
-      const value = formData[field];
-      if (value && !dimensionPattern.test(value)) {
-        newErrors[field] = `${field
-          .replace(/_/g, " ")
-          .replace(/\b\w/g, (char) => char.toUpperCase())} must be in format like "50x40".`;
-        isValid = false;
-      }
-    });
-
-
 
     setErrors(newErrors);
     return isValid;
@@ -306,10 +297,13 @@ function CreatePlot() {
         project_name: formData.project_name,
         block_id: formData.block_id,
         block_name: formData.block_name,
-        document_type: formData.property_type, // Corrected field name
+        document_type: formData.property_type,
         plot_shop_villa_no: formData.plot_shop_villa_no,
-        dimension: formData.plot_size, // Send as string, not parseFloat
-        // area_sqyd: parseFloat(formData.plot_sqyd),
+        north: formData.north,
+        south: formData.south,
+        east: formData.east,
+        west: formData.west,
+        area_sqyd: formData.area_sqyd,
         rate: parseFloat(formData.plot_rate),
         address: formData.plot_address,
         status: formData.status,
@@ -319,7 +313,6 @@ function CreatePlot() {
         plc_percentage: formData.plc_percentage,
       };
 
-      // Conditionally add resgistry_date to payload
       if (formData.property_type === "registry" || formData.property_type === "registrywithpatta") {
         payload.resgistry_date = formData.resgistry_date;
       }
@@ -350,16 +343,19 @@ function CreatePlot() {
         "success"
       );
 
-      // Reset form data after successful submission
+
       setFormData({
         project_id: "",
         project_name: "",
         block_id: "",
         block_name: "",
-        property_type: "", // Reset this too
+        property_type: "",
         plot_shop_villa_no: "",
-        plot_size: "",
-        // plot_sqyd: "",
+        north: "",
+        south: "",
+        east: "",
+        west: "",
+        area_sqyd: "",
         plot_rate: "",
         resgistry_date: "",
         plot_hold: "",
@@ -368,10 +364,10 @@ function CreatePlot() {
         road_size: "",
         unit_type: "",
         facing: "",
-        status: "available", // Default status back to 'available'
+        status: "available",
       });
       setErrors({});
-      setBlocks([]); // Clear blocks specific to the previous project
+      setBlocks([]);
       setSelectedProjectCommissionData(null);
 
       setTimeout(() => {
@@ -389,8 +385,6 @@ function CreatePlot() {
     }
   };
 
-  // This function seems unused in the provided JSX for commission display.
-  // Keeping it as is, but it's not impacting the form submission errors.
   const getCurrentCommission = () => {
     if (!selectedProjectCommissionData || !formData.property_type) return "N/A";
 
@@ -438,7 +432,7 @@ function CreatePlot() {
                         Select Project <span className="text-danger">*</span>
                       </Form.Label>
                       <Form.Control
-                        as="select" // Use Form.Control as="select" for better styling
+                        as="select"
                         name="project_id"
                         value={formData.project_id}
                         onChange={handleChange}
@@ -469,10 +463,10 @@ function CreatePlot() {
                   <Col md={6}>
                     <Form.Group className="mb-3" controlId="formBlockId">
                       <Form.Label>
-                        Select Block <span className="text-danger">*</span>
+                        Select Block {/*<span className="text-danger">*</span> */}
                       </Form.Label>
                       <Form.Control
-                        as="select" // Use Form.Control as="select"
+                        as="select"
                         name="block_id"
                         value={formData.block_id}
                         onChange={handleChange}
@@ -521,36 +515,101 @@ function CreatePlot() {
                       </Form.Control.Feedback>
                     </Form.Group>
                   </Col>
+                  <Col md={6}>
+                    <Form.Group className="mb-3" controlId="formStatus">
+                      <Form.Label>
+                        Status <span className="text-danger">*</span>
+                      </Form.Label>
+                      <Form.Control
+                        as="select"
+                        name="status"
+                        value={formData.status}
+                        onChange={handleChange}
+                        isInvalid={!!errors.status}
+                      >
+                        <option value="available">Available</option>
+                        <option value="sold">Sold</option>
+                      </Form.Control>
+                      <Form.Control.Feedback type="invalid">
+                        {errors.status}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={3}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>East</Form.Label>
+                      <Form.Control
+                        name="east"
+                        placeholder="Enter East (e.g. 100 ft)"
+                        value={formData.east}
+                        onChange={handleChange}
+                      />
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={3}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>West</Form.Label>
+                      <Form.Control
+                        name="west"
+                        placeholder="Enter West (e.g. 100 ft)"
+                        value={formData.west}
+                        onChange={handleChange}
+                      />
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={3}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>North</Form.Label>
+                      <Form.Control
+                        name="north"
+                        placeholder="Enter North (e.g. 100 ft)"
+                        value={formData.north}
+                        onChange={handleChange}
+                      />
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={3}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>South</Form.Label>
+                      <Form.Control
+                        name="south"
+                        placeholder="Enter South (e.g. 100 ft)"
+                        value={formData.south}
+                        onChange={handleChange}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Area (SqYd)</Form.Label>
+                      <Form.Control
+                        name="area_sqyd"
+                        placeholder="Area (SqYd)"
+                        value={formData.area_sqyd}
+                        onChange={handleChange}
+                        isInvalid={!!errors.area_sqyd}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.area_sqyd}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+
 
                   <Col md={6}>
                     <Form.Group className="mb-3" controlId="formPlotSize">
                       <Form.Label>
-                        Dimensions <span className="text-danger">*</span>
-                        <span className="text-muted ms-2">(e.g., 50x40)</span>
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="plot_size"
-                        placeholder="e.g., 50x40"
-                        value={formData.plot_size}
-                        onChange={handleChange}
-                        isInvalid={!!errors.plot_size}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {errors.plot_size}
-                      </Form.Control.Feedback>
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group className="mb-3" controlId="formPlotSize">
-                      <Form.Label>
                         PLC (%)
-                        <span className="text-muted ms-2">(e.g., 50)</span>
+                        <span className="text-muted ms-2">(e.g., 2%)</span>
                       </Form.Label>
                       <Form.Control
                         type="text"
                         name="plc_percentage"
-                        placeholder="e.g., 50"
+                        placeholder="e.g., 2%"
                         value={formData.plc_percentage}
                         onChange={handleChange}
                         isInvalid={!!errors.plc_percentage}
@@ -561,24 +620,6 @@ function CreatePlot() {
                     </Form.Group>
                   </Col>
 
-                  {/* <Col md={6}>
-                    <Form.Group className="mb-3" controlId="formPlotSqYd">
-                      <Form.Label>
-                        Area Sq. Yd. <span className="text-danger">*</span>
-                      </Form.Label>
-                      <Form.Control
-                        type="number"
-                        name="plot_sqyd"
-                        placeholder="e.g., 133"
-                        value={formData.plot_sqyd}
-                        onChange={handleChange}
-                        isInvalid={!!errors.plot_sqyd}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {errors.plot_sqyd}
-                      </Form.Control.Feedback>
-                    </Form.Group>
-                  </Col> */}
                   <Col md={6}>
                     <Form.Group className="mb-3" controlId="formPlotSqYd">
                       <Form.Label>
@@ -615,26 +656,6 @@ function CreatePlot() {
                       </Form.Control.Feedback>
                     </Form.Group>
                   </Col>
-                  {/* <Col md={6}>
-                    <Form.Group className="mb-3" controlId="formPlotSqYd">
-                      <Form.Label>
-                        Facing <span className="text-danger">*</span>
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="facing"
-                        placeholder="e.g., east"
-                        value={formData.facing}
-                        onChange={handleChange}
-                        isInvalid={!!errors.facing}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {errors.facing}
-                      </Form.Control.Feedback>
-                    </Form.Group>
-                  </Col> */}
-
-
                   <Col md={6}>
                     <Form.Group className="mb-3" controlId="formPlotFacing">
                       <Form.Label>
@@ -685,8 +706,8 @@ function CreatePlot() {
                         Document Type <span className="text-danger">*</span>
                       </Form.Label>
                       <Form.Control
-                        as="select" // Use Form.Control as="select"
-                        name="property_type" // Changed name to property_type
+                        as="select"
+                        name="property_type"
                         value={formData.property_type}
                         onChange={handleChange}
                         isInvalid={!!errors.property_type}
@@ -704,26 +725,7 @@ function CreatePlot() {
                     </Form.Group>
                   </Col>
 
-                  <Col md={6}>
-                    <Form.Group className="mb-3" controlId="formStatus">
-                      <Form.Label>
-                        Status <span className="text-danger">*</span>
-                      </Form.Label>
-                      <Form.Control
-                        as="select" // Use Form.Control as="select"
-                        name="status"
-                        value={formData.status}
-                        onChange={handleChange}
-                        isInvalid={!!errors.status}
-                      >
-                        <option value="available">Available</option>
-                        <option value="sold">Sold</option> {/* Changed from inactive to sold for clarity */}
-                      </Form.Control>
-                      <Form.Control.Feedback type="invalid">
-                        {errors.status}
-                      </Form.Control.Feedback>
-                    </Form.Group>
-                  </Col>
+
                 </Row>
 
                 <Form.Group className="mb-4" controlId="formPlotAddress">
@@ -759,7 +761,7 @@ function CreatePlot() {
         </div>
       </div>
 
-      {/* Message Modal */}
+
       {showMessageModal && (
         <div
           className="modal d-block"

@@ -46,7 +46,6 @@ function AssociatesBimaAchieverLists() {
     nominee_name: "",
     nominee_relation: "",
     nominee_dob: "",
-    // status: ""
   });
   const [updateFiles, setUpdateFiles] = useState({
     pan_image: null,
@@ -72,7 +71,6 @@ function AssociatesBimaAchieverLists() {
   const [searchTerm, setSearchTerm] = useState({
     customer_name: "",
     mobile: "",
-    // status: "",
     orderid: "",
   });
 
@@ -100,7 +98,6 @@ function AssociatesBimaAchieverLists() {
       const data = await res.json();
       if (res.ok) {
         setStates(data.data || []);
-        // Create state map for quick lookup
         const map = {};
         (data.data || []).forEach(state => {
           map[state.id] = state.name;
@@ -123,7 +120,6 @@ function AssociatesBimaAchieverLists() {
     }
     
     try {
-      // First get all states
       const statesRes = await fetch(`${API_URL}/state-list`, {
         headers: {
           "Content-Type": "application/json",
@@ -135,7 +131,6 @@ function AssociatesBimaAchieverLists() {
       
       console.log("Fetching cities for states:", allStates);
       
-      // Fetch cities for each state
       const cityMapData = {};
       
       for (const state of allStates) {
@@ -200,7 +195,7 @@ function AssociatesBimaAchieverLists() {
     setUpdateFormData(prev => ({
       ...prev,
       state: stateId,
-      city: "" // Reset city when state changes
+      city: ""
     }));
     fetchCitiesForState(stateId);
   };
@@ -208,21 +203,15 @@ function AssociatesBimaAchieverLists() {
   // Get State Name by ID
   const getStateName = (stateId) => {
     if (!stateId) return "-";
-    // Convert to number if it's a string
     const id = parseInt(stateId);
     return stateMap[id] || stateId;
   };
 
-  // Get City Name by ID
   const getCityName = (cityId) => {
-    if (!cityId) return "-";
-    // Convert to number if it's a string
-    const id = parseInt(cityId);
-    const cityName = cityMap[id];
-    console.log(`Looking for city ${id}: found ${cityName}`);
-    return cityName || cityId;
-  };
-
+  if (!cityId) return "-";
+  // Agar cityMap mein hai to dikhao, warna ID hi dikhao
+  return cityMap[cityId] || cityId;
+};
   const showCustomMessageModal = (title, text, type, confirmAction = null) => {
     setMessageModalContent({ title, text, type, confirmAction });
     setShowMessageModal(true);
@@ -271,6 +260,8 @@ function AssociatesBimaAchieverLists() {
       setCurrentPage(page);
     } catch (error) {
       console.error("Error fetching users:", error);
+      setUsers([]);
+      setAllUsers([]);
     } finally {
       setLoading(false);
     }
@@ -278,8 +269,8 @@ function AssociatesBimaAchieverLists() {
 
   useEffect(() => {
     fetchUsers(currentPage);
-    fetchStates(); // Fetch states on component mount
-    fetchAllCities(); // Fetch all cities on component mount
+    fetchStates();
+    //fetchAllCities();
   }, [currentPage]);
 
   const handleSearch = () => {
@@ -315,7 +306,6 @@ function AssociatesBimaAchieverLists() {
       nominee_name: user.nominee_name || "",
       nominee_relation: user.nominee_relation || "",
       nominee_dob: user.nominee_dob || "",
-      // status: user.status || "pending"
     });
     setExistingImages({
       pan_image_url: user.pan_image || "",
@@ -330,7 +320,6 @@ function AssociatesBimaAchieverLists() {
       profile_photo: null
     });
     
-    // Fetch cities for the user's state
     if (user.state) {
       fetchCitiesForState(user.state);
     } else {
@@ -369,14 +358,12 @@ function AssociatesBimaAchieverLists() {
       const token = getAuthToken();
       const formData = new FormData();
       
-      // Add all text fields
       Object.keys(updateFormData).forEach(key => {
         if (updateFormData[key]) {
           formData.append(key, updateFormData[key]);
         }
       });
       
-      // Add files if they are selected
       if (updateFiles.pan_image) {
         formData.append("pan_image", updateFiles.pan_image);
       }
@@ -422,10 +409,11 @@ function AssociatesBimaAchieverLists() {
     }
   };
 
-  const toSentenceCase = (text) => {
-    if (!text) return "-";
-    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-  };
+const toSentenceCase = (text) => {
+  if (typeof text !== "string") return "-";
+
+  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+};
 
   const formatDate = (dateString) => {
     if (!dateString) return "-";
@@ -506,7 +494,7 @@ function AssociatesBimaAchieverLists() {
         <div className="card-header">
           <div className="d-flex align-items-center justify-content-between gap-2">
             <div className="titlepage">
-              <h3>Bima Achiever Lists</h3>
+              <h3>Bima Achiever Entry Form Lists</h3>
             </div>
             <div className="d-flex gap-2 align-items-center">
               <button
@@ -523,54 +511,6 @@ function AssociatesBimaAchieverLists() {
         {showFilter && (
           <div className="card-body pb-0">
             <div className="d-flex flex-wrap-mobile align-items-md-center gap-2">
-              {/* <div className="form_design w-100">
-                <input
-                  type="text"
-                  name="orderid"
-                  placeholder="Lead ID"
-                  value={searchTerm.orderid}
-                  onChange={(e) =>
-                    setSearchTerm({
-                      ...searchTerm,
-                      [e.target.name]: e.target.value,
-                    })
-                  }
-                />
-              </div> */}
-
-              {/* <div className="form_design w-100">
-                <select
-                  name="status"
-                  value={searchTerm.status}
-                  onChange={(e) => {
-                    setSearchTerm({
-                      ...searchTerm,
-                      [e.target.name]: e.target.value,
-                    });
-                  }}
-                >
-                  <option value="">All Status</option>
-                  <option value="pending">Pending</option>
-                  <option value="approved">Approved</option>
-                  <option value="rejected">Rejected</option>
-                </select>
-              </div>
-
-              <div className="form_design w-100">
-                <input
-                  type="text"
-                  name="customer_name"
-                  placeholder="Name"
-                  value={searchTerm.customer_name}
-                  onChange={(e) =>
-                    setSearchTerm({
-                      ...searchTerm,
-                      [e.target.name]: e.target.value,
-                    })
-                  }
-                />
-              </div> */}
-
               <div className="form_design w-100">
                 <input
                   type="number"
@@ -603,8 +543,6 @@ function AssociatesBimaAchieverLists() {
               <Spinner animation="border" />
               <p className="mt-3">Loading Bima Achiever lists...</p>
             </div>
-          ) : users.length === 0 ? (
-            <p className="text-center text-danger fw-bold">No data found!</p>
           ) : (
             <>
               <div className="table-responsive">
@@ -632,125 +570,136 @@ function AssociatesBimaAchieverLists() {
                     </tr>
                   </thead>
                   <tbody>
-                    {users.map((user, index) => (
-                      <tr key={user.id}>
-                        <td>{(currentPage - 1) * LIMIT + index + 1}</td>
-                        <td>{toSentenceCase(user.user_name)}</td>
-                        <td>{user.user_mobile}</td>
-                        <td>{user.email || "-"}</td>
-                        <td>{formatDate(user.date_of_birth)}</td>
-                        <td>{toSentenceCase(user.gender)}</td>
-                        <td>{user.pan_number || "-"}</td>
-                        <td>{user.aadhar_number || "-"}</td>
-                        <td>
-                          <div 
-                            style={{ 
-                              maxWidth: "600px", 
-                              wordWrap: "break-word", 
-                              lineHeight: "1.4"
-                            }}
-                            title={user.address || "-"}
-                          >
-                            {user.address ? (
-                              <>
-                                {user.address.length > 60 ? (
-                                  <>
-                                    {user.address.substring(0, 60)}...
-                                    <br />
-                                    <small className="text-muted">
-                                      {user.address.substring(60, 200)}
-                                      {user.address.length > 120 && "..."}
-                                    </small>
-                                  </>
-                                ) : (
-                                  user.address
-                                )}
-                              </>
-                            ) : "-"}
-                          </div>
-                        </td>
-                        <td>{getStateName(user.state)}</td>
-                        <td>{getCityName(user.city)}</td>
-                        <td>{user.pincode || "-"}</td>
-                        <td>{toSentenceCase(user.nominee_name)}</td>
-                        <td>{toSentenceCase(user.nominee_relation)}</td>
-                        <td>{formatDate(user.nominee_dob)}</td>
-                        <td>
-                          <span
-                            className="badge"
-                            style={getStatusStyle(user.status)}
-                          >
-                            {toSentenceCase(user.status)}
-                          </span>
-                        </td>
-                        <td>{formatDateTime(user.created_at)}</td>
-                        <td>
-                          <div className="dropdown">
-                            <button
-                              className="btn light btn-action dropdown-toggle"
-                              type="button"
-                              id="dropdownMenuButton"
-                              data-bs-toggle="dropdown"
-                              aria-expanded="false"
-                            >
-                              <BsThreeDots size={20} />
-                            </button>
-                            <ul
-                              className="dropdown-menu"
-                              aria-labelledby="dropdownMenuButton"
-                            >
-                              <li className="dropdown-item">
-                                <button
-                                  className="btn view_btn btn-sm"
-                                  title="View Details"
-                                  onClick={() => handleViewUser(user)}
-                                >
-                                  <FaEye /> View Details
-                                </button>
-                              </li>
-                              <li className="dropdown-item">
-                                <button
-                                  className="btn edit_btn btn-sm"
-                                  title="Update User"
-                                  onClick={() => handleUpdateClick(user)}
-                                >
-                                  <FaEdit /> Update
-                                </button>
-                              </li>
-                            </ul>
-                          </div>
+                    {users.length === 0 ? (
+                      <tr>
+                        <td colSpan="18" className="text-center text-danger fw-bold py-4">
+                          No data found!
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      users.map((user, index) => (
+                        <tr key={user.id}>
+                          <td>{(currentPage - 1) * LIMIT + index + 1}</td>
+                          <td>{toSentenceCase(user.user_name)}</td>
+                          <td>{user.user_mobile}</td>
+                          <td>{user.email || "-"}</td>
+                          <td>{formatDate(user.date_of_birth)}</td>
+                          <td>{toSentenceCase(user.gender)}</td>
+                          <td>{user.pan_number || "-"}</td>
+                          <td>{user.aadhar_number || "-"}</td>
+                          <td>
+                            <div 
+                              style={{ 
+                                maxWidth: "600px", 
+                                wordWrap: "break-word", 
+                                lineHeight: "1.4"
+                              }}
+                              title={user.address || "-"}
+                            >
+                              {user.address ? (
+                                <>
+                                  {user.address.length > 60 ? (
+                                    <>
+                                      {user.address.substring(0, 60)}...
+                                      <br />
+                                      <small className="text-muted">
+                                        {user.address.substring(60, 200)}
+                                        {user.address.length > 120 && "..."}
+                                      </small>
+                                    </>
+                                  ) : (
+                                    user.address
+                                  )}
+                                </>
+                              ) : "-"}
+                            </div>
+                          </td>
+                           <td>{user.state_name || "-"}</td>
+                           <td>{user.city_name || "-"}</td>
+
+                           <td>{user.pincode || "-"}</td>
+                           <td>{toSentenceCase(user.nominee_name)}</td>
+                           <td>{toSentenceCase(user.nominee_relation)}</td>
+                           <td>{formatDate(user.nominee_dob)}</td>
+                           <td>
+                            <span
+                              className="badge"
+                              style={getStatusStyle(user.status)}
+                            >
+                              {toSentenceCase(user.status)}
+                            </span>
+                           </td>
+                           <td>{formatDateTime(user.created_at)}</td>
+                           <td>
+                            <div className="dropdown">
+                              <button
+                                className="btn light btn-action dropdown-toggle"
+                                type="button"
+                                id="dropdownMenuButton"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                              >
+                                <BsThreeDots size={20} />
+                              </button>
+                              <ul
+                                className="dropdown-menu"
+                                aria-labelledby="dropdownMenuButton"
+                              >
+                                <li className="dropdown-item">
+                                  <button
+                                    className="btn view_btn btn-sm"
+                                    title="View Details"
+                                    onClick={() => handleViewUser(user)}
+                                  >
+                                    <FaEye /> View Details
+                                  </button>
+                                </li>
+                                <li className="dropdown-item">
+                                  <button
+                                    className="btn edit_btn btn-sm"
+                                    title="Update User"
+                                    onClick={() => handleUpdateClick(user)}
+                                  >
+                                    <FaEdit /> Update
+                                  </button>
+                                </li>
+                              </ul>
+                            </div>
+                           </td>
+                         </tr>
+                      ))
+                    )}
                   </tbody>
                 </Table>
               </div>
 
-              <div className="d-flex justify-content-end mt-3">
-                <Pagination>
-                  <Pagination.Prev
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                  />
-                  {getPaginationGroup().map((item, index) => (
-                    <Pagination.Item
-                      key={index}
-                      active={item === currentPage}
-                      onClick={() =>
-                        typeof item === "number" ? handlePageChange(item) : null
-                      }
-                      disabled={item === "..."}
-                      style={{ cursor: item === "..." ? "default" : "pointer" }}
-                    >
-                      {item}
-                    </Pagination.Item>
-                  ))}
-                  <Pagination.Next
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                  />
-                </Pagination>
-              </div>
+              {users.length > 0 && (
+                <div className="d-flex justify-content-end mt-3">
+                  <Pagination>
+                    <Pagination.Prev
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    />
+                    {getPaginationGroup().map((item, index) => (
+                      <Pagination.Item
+                        key={index}
+                        active={item === currentPage}
+                        onClick={() =>
+                          typeof item === "number" ? handlePageChange(item) : null
+                        }
+                        disabled={item === "..."}
+                        style={{ cursor: item === "..." ? "default" : "pointer" }}
+                      >
+                        {item}
+                      </Pagination.Item>
+                    ))}
+                    <Pagination.Next
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    />
+                  </Pagination>
+                </div>
+              )}
             </>
           )}
         </div>
@@ -764,7 +713,7 @@ function AssociatesBimaAchieverLists() {
         <Modal.Body>
           {selectedUser && (
             <div className="row">
-              <div className="col-md-6 mb-3">
+              {/* <div className="col-md-6 mb-3">
                 <strong>Profile Photo:</strong><br />
                 {selectedUser.profile_photo ? (
                   <img
@@ -779,7 +728,7 @@ function AssociatesBimaAchieverLists() {
                 ) : (
                   "-"
                 )}
-              </div>
+              </div> */}
               <div className="col-md-6 mb-3">
                 <strong>PAN Card:</strong><br />
                 {selectedUser.pan_image ? (
@@ -834,9 +783,72 @@ function AssociatesBimaAchieverLists() {
                   "-"
                 )}
               </div>
-              <div className="col-md-6 mb-3">
-                <strong>User ID:</strong> {selectedUser.user_id}
+
+
+
+              <div className="col-md-12 mb-3">
+                <strong>PDF Preview:</strong><br />
+
+                {selectedUser.document_pdf ? (
+                  <>
+                    {/* Preview (Google Viewer) */}
+                    <iframe
+                      src={`https://docs.google.com/gview?url=${IMAGE_BASE_URL}/${selectedUser.document_pdf}&embedded=true`}
+                      width="100%"
+                      height="300px"
+                      style={{ border: "1px solid #ddd", borderRadius: "5px" }}
+                      title="PDF Preview"
+                    />
+
+                    {/* Buttons */}
+                    <div className="mt-2 d-flex gap-2">
+
+                      {/* ✅ View Full (New Tab) */}
+                      <a
+                        href={`${IMAGE_BASE_URL}/${selectedUser.document_pdf}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-sm btn-primary"
+                      >
+                        View Full
+                      </a>
+
+                      {/* ✅ Direct Download */}
+                      <button
+                        className="btn btn-sm btn-success"
+                        onClick={async () => {
+                          try {
+                            const response = await fetch(`${IMAGE_BASE_URL}/${selectedUser.document_pdf}`);
+                            const blob = await response.blob();
+
+                            const url = window.URL.createObjectURL(blob);
+                            const link = document.createElement("a");
+                            link.href = url;
+                            link.download = selectedUser.user_name
+                              ? selectedUser.user_name + ".pdf"
+                              : "document.pdf";
+
+                            document.body.appendChild(link);
+                            link.click();
+
+                            link.remove();
+                            window.URL.revokeObjectURL(url);
+                          } catch (error) {
+                            console.error("Download failed:", error);
+                            alert("Download failed!");
+                          }
+                        }}
+                      >
+                        Download
+                      </button>
+
+                    </div>
+                  </>
+                ) : (
+                  "-"
+                )}
               </div>
+             
               <div className="col-md-6 mb-3">
                 <strong>User Name:</strong> {selectedUser.user_name}
               </div>
@@ -865,10 +877,10 @@ function AssociatesBimaAchieverLists() {
                 </div>
               </div>
               <div className="col-md-4 mb-3">
-                <strong>State:</strong> {getStateName(selectedUser.state)}
+                <strong>State:</strong> {selectedUser.state_name}
               </div>
               <div className="col-md-4 mb-3">
-                <strong>City:</strong> {getCityName(selectedUser.city)}
+                <strong>City:</strong> {selectedUser.city_name}
               </div>
               <div className="col-md-4 mb-3">
                 <strong>Pincode:</strong> {selectedUser.pincode || "-"}
@@ -970,19 +982,6 @@ function AssociatesBimaAchieverLists() {
                   <option value="other">Other</option>
                 </Form.Select>
               </div>
-              
-              {/* <div className="col-md-6 mb-3">
-                <Form.Label>Status</Form.Label>
-                <Form.Select
-                  name="status"
-                  value={updateFormData.status}
-                  onChange={handleUpdateInputChange}
-                >
-                  <option value="pending">Pending</option>
-                  <option value="approved">Approved</option>
-                  <option value="rejected">Rejected</option>
-                </Form.Select>
-              </div> */}
 
               <div className="col-md-12 mb-3">
                 <h5 className="border-bottom pb-2">Document Information</h5>
@@ -1011,31 +1010,6 @@ function AssociatesBimaAchieverLists() {
               <div className="col-md-12 mb-3">
                 <h5 className="border-bottom pb-2">Update Images (Leave empty to keep existing)</h5>
               </div>
-              
-              {/* <div className="col-md-3 mb-3">
-                <Form.Label>Profile Photo</Form.Label>
-                {existingImages.profile_photo_url && (
-                  <div className="mb-2">
-                    <img 
-                      src={getImageUrl(existingImages.profile_photo_url)} 
-                      alt="Current" 
-                      style={{ width: "50px", height: "50px", objectFit: "cover" }}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "https://via.placeholder.com/50?text=No+Image";
-                      }}
-                    />
-                    <br />
-                    <small>Current Image</small>
-                  </div>
-                )}
-                <Form.Control
-                  type="file"
-                  name="profile_photo"
-                  accept="image/*"
-                  onChange={handleUpdateFileChange}
-                />
-              </div> */}
               
               <div className="col-md-3 mb-3">
                 <Form.Label>PAN Image</Form.Label>

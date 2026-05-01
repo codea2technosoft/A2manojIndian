@@ -1,0 +1,42 @@
+@import './../../assets/styles/variables.scss';
+
+.plan-pricing-card {
+    height: 100%;
+}
+
+.plan-pricing-card .ant-card-body {
+    height: 100%;
+}
+
+.plan-pricing-card--actived {
+    background-color: $primary-color-1;
+    border: solid 3px $primary-color;
+}
+
+.plan-content-wrapper {
+    min-height: 340px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.plan-description {
+    ul {
+        padding-left: 12px;
+
+        li {
+            line-height: 28px;
+        }
+    } 
+}
+
+.month-marker {
+    line-height: 36px;
+}
+
+.plan-trial-card {
+    img {
+        max-width: 360px;
+        height: auto;
+    }
+}

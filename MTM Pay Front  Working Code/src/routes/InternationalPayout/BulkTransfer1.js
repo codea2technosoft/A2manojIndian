@@ -1,0 +1,380 @@
+// import React, { useState, useEffect, useRef } from 'react';
+// import { Button, Row, Col, Card, Modal, Form, Upload, DatePicker, Table } from 'antd';
+// import { UploadOutlined } from '@ant-design/icons';
+// import dayjs from 'dayjs';
+// import api from 'utils/api';
+// import Papa from 'papaparse';
+// import walletIcon from 'assets/images/Wallet 1.png';
+// import { useLocation, useNavigate } from 'react-router-dom';
+// import { parseQueryParams, stringifyQueryParams } from 'utils/url';
+// import { getBanklist, payoutPayouttransferList, exportOrders } from 'requests/order';
+
+// const { RangePicker } = DatePicker;
+
+
+// function BulkTransfer() {
+//     const [isModalOpen, setIsModalOpen] = useState(false);
+//     const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+//     const [isTransferLoading, setIsTransferLoading] = useState(false);
+//     const [form] = Form.useForm();
+//     const [dates, setDates] = useState([dayjs(), dayjs()]);
+//     const [filter, setFilter] = useState(null);
+//     const [isTableLoading, setIsTableLoading] = useState(false);
+//     const [page, setPage] = useState(1);
+//     const [perPage, setPerPage] = useState(process.env.REACT_APP_RECORDS_PER_PAGE);
+//     const [totalCount, setTotalCount] = useState(0);
+   
+
+
+//     const showModalBulk = () => {
+//         setIsBulkModalOpen(true);
+//     };
+
+//     const handleBulkOk = () => {
+//         setIsModalOpen(false);
+//     };
+
+//     const handleOk = () => {
+//         setIsBulkModalOpen(false);
+//     };
+
+//     const handleCancel = () => {
+//         setIsModalOpen(false);
+//     };
+
+//     const handleBulkCancel = () => {
+//         setIsBulkModalOpen(false);
+//     };
+
+//     const handleFileUpload = (file) => {
+//         console.warn('Uploading file:', file);
+//         form.setFieldsValue({ csv_file: { file } });
+
+//         return false;
+//     };
+
+//     const handleTransfer = async () => {
+//         try {
+//             setIsTransferLoading(true);
+//             const values = await form.validateFields();
+//             const { csv_file } = values;
+
+//             if (!csv_file || !csv_file.file) {
+//                 form.setFields([
+//                     {
+//                         name: 'csv_file',
+//                         errors: ['Please upload a file'],
+//                     },
+//                 ]);
+
+//                 return;
+//             }
+
+//             if (csv_file && csv_file.file) {
+
+//                 const formData = new FormData();
+//                 formData.append('csv_file', csv_file.file);
+
+//                 const response = await api.post('/Payment-transfer-payout-bank-bulk', formData);
+//                 if (response.data.status == true) {
+//                     Modal.success({
+//                         title: 'Payment',
+//                         content: `${response.data.message}`
+//                       });
+//                       setIsModalOpen(false);
+//                       setTimeout(() => {
+//                         Modal.destroyAll();
+//                         window.location.reload();
+//                       }, 2000);
+//                   } else {
+//                     Modal.error({
+//                       title: 'Payment',
+//                       content: `${response.data.message}`
+//                     });
+//                     setIsModalOpen(false);
+//                     setTimeout(() => {
+//                       Modal.destroyAll();
+//                       window.location.reload();
+//                     }, 2000);
+//                   }
+                  
+//             } else {
+//                 console.error('csv_file or csv_file.file is undefined');
+//             }
+//         } catch (errorInfo) {
+//             console.error('Error in handleTransfer:', errorInfo);
+//         } finally {
+//             setIsTransferLoading(false);
+//         }
+//     };
+
+//     const location = useLocation();
+//     const navigate = useNavigate();
+//     const [records, setRecords] = useState([]);
+//     const [isShowFilter, setIsShowFilter] = useState(false);
+//     const [AvailableAmount, setAvailableAmount] = useState(0);
+
+
+//     useEffect(() => {
+//         const query = parseQueryParams(location);
+//         setFilter(query);
+//         getRecords();
+//     }, [location]);
+
+
+//     const getRecords = async (query) => {
+//         try {
+//             setIsTableLoading(true);
+//             const response = await payoutPayouttransferList(query);
+//             setAvailableAmount(response.AvailableAmount);
+//             setRecords(response.data);
+//             setPage(response.page);
+//             setPerPage(response.per_page);
+//             setTotalCount(response.total_records);
+//         } catch (err) {
+//             console.log(err);
+//         } finally {
+//             setIsTableLoading(false);
+//         }
+//     };
+
+
+//     let color = {
+//         pending: "#ffa940",
+//         success: "green",
+//         faild: "red",
+//         inprocess: "#ffa940",
+//         reversed: "blue",
+//         6: "blue",
+//         7: "red",
+//         8: "green",
+//     };
+
+
+//     const columns = [
+//         {
+//             title: 'Created At',
+//             key: 'accountnumber',
+//             render: (text, record, index) => (
+//                 <div>
+//                     <div>{index + 1}<br /></div>
+//                     <div>{new Date(record.created_at).toLocaleDateString()}</div>
+//                     <div>{new Date(record.created_at).toLocaleTimeString()}</div>
+//                     <div>{record.transaction ? record.transaction.data.utr : null}</div>
+
+//                 </div>
+//             )
+//         },
+//         {
+//             title: 'Bank Details',
+//             key: 'bankDetails',
+//             render: (text, record) => (
+//                 <div>
+//                     Account: {record.accountnumber}
+//                     <br></br>
+//                     Bank: {record.bankname}
+//                     <br></br>
+//                     IFSC: {record.Ifsc}
+//                     <br></br>
+//                     Mode: {record.mode}
+
+//                 </div>
+//             )
+
+//         },
+//         {
+//             title: 'Transaction Details',
+//             key: 'transactionDetails',
+//             render: (text, record) => (
+//                 <div>Order ID: {record.orderid}<br></br>Txn ID: {record.tid}<br></br>UTR Number: {record.utr ? record.utr : "null"}</div>
+//             )
+
+//         },
+//         {
+//             title: 'Amount',
+//             key: 'amount',
+//             render: (text, record) => (
+//                 <div>
+//                     Total: {record.amount}
+//                     <br></br>
+//                     Settled Amt: {record.subtotal}
+//                     <br></br>
+//                     Fees Amt: {record.fees}
+//                     <br></br>
+//                     GST Amt: {record.gst}
+
+//                 </div>
+//             )
+
+
+//         },
+//         {
+//             title: 'Status',
+//             key: 'Status',
+//             render: (text, record) => (
+//                 <div style={{ color: color[record.status] }}>
+//                     {record.status === 'pending' ? 'initiated' : record.status.toUpperCase()}
+//                     {record.status === 'pending' || record.status === 'inprocess' ? (
+//                         <div>
+//                             <p
+//                                 id={`cchkstttu_${record.orderid}`}
+//                                 onClick={() => chhkstatus(record.orderid)}
+//                                 style={{
+//                                     padding: '5px 10px',
+//                                     cursor: 'pointer',
+//                                     backgroundColor: '#0dcaf0',
+//                                     color: 'white',
+//                                     border: 'none',
+//                                     borderRadius: '5px',
+//                                 }}>
+//                                 Check Status
+//                             </p>
+//                             <img
+//                                 id={`cchkstttu11_${record.orderid}`}
+//                                 // src={dancingloader}
+//                                 style={{
+//                                     display: 'none',
+//                                     height: '10px',
+//                                     objectFit: 'cover',
+//                                     objectPosition: 'center',
+//                                     WebkitTransform: 'scale(1.9)',
+//                                     transform: 'scale(1.9)',
+//                                     width: '100%',
+//                                 }}
+//                             />
+//                         </div>
+//                     ) : (
+//                         <p></p>
+//                     )}
+//                 </div>
+//             )
+
+
+//         },
+//     ];
+
+
+
+
+
+//     const chhkstatus = async (orderId) => {
+//         alert(orderId);
+//         const statusElement = document.getElementById(`cchkstttu_${orderId}`);
+//         const loaderElement = document.getElementById(`cchkstttu11_${orderId}`);
+
+//         if (statusElement && loaderElement) {
+//             statusElement.style.display = 'none';
+//             loaderElement.style.display = 'block';
+
+//             try {
+//                 const response = await api.post(
+//                     process.env.REACT_APP_API_URL +
+//                     'webhook/payout/checkstatus',
+//                     {
+//                         orderid: orderId,
+//                     },
+
+//                 );
+
+//                 statusElement.style.display = 'block';
+//                 loaderElement.style.display = 'none';
+
+//             } catch (error) {
+//                 console.error('Error fetching data:', error);
+//                 statusElement.style.display = 'block';
+//                 loaderElement.style.display = 'none';
+//             }
+//         }
+//     };
+
+
+//     const csvFileUrl = 'https://api.mtmpay.in/public/payuotdemo.csv';
+
+
+//     const onSetDatesByDatePicker = (newDates) => {
+//         if (!newDates || newDates.length !== 2) {
+//             console.error("Invalid newDates:", newDates);
+//             return;
+//         }
+    
+//         setDates(newDates);
+    
+//         const created_at_date_min = newDates[0]?.toISOString().split('T')[0];
+//         const created_at_date_max = newDates[1]?.toISOString().split('T')[0];
+    
+//         getRecords({ created_at_date_min, created_at_date_max });
+//     };
+    
+
+
+//     return (
+//         <div className="wrap-orders">
+//             <Row gutter={[8, 8]} align="middle" justify={{ md: 'center', lg: 'space-between' }}>
+//                 <Col xs={24} md={14} lg={8} xl={6}>
+//                     {/* <Card className="round_card">
+//                         <div className="walletamount">
+//                             <img src={walletIcon} className="walletimg mr-8" />
+//                             <p>
+//                                 Available Amount
+//                                 <br />
+//                                 <b> Rs. {AvailableAmount}</b>
+//                             </p>
+//                         </div>
+//                     </Card> */}
+//                 </Col>
+//                 <Col xs={24} md={15} lg={8} xl={7}>
+//                     <Card className="round_card">
+//                         <RangePicker
+//                             value={dates}
+//                             onCalendarChange={(newDates) => onSetDatesByDatePicker(newDates)} style={{ height: '45px' }}
+//                         />
+//                     </Card>
+//                 </Col>
+
+//                 <Col xs={24} md={8} lg={6} xl={5}>
+//                     <Card className="round_card">
+//                         <Button type="primary" size="large" onClick={showModalBulk}>
+//                             Bulk Create
+//                         </Button>
+//                     </Card>
+//                 </Col>
+//             </Row>
+
+//             <Table columns={columns} dataSource={records} className="mt-16" />
+
+//             {/* <Modal
+//                 open={isBulkModalOpen}
+//                 onOk={handleBulkOk}
+//                 onCancel={handleBulkCancel}
+//                 title="Transfer Amount"
+//                 footer={[
+//                     <Button key="close" onClick={handleBulkCancel}>
+//                         Close
+//                     </Button>,
+//                     <Button key="transfer" type="primary" onClick={handleTransfer} disabled={isTransferLoading} >
+//                         Upload
+//                     </Button>,
+//                 ]}
+//             >
+//                 <Form form={form}>
+//                     <Form.Item>
+//                         <Row align={'middle'}>
+//                             <label>Download "Bulk Transfer" Demo excel file</label>
+//                             <a href={csvFileUrl} download="Bulk_Transfer_Demo.csv" className='ml-8'>
+//                                 <button type="button">Click here</button>
+//                             </a>
+//                         </Row>
+//                     </Form.Item>
+//                     <Form.Item className="mb-0" name="csv_file">
+//                         <label>Upload File:</label>
+//                         <Upload beforeUpload={handleFileUpload}>
+//                             <Button icon={<UploadOutlined />}>Click to Upload</Button>
+//                         </Upload>
+//                     </Form.Item>
+//                 </Form>
+//             </Modal> */}
+//         </div>
+//     );
+// }
+
+// export default BulkTransfer;

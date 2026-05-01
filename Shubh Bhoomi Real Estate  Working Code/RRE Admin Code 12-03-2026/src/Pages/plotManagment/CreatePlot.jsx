@@ -316,7 +316,7 @@ function CreatePlot() {
             <div className="card-header">
               <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <div className="titlepage">
-                  <h3>Create New Unit/Shop/Villa</h3>
+                  <h3>By Uploading CSV (Create New Unit/Shop/Villa)</h3>
                 </div>
 
 
@@ -383,7 +383,7 @@ function CreatePlot() {
                   <Col md={6}>
                     <Form.Group className="mb-3" controlId="formBlockId">
                       <Form.Label>
-                        Select Block <span className="text-danger">*</span>
+                       Select Block  {/* <span className="text-danger">*</span> */}
                       </Form.Label>
                       <Form.Control
                         as="select"

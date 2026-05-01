@@ -5,30 +5,27 @@ import { getallsettledfancybetshistory } from "../../Server/api";
 import { FiSearch } from "react-icons/fi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 const AllStatementlist = () => {
   const navigate = useNavigate();
   const { adminId } = useParams();
-
   const [loading, setLoading] = useState(true);
   const [statementData, setStatementData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [limit] = useState(50);
-
   // Date filter states
-  const [fromDate, setFromDate] = useState(() => {
-    const date = new Date();
-    date.setDate(date.getDate() - 3);
-    return date.toISOString().split('T')[0];
-  });
-  const [toDate, setToDate] = useState(() => {
-    return new Date().toISOString().split('T')[0];
-  });
-
+  // const [fromDate, setFromDate] = useState(() => {
+  //   const date = new Date();
+  //   date.setDate(date.getDate() - 3);
+  //   return date.toISOString().split('T')[0];
+  // });
+  // const [toDate, setToDate] = useState(() => {
+  //   return new Date().toISOString().split('T')[0];
+  // });
+const [fromDate, setFromDate] = useState("");
+const [toDate, setToDate] = useState("");
   const [summary, setSummary] = useState({
     total_win_amount: 0,
     total_loss_amount: 0,
@@ -37,29 +34,29 @@ const AllStatementlist = () => {
 
   useEffect(() => {
     fetchStatementData(currentPage);
-  }, [adminId, currentPage, fromDate, toDate]);
-
-  const fetchStatementData = async (page = currentPage) => {
+  }, [adminId, currentPage]);
+  const fetchStatementData = async (page = currentPage, customFrom = fromDate, customTo = toDate) => {
     try {
       setLoading(true);
       const loggedInAdminId = localStorage.getItem("admin_id");
-
-      const params = {
+      const body = {
         admin_id: adminId || loggedInAdminId,
         page,
         limit,
         search: searchTerm,
-        from_date: fromDate,
-        to_date: toDate
+        // from_date: fromDate,
+        // to_date: toDate
+       ...(customFrom && { from_date: customFrom }),
+      ...(customTo && { to_date: customTo })
       };
 
-      Object.keys(params).forEach(key => {
-        if (params[key] === undefined || params[key] === '') {
-          delete params[key];
+      Object.keys(body).forEach(key => {
+        if (body[key] === undefined || body[key] === '') {
+          delete body[key];
         }
       });
 
-      const res = await getallsettledfancybetshistory(params);
+      const res = await getallsettledfancybetshistory(body);
       const response = res.data;
 
       if (response.status_code === 1) {
@@ -128,14 +125,20 @@ const AllStatementlist = () => {
     fetchStatementData(1);
   };
 
+  // const handleResetDateFilter = () => {
+  //   const threeDaysAgo = new Date();
+  //   threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+  //   setFromDate(threeDaysAgo.toISOString().split('T')[0]);
+  //   setToDate(new Date().toISOString().split('T')[0]);
+  //   setCurrentPage(1);
+  //   fetchStatementData(1);
+  // };
   const handleResetDateFilter = () => {
-    const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-    setFromDate(threeDaysAgo.toISOString().split('T')[0]);
-    setToDate(new Date().toISOString().split('T')[0]);
-    setCurrentPage(1);
-    fetchStatementData(1);
-  };
+  setFromDate("");
+  setToDate("");
+  setCurrentPage(1);
+  fetchStatementData(1);
+};
 
   const handleSearch = () => {
     setCurrentPage(1);
@@ -163,11 +166,11 @@ const AllStatementlist = () => {
         <div className="card">
           <div className="card-header flex-wrap-mobile bg-color-black p-2 text-white d-flex justify-content-between align-items-md-center gap-2">
             <h5 className="card-title mb-0">Settled  Bets History </h5>
-            <div className="d-flex align-items-center">
+            {/* <div className="d-flex align-items-center">
               <button onClick={() => navigate(-1)} className="backbutton">
                 Back
               </button>
-            </div>
+            </div> */}
           </div>
 
           <div className="card-body">
@@ -338,7 +341,7 @@ const AllStatementlist = () => {
                                 : "N/A"}
                             </td>
                             <td>
-                              <strong>{item.match_name || 'N/A'}</strong>
+                              <strong>{item.market_name || 'N/A'}</strong>
                               <br />
                               <small className="text-muted">Event ID: {item.event_id}</small>
                             </td>

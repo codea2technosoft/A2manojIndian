@@ -1,0 +1,119 @@
+@import '../variables.scss';
+
+// welcome modal
+.kyc-welcome--content {
+    padding: 40px;
+    
+    .kyc-welcome--content-integration {
+        .kyc-welcome--icon {
+            width: 36px;
+            height: 36px;
+            background-color: #FFE900;
+            color: $white-color;
+            border-radius: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 24px;
+        }
+    
+        h5 {
+            margin-top: 0 !important;
+        }
+    }
+
+    button {
+        height: 60px;
+        width: calc(50% - 1rem);
+    }
+}
+
+.kyc-welcome--image {
+    // background: url('../../images/welcome.png');
+    background-size: cover;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+
+// form modal
+.kyc-form {
+    .ant-modal-body {
+        padding: 0;
+    }
+}
+
+.kyc-form--sidebar {
+    padding: 24px 0px 24px 24px; 
+
+    .ant-menu {
+        margin-left: -24px !important;
+        border-right: none !important;
+        pointer-events: none;
+        cursor: initial;
+    }
+
+    .ant-menu-item {
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+    }
+
+    .kyc-form--sidebar-item-content {
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+
+        .kyc-form--sidebar-check {
+            width: 24px;
+            height: 26px;
+            margin-right: 12px;
+        }
+    }
+
+    .kyc-form--sidebar-item-completed {
+        color: $success-color;
+    }
+
+    .ant-menu-item-selected {
+        background-color: $primary-color !important;
+
+        .kyc-form--sidebar-item-completed {
+            color: $white-color;
+        }
+    }
+
+    .ant-menu-item-active {
+        background-color: $white-color !important;
+
+        .kyc-form--sidebar-item-content:not(.kyc-form--sidebar-item-completed) {
+            color: initial;
+        }
+    }
+}
+
+.kyc-form--content {
+    padding: 24px 40px;
+    background-color: rgba(196, 196, 196, 0.16);;
+}
+
+.submission-buttons {
+margin-top: 135px;
+}
+
+// notice modal
+.kyc-notice {
+    .kyc-notice--title {
+        padding: 40px;
+        background-color: $primary-color-1;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+
+        h4 {
+            margin: 0 !important;
+        }
+    }
+
+    .kyc-notice--content {
+        padding: 16px 40px 24px;
+        font-size: 18px;
+    }
+}

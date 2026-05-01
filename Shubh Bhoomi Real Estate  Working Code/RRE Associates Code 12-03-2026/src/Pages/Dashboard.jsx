@@ -35,7 +35,7 @@ import { BiSolidBuildingHouse } from "react-icons/bi";
 import runningHourse from "../assets/images/hourse.gif";
 import welcomeImg from "../assets/images/bonus.webp";
 import bimaActiveImg from "../assets/images/bima.png";
- import bimaSuccessImg from "../assets/images/claimed.webp";
+import bimaSuccessImg from "../assets/images/claimed.webp";
 
 const iconMap = {
   BiSolidBuildingHouse,
@@ -65,23 +65,24 @@ const iconMap = {
 };
 
 const API_URL = process.env.REACT_APP_API_URL;
-
 const imageSlider = `${process.env.REACT_APP_IMAGE_API_URL}/uploads/banner/`;
-
 const legData = [
   { leg: "Leg 1", amount: 300, value: 100, status: "inactive" },
   { leg: "Leg 2", amount: 300, value: 150, status: "active" },
   { leg: "Leg 3", amount: 400, value: 200, status: "inactive" },
 ];
-
 const Dashboard = ({ userType }) => {
   const [eligibilityData, setEligibilityData] = useState([]);
   const [teameligibilityData, setteamEligibilityData] = useState([]);
   const [TeamAchievedTeamArea, setAchievedTeamArea] = useState(0);
-  // New states for Lifetime Rewards
   const [lifetimeRewardsList, setLifetimeRewardsList] = useState([]);
   const [lifetimeEligibilityData, setLifetimeEligibilityData] = useState([]);
   const [loadingLifetimeRewards, setLoadingLifetimeRewards] = useState(false);
+  const [royaltyRewardsList, setRoyaltyRewardsList] = useState([]);
+  const [royaltyEligibilityData, setRoyaltyEligibilityData] = useState([]);
+  const [loadingRoyaltyRewards, setLoadingRoyaltyRewards] = useState(false);
+  const [loadingRoyaltyEligibility, setLoadingRoyaltyEligibility] = useState(false);
+
   const [associateData, setAssociateData] = useState({
     registrationDate: "2026-04-01", // Default date for testing
     name: "",
@@ -92,9 +93,7 @@ const Dashboard = ({ userType }) => {
   const [loadingLifetimeEligibility, setLoadingLifetimeEligibility] =
     useState(false);
   const [designation, setDesignation] = useState("");
-
   useEffect(() => {
-    // Get designation directly as string
     const designationData = localStorage.getItem("designation");
     setDesignation(designationData || "");
   }, []);
@@ -114,13 +113,8 @@ const Dashboard = ({ userType }) => {
       });
 
       const data = await response.json();
-      console.log("Associate Profile Response:", data);
-
       if (data.status === "1" && data.data) {
-        // Date field se date pickup karo
         const registrationDate = data.data.date || data.data.created_at || null;
-        console.log("Registration Date:", registrationDate);
-
         setAssociateData({
           registrationDate: registrationDate,
           name: data.data.username || "",
@@ -128,8 +122,6 @@ const Dashboard = ({ userType }) => {
           designation: data.data.designation || ""
         });
       } else {
-        console.log("No profile data found, using default");
-        // Agar API fail ho to default date use karo
         setAssociateData({
           registrationDate: "2026-04-01",
           name: "",
@@ -138,8 +130,6 @@ const Dashboard = ({ userType }) => {
         });
       }
     } catch (error) {
-      console.error("Error fetching associate profile:", error);
-      // Error case mein bhi default date set karo
       setAssociateData({
         registrationDate: "2026-04-01",
         name: "",
@@ -151,58 +141,32 @@ const Dashboard = ({ userType }) => {
 
 
   const calculateDatesFromRegistration = (registrationDateStr) => {
-    console.log("Calculating dates from:", registrationDateStr);
-
     if (!registrationDateStr) {
-      console.log("No registration date, using default");
-      // Default date use karo agar null hai
       registrationDateStr = "2026-04-01";
     }
-
-    // Parse the registration date
     const regDate = new Date(registrationDateStr);
-    console.log("Parsed registration date:", regDate);
-
-    // Joining date
     const joiningDate = new Date(regDate);
-
     // Booking date = Registration date + 30 days
     const bookingDate = new Date(regDate);
     bookingDate.setDate(regDate.getDate() + 30);
-
     // Closing date = Booking date + 30 days
     const closingDate = new Date(bookingDate);
     closingDate.setDate(bookingDate.getDate() + 30);
-
-    console.log("Joining Date:", joiningDate);
-    console.log("Booking Date:", bookingDate);
-    console.log("Closing Date:", closingDate);
-
     return {
       joiningDate,
       bookingDate,
       closingDate
     };
   };
-
-
-
-
-  // Add this function to calculate dates
   const calculateDates = () => {
     if (!associateData.registrationDate) return { bookingDate: null, closingDate: null };
-
     const regDate = new Date(associateData.registrationDate);
     const bookingDate = new Date(regDate);
     bookingDate.setDate(regDate.getDate() + 30);
-
     const closingDate = new Date(bookingDate);
     closingDate.setDate(bookingDate.getDate() + 30);
-
     return { bookingDate, closingDate };
   };
-
-  // Add this function to format date as DD-MM-YY
   const formatShortDate = (date) => {
     if (!date) return "-";
     const day = String(date.getDate()).padStart(2, "0");
@@ -210,18 +174,6 @@ const Dashboard = ({ userType }) => {
     const year = String(date.getFullYear()).slice(-2);
     return `${day}-${month}-${year}`;
   };
-
-  // Call this in your existing useEffect (around line 350)
-  useEffect(() => {
-    fetchDashboardData();
-    fetchGiftList();
-    fetchTeamGiftList();
-    fetchLifetimeRewardsList();
-    fetchLifetimeRewardsEligibility();
-    fetchmyteamLinesSummaryAssociate();
-    fetchAssociateProfile(); // Add this line
-  }, []);
-
 
   const NoDataMessage = ({ message = "Sorry, no data found" }) => (
     <div className="text-center py-4 text-muted">
@@ -270,9 +222,16 @@ const Dashboard = ({ userType }) => {
     total_loan_earning: 0,
     total_achieved_buy_sqrt: 0,
     total_propertyEarning: 0,
-    bimaStatus: {  // Add this
+    bimaStatus: {
       activeStatus: false,
       successStatus: false
+    }, bonus: {
+      status: false,
+      lastDate: "--",
+      joiningDate: "--",
+      leadDate: "--",
+      targetDate: "--",
+      approved: false
     }
   });
 
@@ -281,7 +240,6 @@ const Dashboard = ({ userType }) => {
   const [loadingGifts, setLoadingGifts] = useState(false);
   const [loadingTeamGifts, setLoadingTeamGifts] = useState(false);
   const navigate = useNavigate();
-
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn");
     const token = localStorage.getItem("token");
@@ -305,8 +263,6 @@ const Dashboard = ({ userType }) => {
       });
 
       const data = await response.json();
-      console.log("Fetched Dashboard Data:", data);
-
       if (data.status === "1") {
         setDashboard({
           todayAssociate: data.todayAssociate?.[0]?.total || 0,
@@ -328,6 +284,7 @@ const Dashboard = ({ userType }) => {
           completeProject: data.completeProject?.[0]?.total || 0,
           total_sqyd_self_sales: data.total_sqyd_self_sales?.[0]?.total || 0,
           total_sqyd_team_sales: data.total_sqyd_team_sales?.[0]?.total || 0,
+
           total_sqyd_channel_sales:
             data.total_sqyd_channel_sales?.[0]?.total || 0,
           total_self_sales_earning: parseFloat(
@@ -350,7 +307,18 @@ const Dashboard = ({ userType }) => {
           total_propertyEarning: parseFloat(
             data.total_propertyEarning?.[0]?.total || 0,
           ),
-          bimaStatus: data.bimaStatus || { activeStatus: false, successStatus: false } // Add this lin
+          bimaStatus: data.bimaStatus || { activeStatus: false, successStatus: false },
+          bonus: {
+            status: data.bonus?.status || false,
+            joiningDate: data.bonus?.joiningDate || "--",
+            lastDate: data.bonus?.lastDate || "--",
+            leadDate: data.bonus?.leadDate || "--",
+            targetDate: data.bonus?.targetDate || "--",
+            approveDate: data.bonus?.approveDate || "--", 
+            approved: data.bonus?.approved || false
+          }
+
+
         });
       } else {
         setDashboard({
@@ -374,11 +342,19 @@ const Dashboard = ({ userType }) => {
           total_channel_sales_earning: 0,
           total_loan_earning: 0,
           total_propertyEarning: 0,
-          bimaStatus: { activeStatus: false, successStatus: false } // Add this line
+          bimaStatus: { activeStatus: false, successStatus: false },
+          bonus: {
+            status: false,
+            joiningDate: "--",
+            lastDate: "--",
+            leadDate: "--",
+            targetDate: "--",
+            approveDate: "--",
+            approved: false
+          }
         });
       }
     } catch (error) {
-      console.error("Dashboard fetch error:", error);
       setDashboard({
         todayAssociate: 0,
         todayChannel: 0,
@@ -400,7 +376,16 @@ const Dashboard = ({ userType }) => {
         total_channel_sales_earning: 0,
         total_loan_earning: 0,
         total_propertyEarning: 0,
-        bimaStatus: { activeStatus: false, successStatus: false } // Add this line
+        bimaStatus: { activeStatus: false, successStatus: false },
+        bonus: {
+          status: false,
+          joiningDate: "--",
+          lastDate: "--",
+          leadDate: "--",
+          targetDate: "--",
+          approveDate: "--",
+          approved: false
+        }
       });
     }
   };
@@ -421,8 +406,6 @@ const Dashboard = ({ userType }) => {
       );
 
       const data = await response.json();
-      console.log("Lifetime Rewards List Response:", data);
-
       if (data.success === "1" && data.data && data.data.length > 0) {
         const sortedRewards = [...data.data].sort(
           (a, b) => parseFloat(a.area_sqyd) - parseFloat(b.area_sqyd),
@@ -455,8 +438,6 @@ const Dashboard = ({ userType }) => {
       );
 
       const data = await response.json();
-      console.log("Lifetime Rewards Eligibility Response:", data);
-
       if (data.success === true) {
         setLifetimeEligibilityData(data.data);
       } else {
@@ -470,34 +451,76 @@ const Dashboard = ({ userType }) => {
     }
   };
 
-  // const fetchLifetimeRewardsEligibility = async () => {
-  //   try {
-  //     setLoadingLifetimeEligibility(true);
-  //     const token = getAuthToken();
-  //     const response = await fetch(`${API_URL}/lifetime-rewards-list-associate-eligibility`, {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
+  const fetchRoyaltyRewardsList = async () => {
+    try {
+      setLoadingRoyaltyRewards(true);
+      const token = getAuthToken();
+      const response = await fetch(
+        `${API_URL}/royalty-rewards-list-associate`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-  //     const data = await response.json();
-  //     console.log("Lifetime Rewards Eligibility Response:", data);
+      const data = await response.json();
+      if (data.success === "1" && data.data && data.data.length > 0) {
+        const sortedRewards = [...data.data].sort(
+          (a, b) => parseFloat(a.area_sqyd) - parseFloat(b.area_sqyd)
+        );
+        setRoyaltyRewardsList(sortedRewards);
+      } else {
+        setRoyaltyRewardsList([]);
+      }
+    } catch (error) {
+      setRoyaltyRewardsList([]);
+    } finally {
+      setLoadingRoyaltyRewards(false);
+    }
+  };
 
-  //     if (data.success == '1') {
-  //       const eligibilityData = Array.isArray(data.data) ? data.data : [data.data];
-  //       setLifetimeEligibilityData(eligibilityData);
-  //     } else {
-  //       setLifetimeEligibilityData([]);
-  //     }
-  //   } catch (error) {
-  //     console.error("Lifetime Rewards eligibility fetch error:", error);
-  //     setLifetimeEligibilityData([]);
-  //   } finally {
-  //     setLoadingLifetimeEligibility(false);
-  //   }
-  // };
+  const fetchRoyaltyRewardsEligibility = async () => {
+    try {
+      setLoadingRoyaltyEligibility(true);
+      const token = getAuthToken();
+      const response = await fetch(
+        `${API_URL}/royalty-rewards-list-associate-eligibility`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();;
+      if (data.success === true) {
+        setRoyaltyEligibilityData(data.data);
+      } else {
+        setRoyaltyEligibilityData([]);
+      }
+    } catch (error) {
+      setRoyaltyEligibilityData([]);
+    } finally {
+      setLoadingRoyaltyEligibility(false);
+    }
+  };
+  useEffect(() => {
+    fetchDashboardData();
+    fetchGiftList();
+    fetchTeamGiftList();
+    fetchLifetimeRewardsList();
+    fetchLifetimeRewardsEligibility();
+    fetchmyteamLinesSummaryAssociate();
+    fetchAssociateProfile();
+
+    fetchRoyaltyRewardsList();
+    fetchRoyaltyRewardsEligibility();
+  }, []);
 
   const fetchGiftList = async () => {
     try {
@@ -541,8 +564,6 @@ const Dashboard = ({ userType }) => {
       });
 
       const data = await response.json();
-      console.log("Fetched Team Gift List:", data);
-
       if (data.success === "1" && data.data && data.data.length > 0) {
         const sortedGifts = [...data.data].sort(
           (a, b) => parseFloat(a.area_sqyd) - parseFloat(b.area_sqyd),
@@ -592,18 +613,16 @@ const Dashboard = ({ userType }) => {
       console.log("myteamLinesSummaryAssociate Response:", data);
 
       if (data.status === 1) {
-        // status 1 hai na ki "1"
-
         const newLineData = {
           line1: {
             total_buysqft: parseFloat(data.lines?.line1?.total_buysqft) || 0,
-            total_members: 1, // line1 mein 1 member (line owner)
+            total_members: 1,
             line_name: data.lines?.line1?.line_name || "Line 1",
             line_id: data.lines?.line1?.line_id,
           },
           line2: {
             total_buysqft: parseFloat(data.lines?.line2?.total_buysqft) || 0,
-            total_members: 1, // line2 mein 1 member (line owner)
+            total_members: 1,
             line_name: data.lines?.line2?.line_name || "Line 2",
             line_id: data.lines?.line2?.line_id,
           },
@@ -615,13 +634,12 @@ const Dashboard = ({ userType }) => {
           },
           summary: {
             total_buysqft: parseFloat(data.summary?.total_team_area) || 0,
-            total_members: (data.lines?.others?.lines_count || 0) + 2, // line1 + line2 + others lines_count
+            total_members: (data.lines?.others?.lines_count || 0) + 2, 
             total_lines: data.summary?.total_direct_lines || 0,
           },
         };
 
         setLineData(newLineData);
-
         setDashboard((prev) => ({
           ...prev,
           first_line: newLineData.line1.total_buysqft || 0,
@@ -635,7 +653,6 @@ const Dashboard = ({ userType }) => {
           third_line: newLineData.line3.total_buysqft || 0,
         });
       } else {
-        // Default data for unsuccessful response
         const defaultData = {
           line1: { total_buysqft: 0, total_members: 0, line_name: "Line 1" },
           line2: { total_buysqft: 0, total_members: 0, line_name: "Line 2" },
@@ -647,7 +664,6 @@ const Dashboard = ({ userType }) => {
           },
           summary: { total_buysqft: 0, total_members: 0, total_lines: 0 },
         };
-
         setLineData(defaultData);
         setLineSummary({
           first_line: 0,
@@ -662,7 +678,6 @@ const Dashboard = ({ userType }) => {
         }));
       }
     } catch (error) {
-      console.error("myteam-lines-summary-associate Error:", error);
       const defaultData = {
         line1: { total_buysqft: 0, total_members: 0, line_name: "Line 1" },
         line2: { total_buysqft: 0, total_members: 0, line_name: "Line 2" },
@@ -674,7 +689,6 @@ const Dashboard = ({ userType }) => {
         },
         summary: { total_buysqft: 0, total_members: 0, total_lines: 0 },
       };
-
       setLineData(defaultData);
       setLineSummary({
         first_line: 0,
@@ -773,93 +787,6 @@ const Dashboard = ({ userType }) => {
       icon: "FaBuilding",
       href: "/property-lead-list",
     },
-
-    // {
-    //   title: "Welcome Bonus",
-    //   icon: "FaGift",
-    //   image: designation === "Sr. Sales Associate" ? welcomeImg : runningHourse,
-    // },
-
-    // {
-    //   title: "Bima",
-    //   icon: "TbReceiptRupee",
-    //   image: designation === "Sr. Sales Associate" ? bimaImg : runningHourse,
-    // },
-
-
-
-
-    // {
-    //   title: "Total Loan Leads",
-    //   value: (
-    //     <span style={{ color: dashboard.total_lead_loan === 0 ? "red" : "green" }}>
-    //       {dashboard.total_lead_loan}
-    //     </span>
-    //   ),
-    //   icon: "RiHandCoinLine",
-    //   href: "/loan-list",
-    // },
-
-    // {
-    //   title: "Total SQYD Sales",
-    //   value: (
-    //     <span
-    //       style={{
-    //         color:
-    //           Number(dashboard.total_sqyd_self_sales || 0) +
-    //             Number(dashboard.total_sqyd_team_sales || 0) ===
-    //           0
-    //             ? "red"
-    //             : "green",
-    //       }}
-    //     >
-    //       {(
-    //         Number(dashboard.total_sqyd_self_sales || 0) +
-    //         Number(dashboard.total_sqyd_team_sales || 0)
-    //       ).toFixed(2)}
-    //     </span>
-    //   ),
-    //   icon: "FaBuilding",
-    // },
-
-    // {
-    //   title: "Total SQYD Self Sales",
-    //   value: (
-    //     <span
-    //       style={{
-    //         color:
-    //           Number(dashboard.total_sqyd_self_sales) === 0 ||
-    //           !dashboard.total_sqyd_self_sales
-    //             ? "red"
-    //             : "green",
-    //       }}
-    //     >
-    //       {Number(dashboard.total_sqyd_self_sales) > 0
-    //         ? Number(dashboard.total_sqyd_self_sales).toFixed(2)
-    //         : "0.00"}
-    //     </span>
-    //   ),
-    //   icon: "FaBuilding",
-    // },
-    // {
-    //   title: "Total SQYD Team Sales",
-    //   value: (
-    //     <span
-    //       style={{
-    //         color:
-    //           Number(dashboard.total_sqyd_team_sales) === 0 ||
-    //           !dashboard.total_sqyd_team_sales
-    //             ? "red"
-    //             : "green",
-    //       }}
-    //     >
-    //       {Number(dashboard.total_sqyd_team_sales) > 0
-    //         ? Number(dashboard.total_sqyd_team_sales).toFixed(2)
-    //         : "0.00"}
-    //     </span>
-    //   ),
-    //   icon: "FaBuilding",
-    // },
     {
       title: "Total SQYD Channel Partner Sales",
       value: (
@@ -1064,6 +991,7 @@ const Dashboard = ({ userType }) => {
       title: "Welcome Bonus",
       icon: "FaGift",
       customContent: true,
+      href: "/associates-bima-achiever-lists",
     },
 
 
@@ -1071,6 +999,7 @@ const Dashboard = ({ userType }) => {
       title: "Bima",
       icon: "TbReceiptRupee",
       customContent: true,
+      href: "/associates-welcome-bonus-achiever-lists",
     },
   ];
 
@@ -1218,8 +1147,331 @@ const Dashboard = ({ userType }) => {
     fetchTeamEligibilityData();
   }, []);
 
+  //old code commented  
   // Self Gift Progress Component
   // Self Gift Progress Component - Updated
+  // const GiftProgressBar = () => {
+  //   if (loadingGifts) {
+  //     return (
+  //       <div className="gift-progress-loading">
+  //         <div className="gift-spinner" role="status">
+  //           <span className="gift-spinner-text">Loading gifts...</span>
+  //         </div>
+  //         <p className="gift-loading-text">Loading gift progress...</p>
+  //       </div>
+  //     );
+  //   }
+
+  //   if (giftList.length === 0) {
+  //     return <NoDataMessage message="Sorry, no gift data found" />;
+  //   }
+
+  //   const currentSqyd = parseFloat(achievedArea) || 0;
+  //   const maxSqyd =
+  //     parseFloat(giftList[giftList.length - 1]?.area_sqyd) ||
+  //     Math.max(...giftList.map((g) => parseFloat(g.area_sqyd)));
+
+  //   // Find the eligible gift based on API response
+  //   const eligibleGiftData = eligibilityData.find(
+  //     (item) => item.status === "Eligible",
+  //   );
+  //   const eligibleGift = giftList.find(
+  //     (gift) =>
+  //       gift.offer_name === eligibleGiftData?.gift_name &&
+  //       gift.offer_item === eligibleGiftData?.gift_item,
+  //   );
+
+  //   // Get qualifying gift's SQYD requirement
+  //   const qualifyingSqyd = eligibleGift
+  //     ? parseFloat(eligibleGift.area_sqyd)
+  //     : 0;
+  //   const achieved_at = eligibleGift ? parseFloat(eligibleGift.achieved_at) : 0;
+
+  //   return (
+  //     <div className="gift-progress-wrapper">
+  //       <div className="gift-progress-header">
+  //         <h5 className="gift-progress-title">
+  //           <FaGift className="gift-title-icon" />
+  //           Self Gift Progress
+  //         </h5>
+  //         {eligibilityData.length > 0 ? (
+  //           eligibilityData.map((data, index) => (
+  //             <div key={index} className="mt-2 w-50">
+  //               <Row>
+  //                 <Col sm={12} className="mb-3 text-end">
+  //                   <div className="fs-5 d-block">Current</div>
+  //                   <span className="text-success">
+  //                     {data.achieved_area || "0"} SQYD
+  //                   </span>
+  //                 </Col>
+  //                 {/* <Col sm={6} className="mb-3">
+  //                   <div className="fs-5">
+  //                     Achieved Area
+  //                   </div>
+  //                   <small className="text-success d-block">  {data.achieved_area || "0"} SQYD</small>
+  //                 </Col> */}
+  //               </Row>
+  //             </div>
+  //           ))
+  //         ) : (
+  //           <NoDataMessage message="Sorry, no eligibility data found" />
+  //         )}
+  //       </div>
+
+  //       <div className="gift-progress-container">
+  //         <div className="gift-progress-track">
+  //           <div className="gift-progress-line">
+  //             <div className="gift-progress-fill"></div>
+  //           </div>
+
+  //           <div className="gift-steps-scroll-container">
+  //             <div className="gift-steps-flex-container">
+  //               <div className="gift-step-flex-item gift-step-blank">
+  //                 <div className="gift-step-content-wrapper">
+  //                   <div className="gift-step-marker gift-step-marker-blank">
+  //                     <span>
+  //                       <img src={Start} alt="Start" width="50" />
+  //                     </span>
+  //                   </div>
+  //                   <div className="gift-step-content">
+  //                     <div className="gift-step-name">Start Point</div>
+  //                     <div className="gift-step-target">0 SQYD</div>
+  //                   </div>
+  //                 </div>
+  //               </div>
+
+  //               {/* {giftList.map((gift, index) => {
+  //                 const giftSqyd = parseFloat(gift.area_sqyd);
+  //                 const isEligibleGift = eligibleGift && gift.id === eligibleGift.id;
+  //                 const isCompleted = currentSqyd >= giftSqyd;
+  //                 if (isEligibleGift || giftSqyd <= qualifyingSqyd) {
+  //                   return (
+  //                     <div
+  //                       key={gift.id || index}
+  //                       className={`gift-step-flex-item ${isEligibleGift ? 'gift-step-current' : ''} ${isCompleted ? 'gift-step-completed' : ''}`}
+  //                     >
+  //                       <div className="gift-step-content-wrapper">
+  //                         <div className={`gift-step-marker ovel ${isEligibleGift ? 'ggift-step-marker-current bg-success' : 'bg-danger'}`}>
+  //                           {isEligibleGift ? 'Qualified' : "Unqualified"}
+  //                         </div>
+  //                         <div className="gift-step-content">
+  //                           <div className="gift-step-name">{gift.offer_name || `Gift ${index + 1}`}</div>
+  //                           <div className="gift-step-target">{gift.offer_item || `Gift ${index + 1}`}</div>
+  //                           <div className="gift-step-target text-dark"><strong>{giftSqyd} </strong>SQYD</div>
+
+  //                           {isEligibleGift && eligibleGiftData && (
+  //                             <div className="gift-step-achieved">
+  //                               <div>{eligibleGiftData?.project_name || "NA"}</div>
+  //                               <div>{formatDate(eligibleGiftData?.status_date)}</div>
+  //                               <small className="text-success">Eligible</small>
+  //                             </div>
+  //                           )}
+  //                           {!isEligibleGift && isCompleted && (
+  //                             <div className="gift-step-achieved">
+  //                             </div>
+  //                           )}
+  //                         </div>
+  //                       </div>
+  //                     </div>
+  //                   );
+  //                 }
+  //                 return null;
+  //               })} */}
+
+  //               {giftList.map((gift, index) => {
+  //                 const giftSqyd = parseFloat(gift.area_sqyd || 0);
+  //                 const isEligibleGift = eligibleGift?.id === gift.id;
+  //                 const isCompleted = currentSqyd >= giftSqyd;
+
+  //                 return (
+  //                   <div
+  //                     key={gift.id}
+  //                     className={`gift-step-flex-item 
+  //       ${isEligibleGift ? "gift-step-current" : ""} 
+  //       ${isCompleted ? "gift-step-completed" : ""}`}
+  //                   >
+  //                     <div className="gift-step-content-wrapper">
+  //                       <div
+  //                         className={`gift-step-marker ovel ${isCompleted ? "bg-success" : "bg-danger"
+  //                           }`}
+  //                       >
+  //                         {isCompleted ? "Qualified" : "Unqualified"}
+  //                       </div>
+
+  //                       <div className="gift-step-content">
+  //                         <div className="gift-step-name">
+  //                           {gift.offer_name}
+  //                         </div>
+  //                         <div className="gift-step-target">
+  //                           {gift.offer_item}
+  //                         </div>
+  //                         <div className="gift-step-target text-dark">
+  //                           <strong>{giftSqyd}</strong> SQYD
+  //                         </div>
+
+  //                         <div className="gift-step-target gift_content">
+  //                           {gift.terms_conditions}
+  //                         </div>
+  //                       </div>
+  //                     </div>
+  //                   </div>
+  //                 );
+  //               })}
+
+  //               {/* Show end point if we have qualifying gift */}
+  //               {qualifyingSqyd > 0 && (
+  //                 <div className="gift-step-flex-item gift-step-blank">
+  //                   <div className="gift-step-content-wrapper">
+  //                     <div className="gift-step-marker gift-step-marker-blank">
+  //                       <span>
+  //                         <img src={Endimage} alt="Endimage" width="50" />
+  //                       </span>
+  //                     </div>
+  //                     <div className="gift-step-content">
+  //                       <div className="gift-step-target">{maxSqyd} SQYD</div>
+  //                     </div>
+
+  //                     <div className="gift-step-content">
+  //                       <div className="gift-step-target">{achieved_at} </div>
+  //                     </div>
+  //                   </div>
+  //                 </div>
+  //               )}
+
+  //               <div className="gift-step-flex-item gift-step-blank">
+  //                 <div className="gift-step-content-wrapper">
+  //                   <div className="gift-step-marker gift-step-marker-blank">
+  //                     <span>
+  //                       <img src={Endimage} alt="Endimage" width="50" />
+  //                     </span>
+  //                   </div>
+  //                   <div className="gift-step-content">
+  //                     <div className="gift-step-name">End Point</div>
+  //                   </div>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+
+  //       {/* Show details only for eligible gift */}
+  //       {/* {eligibleGift && (
+  //         <div className="p-3 border-top">
+  //           <h6 className="mb-3">Eligible Gift Details:</h6>
+  //           <Row>
+  //             <Col sm={2} className="mb-2">
+  //               <div>
+  //                 <div className="text-muted">Start Date:</div>
+  //                 <div className="text-danger fw-bold">
+  //                   {eligibleGift.date_from || eligibleGiftData?.gift_date_from || "-"}
+  //                 </div>
+  //               </div>
+  //             </Col>
+
+  //             <Col sm={2} className="mb-2">
+  //               <div>
+  //                 <div className="text-muted">End Date:</div>
+  //                 <div className="text-success fw-bold">
+  //                   {eligibleGift.date_to || eligibleGiftData?.gift_date_to || "-"}
+  //                 </div>
+  //               </div>
+  //             </Col>
+
+  //             <Col sm={2} className="mb-2">
+  //               <div>
+  //                 <div className="text-muted">Payment Days:</div>
+  //                 <div className="text-danger fw-bold">
+  //                   {eligibleGift.closing_days || eligibleGiftData?.closing_days || "-"}
+  //                 </div>
+  //               </div>
+  //             </Col>
+
+  //             <Col sm={3} className="mb-2">
+  //               <div>
+  //                 <div className="text-muted">Terms & Conditions:</div>
+  //                 <div className="text-danger">
+  //                   {eligibleGift.terms_conditions || "-"}
+  //                 </div>
+  //               </div>
+  //             </Col>
+
+  //             <Col sm={3} className="mb-2">
+  //               <div>
+  //                 <div className="text-muted">Project Name:</div>
+  //                 <div className="text-success fw-bold">
+  //                   {eligibleGift.offer_project_name || eligibleGiftData?.project_name || "-"}
+  //                 </div>
+  //               </div>
+  //             </Col>
+  //           </Row>
+  //           {eligibleGiftData && (
+  //             <Row className="mt-3">
+  //               <Col sm={12}>
+  //                 <div className="alert alert-success">
+  //                   <strong>Status:</strong> {eligibleGiftData.status} <br />
+  //                   <strong>Qualifying Lead Date:</strong> {eligibleGiftData.qualifying_lead_date} <br />
+  //                   <strong>Closing Date:</strong> {formatDate(eligibleGiftData.closing_date)} <br />
+  //                   <strong>Days Completed:</strong> {eligibleGiftData.days_completed} <br />
+  //                   <strong>Days Remaining:</strong> {eligibleGiftData.days_remaining}
+  //                 </div>
+  //               </Col>
+  //             </Row>
+  //           )}
+  //         </div>
+  //       )} */}
+
+  //       {giftList.length > 0 ? (
+  //         <Table bordered hover responsive className="mt-3">
+  //           <thead className="table-light">
+  //             <tr>
+  //               <th>#</th>
+  //               <th>Start Date</th>
+  //               <th>End Date</th>
+  //               <th>Payment Days</th>
+  //               <th>Terms & Conditions</th>
+  //               <th>Offer Project Name</th>
+  //             </tr>
+  //           </thead>
+  //           <tbody>
+  //             {giftList.map((data, index) => (
+  //               <tr key={index}>
+  //                 <td>{index + 1}</td>
+
+  //                 <td className="text-danger">{data.date_from}</td>
+
+  //                 <td className="text-success">{data.date_to}</td>
+
+  //                 <td className="text-danger">{data?.closing_days || "N/A"}</td>
+
+  //                 <td className="text-danger">{data.terms_conditions}</td>
+
+  //                 <td className="text-success">
+  //                   <div className="table-cell-remark">
+  //                     {data.offer_project_name}
+  //                   </div>
+  //                 </td>
+  //               </tr>
+  //             ))}
+  //           </tbody>
+  //         </Table>
+  //       ) : (
+  //         <NoDataMessage message="Sorry, no team eligibility date data found" />
+  //       )}
+
+  //       {/* If no eligible gift found */}
+  //       {!eligibleGift && eligibilityData.length === 0 && (
+  //         <div className="text-center py-4">
+  //           <div className="alert alert-warning">
+  //             No eligible gift found. You need to achieve{" "}
+  //             {giftList[0]?.area_sqyd || 0} SQYD to qualify for the first gift.
+  //           </div>
+  //         </div>
+  //       )}
+  //     </div>
+  //   );
+  // };
+
   const GiftProgressBar = () => {
     if (loadingGifts) {
       return (
@@ -1232,30 +1484,16 @@ const Dashboard = ({ userType }) => {
       );
     }
 
-    if (giftList.length === 0) {
-      return <NoDataMessage message="Sorry, no gift data found" />;
-    }
+    // SHOW STRUCTURE EVEN WHEN NO DATA - Changed from showing NoDataMessage
+    const displayGiftList = giftList.length === 0 ? [
+      { id: 1, offer_name: "Demo Gift 1", offer_item: "Gift Item", area_sqyd: 100, terms_conditions: "Sample terms", date_from: "-", date_to: "-", closing_days: "-", offer_project_name: "-" },
+      { id: 2, offer_name: "Demo Gift 2", offer_item: "Gift Item", area_sqyd: 200, terms_conditions: "Sample terms", date_from: "-", date_to: "-", closing_days: "-", offer_project_name: "-" },
+      { id: 3, offer_name: "Demo Gift 3", offer_item: "Gift Item", area_sqyd: 300, terms_conditions: "Sample terms", date_from: "-", date_to: "-", closing_days: "-", offer_project_name: "-" }
+    ] : giftList;
 
+    const displayEligibilityData = eligibilityData.length === 0 ? [{ achieved_area: "0", status: "Not Eligible" }] : eligibilityData;
     const currentSqyd = parseFloat(achievedArea) || 0;
-    const maxSqyd =
-      parseFloat(giftList[giftList.length - 1]?.area_sqyd) ||
-      Math.max(...giftList.map((g) => parseFloat(g.area_sqyd)));
-
-    // Find the eligible gift based on API response
-    const eligibleGiftData = eligibilityData.find(
-      (item) => item.status === "Eligible",
-    );
-    const eligibleGift = giftList.find(
-      (gift) =>
-        gift.offer_name === eligibleGiftData?.gift_name &&
-        gift.offer_item === eligibleGiftData?.gift_item,
-    );
-
-    // Get qualifying gift's SQYD requirement
-    const qualifyingSqyd = eligibleGift
-      ? parseFloat(eligibleGift.area_sqyd)
-      : 0;
-    const achieved_at = eligibleGift ? parseFloat(eligibleGift.achieved_at) : 0;
+    const maxSqyd = displayGiftList.length > 0 ? parseFloat(displayGiftList[displayGiftList.length - 1]?.area_sqyd) || 300 : 300;
 
     return (
       <div className="gift-progress-wrapper">
@@ -1264,28 +1502,16 @@ const Dashboard = ({ userType }) => {
             <FaGift className="gift-title-icon" />
             Self Gift Progress
           </h5>
-          {eligibilityData.length > 0 ? (
-            eligibilityData.map((data, index) => (
-              <div key={index} className="mt-2 w-50">
-                <Row>
-                  <Col sm={12} className="mb-3 text-end">
-                    <div className="fs-5 d-block">Current</div>
-                    <span className="text-success">
-                      {data.achieved_area || "0"} SQYD
-                    </span>
-                  </Col>
-                  {/* <Col sm={6} className="mb-3">
-                    <div className="fs-5">
-                      Achieved Area
-                    </div>
-                    <small className="text-success d-block">  {data.achieved_area || "0"} SQYD</small>
-                  </Col> */}
-                </Row>
-              </div>
-            ))
-          ) : (
-            <NoDataMessage message="Sorry, no eligibility data found" />
-          )}
+          <div className="mt-2 w-50">
+            <Row>
+              <Col sm={12} className="mb-3 text-end">
+                <div className="fs-5 d-block">Current</div>
+                <span className="text-success">
+                  {displayEligibilityData[0]?.achieved_area || "0"} SQYD
+                </span>
+              </Col>
+            </Row>
+          </div>
         </div>
 
         <div className="gift-progress-container">
@@ -1310,697 +1536,27 @@ const Dashboard = ({ userType }) => {
                   </div>
                 </div>
 
-                {/* {giftList.map((gift, index) => {
-                  const giftSqyd = parseFloat(gift.area_sqyd);
-                  const isEligibleGift = eligibleGift && gift.id === eligibleGift.id;
-                  const isCompleted = currentSqyd >= giftSqyd;
-                  if (isEligibleGift || giftSqyd <= qualifyingSqyd) {
-                    return (
-                      <div
-                        key={gift.id || index}
-                        className={`gift-step-flex-item ${isEligibleGift ? 'gift-step-current' : ''} ${isCompleted ? 'gift-step-completed' : ''}`}
-                      >
-                        <div className="gift-step-content-wrapper">
-                          <div className={`gift-step-marker ovel ${isEligibleGift ? 'ggift-step-marker-current bg-success' : 'bg-danger'}`}>
-                            {isEligibleGift ? 'Qualified' : "Unqualified"}
-                          </div>
-                          <div className="gift-step-content">
-                            <div className="gift-step-name">{gift.offer_name || `Gift ${index + 1}`}</div>
-                            <div className="gift-step-target">{gift.offer_item || `Gift ${index + 1}`}</div>
-                            <div className="gift-step-target text-dark"><strong>{giftSqyd} </strong>SQYD</div>
-
-                            {isEligibleGift && eligibleGiftData && (
-                              <div className="gift-step-achieved">
-                                <div>{eligibleGiftData?.project_name || "NA"}</div>
-                                <div>{formatDate(eligibleGiftData?.status_date)}</div>
-                                <small className="text-success">Eligible</small>
-                              </div>
-                            )}
-                            {!isEligibleGift && isCompleted && (
-                              <div className="gift-step-achieved">
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  }
-                  return null;
-                })} */}
-
-                {giftList.map((gift, index) => {
+                {displayGiftList.map((gift, index) => {
                   const giftSqyd = parseFloat(gift.area_sqyd || 0);
-                  const isEligibleGift = eligibleGift?.id === gift.id;
                   const isCompleted = currentSqyd >= giftSqyd;
 
                   return (
                     <div
-                      key={gift.id}
-                      className={`gift-step-flex-item 
-        ${isEligibleGift ? "gift-step-current" : ""} 
-        ${isCompleted ? "gift-step-completed" : ""}`}
+                      key={gift.id || index}
+                      className={`gift-step-flex-item ${isCompleted ? "gift-step-completed" : ""}`}
                     >
                       <div className="gift-step-content-wrapper">
-                        <div
-                          className={`gift-step-marker ovel ${isCompleted ? "bg-success" : "bg-danger"
-                            }`}
-                        >
+                        <div className={`gift-step-marker ovel ${isCompleted ? "bg-success" : "bg-danger"}`}>
                           {isCompleted ? "Qualified" : "Unqualified"}
                         </div>
-
                         <div className="gift-step-content">
-                          <div className="gift-step-name">
-                            {gift.offer_name}
-                          </div>
-                          <div className="gift-step-target">
-                            {gift.offer_item}
-                          </div>
+                          <div className="gift-step-name">{gift.offer_name || `Gift ${index + 1}`}</div>
+                          <div className="gift-step-target">{gift.offer_item || `Gift Item ${index + 1}`}</div>
                           <div className="gift-step-target text-dark">
                             <strong>{giftSqyd}</strong> SQYD
                           </div>
-
                           <div className="gift-step-target gift_content">
-                            {gift.terms_conditions}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {/* Show end point if we have qualifying gift */}
-                {qualifyingSqyd > 0 && (
-                  <div className="gift-step-flex-item gift-step-blank">
-                    <div className="gift-step-content-wrapper">
-                      <div className="gift-step-marker gift-step-marker-blank">
-                        <span>
-                          <img src={Endimage} alt="Endimage" width="50" />
-                        </span>
-                      </div>
-                      <div className="gift-step-content">
-                        <div className="gift-step-target">{maxSqyd} SQYD</div>
-                      </div>
-
-                      <div className="gift-step-content">
-                        <div className="gift-step-target">{achieved_at} </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                <div className="gift-step-flex-item gift-step-blank">
-                  <div className="gift-step-content-wrapper">
-                    <div className="gift-step-marker gift-step-marker-blank">
-                      <span>
-                        <img src={Endimage} alt="Endimage" width="50" />
-                      </span>
-                    </div>
-                    <div className="gift-step-content">
-                      <div className="gift-step-name">End Point</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Show details only for eligible gift */}
-        {/* {eligibleGift && (
-          <div className="p-3 border-top">
-            <h6 className="mb-3">Eligible Gift Details:</h6>
-            <Row>
-              <Col sm={2} className="mb-2">
-                <div>
-                  <div className="text-muted">Start Date:</div>
-                  <div className="text-danger fw-bold">
-                    {eligibleGift.date_from || eligibleGiftData?.gift_date_from || "-"}
-                  </div>
-                </div>
-              </Col>
-
-              <Col sm={2} className="mb-2">
-                <div>
-                  <div className="text-muted">End Date:</div>
-                  <div className="text-success fw-bold">
-                    {eligibleGift.date_to || eligibleGiftData?.gift_date_to || "-"}
-                  </div>
-                </div>
-              </Col>
-
-              <Col sm={2} className="mb-2">
-                <div>
-                  <div className="text-muted">Payment Days:</div>
-                  <div className="text-danger fw-bold">
-                    {eligibleGift.closing_days || eligibleGiftData?.closing_days || "-"}
-                  </div>
-                </div>
-              </Col>
-
-              <Col sm={3} className="mb-2">
-                <div>
-                  <div className="text-muted">Terms & Conditions:</div>
-                  <div className="text-danger">
-                    {eligibleGift.terms_conditions || "-"}
-                  </div>
-                </div>
-              </Col>
-
-              <Col sm={3} className="mb-2">
-                <div>
-                  <div className="text-muted">Project Name:</div>
-                  <div className="text-success fw-bold">
-                    {eligibleGift.offer_project_name || eligibleGiftData?.project_name || "-"}
-                  </div>
-                </div>
-              </Col>
-            </Row>
-            {eligibleGiftData && (
-              <Row className="mt-3">
-                <Col sm={12}>
-                  <div className="alert alert-success">
-                    <strong>Status:</strong> {eligibleGiftData.status} <br />
-                    <strong>Qualifying Lead Date:</strong> {eligibleGiftData.qualifying_lead_date} <br />
-                    <strong>Closing Date:</strong> {formatDate(eligibleGiftData.closing_date)} <br />
-                    <strong>Days Completed:</strong> {eligibleGiftData.days_completed} <br />
-                    <strong>Days Remaining:</strong> {eligibleGiftData.days_remaining}
-                  </div>
-                </Col>
-              </Row>
-            )}
-          </div>
-        )} */}
-
-        {giftList.length > 0 ? (
-          <Table bordered hover responsive className="mt-3">
-            <thead className="table-light">
-              <tr>
-                <th>#</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Payment Days</th>
-                <th>Terms & Conditions</th>
-                <th>Offer Project Name</th>
-              </tr>
-            </thead>
-            <tbody>
-              {giftList.map((data, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-
-                  <td className="text-danger">{data.date_from}</td>
-
-                  <td className="text-success">{data.date_to}</td>
-
-                  <td className="text-danger">{data?.closing_days || "N/A"}</td>
-
-                  <td className="text-danger">{data.terms_conditions}</td>
-
-                  <td className="text-success">
-                    <div className="table-cell-remark">
-                      {data.offer_project_name}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        ) : (
-          <NoDataMessage message="Sorry, no team eligibility date data found" />
-        )}
-
-        {/* If no eligible gift found */}
-        {!eligibleGift && eligibilityData.length === 0 && (
-          <div className="text-center py-4">
-            <div className="alert alert-warning">
-              No eligible gift found. You need to achieve{" "}
-              {giftList[0]?.area_sqyd || 0} SQYD to qualify for the first gift.
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  // Team Gift Progress Component
-  const TeamProgressBar = () => {
-    if (loadingTeamGifts) {
-      return (
-        <div className="gift-progress-loading">
-          <div className="gift-spinner" role="status">
-            <span className="gift-spinner-text">Loading team gifts...</span>
-          </div>
-          <p className="gift-loading-text">Loading team gift progress...</p>
-        </div>
-      );
-    }
-
-    if (giftTeamList.length === 0) {
-      return <NoDataMessage message="Sorry, no team gift data found" />;
-    }
-
-    const currentTeamSqyd = parseFloat(TeamAchievedTeamArea) || 0;
-    const maxTeamSqyd =
-      parseFloat(giftTeamList[giftTeamList.length - 1]?.area_sqyd) ||
-      Math.max(...giftTeamList.map((g) => parseFloat(g.area_sqyd)));
-
-    return (
-      <div className="gift-progress-wrapper">
-        <div className="gift-progress-header">
-          <h5 className="gift-progress-title">
-            <FaUsers className="gift-title-icon" />
-            Team Gift Progress
-          </h5>
-          {teameligibilityData.length > 0 ? (
-            <div className="mt-2 w-50">
-              <Row className="text-end">
-                <Col sm={12} className="mb-3">
-                  <div>
-                    <div className="fs-5">Current</div>
-                    <small className="text-success d-block">
-                      {currentTeamSqyd} SQYD
-                    </small>
-                    {/* <span className="gift-current-badge d-block mt-1">
-                      Current Progress
-                    </span> */}
-                  </div>
-                </Col>
-                <Col sm={6} className="mb-3">
-                  <div>
-                    {/* <div className="fs-5">Target Area</div>
-                    <small className=" text-info d-block">
-                      {maxTeamSqyd} SQYD
-                    </small> */}
-                    {/* <span className="gift-target-badge d-block mt-1">
-                      Final Goal
-                    </span> */}
-                  </div>
-                </Col>
-              </Row>
-            </div>
-          ) : (
-            <NoDataMessage message="Sorry, no team eligibility data found" />
-          )}
-        </div>
-
-        <div className="gift-progress-container">
-          <div className="gift-progress-track">
-            <div className="gift-progress-line">
-              <div
-                className="gift-progress-fill"
-                style={{
-                  width: `${Math.min(100, (currentTeamSqyd / maxTeamSqyd) * 100)}%`,
-                }}
-              ></div>
-            </div>
-
-            <div className="gift-steps-scroll-container">
-              <div className="gift-steps-flex-container">
-                <div className="gift-step-flex-item gift-step-blank">
-                  <div className="gift-step-content-wrapper">
-                    <div className="gift-step-marker gift-step-marker-blank">
-                      <span>
-                        <img src={Start} alt="Start" width="50" />
-                      </span>
-                    </div>
-                    <div className="gift-step-content">
-                      <div className="gift-step-name">Start Point</div>
-                      <div className="gift-step-target">0 SQYD</div>
-                    </div>
-                  </div>
-                </div>
-
-                {giftTeamList.map((gift, index) => {
-                  const giftSqyd = parseFloat(gift.area_sqyd);
-                  const isCompleted = currentTeamSqyd >= giftSqyd;
-                  const isCurrent =
-                    currentTeamSqyd < giftSqyd &&
-                    (index === 0 ||
-                      currentTeamSqyd >=
-                      parseFloat(giftTeamList[index - 1]?.area_sqyd));
-                  const progressPercentage = Math.min(
-                    100,
-                    (currentTeamSqyd / giftSqyd) * 100,
-                  );
-
-                  return (
-                    <>
-                      <div
-                        key={gift.id || index}
-                        className={`gift-step-flex-item ${isCompleted ? "gift-step-completed" : ""} ${isCurrent ? "gift-step-current" : ""}`}
-                      >
-                        <div className="gift-step-content-wrapper">
-                          <div
-                            className={`gift-step-marker ovel ${isCompleted
-                              ? "gift-step-marker-completed bg-success text-white"
-                              : isCurrent
-                                ? "gift-step-marker-current bg-danger text-white"
-                                : "bg-danger text-white"
-                              }`}
-                          >
-                            {isCompleted ? "Qualified" : "Unqualified"}
-                          </div>
-                          <div className="gift-step-content">
-                            <div className="gift-step-name">
-                              {gift.offer_name || `Team Gift ${index + 1}`}
-                            </div>
-                            <div className="gift-step-target">
-                              {gift.offer_item || `Team Reward ${index + 1}`}
-                            </div>
-                            <div className="gift-step-sqyd text-dark">
-                              <strong>{giftSqyd} SQYD</strong>
-                            </div>
-                            {isCompleted && (
-                              <div className="gift-step-achieved">
-                                {/* <small>Completed!</small> */}
-                                <div>
-                                  {teameligibilityData?.[0]?.project_name ||
-                                    "-NA-"}
-                                </div>
-                                {/* <div>{teameligibilityData?.[0]?.qualify_date || "-NA-"}</div> */}
-                                <div>
-                                  {formatDate(
-                                    teameligibilityData?.[0]?.achieved_at,
-                                  )}
-                                </div>
-                              </div>
-                            )}
-                            {isCurrent && (
-                              <div className="gift-step-progress">
-                                <div className="gift-step-progress-bar">
-                                  <div
-                                    className="gift-step-progress-fill"
-                                    style={{ width: `${progressPercentage}%` }}
-                                  ></div>
-                                </div>
-                                {/* <small>{progressPercentage.toFixed(1)}%</small> */}
-                              </div>
-                            )}
-                            <div className="gift-step-target gift_content">
-                              {gift.terms_conditions}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  );
-                })}
-
-                <div className="gift-step-flex-item gift-step-blank">
-                  <div className="gift-step-content-wrapper">
-                    <div className="gift-step-marker gift-step-marker-blank">
-                      <span>
-                        <img src={Endimage} alt="End" width="50" />
-                      </span>
-                    </div>
-                    <div className="gift-step-content">
-                      <div className="gift-step-name">End Point</div>
-                      <div className="gift-step-target">{maxTeamSqyd} SQYD</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {giftTeamList.length > 0 ? (
-          <Table bordered hover responsive className="mt-3">
-            <thead className="table-light">
-              <tr>
-                <th>#</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Payment Days</th>
-                <th>Terms & Conditions</th>
-                <th>Offer Project Name</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {giftTeamList.map((data, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-
-                  <td className="text-danger">{data.date_from}</td>
-
-                  <td className="text-success">{data.date_to}</td>
-
-                  <td className="text-danger">{data?.closing_days || "N/A"}</td>
-
-                  <td className="text-danger">{data.terms_conditions}</td>
-
-                  <td className="text-success">
-                    <div className="table-cell-remark">
-                      {data.offer_project_name}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        ) : (
-          <NoDataMessage message="Sorry, no team eligibility date data found" />
-        )}
-      </div>
-    );
-  };
-
-  const LifetimeRewardsProgressBar = () => {
-    if (loadingLifetimeRewards || loadingLifetimeEligibility) {
-      return (
-        <div className="gift-progress-loading">
-          <div className="gift-spinner" role="status">
-            <span className="gift-spinner-text">
-              Loading lifetime Rewards...
-            </span>
-          </div>
-          <p className="gift-loading-text">
-            Loading lifetime Rewards progress...
-          </p>
-        </div>
-      );
-    }
-
-    if (lifetimeRewardsList.length === 0) {
-      return <NoDataMessage message="Sorry, no lifetime Rewards data found" />;
-    }
-
-    const eligibilityData =
-      lifetimeEligibilityData.length > 0 ? lifetimeEligibilityData[0] : null;
-
-    const currentSqyd =
-      eligibilityData?.rewards && eligibilityData.rewards.length > 0
-        ? Math.max(
-          ...eligibilityData.rewards.map((r) => parseFloat(r.totalArea || 0)),
-        )
-        : 0;
-
-    const maxSqyd =
-      parseFloat(
-        lifetimeRewardsList[lifetimeRewardsList.length - 1]?.area_sqyd,
-      ) || Math.max(...lifetimeRewardsList.map((g) => parseFloat(g.area_sqyd)));
-
-    const eligibleRewardAreas = eligibilityData?.rewards
-      ? new Set(
-        eligibilityData.rewards.map((r) => parseFloat(r.reward.area_sqyd)),
-      )
-      : new Set();
-
-    const highestEligibleReward =
-      eligibilityData?.rewards && eligibilityData.rewards.length > 0
-        ? eligibilityData.rewards.reduce(
-          (max, reward) =>
-            parseFloat(reward.reward.area_sqyd) >
-              parseFloat(max.reward.area_sqyd)
-              ? reward
-              : max,
-          eligibilityData.rewards[0],
-        )
-        : null;
-
-    return (
-      <div className="gift-progress-wrapper">
-        <div className="gift-progress-header">
-          <h5 className="gift-progress-title">
-            <FaGift className="gift-title-icon" />
-            Lifetime Rewards Progress
-          </h5>
-
-          {eligibilityData ? (
-            <div className="mt-2">
-              <Row className="text-end">
-                <Col sm={12} className="mb-3">
-                  <div className="fs-5">Current Team Area</div>
-                  <small className="text-success d-block">
-                    {currentSqyd.toFixed(2)} SQYD
-                  </small>
-                </Col>
-              </Row>
-
-              {/* Show eligible rewards summary */}
-              {eligibilityData.rewards &&
-                eligibilityData.rewards.length > 0 && (
-                  <div className="mt-2 p-2 bg-light rounded">
-                    <h6 className="text-success mb-2">
-                      🏆 You are eligible for {eligibilityData.rewards.length}{" "}
-                      Rewards!
-                    </h6>
-                    <div className="small">
-                      {eligibilityData.rewards.map((reward, idx) => (
-                        <div
-                          key={idx}
-                          className="d-flex justify-content-between border-bottom py-1"
-                        >
-                          <span>{reward.reward.offer_item}</span>
-                          <span className="text-primary">
-                            ₹{reward.reward.item_amount?.toLocaleString()}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-            </div>
-          ) : (
-            <NoDataMessage message="Sorry, no lifetime Rewards eligibility data found" />
-          )}
-        </div>
-
-        <div className="gift-progress-container">
-          <div className="gift-progress-track">
-            <div className="gift-progress-line">
-              <div className="gift-progress-fill"></div>
-            </div>
-
-            <div className="gift-steps-scroll-container">
-              <div className="gift-steps-flex-container">
-                <div className="gift-step-flex-item gift-step-blank">
-                  <div className="gift-step-content-wrapper">
-                    <div className="gift-step-marker gift-step-marker-blank">
-                      <span>
-                        <img src={Start} alt="Start" width="50" />
-                      </span>
-                    </div>
-                    <div className="gift-step-content">
-                      <div className="gift-step-name">Start Point</div>
-                      <div className="gift-step-target">0 SQYD</div>
-                    </div>
-                  </div>
-                </div>
-
-                {lifetimeRewardsList.map((reward, index) => {
-                  const rewardSqyd = parseFloat(reward.area_sqyd);
-                  const isCompleted = currentSqyd >= rewardSqyd;
-                  const isEligible = eligibleRewardAreas.has(rewardSqyd);
-
-                  const matchingReward =
-                    isEligible && eligibilityData?.rewards
-                      ? eligibilityData.rewards.find(
-                        (r) => parseFloat(r.reward.area_sqyd) === rewardSqyd,
-                      )
-                      : null;
-
-                  return (
-                    <div
-                      key={reward.id || index}
-                      className={`gift-step-flex-item 
-                      ${isCompleted ? "gift-step-completed" : ""} 
-                      ${isEligible ? "gift-step-current" : ""}`}
-                    >
-                      <div className="gift-step-content-wrapper">
-                        <div className="gift-step-target gift_content mb-2">
-                          <ul className="leg_content">
-                            {legData.map((item, index) => (
-                              <li key={index}>
-                                <span className="text_leg">{item.leg} :</span>
-                                {item.amount} - {item.value}
-                                <span
-                                  className={`status ${item.status}`}
-                                  style={{
-                                    marginLeft: "10px",
-                                    color:
-                                      item.status === "active"
-                                        ? "green"
-                                        : "red",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  {item.status === "active"
-                                    ? "Active"
-                                    : "Inactive"}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        <div
-                          className={`gift-step-marker ovel ${isEligible
-                            ? "bg-success"
-                            : isCompleted
-                              ? "bg-warning"
-                              : "bg-danger"
-                            } text-white`}
-                        >
-                          {isEligible
-                            ? "Eligible"
-                            : isCompleted
-                              ? "Qualified"
-                              : "Not Qualified"}
-                        </div>
-                        <div className="gift-step-content">
-                          <div className="gift-step-name">
-                            {reward.offer_name ||
-                              `Lifetime Rewards ${index + 1}`}
-                          </div>
-                          <div className="gift-step-target">
-                            {reward.offer_item || `Rewards ${index + 1}`}
-                          </div>
-                          <div className="gift-step-target text-dark">
-                            <strong>{rewardSqyd} </strong>SQYD
-                          </div>
-
-                          {matchingReward && (
-                            <div className="gift-step-target text-success">
-                              <strong>
-                                Date:{" "}
-                                {(() => {
-                                  const d = new Date(
-                                    matchingReward.achievementDate,
-                                  );
-                                  const day = String(d.getDate()).padStart(
-                                    2,
-                                    "0",
-                                  );
-                                  const month = String(
-                                    d.getMonth() + 1,
-                                  ).padStart(2, "0");
-                                  const year = d.getFullYear();
-                                  return `${day}-${month}-${year}`;
-                                })()}
-                              </strong>
-                            </div>
-                          )}
-
-                          {reward.item_amount && (
-                            <div className="gift-step-target text-primary">
-                              <strong>
-                                ₹
-                                {parseFloat(
-                                  reward.item_amount,
-                                ).toLocaleString()}
-                              </strong>
-                            </div>
-                          )}
-
-                          {isEligible && matchingReward && (
-                            <div className="gift-step-target text-success small">
-                              ✓ You've earned this reward!
-                            </div>
-                          )}
-
-                          <div className="gift-step-target gift_content">
-                            {reward.terms_conditions}
+                            {gift.terms_conditions || "Sample terms & conditions"}
                           </div>
                         </div>
                       </div>
@@ -2026,62 +1582,724 @@ const Dashboard = ({ userType }) => {
           </div>
         </div>
 
-        {/* Eligible Rewards Details Section */}
-        {eligibilityData?.rewards && eligibilityData.rewards.length > 0 && (
-          <div className="p-3 border-top bg-light">
-            <h6 className="mb-3">
-              🎁 Your Eligible Rewards ({eligibilityData.rewards.length})
-            </h6>
-            <Row>
-              {eligibilityData.rewards.map((rewardItem, idx) => (
-                <Col md={4} key={idx} className="mb-3">
-                  <div className="border rounded p-2 h-100">
-                    <div className="fw-bold text-success">
-                      {rewardItem.reward.offer_item}
-                    </div>
-                    <div className="small">
-                      <div>
-                        <strong>Area:</strong> {rewardItem.reward.area_sqyd}{" "}
-                        SQYD
-                      </div>
-                      <div>
-                        <strong>Value:</strong> ₹
-                        {parseFloat(
-                          rewardItem.reward.item_amount,
-                        ).toLocaleString()}
-                      </div>
-                      {/* <div><strong>Achieved:</strong> {new Date(rewardItem.achievementDate).toLocaleDateString()}</div> */}
-
-                      <div className="gift-step-target text-success">
-                        <strong>
-                          Date:{" "}
-                          {(() => {
-                            const d = new Date(rewardItem.achievementDate);
-                            const day = String(d.getDate()).padStart(2, "0");
-                            const month = String(d.getMonth() + 1).padStart(
-                              2,
-                              "0",
-                            );
-                            const year = d.getFullYear();
-                            return `${day}-${month}-${year}`;
-                          })()}
-                        </strong>
-                      </div>
-
-                      <div className="mt-1">
-                        <strong>Your Team Area:</strong>{" "}
-                        {rewardItem.totalArea.toFixed(2)} SQYD
-                      </div>
-                    </div>
+        {/* Always show table structure */}
+        <Table bordered hover responsive className="mt-3">
+          <thead className="table-light">
+            <tr>
+              <th>#</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Payment Days</th>
+              <th>Terms & Conditions</th>
+              <th>Offer Project Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {displayGiftList.map((data, index) => (
+              <tr key={index}>
+                <td>{index + 1}</td>
+                <td className="text-danger">{data.date_from || "-"}</td>
+                <td className="text-success">{data.date_to || "-"}</td>
+                <td className="text-danger">{data?.closing_days || "N/A"}</td>
+                <td className="text-danger">{data.terms_conditions || "-"}</td>
+                <td className="text-success">
+                  <div className="table-cell-remark">
+                    {data.offer_project_name || "-"}
                   </div>
-                </Col>
-              ))}
-            </Row>
-          </div>
-        )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
       </div>
     );
   };
+
+    //old code commented 25-04-2026
+  // Team Gift Progress Component
+  // const TeamProgressBar = () => {
+  //   if (loadingTeamGifts) {
+  //     return (
+  //       <div className="gift-progress-loading">
+  //         <div className="gift-spinner" role="status">
+  //           <span className="gift-spinner-text">Loading team gifts...</span>
+  //         </div>
+  //         <p className="gift-loading-text">Loading team gift progress...</p>
+  //       </div>
+  //     );
+  //   }
+
+  //   if (giftTeamList.length === 0) {
+  //     return <NoDataMessage message="Sorry, no team gift data found" />;
+  //   }
+
+  //   const currentTeamSqyd = parseFloat(TeamAchievedTeamArea) || 0;
+  //   const maxTeamSqyd =
+  //     parseFloat(giftTeamList[giftTeamList.length - 1]?.area_sqyd) ||
+  //     Math.max(...giftTeamList.map((g) => parseFloat(g.area_sqyd)));
+
+  //   return (
+  //     <div className="gift-progress-wrapper">
+  //       <div className="gift-progress-header">
+  //         <h5 className="gift-progress-title">
+  //           <FaUsers className="gift-title-icon" />
+  //           Team Gift Progress
+  //         </h5>
+  //         {teameligibilityData.length > 0 ? (
+  //           <div className="mt-2 w-50">
+  //             <Row className="text-end">
+  //               <Col sm={12} className="mb-3">
+  //                 <div>
+  //                   <div className="fs-5">Current</div>
+  //                   <small className="text-success d-block">
+  //                     {currentTeamSqyd} SQYD
+  //                   </small>
+  //                   {/* <span className="gift-current-badge d-block mt-1">
+  //                     Current Progress
+  //                   </span> */}
+  //                 </div>
+  //               </Col>
+  //               <Col sm={6} className="mb-3">
+  //                 <div>
+  //                   {/* <div className="fs-5">Target Area</div>
+  //                   <small className=" text-info d-block">
+  //                     {maxTeamSqyd} SQYD
+  //                   </small> */}
+  //                   {/* <span className="gift-target-badge d-block mt-1">
+  //                     Final Goal
+  //                   </span> */}
+  //                 </div>
+  //               </Col>
+  //             </Row>
+  //           </div>
+  //         ) : (
+  //           <NoDataMessage message="Sorry, no team eligibility data found" />
+  //         )}
+  //       </div>
+
+  //       <div className="gift-progress-container">
+  //         <div className="gift-progress-track">
+  //           <div className="gift-progress-line">
+  //             <div
+  //               className="gift-progress-fill"
+  //               style={{
+  //                 width: `${Math.min(100, (currentTeamSqyd / maxTeamSqyd) * 100)}%`,
+  //               }}
+  //             ></div>
+  //           </div>
+
+  //           <div className="gift-steps-scroll-container">
+  //             <div className="gift-steps-flex-container">
+  //               <div className="gift-step-flex-item gift-step-blank">
+  //                 <div className="gift-step-content-wrapper">
+  //                   <div className="gift-step-marker gift-step-marker-blank">
+  //                     <span>
+  //                       <img src={Start} alt="Start" width="50" />
+  //                     </span>
+  //                   </div>
+  //                   <div className="gift-step-content">
+  //                     <div className="gift-step-name">Start Point</div>
+  //                     <div className="gift-step-target">0 SQYD</div>
+  //                   </div>
+  //                 </div>
+  //               </div>
+
+  //               {giftTeamList.map((gift, index) => {
+  //                 const giftSqyd = parseFloat(gift.area_sqyd);
+  //                 const isCompleted = currentTeamSqyd >= giftSqyd;
+  //                 const isCurrent =
+  //                   currentTeamSqyd < giftSqyd &&
+  //                   (index === 0 ||
+  //                     currentTeamSqyd >=
+  //                     parseFloat(giftTeamList[index - 1]?.area_sqyd));
+  //                 const progressPercentage = Math.min(
+  //                   100,
+  //                   (currentTeamSqyd / giftSqyd) * 100,
+  //                 );
+
+  //                 return (
+  //                   <>
+  //                     <div
+  //                       key={gift.id || index}
+  //                       className={`gift-step-flex-item ${isCompleted ? "gift-step-completed" : ""} ${isCurrent ? "gift-step-current" : ""}`}
+  //                     >
+  //                       <div className="gift-step-content-wrapper">
+  //                         <div
+  //                           className={`gift-step-marker ovel ${isCompleted
+  //                             ? "gift-step-marker-completed bg-success text-white"
+  //                             : isCurrent
+  //                               ? "gift-step-marker-current bg-danger text-white"
+  //                               : "bg-danger text-white"
+  //                             }`}
+  //                         >
+  //                           {isCompleted ? "Qualified" : "Unqualified"}
+  //                         </div>
+  //                         <div className="gift-step-content">
+  //                           <div className="gift-step-name">
+  //                             {gift.offer_name || `Team Gift ${index + 1}`}
+  //                           </div>
+  //                           <div className="gift-step-target">
+  //                             {gift.offer_item || `Team Reward ${index + 1}`}
+  //                           </div>
+  //                           <div className="gift-step-sqyd text-dark">
+  //                             <strong>{giftSqyd} SQYD</strong>
+  //                           </div>
+  //                           {isCompleted && (
+  //                             <div className="gift-step-achieved">
+  //                               {/* <small>Completed!</small> */}
+  //                               <div>
+  //                                 {teameligibilityData?.[0]?.project_name ||
+  //                                   "-NA-"}
+  //                               </div>
+  //                               {/* <div>{teameligibilityData?.[0]?.qualify_date || "-NA-"}</div> */}
+  //                               <div>
+  //                                 {formatDate(
+  //                                   teameligibilityData?.[0]?.achieved_at,
+  //                                 )}
+  //                               </div>
+  //                             </div>
+  //                           )}
+  //                           {isCurrent && (
+  //                             <div className="gift-step-progress">
+  //                               <div className="gift-step-progress-bar">
+  //                                 <div
+  //                                   className="gift-step-progress-fill"
+  //                                   style={{ width: `${progressPercentage}%` }}
+  //                                 ></div>
+  //                               </div>
+  //                               {/* <small>{progressPercentage.toFixed(1)}%</small> */}
+  //                             </div>
+  //                           )}
+  //                           <div className="gift-step-target gift_content">
+  //                             {gift.terms_conditions}
+  //                           </div>
+  //                         </div>
+  //                       </div>
+  //                     </div>
+  //                   </>
+  //                 );
+  //               })}
+
+  //               <div className="gift-step-flex-item gift-step-blank">
+  //                 <div className="gift-step-content-wrapper">
+  //                   <div className="gift-step-marker gift-step-marker-blank">
+  //                     <span>
+  //                       <img src={Endimage} alt="End" width="50" />
+  //                     </span>
+  //                   </div>
+  //                   <div className="gift-step-content">
+  //                     <div className="gift-step-name">End Point</div>
+  //                     <div className="gift-step-target">{maxTeamSqyd} SQYD</div>
+  //                   </div>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+
+  //       {giftTeamList.length > 0 ? (
+  //         <Table bordered hover responsive className="mt-3">
+  //           <thead className="table-light">
+  //             <tr>
+  //               <th>#</th>
+  //               <th>Start Date</th>
+  //               <th>End Date</th>
+  //               <th>Payment Days</th>
+  //               <th>Terms & Conditions</th>
+  //               <th>Offer Project Name</th>
+  //             </tr>
+  //           </thead>
+
+  //           <tbody>
+  //             {giftTeamList.map((data, index) => (
+  //               <tr key={index}>
+  //                 <td>{index + 1}</td>
+
+  //                 <td className="text-danger">{data.date_from}</td>
+
+  //                 <td className="text-success">{data.date_to}</td>
+
+  //                 <td className="text-danger">{data?.closing_days || "N/A"}</td>
+
+  //                 <td className="text-danger">{data.terms_conditions}</td>
+
+  //                 <td className="text-success">
+  //                   <div className="table-cell-remark">
+  //                     {data.offer_project_name}
+  //                   </div>
+  //                 </td>
+  //               </tr>
+  //             ))}
+  //           </tbody>
+  //         </Table>
+  //       ) : (
+  //         <NoDataMessage message="Sorry, no team eligibility date data found" />
+  //       )}
+  //     </div>
+  //   );
+  // };
+
+  const TeamProgressBar = () => {
+    if (loadingTeamGifts) {
+      return (
+        <div className="gift-progress-loading">
+          <div className="gift-spinner" role="status">
+            <span className="gift-spinner-text">Loading team gifts...</span>
+          </div>
+          <p className="gift-loading-text">Loading team gift progress...</p>
+        </div>
+      );
+    }
+
+    const displayGiftTeamList = giftTeamList.length === 0 ? [
+      { id: 1, offer_name: "Team Demo Gift 1", offer_item: "Team Gift Item", area_sqyd: 500, terms_conditions: "Sample team terms", date_from: "-", date_to: "-", closing_days: "-", offer_project_name: "-" },
+      { id: 2, offer_name: "Team Demo Gift 2", offer_item: "Team Gift Item", area_sqyd: 1000, terms_conditions: "Sample team terms", date_from: "-", date_to: "-", closing_days: "-", offer_project_name: "-" }
+    ] : giftTeamList;
+
+    const displayTeamEligibilityData = teameligibilityData.length === 0 ? [{ total_team_sales: "0" }] : teameligibilityData;
+    const currentTeamSqyd = parseFloat(TeamAchievedTeamArea) || 0;
+    const maxTeamSqyd = displayGiftTeamList.length > 0 ? parseFloat(displayGiftTeamList[displayGiftTeamList.length - 1]?.area_sqyd) || 1000 : 1000;
+
+    return (
+      <div className="gift-progress-wrapper">
+        <div className="gift-progress-header">
+          <h5 className="gift-progress-title">
+            <FaUsers className="gift-title-icon" />
+            Team Gift Progress
+          </h5>
+          <div className="mt-2 w-50">
+            <Row className="text-end">
+              <Col sm={12} className="mb-3">
+                <div>
+                  <div className="fs-5">Current</div>
+                  <small className="text-success d-block">
+                    {currentTeamSqyd} SQYD
+                  </small>
+                </div>
+              </Col>
+            </Row>
+          </div>
+        </div>
+
+        <div className="gift-progress-container">
+          <div className="gift-progress-track">
+            <div className="gift-progress-line">
+              <div className="gift-progress-fill"></div>
+            </div>
+
+            <div className="gift-steps-scroll-container">
+              <div className="gift-steps-flex-container">
+                <div className="gift-step-flex-item gift-step-blank">
+                  <div className="gift-step-content-wrapper">
+                    <div className="gift-step-marker gift-step-marker-blank">
+                      <span>
+                        <img src={Start} alt="Start" width="50" />
+                      </span>
+                    </div>
+                    <div className="gift-step-content">
+                      <div className="gift-step-name">Start Point</div>
+                      <div className="gift-step-target">0 SQYD</div>
+                    </div>
+                  </div>
+                </div>
+
+                {displayGiftTeamList.map((gift, index) => {
+                  const giftSqyd = parseFloat(gift.area_sqyd);
+                  const isCompleted = currentTeamSqyd >= giftSqyd;
+
+                  return (
+                    <div
+                      key={gift.id || index}
+                      className={`gift-step-flex-item ${isCompleted ? "gift-step-completed" : ""}`}
+                    >
+                      <div className="gift-step-content-wrapper">
+                        <div className={`gift-step-marker ovel ${isCompleted ? "bg-success" : "bg-danger"}`}>
+                          {isCompleted ? "Qualified" : "Unqualified"}
+                        </div>
+                        <div className="gift-step-content">
+                          <div className="gift-step-name">{gift.offer_name || `Team Gift ${index + 1}`}</div>
+                          <div className="gift-step-target">{gift.offer_item || `Team Gift Item ${index + 1}`}</div>
+                          <div className="gift-step-sqyd text-dark">
+                            <strong>{giftSqyd} SQYD</strong>
+                          </div>
+                          <div className="gift-step-target gift_content">
+                            {gift.terms_conditions || "Sample team terms & conditions"}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                <div className="gift-step-flex-item gift-step-blank">
+                  <div className="gift-step-content-wrapper">
+                    <div className="gift-step-marker gift-step-marker-blank">
+                      <span>
+                        <img src={Endimage} alt="End" width="50" />
+                      </span>
+                    </div>
+                    <div className="gift-step-content">
+                      <div className="gift-step-name">End Point</div>
+                      <div className="gift-step-target">{maxTeamSqyd} SQYD</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <Table bordered hover responsive className="mt-3">
+          <thead className="table-light">
+            <tr>
+              <th>#</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Payment Days</th>
+              <th>Terms & Conditions</th>
+              <th>Offer Project Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {displayGiftTeamList.map((data, index) => (
+              <tr key={index}>
+                <td>{index + 1}</td>
+                <td className="text-danger">{data.date_from || "-"}</td>
+                <td className="text-success">{data.date_to || "-"}</td>
+                <td className="text-danger">{data?.closing_days || "N/A"}</td>
+                <td className="text-danger">{data.terms_conditions || "-"}</td>
+                <td className="text-success">
+                  <div className="table-cell-remark">
+                    {data.offer_project_name || "-"}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+    );
+  };
+
+
+
+//old code commented 25-04-2026
+  //   if (loadingLifetimeRewards || loadingLifetimeEligibility) {
+  //     return (
+  //       <div className="gift-progress-loading">
+  //         <div className="gift-spinner" role="status">
+  //           <span className="gift-spinner-text">
+  //             Loading lifetime Rewards...
+  //           </span>
+  //         </div>
+  //         <p className="gift-loading-text">
+  //           Loading lifetime Rewards progress...
+  //         </p>
+  //       </div>
+  //     );
+  //   }
+
+  //   if (lifetimeRewardsList.length === 0) {
+  //     return <NoDataMessage message="Sorry, no lifetime Rewards data found" />;
+  //   }
+
+  //   const eligibilityData =
+  //     lifetimeEligibilityData.length > 0 ? lifetimeEligibilityData[0] : null;
+
+  //   const currentSqyd =
+  //     eligibilityData?.rewards && eligibilityData.rewards.length > 0
+  //       ? Math.max(
+  //         ...eligibilityData.rewards.map((r) => parseFloat(r.totalArea || 0)),
+  //       )
+  //       : 0;
+
+  //   const maxSqyd =
+  //     parseFloat(
+  //       lifetimeRewardsList[lifetimeRewardsList.length - 1]?.area_sqyd,
+  //     ) || Math.max(...lifetimeRewardsList.map((g) => parseFloat(g.area_sqyd)));
+
+  //   const eligibleRewardAreas = eligibilityData?.rewards
+  //     ? new Set(
+  //       eligibilityData.rewards.map((r) => parseFloat(r.reward.area_sqyd)),
+  //     )
+  //     : new Set();
+
+  //   const highestEligibleReward =
+  //     eligibilityData?.rewards && eligibilityData.rewards.length > 0
+  //       ? eligibilityData.rewards.reduce(
+  //         (max, reward) =>
+  //           parseFloat(reward.reward.area_sqyd) >
+  //             parseFloat(max.reward.area_sqyd)
+  //             ? reward
+  //             : max,
+  //         eligibilityData.rewards[0],
+  //       )
+  //       : null;
+
+  //   return (
+  //     <div className="gift-progress-wrapper">
+  //       <div className="gift-progress-header">
+  //         <h5 className="gift-progress-title">
+  //           <FaGift className="gift-title-icon" />
+  //           Lifetime Rewards Progress
+  //         </h5>
+
+  //         {eligibilityData ? (
+  //           <div className="mt-2">
+  //             <Row className="text-end">
+  //               <Col sm={12} className="mb-3">
+  //                 <div className="fs-5">Current Team Area</div>
+  //                 <small className="text-success d-block">
+  //                   {currentSqyd.toFixed(2)} SQYD
+  //                 </small>
+  //               </Col>
+  //             </Row>
+
+  //             {/* Show eligible rewards summary */}
+  //             {eligibilityData.rewards &&
+  //               eligibilityData.rewards.length > 0 && (
+  //                 <div className="mt-2 p-2 bg-light rounded">
+  //                   <h6 className="text-success mb-2">
+  //                     🏆 You are eligible for {eligibilityData.rewards.length}{" "}
+  //                     Rewards!
+  //                   </h6>
+  //                   <div className="small">
+  //                     {eligibilityData.rewards.map((reward, idx) => (
+  //                       <div
+  //                         key={idx}
+  //                         className="d-flex justify-content-between border-bottom py-1"
+  //                       >
+  //                         <span>{reward.reward.offer_item}</span>
+  //                         <span className="text-primary">
+  //                           ₹{reward.reward.item_amount?.toLocaleString()}
+  //                         </span>
+  //                       </div>
+  //                     ))}
+  //                   </div>
+  //                 </div>
+  //               )}
+  //           </div>
+  //         ) : (
+  //           <NoDataMessage message="Sorry, no lifetime Rewards eligibility data found" />
+  //         )}
+  //       </div>
+
+  //       <div className="gift-progress-container">
+  //         <div className="gift-progress-track">
+  //           <div className="gift-progress-line">
+  //             <div className="gift-progress-fill"></div>
+  //           </div>
+
+  //           <div className="gift-steps-scroll-container">
+  //             <div className="gift-steps-flex-container">
+  //               <div className="gift-step-flex-item gift-step-blank">
+  //                 <div className="gift-step-content-wrapper">
+  //                   <div className="gift-step-marker gift-step-marker-blank">
+  //                     <span>
+  //                       <img src={Start} alt="Start" width="50" />
+  //                     </span>
+  //                   </div>
+  //                   <div className="gift-step-content">
+  //                     <div className="gift-step-name">Start Point</div>
+  //                     <div className="gift-step-target">0 SQYD</div>
+  //                   </div>
+  //                 </div>
+  //               </div>
+
+  //               {lifetimeRewardsList.map((reward, index) => {
+  //                 const rewardSqyd = parseFloat(reward.area_sqyd);
+  //                 const isCompleted = currentSqyd >= rewardSqyd;
+  //                 const isEligible = eligibleRewardAreas.has(rewardSqyd);
+
+  //                 const matchingReward =
+  //                   isEligible && eligibilityData?.rewards
+  //                     ? eligibilityData.rewards.find(
+  //                       (r) => parseFloat(r.reward.area_sqyd) === rewardSqyd,
+  //                     )
+  //                     : null;
+
+  //                 return (
+  //                   <div
+  //                     key={reward.id || index}
+  //                     className={`gift-step-flex-item 
+  //                     ${isCompleted ? "gift-step-completed" : ""} 
+  //                     ${isEligible ? "gift-step-current" : ""}`}
+  //                   >
+  //                     <div className="gift-step-content-wrapper">
+  //                       <div className="gift-step-target gift_content mb-2">
+  //                         <ul className="leg_content">
+  //                           {legData.map((item, index) => (
+  //                             <li key={index}>
+  //                               <span className="text_leg">{item.leg} :</span>
+  //                               {item.amount} - {item.value}
+  //                               <span
+  //                                 className={`status ${item.status}`}
+  //                                 style={{
+  //                                   marginLeft: "10px",
+  //                                   color:
+  //                                     item.status === "active"
+  //                                       ? "green"
+  //                                       : "red",
+  //                                   fontWeight: "bold",
+  //                                 }}
+  //                               >
+  //                                 {item.status === "active"
+  //                                   ? "Active"
+  //                                   : "Inactive"}
+  //                               </span>
+  //                             </li>
+  //                           ))}
+  //                         </ul>
+  //                       </div>
+  //                       <div
+  //                         className={`gift-step-marker ovel ${isEligible
+  //                           ? "bg-success"
+  //                           : isCompleted
+  //                             ? "bg-warning"
+  //                             : "bg-danger"
+  //                           } text-white`}
+  //                       >
+  //                         {isEligible
+  //                           ? "Eligible"
+  //                           : isCompleted
+  //                             ? "Qualified"
+  //                             : "Not Qualified"}
+  //                       </div>
+  //                       <div className="gift-step-content">
+  //                         <div className="gift-step-name">
+  //                           {reward.offer_name ||
+  //                             `Lifetime Rewards ${index + 1}`}
+  //                         </div>
+  //                         <div className="gift-step-target">
+  //                           {reward.offer_item || `Rewards ${index + 1}`}
+  //                         </div>
+  //                         <div className="gift-step-target text-dark">
+  //                           <strong>{rewardSqyd} </strong>SQYD
+  //                         </div>
+
+  //                         {matchingReward && (
+  //                           <div className="gift-step-target text-success">
+  //                             <strong>
+  //                               Date:{" "}
+  //                               {(() => {
+  //                                 const d = new Date(
+  //                                   matchingReward.achievementDate,
+  //                                 );
+  //                                 const day = String(d.getDate()).padStart(
+  //                                   2,
+  //                                   "0",
+  //                                 );
+  //                                 const month = String(
+  //                                   d.getMonth() + 1,
+  //                                 ).padStart(2, "0");
+  //                                 const year = d.getFullYear();
+  //                                 return `${day}-${month}-${year}`;
+  //                               })()}
+  //                             </strong>
+  //                           </div>
+  //                         )}
+
+  //                         {reward.item_amount && (
+  //                           <div className="gift-step-target text-primary">
+  //                             <strong>
+  //                               ₹
+  //                               {parseFloat(
+  //                                 reward.item_amount,
+  //                               ).toLocaleString()}
+  //                             </strong>
+  //                           </div>
+  //                         )}
+
+  //                         {isEligible && matchingReward && (
+  //                           <div className="gift-step-target text-success small">
+  //                             ✓ You've earned this reward!
+  //                           </div>
+  //                         )}
+
+  //                         <div className="gift-step-target gift_content">
+  //                           {reward.terms_conditions}
+  //                         </div>
+  //                       </div>
+  //                     </div>
+  //                   </div>
+  //                 );
+  //               })}
+
+  //               <div className="gift-step-flex-item gift-step-blank">
+  //                 <div className="gift-step-content-wrapper">
+  //                   <div className="gift-step-marker gift-step-marker-blank">
+  //                     <span>
+  //                       <img src={Endimage} alt="Endimage" width="50" />
+  //                     </span>
+  //                   </div>
+  //                   <div className="gift-step-content">
+  //                     <div className="gift-step-name">End Point</div>
+  //                     <div className="gift-step-target">{maxSqyd} SQYD</div>
+  //                   </div>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+
+  //       {/* Eligible Rewards Details Section */}
+  //       {eligibilityData?.rewards && eligibilityData.rewards.length > 0 && (
+  //         <div className="p-3 border-top bg-light">
+  //           <h6 className="mb-3">
+  //             🎁 Your Eligible Rewards ({eligibilityData.rewards.length})
+  //           </h6>
+  //           <Row>
+  //             {eligibilityData.rewards.map((rewardItem, idx) => (
+  //               <Col md={4} key={idx} className="mb-3">
+  //                 <div className="border rounded p-2 h-100">
+  //                   <div className="fw-bold text-success">
+  //                     {rewardItem.reward.offer_item}
+  //                   </div>
+  //                   <div className="small">
+  //                     <div>
+  //                       <strong>Area:</strong> {rewardItem.reward.area_sqyd}{" "}
+  //                       SQYD
+  //                     </div>
+  //                     <div>
+  //                       <strong>Value:</strong> ₹
+  //                       {parseFloat(
+  //                         rewardItem.reward.item_amount,
+  //                       ).toLocaleString()}
+  //                     </div>
+  //                     {/* <div><strong>Achieved:</strong> {new Date(rewardItem.achievementDate).toLocaleDateString()}</div> */}
+
+  //                     <div className="gift-step-target text-success">
+  //                       <strong>
+  //                         Date:{" "}
+  //                         {(() => {
+  //                           const d = new Date(rewardItem.achievementDate);
+  //                           const day = String(d.getDate()).padStart(2, "0");
+  //                           const month = String(d.getMonth() + 1).padStart(
+  //                             2,
+  //                             "0",
+  //                           );
+  //                           const year = d.getFullYear();
+  //                           return `${day}-${month}-${year}`;
+  //                         })()}
+  //                       </strong>
+  //                     </div>
+
+  //                     <div className="mt-1">
+  //                       <strong>Your Team Area:</strong>{" "}
+  //                       {rewardItem.totalArea.toFixed(2)} SQYD
+  //                     </div>
+  //                   </div>
+  //                 </div>
+  //               </Col>
+  //             ))}
+  //           </Row>
+  //         </div>
+  //       )}
+  //     </div>
+  //   );
+  // };
 
   // const LifetimeRewardsProgressBar = () => {
   //   if (loadingLifetimeRewards || loadingLifetimeEligibility) {
@@ -2408,6 +2626,477 @@ const Dashboard = ({ userType }) => {
   //   );
   // };
 
+  const LifetimeRewardsProgressBar = () => {
+    if (loadingLifetimeRewards || loadingLifetimeEligibility) {
+      return (
+        <div className="gift-progress-loading">
+          <div className="gift-spinner" role="status">
+            <span className="gift-spinner-text">Loading lifetime Rewards...</span>
+          </div>
+          <p className="gift-loading-text">Loading lifetime Rewards progress...</p>
+        </div>
+      );
+    }
+
+    // DEMO DATA - Show structure even when no API data
+    const displayLifetimeRewardsList = lifetimeRewardsList.length === 0 ? [
+      { id: 1, offer_name: "Bronze Lifetime Reward", offer_item: "Gold Coin", area_sqyd: 5000, item_amount: 50000, terms_conditions: "Terms & conditions apply", date_from: "-", date_to: "-", closing_days: "-", offer_project_name: "-" },
+      { id: 2, offer_name: "Silver Lifetime Reward", offer_item: "Silver Coin", area_sqyd: 10000, item_amount: 100000, terms_conditions: "Terms & conditions apply", date_from: "-", date_to: "-", closing_days: "-", offer_project_name: "-" },
+      { id: 3, offer_name: "Gold Lifetime Reward", offer_item: "Gold Bar", area_sqyd: 25000, item_amount: 250000, terms_conditions: "Terms & conditions apply", date_from: "-", date_to: "-", closing_days: "-", offer_project_name: "-" },
+      { id: 4, offer_name: "Platinum Lifetime Reward", offer_item: "Diamond Ring", area_sqyd: 50000, item_amount: 500000, terms_conditions: "Terms & conditions apply", date_from: "-", date_to: "-", closing_days: "-", offer_project_name: "-" }
+    ] : lifetimeRewardsList;
+
+    const displayEligibilityData = lifetimeEligibilityData.length > 0 ? lifetimeEligibilityData[0] : null;
+
+    const currentSqyd = displayEligibilityData?.rewards && displayEligibilityData.rewards.length > 0
+      ? Math.max(...displayEligibilityData.rewards.map((r) => parseFloat(r.totalArea || 0)))
+      : 0;
+
+    const maxSqyd = displayLifetimeRewardsList.length > 0
+      ? parseFloat(displayLifetimeRewardsList[displayLifetimeRewardsList.length - 1]?.area_sqyd) || 50000
+      : 50000;
+
+    const eligibleRewardAreas = displayEligibilityData?.rewards
+      ? new Set(displayEligibilityData.rewards.map((r) => parseFloat(r.reward.area_sqyd)))
+      : new Set();
+
+    // Static leg data - always shown
+    const lifetimeLegData = [
+      { leg: "Leg 1", amount: 300, value: 100, status: "inactive" },
+      { leg: "Leg 2", amount: 300, value: 150, status: "active" },
+      { leg: "Leg 3", amount: 400, value: 200, status: "inactive" },
+    ];
+
+    return (
+      <div className="gift-progress-wrapper">
+        <div className="gift-progress-header">
+          <h5 className="gift-progress-title">
+            <FaGift className="gift-title-icon" />
+            Lifetime Rewards Progress
+          </h5>
+
+          <div className="mt-2 w-50">
+            <Row>
+              <Col sm={12} className="mb-3 text-end">
+                <div className="fs-5 d-block">Current</div>
+                <span className="text-success">
+                  {currentSqyd.toFixed(2)} SQYD
+                </span>
+              </Col>
+            </Row>
+          </div>
+        </div>
+
+        <div className="gift-progress-container">
+          <div className="gift-progress-track">
+            <div className="gift-progress-line">
+              <div className="gift-progress-fill"></div>
+            </div>
+
+            <div className="gift-steps-scroll-container">
+              <div className="gift-steps-flex-container">
+                <div className="gift-step-flex-item gift-step-blank">
+                  <div className="gift-step-content-wrapper">
+                    <div className="gift-step-marker gift-step-marker-blank">
+                      <span>
+                        <img src={Start} alt="Start" width="50" />
+                      </span>
+                    </div>
+                    <div className="gift-step-content">
+                      <div className="gift-step-name">Start Point</div>
+                      <div className="gift-step-target">0 SQYD</div>
+                    </div>
+                  </div>
+                </div>
+
+                {displayLifetimeRewardsList.map((reward, index) => {
+                  const rewardSqyd = parseFloat(reward.area_sqyd);
+                  const isCompleted = currentSqyd >= rewardSqyd;
+                  const isEligible = eligibleRewardAreas.has(rewardSqyd);
+
+                  const matchingReward = isEligible && displayEligibilityData?.rewards
+                    ? displayEligibilityData.rewards.find((r) => parseFloat(r.reward.area_sqyd) === rewardSqyd)
+                    : null;
+
+                  return (
+                    <div
+                      key={reward.id || index}
+                      className={`gift-step-flex-item 
+                      ${isCompleted ? "gift-step-completed" : ""} 
+                      ${isEligible ? "gift-step-current" : ""}`}
+                    >
+                      <div className="gift-step-content-wrapper">
+                        {/* Leg Data - Always Shown */}
+                        <div className="gift-step-target gift_content mb-2">
+                          <ul className="leg_content">
+                            {lifetimeLegData.map((item, idx) => (
+                              <li key={idx}>
+                                <span className="text_leg">{item.leg} :</span>
+                                {item.amount} - {item.value}
+                                <span
+                                  className={`status ${item.status}`}
+                                  style={{
+                                    marginLeft: "10px",
+                                    color: item.status === "active" ? "green" : "red",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  {item.status === "active" ? "Active" : "Inactive"}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div
+                          className={`gift-step-marker ovel ${isEligible
+                            ? "bg-success"
+                            : isCompleted
+                              ? "bg-warning"
+                              : "bg-danger"
+                            } text-white`}
+                        >
+                          {isEligible
+                            ? "Eligible"
+                            : isCompleted
+                              ? "Qualified"
+                              : "Not Qualified"}
+                        </div>
+                        <div className="gift-step-content">
+                          <div className="gift-step-name">
+                            {reward.offer_name || `Lifetime Rewards ${index + 1}`}
+                          </div>
+                          <div className="gift-step-target">
+                            {reward.offer_item || `Rewards ${index + 1}`}
+                          </div>
+                          <div className="gift-step-target text-dark">
+                            <strong>{rewardSqyd} </strong>SQYD
+                          </div>
+
+                          {matchingReward && (
+                            <div className="gift-step-target text-success">
+                              <strong>
+                                Date:{" "}
+                                {(() => {
+                                  const d = new Date(matchingReward.achievementDate);
+                                  const day = String(d.getDate()).padStart(2, "0");
+                                  const month = String(d.getMonth() + 1).padStart(2, "0");
+                                  const year = d.getFullYear();
+                                  return `${day}-${month}-${year}`;
+                                })()}
+                              </strong>
+                            </div>
+                          )}
+
+                          {reward.item_amount && (
+                            <div className="gift-step-target text-primary">
+                              <strong>
+                                ₹{parseFloat(reward.item_amount).toLocaleString()}
+                              </strong>
+                            </div>
+                          )}
+
+                          {isEligible && matchingReward && (
+                            <div className="gift-step-target text-success small">
+                              ✓ You've earned this reward!
+                            </div>
+                          )}
+
+                          <div className="gift-step-target gift_content">
+                            {reward.terms_conditions || "Terms & conditions apply"}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                <div className="gift-step-flex-item gift-step-blank">
+                  <div className="gift-step-content-wrapper">
+                    <div className="gift-step-marker gift-step-marker-blank">
+                      <span>
+                        <img src={Endimage} alt="Endimage" width="50" />
+                      </span>
+                    </div>
+                    <div className="gift-step-content">
+                      <div className="gift-step-name">End Point</div>
+                      <div className="gift-step-target">{maxSqyd} SQYD</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Always show table structure */}
+        <Table bordered hover responsive className="mt-3">
+          <thead className="table-light">
+            <tr>
+              <th>#</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Payment Days</th>
+              <th>Terms & Conditions</th>
+              <th>Offer Project Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {displayLifetimeRewardsList.map((data, index) => (
+              <tr key={index}>
+                <td>{index + 1}</td>
+                <td className="text-danger">{data.date_from || "-"}</td>
+                <td className="text-success">{data.date_to || "-"}</td>
+                <td className="text-danger">{data?.closing_days || "N/A"}</td>
+                <td className="text-danger">{data.terms_conditions || "-"}</td>
+                <td className="text-success">
+                  <div className="table-cell-remark">{data.offer_project_name || "-"}</div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+    );
+  };
+
+  const RoyaltyRewardsProgressBar = () => {
+    if (loadingRoyaltyRewards || loadingRoyaltyEligibility) {
+      return (
+        <div className="gift-progress-loading">
+          <div className="gift-spinner" role="status">
+            <span className="gift-spinner-text">Loading Royalty Rewards...</span>
+          </div>
+          <p className="gift-loading-text">Loading Royalty Rewards progress...</p>
+        </div>
+      );
+    }
+
+    // DEMO DATA - Show structure even when no API data
+    const displayRoyaltyRewardsList = royaltyRewardsList.length === 0 ? [
+      { id: 1, offer_name: "Royalty Level 1", offer_item: "Smart Watch", area_sqyd: 10000, item_amount: 25000, terms_conditions: "Royalty terms apply", date_from: "-", date_to: "-", closing_days: "-", offer_project_name: "-" },
+      { id: 2, offer_name: "Royalty Level 2", offer_item: "Laptop", area_sqyd: 25000, item_amount: 50000, terms_conditions: "Royalty terms apply", date_from: "-", date_to: "-", closing_days: "-", offer_project_name: "-" },
+      { id: 3, offer_name: "Royalty Level 3", offer_item: "International Trip", area_sqyd: 50000, item_amount: 150000, terms_conditions: "Royalty terms apply", date_from: "-", date_to: "-", closing_days: "-", offer_project_name: "-" },
+      { id: 4, offer_name: "Royalty Level 4", offer_item: "Car", area_sqyd: 100000, item_amount: 500000, terms_conditions: "Royalty terms apply", date_from: "-", date_to: "-", closing_days: "-", offer_project_name: "-" }
+    ] : royaltyRewardsList;
+
+    const displayRoyaltyEligibilityData = royaltyEligibilityData.length > 0 ? royaltyEligibilityData[0] : null;
+
+    const currentSqyd = displayRoyaltyEligibilityData?.rewards && displayRoyaltyEligibilityData.rewards.length > 0
+      ? Math.max(...displayRoyaltyEligibilityData.rewards.map((r) => parseFloat(r.totalArea || 0)))
+      : 0;
+
+    const maxSqyd = displayRoyaltyRewardsList.length > 0
+      ? parseFloat(displayRoyaltyRewardsList[displayRoyaltyRewardsList.length - 1]?.area_sqyd) || 100000
+      : 100000;
+
+    const eligibleRewardAreas = displayRoyaltyEligibilityData?.rewards
+      ? new Set(displayRoyaltyEligibilityData.rewards.map((r) => parseFloat(r.reward.area_sqyd)))
+      : new Set();
+
+    // Static royalty leg data - always shown (same as lifetime)
+    const royaltyLegData = [
+      { leg: "Leg 1", amount: 300, value: 100, status: "inactive" },
+      { leg: "Leg 2", amount: 300, value: 150, status: "active" },
+      { leg: "Leg 3", amount: 400, value: 200, status: "inactive" },
+    ];
+
+    return (
+      <div className="gift-progress-wrapper">
+        <div className="gift-progress-header">
+          <h5 className="gift-progress-title">
+            <FaGift className="gift-title-icon" />
+            Royalty Rewards Progress
+          </h5>
+
+          <div className="mt-2 w-50">
+            <Row>
+              <Col sm={12} className="mb-3 text-end">
+                <div className="fs-5 d-block">Current</div>
+                <span className="text-success">
+                  {currentSqyd.toFixed(2)} SQYD
+                </span>
+              </Col>
+            </Row>
+          </div>
+        </div>
+
+        <div className="gift-progress-container">
+          <div className="gift-progress-track">
+            <div className="gift-progress-line">
+              <div className="gift-progress-fill"></div>
+            </div>
+
+            <div className="gift-steps-scroll-container">
+              <div className="gift-steps-flex-container">
+                <div className="gift-step-flex-item gift-step-blank">
+                  <div className="gift-step-content-wrapper">
+                    <div className="gift-step-marker gift-step-marker-blank">
+                      <span>
+                        <img src={Start} alt="Start" width="50" />
+                      </span>
+                    </div>
+                    <div className="gift-step-content">
+                      <div className="gift-step-name">Start Point</div>
+                      <div className="gift-step-target">0 SQYD</div>
+                    </div>
+                  </div>
+                </div>
+
+                {displayRoyaltyRewardsList.map((reward, index) => {
+                  const rewardSqyd = parseFloat(reward.area_sqyd);
+                  const isCompleted = currentSqyd >= rewardSqyd;
+                  const isEligible = eligibleRewardAreas.has(rewardSqyd);
+
+                  const matchingReward = isEligible && displayRoyaltyEligibilityData?.rewards
+                    ? displayRoyaltyEligibilityData.rewards.find((r) => parseFloat(r.reward.area_sqyd) === rewardSqyd)
+                    : null;
+
+                  return (
+                    <div
+                      key={reward.id || index}
+                      className={`gift-step-flex-item 
+                      ${isCompleted ? "gift-step-completed" : ""} 
+                      ${isEligible ? "gift-step-current" : ""}`}
+                    >
+                      <div className="gift-step-content-wrapper">
+                        {/* Royalty Leg Data - Always Shown */}
+                        <div className="gift-step-target gift_content mb-2">
+                          <ul className="leg_content">
+                            {royaltyLegData.map((item, idx) => (
+                              <li key={idx}>
+                                <span className="text_leg">{item.leg} :</span>
+                                {item.amount} - {item.value}
+                                <span
+                                  className={`status ${item.status}`}
+                                  style={{
+                                    marginLeft: "10px",
+                                    color: item.status === "active" ? "green" : "red",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  {item.status === "active" ? "Active" : "Inactive"}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div
+                          className={`gift-step-marker ovel ${isEligible
+                            ? "bg-success"
+                            : isCompleted
+                              ? "bg-warning"
+                              : "bg-danger"
+                            } text-white`}
+                        >
+                          {isEligible
+                            ? "Eligible"
+                            : isCompleted
+                              ? "Qualified"
+                              : "Not Qualified"}
+                        </div>
+                        <div className="gift-step-content">
+                          <div className="gift-step-name">
+                            {reward.offer_name || `Royalty Rewards ${index + 1}`}
+                          </div>
+                          <div className="gift-step-target">
+                            {reward.offer_item || `Rewards ${index + 1}`}
+                          </div>
+                          <div className="gift-step-target text-dark">
+                            <strong>{rewardSqyd} </strong>SQYD
+                          </div>
+
+                          {matchingReward && (
+                            <div className="gift-step-target text-success">
+                              <strong>
+                                Date:{" "}
+                                {(() => {
+                                  const d = new Date(matchingReward.achievementDate);
+                                  const day = String(d.getDate()).padStart(2, "0");
+                                  const month = String(d.getMonth() + 1).padStart(2, "0");
+                                  const year = d.getFullYear();
+                                  return `${day}-${month}-${year}`;
+                                })()}
+                              </strong>
+                            </div>
+                          )}
+
+                          {reward.item_amount && (
+                            <div className="gift-step-target text-primary">
+                              <strong>
+                                ₹{parseFloat(reward.item_amount).toLocaleString()}
+                              </strong>
+                            </div>
+                          )}
+
+                          {isEligible && matchingReward && (
+                            <div className="gift-step-target text-success small">
+                              ✓ You've earned this reward!
+                            </div>
+                          )}
+
+                          <div className="gift-step-target gift_content">
+                            {reward.terms_conditions || "Terms & conditions apply"}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                <div className="gift-step-flex-item gift-step-blank">
+                  <div className="gift-step-content-wrapper">
+                    <div className="gift-step-marker gift-step-marker-blank">
+                      <span>
+                        <img src={Endimage} alt="Endimage" width="50" />
+                      </span>
+                    </div>
+                    <div className="gift-step-content">
+                      <div className="gift-step-name">End Point</div>
+                      <div className="gift-step-target">{maxSqyd} SQYD</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Always show table structure */}
+        <Table bordered hover responsive className="mt-3">
+          <thead className="table-light">
+            <tr>
+              <th>#</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Payment Days</th>
+              <th>Terms & Conditions</th>
+              <th>Offer Project Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {displayRoyaltyRewardsList.map((data, index) => (
+              <tr key={index}>
+                <td>{index + 1}</td>
+                <td className="text-danger">{data.date_from || "-"}</td>
+                <td className="text-success">{data.date_to || "-"}</td>
+                <td className="text-danger">{data?.closing_days || "N/A"}</td>
+                <td className="text-danger">{data.terms_conditions || "-"}</td>
+                <td className="text-success">
+                  <div className="table-cell-remark">{data.offer_project_name || "-"}</div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+
+    );
+
+  };
+
+
   return (
     <>
       <div id="Breadcrumb" className="">
@@ -2483,151 +3172,275 @@ const Dashboard = ({ userType }) => {
         )}
       </div>
 
-      {/* 2. Dashboard Cards Section */}
-      {/*<Row className="mt-4">
-        {dashboardData.length > 0 ? (
-          dashboardData.map((item, index) => {
-            const IconComponent = iconMap[item.icon];
-            return (
-              <Col key={index} xs={12} sm={6} md={4} lg={4}>
-                <div className="card bg_card_design">
-                  <Link to={item.href} className="text-decoration-none">
-                    <div className="card-body pr-0 gap-2 d-flex align-items-center justify-content-start">
-                      {IconComponent && (
-                        <div className="icon_dashboard">
-                          <IconComponent size={40} className="text-white" />
-                        </div>
-                      )}
-                      <div>
-                        <div className="card-title">{item.title}</div>
-                        <div className="card-text">
-                          {item.value
-                            ? item.value
-                            : item.image && (
-                              <img
-                                className="load_img hourse"
-                                src={item.image}
-                                alt="load-img"
-                              />
-                            )}
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                </div>
-              </Col>
-            );
-          })
-        ) : (
-          <NoDataMessage message="Sorry, no dashboard data found" />
-        )}
-      </Row>*/}
 
-
-      {/* 2. Dashboard Cards Section */}
       <Row className="mt-4">
         {dashboardData.length > 0 ? (
           dashboardData.map((item, index) => {
             const IconComponent = iconMap[item.icon];
 
-            // Welcome Bonus Card with dynamic dates
-            if (item.customContent && item.title === "Welcome Bonus") {
-              const { bookingDate, closingDate } = calculateDates();
-              const currentDate = new Date();
-              let status = "Processing";
-              let statusColor = "#ffc107"; // yellow/warning
+        
+            //without clicable code  commented 24-04-2026
+            // if (item.customContent && item.title === "Welcome Bonus") {
+            //   const bonusData = dashboard?.bonus || {};
+            //   const joiningDate = bonusData.joiningDate || "--";
+            //   const lastDate = bonusData.lastDate || "--";
+            //   const leadDate = bonusData.leadDate || "--";
+            //   const targetDate = bonusData.targetDate || "--";
+            //   const approveDate = bonusData.approveDate || "--";
+            //   const approved = bonusData.approved || false;
 
-              if (closingDate && currentDate > closingDate) {
-                status = "success";
-                statusColor = "#28a745"; // green
-              } else if (bookingDate && currentDate > bookingDate) {
-                status = "processing";
-                statusColor = "#17a2b8"; // teal/blue
+            //   console.log("Bonus Data:", bonusData);
+            //   const isValidDate = (date) => {
+            //     return date && date !== "--" && date !== null && date !== "null";
+            //   };
+            //   const isDateExpired = (dateStr) => {
+            //     if (!isValidDate(dateStr)) return true;
+            //     const currentDate = new Date();
+            //     const [day, month, year] = dateStr.split("-");
+            //     const dateObj = new Date(year, month - 1, day);
+            //     return currentDate > dateObj;
+            //   };
+            //   let joiningBookingStatus = "--";
+            //   let joiningBookingColor = "#6c757d";
+            //   let canRegister = false;
+
+            //   if (isValidDate(joiningDate) && isValidDate(lastDate)) {
+            //     if (approved === true) {
+            //       joiningBookingStatus = "Success";
+            //       joiningBookingColor = "#28a745";
+            //       canRegister = false;
+            //     } else if (approved === false) {
+            //       if (!isDateExpired(lastDate)) {
+            //         joiningBookingStatus = "Progress";
+            //         joiningBookingColor = "#ffc107";
+            //         canRegister = true;
+            //       } else {
+            //         joiningBookingStatus = "Progress";
+            //         joiningBookingColor = "#ffc107";
+            //         canRegister = false;
+            //       }
+            //     }
+            //   } else {
+            //     joiningBookingStatus = "Not Available";
+            //     joiningBookingColor = "#dc3545";
+            //     canRegister = false;
+            //   }
+            //   let bookingClosingStatus = "--";
+            //   let bookingClosingColor = "#6c757d";
+
+            //   if (isValidDate(leadDate) && isValidDate(targetDate)) {
+            //     if (approved === true && isValidDate(approveDate)) {
+            //       bookingClosingStatus = "Achieved";
+            //       bookingClosingColor = "#28a745";
+            //     } else {
+            //       bookingClosingStatus = "Not Achieved";
+            //       bookingClosingColor = "#dc3545";
+            //     }
+            //   } else {
+            //     bookingClosingStatus = "Not Achieved";
+            //     bookingClosingColor = "#dc3545";
+            //   }
+            //   const formatDisplayDate = (dateStr) => {
+            //     if (!dateStr || dateStr === "--" || dateStr === null || dateStr === "null") return "--";
+            //     return dateStr;
+            //   };
+
+            //   return (
+            //     <Col key={index} xs={12} sm={6} md={6} lg={6}>
+            //       <div
+            //         className="card bg_card_design welcome-bonus-card h-100"
+            //         style={{ cursor: canRegister ? "pointer" : "default" }}
+            //         onClick={() => canRegister && navigate("/welcome-bonus-registration-form")}
+            //       >
+            //         <div className="card-body">
+            //           <div className="d-flex align-items-center gap-2 gap-md-4">
+            //             <div className="icon_dashboard">
+            //               <FaGift size={40} className="text-white" />
+            //             </div>
+            //             <div className="w-100">
+            //               <div className="card-title mb-0">{item.title}</div>
+            //               <div className="d-flex justify-content-between mt-2">
+            //                 <div className="date-section">
+            //                   <div className="date-label">Joining + Booking</div>
+            //                   <div className="date-range">
+            //                     {formatDisplayDate(joiningDate)} - {formatDisplayDate(lastDate)}
+            //                   </div>
+            //                   {joiningBookingStatus !== "--" && (
+            //                     <div className="status-badge" style={{ color: joiningBookingColor }}>
+            //                       {joiningBookingStatus}
+            //                     </div>
+            //                   )}
+            //                 </div>
+            //                 <div className="date-section">
+            //                   <div className="date-label">Booking + Closing</div>
+            //                   <div className="date-range">
+            //                     {formatDisplayDate(leadDate)} - {formatDisplayDate(targetDate)}
+            //                   </div>
+            //                   {bookingClosingStatus !== "--" && (
+            //                     <div className="status-badge" style={{ color: bookingClosingColor }}>
+            //                       {bookingClosingStatus}
+            //                     </div>
+            //                   )}
+            //                 </div>
+
+            //               </div>
+            //               {canRegister && (
+            //                 <div className="register-text mt-2" style={{ color: "#17a2b8", fontSize: "14px", textAlign: "center" }}>
+            //                   Click to Register
+            //                 </div>
+            //               )}
+            //             </div>
+            //           </div>
+            //         </div>
+            //       </div>
+            //     </Col>
+            //   );
+            // }
+
+            if (item.customContent && item.title === "Welcome Bonus") {
+              const bonusData = dashboard?.bonus || {};
+              const joiningDate = bonusData.joiningDate || "--";
+              const lastDate = bonusData.lastDate || "--";
+              const leadDate = bonusData.leadDate || "--";
+              const targetDate = bonusData.targetDate || "--";
+              const approveDate = bonusData.approveDate || "--";
+              const approved = bonusData.approved || false;
+              const isValidDate = (date) => {
+                return date && date !== "--" && date !== null && date !== "null";
+              };
+              const isDateExpired = (dateStr) => {
+                if (!isValidDate(dateStr)) return true;
+                const currentDate = new Date();
+                const [day, month, year] = dateStr.split("-");
+                const dateObj = new Date(year, month - 1, day);
+                return currentDate > dateObj;
+              };
+              let joiningBookingStatus = "--";
+              let joiningBookingColor = "#6c757d";
+              let canRegister = false;
+              if (isValidDate(joiningDate) && isValidDate(lastDate)) {
+                if (approved === true) {
+                  joiningBookingStatus = "Success";
+                  joiningBookingColor = "#28a745";
+                  canRegister = false;
+                } else if (approved === false) {
+                  if (!isDateExpired(lastDate)) {
+                    joiningBookingStatus = "Progress";
+                    joiningBookingColor = "#ffc107";
+                    canRegister = true;
+                  } else {
+                    joiningBookingStatus = "Progress";
+                    joiningBookingColor = "#ffc107";
+                    canRegister = false;
+                  }
+                }
+              } else {
+                joiningBookingStatus = "Not Available";
+                joiningBookingColor = "#dc3545";
+                canRegister = false;
               }
+              let bookingClosingStatus = "--";
+              let bookingClosingColor = "#6c757d";
+
+              if (isValidDate(leadDate) && isValidDate(targetDate)) {
+                if (approved === true && isValidDate(approveDate)) {
+                  bookingClosingStatus = "Achieved";
+                  bookingClosingColor = "#28a745";
+                } else {
+                  bookingClosingStatus = "Not Achieved";
+                  bookingClosingColor = "#dc3545";
+                }
+              } else {
+                bookingClosingStatus = "Not Achieved";
+                bookingClosingColor = "#dc3545";
+              }
+              const formatDisplayDate = (dateStr) => {
+                if (!dateStr || dateStr === "--" || dateStr === null || dateStr === "null") return "--";
+                return dateStr;
+              };
+              const handleCardClick = () => {
+                const fullUrl = `/associates-welcome-bonus-achiever-lists`;
+                navigate(fullUrl);
+              };
 
               return (
                 <Col key={index} xs={12} sm={6} md={6} lg={6}>
-                  <div className="card bg_card_design welcome-bonus-card">
+                  <div
+                    className="card bg_card_design welcome-bonus-card h-100"
+                    style={{ cursor: "pointer" }}
+                    onClick={handleCardClick}
+                  >
                     <div className="card-body">
                       <div className="d-flex align-items-center gap-2 gap-md-4">
                         <div className="icon_dashboard">
                           <FaGift size={40} className="text-white" />
                         </div>
-                        <div className="d-flex align-items-start justify-content-between flex-column">
+                        <div className="w-100">
                           <div className="card-title mb-0">{item.title}</div>
-                          <div className="d-flex gap-2 gap-md-5 align-items-center justify-content-between">
+                          <div className="d-flex justify-content-between mt-2">
                             <div className="date-section">
                               <div className="date-label">Joining + Booking</div>
                               <div className="date-range">
-                                {associateData.registrationDate ? (
-                                  <>
-                                    {formatShortDate(new Date(associateData.registrationDate))} - {bookingDate ? formatShortDate(bookingDate) : "-"}
-                                  </>
-                                ) : "-"}
+                                {formatDisplayDate(joiningDate)} - {formatDisplayDate(lastDate)}
                               </div>
-                              <div className="status-badge" style={{ color: statusColor }}>
-                                {status}
-                              </div>
+                              {joiningBookingStatus !== "--" && (
+                                <div className="status-badge" style={{ color: joiningBookingColor }}>
+                                  {joiningBookingStatus}
+                                </div>
+                              )}
                             </div>
-
+                            {/* Section 2: Booking + Closing */}
                             <div className="date-section">
                               <div className="date-label">Booking + Closing</div>
                               <div className="date-range">
-                                15-04-26 - 14-05-26
+                                {formatDisplayDate(leadDate)} - {formatDisplayDate(targetDate)}
                               </div>
-                              <div className="status-badge" style={{ color: "#28a745" }}>
-                                success
-                              </div>
+                              {bookingClosingStatus !== "--" && (
+                                <div className="status-badge" style={{ color: bookingClosingColor }}>
+                                  {bookingClosingStatus}
+                                </div>
+                              )}
                             </div>
+
                           </div>
+                          {/* Only show registration link when canRegister is true */}
+                          {canRegister && (
+                            <div className="register-text mt-2" style={{ color: "#17a2b8", fontSize: "14px", textAlign: "center" }}>
+                              Click to Register
+                            </div>
+                          )}
                         </div>
                       </div>
-
-
                     </div>
                   </div>
                 </Col>
               );
             }
 
-            // Bima Card - Click to open registration form
-            // Bima Card - Based on API status
+            //without click working code commented 25-04-2026
             // if (item.customContent && item.title === "Bima") {
             //   const { activeStatus, successStatus } = dashboard.bimaStatus;
-
-            //   // Determine status text and color
             //   let statusText = "Inactive";
-            //   let statusColor = "#dc3545"; // red
+            //   let statusColor = "#dc3545";
             //   let canRegister = false;
-            //    let bimaImage = runningHourse; 
+            //   let bimaImage = runningHourse;
 
             //   if (activeStatus === true && successStatus === true) {
             //     statusText = "Success";
-            //     statusColor = "#28a745"; // green
-            //      <div className="icon_dashboard bg_running">
-            //               {/* <TbReceiptRupee size={40} className="text-white" /> */}
-            //               <img src={runningHourse} alt="running horse" className="load_img hourse"/>
-            //             </div>
+            //     statusColor = "#28a745";
             //     canRegister = false;
+            //     bimaImage = bimaSuccessImg;
             //   } else if (activeStatus === true && successStatus === false) {
             //     statusText = "Active";
-            //     statusColor = "#28a745"; // green
+            //     statusColor = "#28a745";
             //     canRegister = true;
-            //      <div className="icon_dashboard bg_running">
-            //               {/* <TbReceiptRupee size={40} className="text-white" /> */}
-            //               <img src={runningHourse} alt="running horse" className="load_img hourse"/>
-            //             </div>
+            //     bimaImage = bimaActiveImg;
             //   } else {
             //     statusText = "Inactive";
-            //     statusColor = "#dc3545"; // red
+            //     statusColor = "#dc3545";
             //     canRegister = false;
-
-            //      <div className="icon_dashboard bg_running">
-            //               {/* <TbReceiptRupee size={40} className="text-white" /> */}
-            //               <img src={runningHourse} alt="running horse" className="load_img hourse"/>
-            //             </div>
+            //     bimaImage = runningHourse;
             //   }
-
             //   const handleBimaClick = () => {
             //     if (canRegister) {
             //       navigate("/bima-registration-form");
@@ -2637,17 +3450,19 @@ const Dashboard = ({ userType }) => {
             //   return (
             //     <Col key={index} xs={12} sm={6} md={6} lg={6}>
             //       <div
-            //         className="card bg_card_design welcome-bonus-card"
+            //         className="card bg_card_design welcome-bonus-card h-100"
             //         style={{ cursor: canRegister ? "pointer" : "default" }}
             //         onClick={handleBimaClick}
             //       >
             //         <div className="card-body">
             //           <div className="d-flex align-items-center gap-2 gap-md-4">
-            //            {}
+            //             <div className="icon_dashboard bg_running">
+            //               <img src={bimaImage} alt="bima" className="load_img hourse" />
+            //             </div>
             //             <div className="d-flex align-items-start justify-content-between flex-column w-100">
             //               <div className="card-title mb-0">{item.title}</div>
             //               <div className="d-flex justify-content-between align-items-center w-100 mt-2">
-            //                 <div style={{ color: statusColor, fontSize: "18px", fontWeight: "bold" }}>
+            //                 <div className="fw-bold" style={{ color: statusColor, fontSize: "18px" }}>
             //                   {statusText}
             //                 </div>
             //                 {canRegister && (
@@ -2662,7 +3477,7 @@ const Dashboard = ({ userType }) => {
             //                 )}
             //                 {!canRegister && statusText === "Inactive" && (
             //                   <div className="register-text" style={{ color: "#dc3545", fontSize: "14px" }}>
-            //                     Registration Not Available
+            //                     Not Available
             //                   </div>
             //                 )}
             //               </div>
@@ -2674,43 +3489,38 @@ const Dashboard = ({ userType }) => {
             //   );
             // }
 
+
             if (item.customContent && item.title === "Bima") {
               const { activeStatus, successStatus } = dashboard.bimaStatus;
-
-              // Determine status text and color
               let statusText = "Inactive";
-              let statusColor = "#dc3545"; // red
+              let statusColor = "#dc3545";
               let canRegister = false;
-              let bimaImage = runningHourse; // default image
+              let bimaImage = runningHourse;
 
               if (activeStatus === true && successStatus === true) {
                 statusText = "Success";
-                statusColor = "#28a745"; // green
+                statusColor = "#28a745";
                 canRegister = false;
-                bimaImage = bimaSuccessImg; // Success image
+                bimaImage = bimaSuccessImg;
               } else if (activeStatus === true && successStatus === false) {
                 statusText = "Active";
-                statusColor = "#28a745"; // green
+                statusColor = "#28a745";
                 canRegister = true;
-                bimaImage = bimaActiveImg; // Active image
+                bimaImage = bimaActiveImg;
               } else {
                 statusText = "Inactive";
-                statusColor = "#dc3545"; // red
+                statusColor = "#dc3545";
                 canRegister = false;
-                bimaImage = runningHourse; // Inactive image
+                bimaImage = runningHourse;
               }
-
               const handleBimaClick = () => {
-                if (canRegister) {
-                  navigate("/bima-registration-form");
-                }
+                navigate("/associates-bima-achiever-lists");
               };
-
               return (
                 <Col key={index} xs={12} sm={6} md={6} lg={6}>
                   <div
-                    className="card bg_card_design welcome-bonus-card"
-                    style={{ cursor: canRegister ? "pointer" : "default" }}
+                    className="card bg_card_design welcome-bonus-card h-100"
+                    style={{ cursor: "pointer" }}
                     onClick={handleBimaClick}
                   >
                     <div className="card-body">
@@ -2747,7 +3557,6 @@ const Dashboard = ({ userType }) => {
                 </Col>
               );
             }
-
             // Regular card rendering
             return (
               <Col key={index} xs={12} sm={6} md={4} lg={4}>
@@ -2783,7 +3592,6 @@ const Dashboard = ({ userType }) => {
           <NoDataMessage message="Sorry, no dashboard data found" />
         )}
       </Row>
-
       {/* 3. Self Gift Progress Section */}
       <div className="card mt-4">
         <div className="card-body shadow-none">
@@ -2804,8 +3612,16 @@ const Dashboard = ({ userType }) => {
           <LifetimeRewardsProgressBar />
         </div>
       </div>
+
+      {/* 6. Royalty Rewards Progress Section - YAHAN ADD KARO */}
+      <div className="card mt-4">
+        <div className="card-body shadow-none">
+          <RoyaltyRewardsProgressBar />
+        </div>
+      </div>
     </>
   );
+
 };
 
 export default Dashboard;

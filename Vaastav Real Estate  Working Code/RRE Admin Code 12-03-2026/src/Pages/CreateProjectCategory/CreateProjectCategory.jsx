@@ -11,9 +11,9 @@ function CreateProjectCategory() {
     category_name: "",
     commission: "",
     commission_type: "multiplier",
-    salary: 0,
-    salary_months: 0,
-    is_salary_applicable: 0,
+    // salary: 100,
+    // salary_months: 1,
+    // is_salary_applicable: 0,
     status: "active",
   });
 
@@ -143,10 +143,11 @@ function CreateProjectCategory() {
 
             {/* Category Name */}
             <div className="mb-3">
-              <label>Category Name</label>
+              <label>Category Name <span className="text-danger">*</span></label>
               <input
                 type="text"
                 name="category_name"
+                placeholder="Enter Category Name"
                 className={`form-control ${errors.category_name && "is-invalid"}`}
                 value={formData.category_name}
                 onChange={handleChange}
@@ -156,7 +157,7 @@ function CreateProjectCategory() {
 
             {/* Commission */}
             <div className="mb-3">
-              <label>Commission (Multiplier)</label>
+              <label>Commission(%) (Multiplier) <span className="text-danger">*</span> </label>
               <input
                 type="number"
                 step="0.01"
@@ -171,7 +172,7 @@ function CreateProjectCategory() {
 
             {/* Salary Applicable */}
             <div className="mb-3">
-              <label>Salary Applicable</label>
+              <label>Salary Applicable <span className="text-danger">*</span> </label>
               <select
                 name="is_salary_applicable"
                 className="form-control"
@@ -187,24 +188,26 @@ function CreateProjectCategory() {
             {formData.is_salary_applicable === 1 && (
               <>
                 <div className="mb-3">
-                  <label>Monthly Salary</label>
+                  <label>Monthly Salary <span className="text-danger">*</span></label>
                   <input
                     type="number"
                     name="salary"
                     className={`form-control ${errors.salary && "is-invalid"}`}
                     value={formData.salary}
                     onChange={handleChange}
+                    placeholder="Like :  5000"
                   />
                   <div className="invalid-feedback">{errors.salary}</div>
                 </div>
 
                 <div className="mb-3">
-                  <label>Salary Months</label>
+                  <label>Salary Months <span className="text-danger">*</span></label>
                   <input
                     type="number"
                     name="salary_months"
                     className={`form-control ${errors.salary_months && "is-invalid"}`}
                     value={formData.salary_months}
+                    placeholder="Like : 1"
                     onChange={handleChange}
                   />
                   <div className="invalid-feedback">{errors.salary_months}</div>
@@ -214,7 +217,7 @@ function CreateProjectCategory() {
 
             {/* Status */}
             <div className="mb-3">
-              <label>Status</label>
+              <label>Status <span className="text-danger">*</span></label>
               <select
                 name="status"
                 className="form-control"

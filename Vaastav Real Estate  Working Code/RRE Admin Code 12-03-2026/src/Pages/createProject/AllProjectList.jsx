@@ -1342,7 +1342,8 @@ function AllProjectList() {
             <thead className="bg-primary text-white">
               <tr>
                 <th>S.N</th>
-                <th>Name</th>
+                <th>Project Name</th>
+                <th>Category Name</th>
                 <th>Total Townships(Sq. Yard)</th>
                 <th>Location</th>
                 <th>Business Volume(%)</th>
@@ -1504,6 +1505,11 @@ function AllProjectList() {
                             project.name.slice(1).toLowerCase()
                           : ""}
                       </td>
+
+                      <td>
+                        {project.category_name || "NA"}
+                      </td>
+
                       <td>{project.total_township_area}</td>
                       <td>
                         <div className="table-cell-remark">
@@ -1713,7 +1719,7 @@ function AllProjectList() {
                   <div className="table-responsive">
                     <table className="table">
                       <tr>
-                        <th>Name</th>
+                        <th>Project Name</th>
                         <td>
                           {selectedProject.name
                             ? selectedProject.name.charAt(0).toUpperCase() +
@@ -1721,6 +1727,12 @@ function AllProjectList() {
                             : ""}
                         </td>
                       </tr>
+
+                       <tr>
+                        <th>Category Name</th>
+                        <td>{selectedProject.category_name || "NA"}</td>
+                      </tr>
+
                       <tr>
                         <th>Total Townships(Sq. Yard)</th>
                         <td>{selectedProject.total_township_area}</td>

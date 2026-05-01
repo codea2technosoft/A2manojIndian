@@ -70,6 +70,10 @@ import UnitSQYDLedger from "./Pages/WalletReport/UnitSQYDLedger.jsx";
 import BimaRegistrationForm from "./Pages/BimaRegistrationForm/BimaRegistrationForm.jsx";
 import AssociatesBimaAchieverLists from "./Pages/BimaRegistrationForm/AssociatesBimaAchieverLists.jsx";
 
+import WelcomeBonusRegistrationForm from "./Pages/WelcomeBonusRegistrationForm/WelcomeBonusRegistrationForm.jsx";
+import WelcomeBonusAchieverLists from "./Pages/WelcomeBonusRegistrationForm/WelcomeBonusAchieverLists.jsx";
+
+
 const App = () => {
   const [userType, setUserType] = useState(() => {
     return localStorage.getItem("userType") || null;
@@ -692,7 +696,23 @@ const App = () => {
         />
 
 
-        
+         <Route
+          path="/welcome-bonus-registration-form"
+          element={
+            <Layout userType={userType}>
+              <WelcomeBonusRegistrationForm userType={userType} />
+            </Layout>
+          }
+        />
+
+         <Route
+          path="/associates-welcome-bonus-achiever-lists" 
+          element={
+            <Layout userType={userType} mobile={mobile}>
+              <WelcomeBonusAchieverLists />
+            </Layout>
+          }
+        />
 
 
 

@@ -1245,7 +1245,8 @@ function InactiveProjectList() {
             <thead className="bg-primary text-white">
               <tr>
                 <th>S.N</th>
-                <th>Name</th>
+                <th>Project Name</th>
+                <th>Category Name</th>
                 <th>Total Townships(Sq. Yard)</th>
                 <th>Location</th>
                 <th>Business Volume(%)</th>
@@ -1480,8 +1481,14 @@ function InactiveProjectList() {
                     <table className="table">
                       <tr>
                         <th>Name</th>
-                        <td>{selectedProject.name}</td>
+                        <td>{selectedProject.name || "NA"}</td>
                       </tr>
+
+                       <tr>
+                        <th>Category Name</th>
+                        <td>{selectedProject.category_name || "NA"}</td>
+                      </tr>
+
                       <tr>
                         <th>Total Townships(Sq. Yard)</th>
                         <td>{selectedProject.total_township_area}</td>

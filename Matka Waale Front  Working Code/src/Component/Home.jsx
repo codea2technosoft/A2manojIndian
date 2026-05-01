@@ -203,12 +203,17 @@ export default function Home() {
   //   navigate(`/game-load/${encodedMarketName}/${user_id}`);
   // };
 
-  const handleGameLoad = (market_id, user_id) => {
+  const handleGameLoad = (market_id, user_id, market_result) => {
     console.log("Market ID:", market_id);
     console.log("User ID:", user_id);
+    console.log("Market Result:", market_result);
 
     // Market ID direct use karo (already clean hai)
-    navigate(`/game-load/${market_id}/${user_id}`);
+    if (market_result) {
+      navigate(`/game-load/${market_id}/${user_id}/${market_result}`);
+    } else {
+      navigate(`/game-load/${market_id}/${user_id}`);
+    }
   };
 
 
@@ -618,7 +623,7 @@ export default function Home() {
                 </div> */}
                     </div>
                     {/* Game Load Button - Added for open market */}
-                    <button
+                    {/* <button
                       className="game-load-btn-open"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -629,7 +634,19 @@ export default function Home() {
                       
                     >
                       Game Load
+                    </button> */}
+
+                    <button
+                      className="game-load-btn-open"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const loginUserId = localStorage.getItem("userid");
+                        handleGameLoad(user.market_id, loginUserId, user.market_result);
+                      }}
+                    >
+                      Game Load
                     </button>
+
                   </div>
                 ) : (
                   <div className="market">
@@ -695,7 +712,7 @@ export default function Home() {
                 </div> */}
                     </div>
                     {/* Game Load Button - Added for closed market */}
-                    <button
+                    {/* <button
                       className="game-load-btn-open"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -704,7 +721,19 @@ export default function Home() {
                       }}
                     >
                       Game Load
+                    </button> */}
+
+                    <button
+                      className="game-load-btn-open"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const loginUserId = localStorage.getItem("userid");
+                        handleGameLoad(user.market_id, loginUserId, user.market_result);
+                      }}
+                    >
+                      Game Load
                     </button>
+
                   </div>
                 )
               )}
@@ -725,7 +754,8 @@ export default function Home() {
                   >
                     <span>
                       ➤ {user.market_name}
-                      {user.is_open != 1 && " (Closed)"}
+                      {/*   {user.is_open != 1 && " (Closed)"}*/}
+                      {user.is_open != 1 && ""}
                     </span>
                     <span>{user.resultTime}</span>
                   </div>

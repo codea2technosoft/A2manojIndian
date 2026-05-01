@@ -582,6 +582,7 @@ function AssociatesDesignationLists() {
                     >
                       <option value="">All Designations</option>
                       <option value="Associate">Associate</option>
+                      <option value="Sr. Sales Associate">Sr. Sales Associate</option>
                       <option value="Team Leader">Team Leader</option>
                       <option value="Real Estate Manager">Real Estate Manager</option>
                       <option value="Business Promoter (BDP)">Business Promoter (BDP)</option>

@@ -9,6 +9,8 @@ const API_URL = process.env.REACT_APP_API_URL;
 function CreateProject() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [categories, setCategories] = useState([]);
   const [projectSize, setProjectSize] = useState("");
   const [status, setStatus] = useState("active");
   const [projectStatus, setProjectStatus] = useState("ongoing");
@@ -20,7 +22,6 @@ function CreateProject() {
   const [description, setDescription] = useState("");
   const [youtubeLink, setYoutubeLink] = useState("");
   const [legality, setLegality] = useState("");
-
   const [businessVolume, setBusinessVolume] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
@@ -64,6 +65,35 @@ function CreateProject() {
     return localStorage.getItem("token");
   };
 
+  // Fetch categories on component mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const token = getAuthToken();
+      if (!token) {
+        showCustomModal("Authentication token not found. Please log in.", "error");
+        return;
+      }
+      try {
+        const response = await fetch(`${API_URL}/created-project-category-lists`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+
+        if (response.ok && data.status === "1") {
+          setCategories(data.data);
+        } else {
+          console.error("Failed to fetch categories:", data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     const fetchAmenities = async () => {
@@ -93,7 +123,6 @@ function CreateProject() {
     fetchAmenities();
   }, []);
 
-
   useEffect(() => {
     const fetchStates = async () => {
       const token = getAuthToken();
@@ -116,16 +145,13 @@ function CreateProject() {
           setStatesList(statesData.data);
         } else {
           console.error("Failed to fetch states:", statesData.message);
-
         }
       } catch (error) {
         console.error("Error fetching states:", error);
-
       }
     };
     fetchStates();
   }, []);
-
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -151,12 +177,10 @@ function CreateProject() {
           } else {
             setCitiesList([]);
             console.error("Failed to fetch cities:", citiesData.message);
-
           }
         } catch (error) {
           setCitiesList([]);
           console.error("Error fetching cities:", error);
-
         }
       } else {
         setCitiesList([]);
@@ -166,17 +190,13 @@ function CreateProject() {
     fetchCities();
   }, [selectedStateId]);
 
-
-
   const validateForm = () => {
     const newErrors = {};
     if (!name.trim()) newErrors.name = "Project name is required.";
+    if (!categoryId) newErrors.categoryId = "Project category is required.";
     if (!projectSize || isNaN(projectSize) || parseFloat(projectSize) <= 0) {
       newErrors.projectSize = "Project size must be a positive number.";
     }
-    // if (images.length === 0) newErrors.images = "At least one multi-image is required.";
-    // if (!image1) newErrors.image1 = "A single project thumbnail image is required.";
-    // if (!imageprojectmap) newErrors.imageprojectmap = "A project map PDF file is required.";
     if (!reraRegistrationNo.trim()) newErrors.reraRegistrationNo = "RERA Registration No. is required.";
     if (!location.trim()) newErrors.location = "Location is required.";
     if (!description.trim()) newErrors.description = "Description is required.";
@@ -187,14 +207,12 @@ function CreateProject() {
     if (!state) newErrors.state = "State is required.";
     if (!landmark.trim()) newErrors.landmark = "Landmark is required.";
     if (amenities.length === 0) newErrors.amenities = "At least one amenity must be selected.";
-    // if (propertyChainPapers.length === 0) newErrors.propertyChainPapers = "At least one property chain paper (PDF) is required.";
     if (keyTransports.length === 0) newErrors.keyTransports = "At least one Key Transport entry is required.";
     if (youtubeLink.length === 0) newErrors.youtubeLink = " Youtube Link is required.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -286,7 +304,6 @@ function CreateProject() {
     if (errors.amenities) setErrors(prev => ({ ...prev, amenities: null }));
   };
 
-
   const addKeyTransport = () => {
     if (newTransportName.trim() && newTransportDistance.trim()) {
       setKeyTransports(prev => [
@@ -305,8 +322,6 @@ function CreateProject() {
     setKeyTransports(prev => prev.filter((_, index) => index !== indexToRemove));
   };
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
@@ -317,7 +332,13 @@ function CreateProject() {
 
     setIsLoading(true);
     const formData = new FormData();
-    formData.append("name", name);
+    formData.append("category_name", name);
+    formData.append("category_id", categoryId);
+    const selectedCategory = categories.find(cat => cat.id == categoryId);
+    if (selectedCategory) {
+      formData.append("category_name", selectedCategory.category_name);
+    }
+    
     formData.append("project_rera_no", reraRegistrationNo);
     formData.append("location", location);
     formData.append("bussiness_volume", businessVolume);
@@ -327,10 +348,6 @@ function CreateProject() {
     formData.append("state", state);
     formData.append("city", city);
     formData.append("land_mark", landmark);
-
-    // amenities.forEach(amenityId => {
-    //   formData.append("aminities", JSON.stringify(amenityId));
-    // });
 
     const amenitiesArrayOfObjects = amenities.map(id => ({ id: String(id) }));
     formData.append("aminities", JSON.stringify(amenitiesArrayOfObjects));
@@ -357,7 +374,6 @@ function CreateProject() {
       formData.append("image[]", imageFile);
     });
 
-
     const authToken = localStorage.getItem("token");
 
     if (!authToken) {
@@ -375,7 +391,6 @@ function CreateProject() {
         body: formData,
       });
 
-
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Server error response:", errorText);
@@ -386,6 +401,7 @@ function CreateProject() {
       if (result.success == "1" || result.status == "1") {
         showCustomModal(result.message || "Project has been created successfully!", "success");
         setName("");
+        setCategoryId("");
         setProjectSize("");
         setStatus("active");
         setProjectStatus("ongoing");
@@ -460,6 +476,30 @@ function CreateProject() {
                 </Col>
 
                 <Col md={6}>
+                  <Form.Group className="mb-3" controlId="category">
+                    <Form.Label>Project Category <span className="text-danger">*</span></Form.Label>
+                    <Form.Select
+                      value={categoryId}
+                      onChange={(e) => {
+                        setCategoryId(e.target.value);
+                        if (errors.categoryId) setErrors(prev => ({ ...prev, categoryId: null }));
+                      }}
+                      isInvalid={!!errors.categoryId}
+                    >
+                      <option value="">Select Category</option>
+                      {categories.map(category => (
+                        <option key={category.id} value={category.id}>
+                          {category.category_name}
+                        </option>
+                      ))}
+                    </Form.Select>
+                    <Form.Control.Feedback type="invalid">{errors.categoryId}</Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col md={6}>
                   <Form.Group className="mb-3" controlId="project_size">
                     <Form.Label>Total Townships (Sq. Yard) <span className="text-danger">*</span></Form.Label>
                     <Form.Control
@@ -477,9 +517,7 @@ function CreateProject() {
                     <Form.Control.Feedback type="invalid">{errors.projectSize}</Form.Control.Feedback>
                   </Form.Group>
                 </Col>
-              </Row>
 
-              <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3" controlId="rera_registration_no">
                     <Form.Label>Project RERA Number <span className="text-danger">*</span></Form.Label>
@@ -496,7 +534,9 @@ function CreateProject() {
                     <Form.Control.Feedback type="invalid">{errors.reraRegistrationNo}</Form.Control.Feedback>
                   </Form.Group>
                 </Col>
+              </Row>
 
+              <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3" controlId="location">
                     <Form.Label>Location <span className="text-danger">*</span></Form.Label>
@@ -513,9 +553,7 @@ function CreateProject() {
                     <Form.Control.Feedback type="invalid">{errors.location}</Form.Control.Feedback>
                   </Form.Group>
                 </Col>
-              </Row>
 
-              <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3" controlId="businessVolume">
                     <Form.Label>Business Volume(%) <span className="text-danger">*</span></Form.Label>
@@ -532,6 +570,9 @@ function CreateProject() {
                     <Form.Control.Feedback type="invalid">{errors.businessVolume}</Form.Control.Feedback>
                   </Form.Group>
                 </Col>
+              </Row>
+
+              <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3" controlId="state">
                     <Form.Label>State <span className="text-danger">*</span></Form.Label>
@@ -554,9 +595,7 @@ function CreateProject() {
                     <Form.Control.Feedback type="invalid">{errors.state}</Form.Control.Feedback>
                   </Form.Group>
                 </Col>
-              </Row>
 
-              <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3" controlId="city">
                     <Form.Label>City <span className="text-danger">*</span></Form.Label>
@@ -577,6 +616,9 @@ function CreateProject() {
                     <Form.Control.Feedback type="invalid">{errors.city}</Form.Control.Feedback>
                   </Form.Group>
                 </Col>
+              </Row>
+
+              <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3" controlId="landmark">
                     <Form.Label>Landmark <span className="text-danger">*</span></Form.Label>
@@ -593,9 +635,7 @@ function CreateProject() {
                     <Form.Control.Feedback type="invalid">{errors.landmark}</Form.Control.Feedback>
                   </Form.Group>
                 </Col>
-              </Row>
 
-              <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3" controlId="amenities">
                     <Form.Label>Amenities <span className="text-danger">*</span></Form.Label>
@@ -626,6 +666,9 @@ function CreateProject() {
                     <Form.Text className="text-muted">Click to select amenities.</Form.Text>
                   </Form.Group>
                 </Col>
+              </Row>
+
+              <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3" controlId="propertyChainPapers">
                     <Form.Label>Property Chain Papers (PDF)</Form.Label>
@@ -664,59 +707,61 @@ function CreateProject() {
                     )}
                   </Form.Group>
                 </Col>
+
+                <Col md={6}>
+                  <Form.Group className="mb-3" controlId="keyTransports">
+                    <Form.Label>Key Transport <span className="text-danger">*</span></Form.Label>
+                    <Row className="mb-2">
+                      <Col md={5}>
+                        <Form.Control
+                          type="text"
+                          placeholder="e.g., Malls"
+                          value={newTransportName}
+                          onChange={(e) => setNewTransportName(e.target.value)}
+                          isInvalid={!!errors.keyTransports && keyTransports.length === 0}
+                        />
+                      </Col>
+                      <Col md={5}>
+                        <Form.Control
+                          type="text"
+                          placeholder="e.g., 2KM, 190m"
+                          value={newTransportDistance}
+                          onChange={(e) => setNewTransportDistance(e.target.value)}
+                          isInvalid={!!errors.keyTransports && keyTransports.length === 0}
+                        />
+                      </Col>
+                      <Col md={2} className="d-grid">
+                        <Button variant="primary" onClick={addKeyTransport}>
+                          Add
+                        </Button>
+                      </Col>
+                    </Row>
+                    <Form.Control.Feedback type="invalid">{errors.keyTransports}</Form.Control.Feedback>
+
+                    {keyTransports.length > 0 && (
+                      <div className="mt-2 border rounded p-3 bg-light">
+                        <h5>Added Locations:</h5>
+                        <ul className="list-unstyled mb-0">
+                          {keyTransports.map((item, index) => (
+                            <li key={index} className="d-flex justify-content-between align-items-center mb-1">
+                              <span>
+                                <strong>{item.name}:</strong> {item.distance}
+                              </span>
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                onClick={() => removeKeyTransport(index)}
+                              >
+                                Remove
+                              </Button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </Form.Group>
+                </Col>
               </Row>
-
-              <Form.Group className="mb-3" controlId="keyTransports">
-                <Form.Label>Key Transport <span className="text-danger">*</span></Form.Label>
-                <Row className="mb-2">
-                  <Col md={5}>
-                    <Form.Control
-                      type="text"
-                      placeholder="e.g., Malls"
-                      value={newTransportName}
-                      onChange={(e) => setNewTransportName(e.target.value)}
-                      isInvalid={!!errors.keyTransports && keyTransports.length === 0}
-                    />
-                  </Col>
-                  <Col md={5}>
-                    <Form.Control
-                      type="text"
-                      placeholder="e.g., 2KM, 190m"
-                      value={newTransportDistance}
-                      onChange={(e) => setNewTransportDistance(e.target.value)}
-                      isInvalid={!!errors.keyTransports && keyTransports.length === 0}
-                    />
-                  </Col>
-                  <Col md={2} className="d-grid">
-                    <Button variant="primary" onClick={addKeyTransport}>
-                      Add
-                    </Button>
-                  </Col>
-                </Row>
-                <Form.Control.Feedback type="invalid">{errors.keyTransports}</Form.Control.Feedback>
-
-                {keyTransports.length > 0 && (
-                  <div className="mt-2 border rounded p-3 bg-light">
-                    <h5>Added Locations:</h5>
-                    <ul className="list-unstyled mb-0">
-                      {keyTransports.map((item, index) => (
-                        <li key={index} className="d-flex justify-content-between align-items-center mb-1">
-                          <span>
-                            <strong>{item.name}:</strong> {item.distance}
-                          </span>
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => removeKeyTransport(index)}
-                          >
-                            Remove
-                          </Button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </Form.Group>
 
               <Row>
                 <Col md={6}>
@@ -756,7 +801,7 @@ function CreateProject() {
                 <Form.Control
                   as="textarea"
                   rows={3}
-                value={description}
+                  value={description}
                   onChange={(e) => {
                     setDescription(e.target.value);
                     if (errors.description) setErrors(prev => ({ ...prev, description: null }));
@@ -764,7 +809,6 @@ function CreateProject() {
                   placeholder="Enter Decription"
                   isInvalid={!!errors.description}
                 />
-              
                 {errors.description && <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.description}</div>}
               </Form.Group>
 
@@ -783,7 +827,6 @@ function CreateProject() {
                 />
                 <Form.Control.Feedback type="invalid">{errors.legality}</Form.Control.Feedback>
               </Form.Group>
-
 
               <Form.Group className="mb-3" controlId="images-upload-multiple">
                 <Form.Label>Project Images (Multiple) </Form.Label>
@@ -884,11 +927,10 @@ function CreateProject() {
                 )}
               </Form.Group>
 
-
               <Form.Group className="mb-3" controlId="youtubelink">
                 <Form.Label>Youtube Link <span className="text-danger">*</span></Form.Label>
                 <Form.Control
-                 type="text"
+                  type="text"
                   value={youtubeLink}
                   onChange={(e) => {
                     setYoutubeLink(e.target.value);

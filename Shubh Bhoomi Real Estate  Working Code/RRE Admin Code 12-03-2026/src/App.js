@@ -181,6 +181,10 @@ import AssociatesBonusAchieverLists from "./Pages/createAssociate/AssociatesBonu
 import TodayChannelList from "./Pages/channelCreate/TodayChannelList";
 import HomeDashboard from "./Pages/HomeDashboard";
 
+import AssociatesBimaAchieverFormEntriesLists from "./Pages/createAssociate/AssociatesBimaAchieverFormEntriesLists";
+import AssociatesBonusAchieverFormEntriesLists from "./Pages/createAssociate/AssociatesBonusAchieverFormEntriesLists";
+
+
 
 
 
@@ -841,12 +845,12 @@ const App = () => {
 
 
         <Route path="/associates-bima-achiever-lists" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AssociatesBimaAchieverLists /> </Layout></PrivateRoute>} />
-
-
-
-
-
         <Route path="/associates-bonus-reward-list" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AssociatesBonusAchieverLists /> </Layout></PrivateRoute>} />
+
+
+        <Route path="/associates-bima-achiever-form-entries-lists" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AssociatesBimaAchieverFormEntriesLists /> </Layout></PrivateRoute>} />
+        <Route path="/associates-bonus-achiever-form-entries-lists" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AssociatesBonusAchieverFormEntriesLists /> </Layout></PrivateRoute>} />
+
 
 
 

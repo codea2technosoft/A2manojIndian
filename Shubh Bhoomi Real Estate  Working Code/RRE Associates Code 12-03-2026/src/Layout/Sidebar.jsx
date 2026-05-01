@@ -118,6 +118,29 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         },
 
         {
+          id: "achiever_lists",
+          title: "Eligibilities Lists",
+          dropdown: true,
+          icon: <MdSupportAgent />,
+          checked: false,
+          children: [
+            {
+              id: "achiever_lists",
+              title: "Bima From Entries",
+              href: "/associates-bima-achiever-lists",
+              checked: false,
+            },
+             {
+              id: "welcome-bonus-achiever-lists",
+              title: "Bonus From Entries",
+              href: "/associates-welcome-bonus-achiever-lists",
+              checked: false,
+            },
+
+          ],
+        },
+
+        {
           id: "Account",
           title: "Bank Account",
           dropdown: true,
@@ -164,26 +187,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         },
 
 
-
-        {
-          id: "bima_achiever_lists",
-          title: "Bima Achievers",
-          dropdown: true,
-          icon: <MdSupportAgent />,
-          checked: false,
-          children: [
-            {
-              id: "bima_achiever_lists",
-              title: "Bima Achievers",
-              href: "/associates-bima-achiever-lists",
-              checked: false,
-            },
-
-          ],
-        },
-
-
-
         {
           id: "wallet_ledger",
           title: "Wallet ledger",
@@ -216,6 +219,9 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
           ],
         },
+
+         
+
 
 
         // {
@@ -421,7 +427,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
         {
           id: "Lead_Management",
-          title: "Lead Management",
+          title: "Leads",
           dropdown: true,
           icon: (
             <svg

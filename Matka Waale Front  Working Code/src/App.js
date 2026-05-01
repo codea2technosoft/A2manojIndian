@@ -229,7 +229,7 @@ function App() {
             }
           />
           <Route
-            path="/game-load/:market_id/:user_id"
+            path="/game-load/:market_id/:user_id/:market_result"
             element={
               <>
                 <Header />

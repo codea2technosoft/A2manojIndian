@@ -159,8 +159,12 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
             { id: "associates-anniversary-lists", title: "Anniversary Lists", href: "/associates-anniversary-lists", checked: false },
             { id: "associates-designation-lists", title: "Designation Lists", href: "/associates-designation-lists", checked: false },
             { id: "associates-bima-achiever-lists", title: "Bima Achiever Lists", href: "/associates-bima-achiever-lists", checked: false },
-
             { id: "associates-bonus-reward-list", title: "Bonus Achiever Lists", href: "/associates-bonus-reward-list", checked: false },
+
+
+            { id: "associates-bima-achiever-form-entries-lists", title: "Bima Form Entries Lists", href: "/associates-bima-achiever-form-entries-lists", checked: false },
+            { id: "associates-bonus-achiever-form-entries-lists", title: "Bomus Form Entries Lists", href: "/associates-bonus-achiever-form-entries-lists", checked: false },
+
 
 
 
