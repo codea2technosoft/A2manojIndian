@@ -151,6 +151,9 @@ function CreateProjectCategoryList() {
           category_name: editData.category_name,
           commission: editData.commission,
           salary: editData.salary || 0,
+          is_salary_applicable: editData.is_salary_applicable,
+          salary_months: editData.salary_months || 0,
+          status: editData.status || 0,
         }),
       });
 
@@ -201,17 +204,17 @@ function CreateProjectCategoryList() {
         return;
       }
 
-      const headers = ["Category ID", "Category Name",  "Salary", "Salary Months", "Commission (%)", "Commission Type", "Is Salary Applicable", "Status", "Date"];
+      const headers = ["Category ID", "Category Name", "Salary", "Salary Months", "Commission (%)", "Commission Type", "Is Salary Applicable", "Status", "Date"];
 
       const rows = categories.map((category) => [
         category.id ?? "",
         category.category_name ?? "",
-         category.salary ?? 0,        // Fix: 0 show karega, blank nahi
+        category.salary ?? 0,        // Fix: 0 show karega, blank nahi
         category.salary_months ?? 0,  // Fix: 0 show karega, blank nahi
 
         category.commission ?? 0,
         category.commission_type ?? "",
-       
+
         category.is_salary_applicable == 1 ? "Yes" : "No",
         category.status ?? "",
         new Date(category.created_at).toLocaleString("en-GB", {
@@ -330,7 +333,7 @@ function CreateProjectCategoryList() {
 
                   <th>Commissions</th>
                   <th>Commission Type</th>
-                  
+
                   <th>Is Salary Applicable</th>
                   <th>Status</th>
                   <th>Date & Timing</th>
@@ -348,7 +351,7 @@ function CreateProjectCategoryList() {
                           {subadmin.category_name?.charAt(0).toUpperCase() + subadmin.category_name?.slice(1).toLowerCase()}
                         </strong>
                       </td>
-                       <td className="text-danger"><strong>{Number(subadmin.salary).toFixed(2)}</strong></td>
+                      <td className="text-danger"><strong>{Number(subadmin.salary).toFixed(2)}</strong></td>
                       <td className="text-danger"><strong>{subadmin.salary_months}</strong></td>
 
 
@@ -358,7 +361,7 @@ function CreateProjectCategoryList() {
                           {subadmin.commission_type?.charAt(0).toUpperCase() + subadmin.commission_type?.slice(1).toLowerCase()}
                         </strong>
                       </td>
-                     
+
                       <td>
                         {subadmin.is_salary_applicable === 1 ? (
                           <span className="text-success fw-bold">Yes</span>
@@ -433,7 +436,7 @@ function CreateProjectCategoryList() {
                   </div>
 
                   <div className="modal-body">
-                    Category Name 
+                    Category Name
                     <input
                       type="text"
                       className="form-control mb-2"
@@ -443,6 +446,7 @@ function CreateProjectCategoryList() {
                         setEditData({ ...editData, category_name: e.target.value })
                       }
                     />
+
                     Commission (%)
                     <input
                       type="text"
@@ -453,16 +457,63 @@ function CreateProjectCategoryList() {
                         setEditData({ ...editData, commission: e.target.value })
                       }
                     />
-                    Salary
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Salary Like 50000"
-                      value={editData?.salary || ""}
+
+                    {/* Salary Applicable */}
+                    <label>Salary Applicable</label>
+                    <select
+                      className="form-control mb-2"
+                      value={editData?.is_salary_applicable || 0}
                       onChange={(e) =>
-                        setEditData({ ...editData, salary: e.target.value })
+                        setEditData({
+                          ...editData,
+                          is_salary_applicable: Number(e.target.value),
+                        })
                       }
-                    />
+                    >
+                      <option value={0}>No</option>
+                      <option value={1}>Yes</option>
+                    </select>
+
+                    {/* Salary */}
+                    {editData?.is_salary_applicable === 1 && (
+                      <>
+                        Salary
+                        <input
+                          type="text"
+                          className="form-control mb-2"
+                          placeholder="Salary Like 50000"
+                          value={editData?.salary || ""}
+                          onChange={(e) =>
+                            setEditData({ ...editData, salary: e.target.value })
+                          }
+                        />
+
+                        {/* Salary Months */}
+                        Salary Months
+                        <input
+                          type="number"
+                          className="form-control mb-2"
+                          placeholder="Like : 1"
+                          value={editData?.salary_months || ""}
+                          onChange={(e) =>
+                            setEditData({ ...editData, salary_months: e.target.value })
+                          }
+                        />
+                      </>
+                    )}
+
+                    {/* Status */}
+                    <label>Status</label>
+                    <select
+                      className="form-control"
+                      value={editData?.status || "active"}
+                      onChange={(e) =>
+                        setEditData({ ...editData, status: e.target.value })
+                      }
+                    >
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                    </select>
                   </div>
 
                   <div className="modal-footer">

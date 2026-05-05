@@ -33,6 +33,7 @@ function ActiveProjectList() {
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [amenitiesList, setAmenitiesList] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const [editFormData, setEditFormData] = useState({
     name: "",
@@ -54,6 +55,7 @@ function ActiveProjectList() {
     description: "",
     legality: "",
     businessVolume: "",
+    category_id: "",     // ← ADD THIS
     city: "",
     state: "",
     landmark: "",
@@ -76,6 +78,31 @@ function ActiveProjectList() {
     type: "",
     confirmAction: null,
   });
+
+  const fetchProjectCategories = async () => {
+    try {
+      const token = getAuthToken();
+      if (!token) return;
+
+      const response = await fetch(`${API_URL}/created-project-category-lists`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch categories.");
+      }
+
+      const data = await response.json();
+      setCategories(data.data || []);
+    } catch (err) {
+      console.error("Fetch categories error:", err);
+    }
+  };
+
 
   useEffect(() => {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -133,6 +160,7 @@ function ActiveProjectList() {
 
     fetchStates();
     fetchAmenities();
+    fetchProjectCategories();  // ← SIRF YEH LINE ADD KARO
   }, []);
 
 
@@ -179,6 +207,19 @@ function ActiveProjectList() {
 
   const getAuthToken = () => {
     return localStorage.getItem("token");
+  };
+
+
+  const safeParse = (value) => {
+    if (!value) return [];
+    if (Array.isArray(value)) return value;
+    if (typeof value === 'object') return value;
+    try {
+      return JSON.parse(value);
+    } catch (e) {
+      console.warn("Failed to parse:", value);
+      return [];
+    }
   };
 
   const fetchProjects = async (page = 1, name = "") => {
@@ -257,46 +298,75 @@ function ActiveProjectList() {
     }, 500);
   };
 
-  const handleViewProject = async (projectId) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const token = getAuthToken();
-      if (!token) {
-        showCustomMessageModal("Authentication Error", "Authentication token not found. Please log in.", "error");
-        return;
-      }
-
-      const response = await fetch(`${API_URL}/project-view`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ id: projectId }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to fetch project details.");
-      }
-
-      const data = await response.json();
-      const projectData = data.data;
-      setSelectedProject(projectData);
-      const imagesArray = projectData.images ? JSON.parse(projectData.images) : [];
-      const parsedPropertyChainPapers = projectData.property_chain_papers ? JSON.parse(projectData.property_chain_papers) : [];
-      setSelectedProject({ ...projectData, property_chain_papers: parsedPropertyChainPapers });
-      setViewModalImages(imagesArray);
-      setShowViewModal(true);
-    } catch (err) {
-      console.error("View project error:", err);
-
-    } finally {
-      setLoading(false);
+const handleViewProject = async (projectId) => {
+  setLoading(true);
+  setError(null);
+  try {
+    const token = getAuthToken();
+    if (!token) {
+      showCustomMessageModal(
+        "Authentication Error",
+        "Authentication token not found. Please log in.",
+        "error",
+      );
+      return;
     }
-  };
 
+    const response = await fetch(`${API_URL}/project-view`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ id: projectId }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to fetch project details.");
+    }
+
+    const data = await response.json();
+    const projectData = data.data;
+    
+    // ✅ Projects list se city, state, category find karo
+    const matchedProject = projects.find(p => p.id === projectId);
+    
+    const safeParse = (value) => {
+      if (!value) return [];
+      if (Array.isArray(value)) return value;
+      if (typeof value === 'object') return value;
+      try {
+        return JSON.parse(value);
+      } catch (e) {
+        return [];
+      }
+    };
+
+    const imagesArray = safeParse(projectData.images);
+    const parsedPropertyChainPapers = safeParse(projectData.property_chain_papers);
+
+    setSelectedProject({
+      ...projectData,
+      // ✅ Correct way - pehle matchedProject se lo, nahi toh projectData se
+      city_name: matchedProject?.city_name || projectData.city_name || "N/A",
+      state_name: matchedProject?.state_name || projectData.state_name || "N/A",
+      project_category_name: matchedProject?.project_category_name || projectData.project_category_name || "N/A",
+      property_chain_papers: parsedPropertyChainPapers,
+    });
+    setViewModalImages(imagesArray);
+    setShowViewModal(true);
+  } catch (err) {
+    console.error("View project error:", err);
+    showCustomMessageModal(
+      "Error",
+      err.message || "Failed to fetch project details.",
+      "error",
+    );
+  } finally {
+    setLoading(false);
+  }
+};
   const handleEditProject = async (projectId) => {
     setLoading(true);
     setError(null);
@@ -327,30 +397,32 @@ function ActiveProjectList() {
       const data = await response.json();
       const projectData = data.data;
 
+      // Find category name if not provided
+      let categoryName = projectData.category_name || "";
+      if (!categoryName && projectData.category_id && categories.length > 0) {
+        const foundCategory = categories.find(cat => String(cat.id) === String(projectData.category_id));
+        categoryName = foundCategory ? foundCategory.category_name : "";
+      }
 
+      // Use safeParse instead of JSON.parse
       const parsedAmenities = projectData.aminities
-        ? JSON.parse(projectData.aminities).map((a) => String(a.id))
+        ? safeParse(projectData.aminities).map((a) => String(a.id))
         : [];
-      const parsedKeyTransports = projectData.key_transport
-        ? JSON.parse(projectData.key_transport)
-        : [];
+      const parsedKeyTransports = safeParse(projectData.key_transport);
 
-      const imagesArrayRaw = projectData.images ? JSON.parse(projectData.images) : [];
-
-
+      const imagesArrayRaw = safeParse(projectData.images);
       const imagesArray = imagesArrayRaw.filter(file =>
-        /\.(jpe?g|png|gif|bmp|webp)$/i.test(file.image)
+        /\.(jpe?g|png|gif|bmp|webp)$/i.test(file.image || file)
       );
+      const pdfsArray = imagesArrayRaw
+        .filter(file => /\.pdf$/i.test(file.image || file))
+        .map(file => ({
+          ...file,
+          pdf: file.image || file,
+          thumbnail: "assets/pdf-thumbnail.png",
+        }));
 
-      const pdfsArray = imagesArrayRaw.filter(file =>
-        /\.pdf$/i.test(file.image)
-      ).map(file => ({
-        ...file,
-        pdf: file.image,
-        thumbnail: "assets/pdf-thumbnail.png",
-      }));
-
-      const parsedPropertyChainPapers = projectData.property_chain_papers ? JSON.parse(projectData.property_chain_papers) : [];
+      const parsedPropertyChainPapers = safeParse(projectData.property_chain_papers);
 
       setEditFormData({
         name: projectData.name || "",
@@ -358,6 +430,8 @@ function ActiveProjectList() {
         status: projectData.status || "inactive",
         project_status: projectData.project_status || "ongoing",
         project_id: projectData.id || "",
+        category_id: projectData.category_id || "",
+        // category_name: categoryName,
         newImages: [],
         images: imagesArray,
         pdfs: pdfsArray,
@@ -375,7 +449,6 @@ function ActiveProjectList() {
         state: projectData.state || "",
         landmark: projectData.land_mark || "",
         youtube_links: projectData.youtube_links || "",
-        // propertyChainPapers: [],
         propertyChainPapers: parsedPropertyChainPapers,
         amenities: parsedAmenities,
         keyTransports: parsedKeyTransports,
@@ -756,6 +829,8 @@ function ActiveProjectList() {
       formData.append("land_mark", editFormData.landmark);
       formData.append("project_status", editFormData.project_status);
       formData.append("status", editFormData.status);
+      formData.append("category_id", editFormData.category_id);     // ← ADD THIS
+      // formData.append("category_name", editFormData.category_name); // ← ADD THIS
 
 
       if (editFormData.singleImageFile) {
@@ -968,6 +1043,7 @@ function ActiveProjectList() {
       status: "",
       project_status: "",
       project_id: "",
+      category_id: "",
       newImages: [],
       images: [],
       singleImageFile: null,
@@ -1078,7 +1154,7 @@ function ActiveProjectList() {
                   className={`filter-toggle-btn ${isFilterActive ? "active" : ""}`}
                   onClick={handleToggle}
                 >
-                  {isFilterActive ? ( 
+                  {isFilterActive ? (
                     <>
                       <MdFilterAltOff />
                     </>
@@ -1143,25 +1219,25 @@ function ActiveProjectList() {
 
 
 
-                      <td>{project.category_name || "NA"}</td>
+                      <td>{project.project_category_name || "NA"}</td>
                       <td>{project.total_township_area}</td>
                       <td>
-                         <div className="table-cell-remark">
+                        <div className="table-cell-remark">
 
-                        
-                        {project.location
-                          ? project.location.charAt(0).toUpperCase() + project.location.slice(1).toLowerCase()
-                          : ''}
-                          </div>
+
+                          {project.location
+                            ? project.location.charAt(0).toUpperCase() + project.location.slice(1).toLowerCase()
+                            : ''}
+                        </div>
                       </td>
 
                       <td>{project.bussiness_volume}</td>
                       <td>
-                         <div className="table-cell-remark">
-                        {project.approve_authority
-                          ? project.approve_authority.charAt(0).toUpperCase() + project.approve_authority.slice(1).toLowerCase()
-                          : ''}
-                          </div>
+                        <div className="table-cell-remark">
+                          {project.approve_authority
+                            ? project.approve_authority.charAt(0).toUpperCase() + project.approve_authority.slice(1).toLowerCase()
+                            : ''}
+                        </div>
                       </td>
 
                       <td>{project.date}</td>
@@ -1305,254 +1381,557 @@ function ActiveProjectList() {
           </nav>
         </div>
 
-        <Modal show={showViewModal} onHide={handleCloseViewModal} centered size="xl">
-          <Modal.Header closeButton>
-            <Modal.Title>Project Details</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {selectedProject && (
-              <div className="container-fluid">
-                <Row>
-                  <Col md={7}>
-                    {/* <p><strong>ID:</strong> {selectedProject.id}</p> */}
-                    <div className="table-responsive">
-                      <table className="table">
-                        <tr>
-                          <th>Name</th>
-                          <td>
-                            {selectedProject.name
-                              ? selectedProject.name.charAt(0).toUpperCase() + selectedProject.name.slice(1).toLowerCase()
-                              : ''}
-                          </td>
-
-                        </tr>
-                        <tr>
-                          <th>Total Townships(Sq. Yard)</th>
-                          <td>{selectedProject.total_township_area}</td>
-                        </tr>
-                        <tr>
-                          <th>Project RERA Number</th>
-                          <td>{selectedProject.project_rera_no}</td>
-                        </tr>
-                        <tr>
-                          <th>Bussiness Volume</th>
-                          <td>{selectedProject.bussiness_volume}</td>
-                        </tr>
-
-                        <tr>
-                          <th>Approve Authority</th>
-                          <td>
-                            {selectedProject.approve_authority
-                              ? selectedProject.approve_authority.charAt(0).toUpperCase() + selectedProject.approve_authority.slice(1).toLowerCase()
-                              : ''}
-                          </td>
-
-                        </tr>
-                        <tr>
-                          <th>Location</th>
-                          <td>
-                            {selectedProject.location
-                              ? selectedProject.location.charAt(0).toUpperCase() + selectedProject.location.slice(1).toLowerCase()
-                              : ''}
-                          </td>
-
-                        </tr>
-                        <tr>
-                          <th>State</th>
-                          <td>
-                            {selectedProject.state_name
-                              ? selectedProject.state_name.charAt(0).toUpperCase() + selectedProject.state_name.slice(1).toLowerCase()
-                              : ''}
-                          </td>
-
-                        </tr>
-
-                        <tr>
-                          <th>City</th>
-                          <td>
-                            {selectedProject.city_name
-                              ? selectedProject.city_name.charAt(0).toUpperCase() + selectedProject.city_name.slice(1).toLowerCase()
-                              : ''}
-                          </td>
-
-                        </tr>
-
-                        <tr>
-                          <th>LandMark</th>
-                          <td>
-                            {selectedProject.land_mark
-                              ? selectedProject.land_mark.charAt(0).toUpperCase() + selectedProject.land_mark.slice(1).toLowerCase()
-                              : ''}
-                          </td>
-
-                        </tr>
-                        <tr>
-                          <th>Key Transport</th>
-                          <td>
-                            {selectedProject.key_transport ? (
-                              JSON.parse(selectedProject.key_transport).map((item, index) => (
-                                <div key={index}>
-                                  {item.name} - {item.distance}
-                                </div>
-                              ))
-                            ) : (
-                              "N/A"
-                            )}
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>Aminities</th>
-                          <td>
-                            {selectedProject.aminities ? (
-                              JSON.parse(selectedProject.aminities).map((item, index) => (
-                                <div key={index}>
-                                  {item.name}
-                                </div>
-                              ))
-                            ) : (
-                              "N/A"
-                            )}
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>Status</th>
-                          <td>
-                            <span
-                              className={`badge ${selectedProject.status === "active" ? "bg-success" : "bg-danger"
-                                }`}
-                            >
-                              {selectedProject.status === "active" ? "Show" : selectedProject.status === "inactive" ? "Hide" : selectedProject.status}
-                            </span>
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <th>Project Status</th>
-                          <td><span
-                            className={`badge  text-white  ${selectedProject.project_status === "ongoing" ? "bg-info" : "bg-primary"
-                              }`}
-                          >
-                            {selectedProject.project_status}
-                          </span></td>
-                        </tr>
-
-
-                      </table>
-                    </div>
-
-                  </Col>
-                  <Col md={5}>
-                    {selectedProject.thumbnail && (
-                      <div className="mb-3">
-                        <strong>Thumbnail Image:</strong>
-                        <br />
-                        <img
-                          src={`${imageAPIURL}/project/${selectedProject.thumbnail}`}
-                          alt={`${selectedProject.name} Main`}
-                          className="img-fluid rounded mt-2"
-                          style={{ maxWidth: "200px", maxHeight: "150px", objectFit: "cover" }}
-                          onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/200x150/cccccc/000000?text=No+Main+Image"; }}
-                        />
-                      </div>
-                    )}
-                    {!selectedProject.thumbnail && (
-                      <div className="mb-3">
-                        <strong>Thumbnail Image:</strong>
-                        <br />
-                        <span>No Thumbnail image available.</span>
-                      </div>
-                    )}
-
-                    {selectedProject.map_pdf && (
-                      <div className="mb-3">
-                        <strong>Map PDF:</strong>
-                        <br />
-                        <a
-                          href={`${selectedimagePath}${selectedProject.map_pdf}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="d-inline-block mt-2"
-                        >
-                          <div style={{ width: "200px", height: "150px", background: "#f0f0f0", borderRadius: "5px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <i className="fas fa-file-pdf fa-3x text-danger"></i>
-                          </div>
-                          <span className="d-block mt-1 text-center">View PDF</span>
-                        </a>
-                      </div>
-                    )}
-                    {!selectedProject.map_pdf && (
-                      <div className="mb-3">
-                        <strong>Map PDF:</strong>
-                        <br />
-                        <span>No Map PDF available.</span>
-                      </div>
-                    )}
-
-
-
-                    <div className="mb-3">
-                      <strong>Gallery Images:</strong>
-                      <br />
-                      {imageFiles.length > 0 ? (
-                        <div className="d-flex flex-wrap gap-2">
-                          {imageFiles.map((imgName, idx) => (
-                            <img
-                              key={idx}
-                              src={`${imageAPIURL}/project/${imgName}`}
-                              alt={`Gallery ${idx + 1}`}
-                              className="img-fluid rounded mt-2"
-                              style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "cover" }}
-                              onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = "https://placehold.co/100x50/cccccc/333333?text=No+Image";
-                              }}
-                            />
-                          ))}
-                        </div>
-                      ) : (
-                        <span>No gallery images available.</span>
-                      )}
-                    </div>
-
-                    {/* Property Chain Paper */}
-                    <div className="mb-3">
-                      <strong>Property Chain Paper:</strong>
-                      <br />
-                      {pdfFiles.length > 0 ? (
-                        <ul className="ps-3">
-                          {pdfFiles.map((pdfName, idx) => (
-                            <li key={idx}>
-                              <a
-                                href={`${selectedimagePath}${pdfName}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                View PDF {idx + 1}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <span>No PDF documents available.</span>
-                      )}
-                    </div>
-
-                  </Col>
-                  <Col xs={12}>
-                    <hr />
-                    <p><strong>Description:</strong></p>
-                    <div dangerouslySetInnerHTML={{ __html: selectedProject.description }} />
-                  </Col>
-                </Row>
-              </div>
-            )}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="danger" onClick={handleCloseViewModal}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
+    <Modal
+             show={showViewModal}
+             onHide={handleCloseViewModal}
+             centered
+             size="xl"
+           >
+             <Modal.Header closeButton>
+               <Modal.Title>Project Details</Modal.Title>
+             </Modal.Header>
+             <Modal.Body
+               style={{
+                 overflowX: "hidden",
+                 padding: "20px",
+                 maxHeight: "80vh",
+                 overflowY: "auto",
+               }}
+             >
+               {selectedProject && (
+                 <div style={{ width: "100%" }}>
+                   {/* Project Name & Status Header */}
+                   <div
+                     style={{
+                       display: "flex",
+                       justifyContent: "space-between",
+                       alignItems: "start",
+                       flexWrap: "wrap",
+                       marginBottom: "20px",
+                       paddingBottom: "15px",
+                       borderBottom: "2px solid #e9ecef",
+                     }}
+                   >
+                     <div>
+                       <h4 style={{ margin: "0 0 8px 0", color: "#0d6efd" }}>
+                         {selectedProject.name
+                           ? selectedProject.name.charAt(0).toUpperCase() +
+                           selectedProject.name.slice(1).toLowerCase()
+                           : ""}
+                       </h4>
+                       <span
+                         style={{
+                           background: "#0dcaf0",
+                           color: "#fff",
+                           padding: "5px 12px",
+                           borderRadius: "20px",
+                           fontSize: "13px",
+                           fontWeight: "500",
+                           display: "inline-block",
+                         }}
+                       >
+                         {selectedProject.project_category_name
+                           ? selectedProject.project_category_name.charAt(0).toUpperCase() +
+                           selectedProject.project_category_name.slice(1).toLowerCase()
+                           : "NA"}
+                       </span>
+                     </div>
+                     <div style={{ display: "flex", gap: "10px" }}>
+                       <span
+                         style={{
+                           background: selectedProject.status === "active" ? "#198754" : "#dc3545",
+                           color: "#fff",
+                           padding: "5px 12px",
+                           borderRadius: "20px",
+                           fontSize: "13px",
+                           fontWeight: "500",
+                         }}
+                       >
+                         {selectedProject.status === "active" ? "Show" : "Hide"}
+                       </span>
+                       <span
+                         style={{
+                           background: selectedProject.project_status === "ongoing" ? "#0dcaf0" : "#0d6efd",
+                           color: "#fff",
+                           padding: "5px 12px",
+                           borderRadius: "20px",
+                           fontSize: "13px",
+                           fontWeight: "500",
+                         }}
+                       >
+                         {selectedProject.project_status}
+                       </span>
+                     </div>
+                   </div>
+   
+                   <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+                     {/* Left Column - Table Details */}
+                     <div style={{ flex: "7", minWidth: "280px" }}>
+                       <div style={{ width: "100%", overflowX: "visible" }}>
+                         <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                           <tbody>
+                             <tr>
+                               <th
+                                 style={{
+                                   width: "35%",
+                                   backgroundColor: "#f8f9fa",
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                   textAlign: "left",
+                                 }}
+                               >
+                                 Project Name
+                               </th>
+                               <td
+                                 style={{
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                 }}
+                               >
+                                 {selectedProject.name
+                                   ? selectedProject.name.charAt(0).toUpperCase() +
+                                   selectedProject.name.slice(1).toLowerCase()
+                                   : ""}
+                               </td>
+                             </tr>
+                             <tr>
+                               <th
+                                 style={{
+                                   backgroundColor: "#f8f9fa",
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                   textAlign: "left",
+                                 }}
+                               >
+                                 Category Name
+                               </th>
+                               <td
+                                 style={{
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                 }}
+                               >
+                                 {selectedProject.project_category_name
+                                   ? selectedProject.project_category_name
+                                     .charAt(0)
+                                     .toUpperCase() +
+                                   selectedProject.project_category_name
+                                     .slice(1)
+                                     .toLowerCase()
+                                   : "NA"}
+                               </td>
+                             </tr>
+                             <tr>
+                               <th
+                                 style={{
+                                   backgroundColor: "#f8f9fa",
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                   textAlign: "left",
+                                 }}
+                               >
+                                 Total Townships(Sq. Yard)
+                               </th>
+                               <td
+                                 style={{
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                 }}
+                               >
+                                 {selectedProject.total_township_area}
+                               </td>
+                             </tr>
+                             <tr>
+                               <th
+                                 style={{
+                                   backgroundColor: "#f8f9fa",
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                   textAlign: "left",
+                                 }}
+                               >
+                                 Project RERA Number
+                               </th>
+                               <td
+                                 style={{
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                 }}
+                               >
+                                 {selectedProject.project_rera_no}
+                               </td>
+                             </tr>
+                             <tr>
+                               <th
+                                 style={{
+                                   backgroundColor: "#f8f9fa",
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                   textAlign: "left",
+                                 }}
+                               >
+                                 Business Volume
+                               </th>
+                               <td
+                                 style={{
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                 }}
+                               >
+                                 {selectedProject.bussiness_volume}
+                               </td>
+                             </tr>
+                             <tr>
+                               <th
+                                 style={{
+                                   backgroundColor: "#f8f9fa",
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                   textAlign: "left",
+                                 }}
+                               >
+                                 Approve Authority
+                               </th>
+                               <td
+                                 style={{
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                 }}
+                               >
+                                 {selectedProject.approve_authority
+                                   ? selectedProject.approve_authority
+                                     .charAt(0)
+                                     .toUpperCase() +
+                                   selectedProject.approve_authority
+                                     .slice(1)
+                                     .toLowerCase()
+                                   : ""}
+                               </td>
+                             </tr>
+                             <tr>
+                               <th
+                                 style={{
+                                   backgroundColor: "#f8f9fa",
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                   textAlign: "left",
+                                 }}
+                               >
+                                 Location
+                               </th>
+                               <td
+                                 style={{
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                 }}
+                               >
+                                 {selectedProject.location
+                                   ? selectedProject.location.charAt(0).toUpperCase() +
+                                   selectedProject.location.slice(1).toLowerCase()
+                                   : ""}
+                               </td>
+                             </tr>
+                             <tr>
+                               <th style={{ backgroundColor: "#f8f9fa" }}>State</th>
+                               <td>
+                                 {selectedProject.state_name
+                                   ? selectedProject.state_name.charAt(0).toUpperCase() + selectedProject.state_name.slice(1).toLowerCase()
+                                   : "N/A"}
+                               </td>
+                             </tr>
+   
+                             {/* City */}
+                             <tr>
+                               <th style={{ backgroundColor: "#f8f9fa" }}>City</th>
+                               <td>
+                                 {selectedProject.city_name
+                                   ? selectedProject.city_name.charAt(0).toUpperCase() + selectedProject.city_name.slice(1).toLowerCase()
+                                   : "N/A"}
+                               </td>
+                             </tr>
+   
+                             {/* Category Name */}
+                             
+                             <tr>
+                               <th
+                                 style={{
+                                   backgroundColor: "#f8f9fa",
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                   textAlign: "left",
+                                 }}
+                               >
+                                 LandMark
+                               </th>
+                               <td
+                                 style={{
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                 }}
+                               >
+                                 {selectedProject.land_mark
+                                   ? selectedProject.land_mark
+                                     .charAt(0)
+                                     .toUpperCase() +
+                                   selectedProject.land_mark.slice(1).toLowerCase()
+                                   : ""}
+                               </td>
+                             </tr>
+                             <tr>
+                               <th
+                                 style={{
+                                   backgroundColor: "#f8f9fa",
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                   textAlign: "left",
+                                 }}
+                               >
+                                 Key Transport
+                               </th>
+                               <td
+                                 style={{
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                 }}
+                               >
+                                 {selectedProject.key_transport
+                                   ? (() => {
+                                     try {
+                                       return JSON.parse(
+                                         selectedProject.key_transport
+                                       ).map((item, index) => (
+                                         <div key={index}>
+                                           {item.name} - {item.distance}
+                                         </div>
+                                       ));
+                                     } catch (e) {
+                                       return "N/A";
+                                     }
+                                   })()
+                                   : "N/A"}
+                               </td>
+                             </tr>
+                             <tr>
+                               <th
+                                 style={{
+                                   backgroundColor: "#f8f9fa",
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                   textAlign: "left",
+                                 }}
+                               >
+                                 Amenities
+                               </th>
+                               <td
+                                 style={{
+                                   padding: "10px",
+                                   border: "1px solid #dee2e6",
+                                 }}
+                               >
+                                 {selectedProject.aminities
+                                   ? (() => {
+                                     try {
+                                       return JSON.parse(
+                                         selectedProject.aminities
+                                       ).map((item, index) => (
+                                         <div key={index}>
+                                           <span
+                                             style={{
+                                               display: "inline-block",
+                                               background: "#e7f1ff",
+                                               color: "#0d6efd",
+                                               padding: "3px 10px",
+                                               margin: "3px",
+                                               borderRadius: "15px",
+                                               fontSize: "12px",
+                                             }}
+                                           >
+                                             {item.name}
+                                           </span>
+                                         </div>
+                                       ));
+                                     } catch (e) {
+                                       return "N/A";
+                                     }
+                                   })()
+                                   : "N/A"}
+                               </td>
+                             </tr>
+                           </tbody>
+                         </table>
+                       </div>
+                     </div>
+   
+                     {/* Right Column - Images */}
+                     <div style={{ flex: "5", minWidth: "250px" }}>
+                       {/* Thumbnail */}
+                       {selectedProject.thumbnail && (
+                         <div style={{ marginBottom: "20px" }}>
+                           <strong style={{ fontSize: "14px" }}>Thumbnail Image:</strong>
+                           <br />
+                           <img
+                             src={`${imageAPIURL}/project/${selectedProject.thumbnail}`}
+                             alt="Thumbnail"
+                             style={{
+                               width: "100%",
+                               maxWidth: "250px",
+                               height: "150px",
+                               objectFit: "cover",
+                               borderRadius: "8px",
+                               border: "1px solid #dee2e6",
+                               marginTop: "8px",
+                             }}
+                             onError={(e) => {
+                               e.target.onerror = null;
+                               e.target.src =
+                                 "https://placehold.co/250x150/cccccc/000000?text=No+Image";
+                             }}
+                           />
+                         </div>
+                       )}
+   
+                       {/* Map PDF */}
+                       {/* Map PDF */}
+                       {/* Map PDF - Inline Preview */}
+                       {selectedProject.map_pdf && (
+                         <div className="mb-3">
+                           <strong>Map PDF:</strong>
+                           <br />
+                           <div
+                             style={{
+                               width: "100%",
+                               height: "500px",
+                               background: "#f5f5f5",
+                               borderRadius: "8px",
+                               border: "1px solid #dee2e6",
+                               marginTop: "8px",
+                               overflow: "hidden",
+                             }}
+                           >
+                             <iframe
+                               src={`${imageAPIURL}/project/${selectedProject.map_pdf}`}
+                               style={{
+                                 width: "100%",
+                                 height: "100%",
+                                 border: "none",
+                               }}
+                               title="Map PDF Preview"
+                             />
+                           </div>
+                           <div className="text-center mt-2">
+                             <a
+                               href={`${imageAPIURL}/project/${selectedProject.map_pdf}`}
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               className="btn btn-sm btn-primary"
+                               style={{ textDecoration: "none" }}
+                             >
+                               <i className="fas fa-download"></i> Download PDF
+                             </a>
+                           </div>
+                         </div>
+                       )}
+   
+                       {/* Gallery Images */}
+                       <div style={{ marginBottom: "20px" }}>
+                         <strong style={{ fontSize: "14px" }}>Gallery Images:</strong>
+                         <br />
+                         <div
+                           style={{
+                             display: "grid",
+                             gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))",
+                             gap: "8px",
+                             marginTop: "8px",
+                           }}
+                         >
+                           {imageFiles.length > 0 ? (
+                             imageFiles.map((imgName, idx) => (
+                               <img
+                                 key={idx}
+                                 src={`${imageAPIURL}/project/${imgName}`}
+                                 alt={`Gallery ${idx + 1}`}
+                                 style={{
+                                   width: "100%",
+                                   height: "70px",
+                                   objectFit: "cover",
+                                   borderRadius: "6px",
+                                   cursor: "pointer",
+                                   border: "1px solid #dee2e6",
+                                 }}
+                                 onClick={() =>
+                                   window.open(`${imageAPIURL}/project/${imgName}`, "_blank")
+                                 }
+                                 onError={(e) => {
+                                   e.target.onerror = null;
+                                   e.target.src =
+                                     "https://placehold.co/80x70/cccccc/333333?text=No+Image";
+                                 }}
+                               />
+                             ))
+                           ) : (
+                             <span>No gallery images available.</span>
+                           )}
+                         </div>
+                       </div>
+   
+                       {/* Property Chain Papers */}
+                       <div style={{ marginBottom: "20px" }}>
+                         <strong style={{ fontSize: "14px" }}>Property Chain Paper:</strong>
+                         <br />
+                         {pdfFiles.length > 0 ? (
+                           <ul
+                             style={{
+                               marginTop: "8px",
+                               paddingLeft: "20px",
+                             }}
+                           >
+                             {pdfFiles.map((pdfName, idx) => (
+                               <li key={idx} style={{ marginBottom: "5px" }}>
+                                 <a
+                                   href={`${imageAPIURL}/project/${pdfName}`}
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   style={{ color: "#0d6efd", textDecoration: "none" }}
+                                 >
+                                   View PDF {idx + 1}
+                                 </a>
+                               </li>
+                             ))}
+                           </ul>
+                         ) : (
+                           <span>No PDF documents available.</span>
+                         )}
+                       </div>
+                     </div>
+                   </div>
+   
+                   {/* Description Section */}
+                   <div style={{ marginTop: "20px" }}>
+                     <hr />
+                     <strong style={{ fontSize: "14px" }}>Description:</strong>
+                     <div
+                       style={{
+                         background: "#f8f9fa",
+                         padding: "15px",
+                         borderRadius: "8px",
+                         fontSize: "14px",
+                         lineHeight: "1.6",
+                         marginTop: "8px",
+                       }}
+                       dangerouslySetInnerHTML={{
+                         __html: selectedProject.description,
+                       }}
+                     />
+                   </div>
+                 </div>
+               )}
+             </Modal.Body>
+             <Modal.Footer>
+               <Button variant="danger" onClick={handleCloseViewModal}>
+                 Close
+               </Button>
+             </Modal.Footer>
+           </Modal>
 
         {/* Edit Project Modal */}
         <Modal show={showEditModal} onHide={handleCloseEditModal} centered size="lg" className="formselectnewdesign">
@@ -1570,8 +1949,34 @@ function ActiveProjectList() {
                       name="name"
                       value={editFormData.name}
                       onChange={handleEditFormChange}
-                      required
+                      disabled
                     />
+                  </Form.Group>
+                </Col>
+
+                <Col md={6}>
+                  <Form.Group className="mb-3" controlId="editCategory">
+                    <Form.Label>Category</Form.Label>
+                    <Form.Select
+                      name="category_id"
+                      value={editFormData.category_id}
+                      onChange={(e) => {
+                        const selectedCategoryId = e.target.value;
+                        const selectedCategory = categories.find(cat => String(cat.id) === selectedCategoryId);
+                        setEditFormData((prevData) => ({
+                          ...prevData,
+                          category_id: selectedCategoryId,
+                          category_name: selectedCategory ? selectedCategory.category_name : "",
+                        }));
+                      }}
+                    >
+                      <option value="">Select Category</option>
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.category_name}
+                        </option>
+                      ))}
+                    </Form.Select>
                   </Form.Group>
                 </Col>
 

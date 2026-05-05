@@ -154,7 +154,7 @@ const OverviewCardByDate = (props) => {
                                             <img src={wallet} alt="wallet" />
                                         </div>
                                         <div className="wallet_info">
-                                            <h3>MTMPay Wallet</h3>
+                                            <h3>MTMPay Balance</h3>
                                             <p className="wallet_amount">₹ {data.amountmtm || 0.00}</p>
                                         </div>
                                     </div>
@@ -170,7 +170,7 @@ const OverviewCardByDate = (props) => {
                                             <img src={wallet} alt="wallet" />
                                         </div>
                                         <div className="wallet_info">
-                                            <h3>Bank Wallet</h3>
+                                            <h3>Bank Balance</h3>
                                             <p className="wallet_amount">₹ {data.amountExternal || 0.00 }</p>
                                         </div>
                                     </div>

@@ -13,18 +13,25 @@ import { Table } from 'antd';
 // styles
 import 'assets/styles/orders.scss';
 // request
-import { getOrders, getFailedreport, exportOrdersFLD } from 'requests/order';
+import { getOrders, getInprocessreport, exportOrdersInprocess } from 'requests/order';
 
 const { RangePicker } = DatePicker;
 
 const titles = [{ title: 'All Transaction' }];
 
 const columns = [
-    {
-        title: 'Order Id',
-        key: 'orderid',
-        dataIndex: 'orderid',
-    },
+      {
+    title: 'Order Id / TID',
+    key: 'orderid',
+    render: (_, record) => {
+        return (
+            <>
+                Order ID : {record.orderid || '-'}<br />
+                TID  : {record.tid || '-'}
+            </>
+        );
+    }
+},
 
     {
         title: 'Account Number',
@@ -72,7 +79,7 @@ const columns = [
     },
 ];
 
-function FailedTransaction() {
+function PendingTransaction() {
     const location = useLocation();
     const navigate = useNavigate();
     const searchRef = useRef(null);
@@ -113,7 +120,7 @@ function FailedTransaction() {
     const getRecords = async (query) => {
         try {
             setIsTableLoading(true);
-            const response = await getFailedreport(query);
+            const response = await getInprocessreport(query);
 
             setOrderOverview({
                 total_records: response.total_records,
@@ -150,7 +157,7 @@ function FailedTransaction() {
             let query = parseQueryParams(location);
             setIsTableLoading(true);
             if (query.start && query.end) {
-                const response = await exportOrdersFLD(query);
+                const response = await exportOrdersInprocess(query);
                 if (response && response.filepath) {
                     // alert(process.env.REACT_APP_ASSET_URL);
                     // alert(response.filepath);
@@ -164,7 +171,7 @@ function FailedTransaction() {
                 const defaultDateMax = today.endOf('day');
                 query.start = defaultDateMin.format('YYYY-MM-DD');
                 query.end = defaultDateMax.format('YYYY-MM-DD');
-                const response = await exportOrdersFLD(query);
+                const response = await exportOrdersInprocess(query);
 
                 if (response && response.filepath) {
                     // alert(process.env.REACT_APP_ASSET_URL);
@@ -176,7 +183,9 @@ function FailedTransaction() {
             }
         } catch (err) {
             console.error(err);
-            toast.error('An error occurred. Please try again.');
+            toast.error('An error occurred. Please try again.', {
+                className: 'your-class-name',
+            });
         } finally {
             setIsTableLoading(false);
         }
@@ -335,4 +344,4 @@ function FailedTransaction() {
     );
 }
 
-export default FailedTransaction;
+export default PendingTransaction;

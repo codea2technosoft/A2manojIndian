@@ -8,23 +8,30 @@ import TableBar from 'components/TableBar';
 import { parseQueryParams, stringifyQueryParams } from 'utils/url';
 import { toast } from 'react-toast';
 import { omitBy, isEmpty, debounce } from 'lodash';
-import { Table, Tag } from 'antd';
+import { Table } from 'antd';
 
 // styles
 import 'assets/styles/orders.scss';
 // request
-import { getOrders, getAllreport, exportOrdersAll } from 'requests/order';
+import { getOrders, getPendingreport, exportOrders } from 'requests/order';
 
 const { RangePicker } = DatePicker;
 
 const titles = [{ title: 'All Transaction' }];
 
 const columns = [
-    {
-        title: 'Order Id',
-        key: 'orderid',
-        dataIndex: 'orderid',
-    },
+{
+    title: 'Order Id / TID',
+    key: 'orderid',
+    render: (_, record) => {
+        return (
+            <>
+                Order ID : {record.orderid || '-'}<br />
+                TID  : {record.tid || '-'}
+            </>
+        );
+    }
+},
 
     {
         title: 'Account Number',
@@ -57,20 +64,6 @@ const columns = [
         title: 'Status',
         key: 'status',
         dataIndex: 'status',
-        render: (text) => {
-            const lowerText = text.toLowerCase();
-            let color = 'red'; // default ab red banayenge
-            if (lowerText === 'faild') {
-                color = 'red';
-            } else if (lowerText === 'pending') {
-                color = 'yellow';
-            } else if (lowerText === 'success') {
-                color = 'green';
-            } else if (lowerText === 'inprocess') {
-                color = 'pink';
-            }
-            return <Tag color={color}>{text.toUpperCase()}</Tag>;
-        },
     },
 
     {
@@ -127,7 +120,7 @@ function PendingTransaction() {
     const getRecords = async (query) => {
         try {
             setIsTableLoading(true);
-            const response = await getAllreport(query);
+            const response = await getPendingreport(query);
 
             setOrderOverview({
                 total_records: response.total_records,
@@ -164,7 +157,7 @@ function PendingTransaction() {
             let query = parseQueryParams(location);
             setIsTableLoading(true);
             if (query.start && query.end) {
-                const response = await exportOrdersAll(query);
+                const response = await exportOrders(query);
                 if (response && response.filepath) {
                     // alert(process.env.REACT_APP_ASSET_URL);
                     // alert(response.filepath);
@@ -178,7 +171,7 @@ function PendingTransaction() {
                 const defaultDateMax = today.endOf('day');
                 query.start = defaultDateMin.format('YYYY-MM-DD');
                 query.end = defaultDateMax.format('YYYY-MM-DD');
-                const response = await exportOrdersAll(query);
+                const response = await exportOrders(query);
 
                 if (response && response.filepath) {
                     // alert(process.env.REACT_APP_ASSET_URL);

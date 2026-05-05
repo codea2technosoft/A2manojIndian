@@ -46,6 +46,7 @@ function InactiveProjectList() {
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [amenitiesList, setAmenitiesList] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const [editFormData, setEditFormData] = useState({
     name: "",
@@ -53,6 +54,8 @@ function InactiveProjectList() {
     status: "",
     project_status: "",
     project_id: "",
+    category_id: "",
+    // category_name: "",
     newImages: [],
     images: [],
     newPDFs: [],
@@ -94,6 +97,19 @@ function InactiveProjectList() {
     setIsFilterActive(!isFilterActive);
   };
 
+  // Safe Parse Function
+  const safeParse = (value) => {
+    if (!value) return [];
+    if (Array.isArray(value)) return value;
+    if (typeof value === 'object') return value;
+    try {
+      return JSON.parse(value);
+    } catch (e) {
+      console.warn("Failed to parse:", value);
+      return [];
+    }
+  };
+
   useEffect(() => {
     const tooltipTriggerList = [].slice.call(
       document.querySelectorAll('[data-bs-toggle="tooltip"]'),
@@ -102,6 +118,30 @@ function InactiveProjectList() {
       return new Tooltip(tooltipTriggerEl);
     });
   }, [projects]);
+
+  const fetchProjectCategories = async () => {
+    try {
+      const token = getAuthToken();
+      if (!token) return;
+
+      const response = await fetch(`${API_URL}/created-project-category-lists`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch categories.");
+      }
+
+      const data = await response.json();
+      setCategories(data.data || []);
+    } catch (err) {
+      console.error("Fetch categories error:", err);
+    }
+  };
 
   useEffect(() => {
     const fetchStates = async () => {
@@ -148,6 +188,7 @@ function InactiveProjectList() {
 
     fetchStates();
     fetchAmenities();
+    fetchProjectCategories();
   }, []);
 
   useEffect(() => {
@@ -201,7 +242,6 @@ function InactiveProjectList() {
   };
 
   const fetchProjects = async (page = 1, name = "") => {
-    // setLoading(true);
     setError(null);
     try {
       const token = getAuthToken();
@@ -244,9 +284,6 @@ function InactiveProjectList() {
       setCurrentPage(data.currentPage || page);
     } catch (err) {
       console.error("Fetch projects error:", err);
-      // if (!showMessageModal) {
-      //   showCustomMessageModal("Error", err.message || "An unexpected error occurred while fetching projects.", "error");
-      // }
     } finally {
       setLoading(false);
     }
@@ -282,57 +319,75 @@ function InactiveProjectList() {
     }, 500);
   };
 
-  const handleViewProject = async (projectId) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const token = getAuthToken();
-      if (!token) {
-        showCustomMessageModal(
-          "Authentication Error",
-          "Authentication token not found. Please log in.",
-          "error",
-        );
-        return;
-      }
-
-      const response = await fetch(`${API_URL}/project-view`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ id: projectId }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.message || "Failed to fetch project details.",
-        );
-      }
-
-      const data = await response.json();
-      const projectData = data.data;
-      setSelectedProject(projectData);
-      const imagesArray = projectData.images
-        ? JSON.parse(projectData.images)
-        : [];
-      const parsedPropertyChainPapers = projectData.property_chain_papers
-        ? JSON.parse(projectData.property_chain_papers)
-        : [];
-      setSelectedProject({
-        ...projectData,
-        property_chain_papers: parsedPropertyChainPapers,
-      });
-      setViewModalImages(imagesArray);
-      setShowViewModal(true);
-    } catch (err) {
-      console.error("View project error:", err);
-    } finally {
-      setLoading(false);
+const handleViewProject = async (projectId) => {
+  setLoading(true);
+  setError(null);
+  try {
+    const token = getAuthToken();
+    if (!token) {
+      showCustomMessageModal(
+        "Authentication Error",
+        "Authentication token not found. Please log in.",
+        "error",
+      );
+      return;
     }
-  };
+
+    const response = await fetch(`${API_URL}/project-view`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ id: projectId }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to fetch project details.");
+    }
+
+    const data = await response.json();
+    const projectData = data.data;
+    
+    // ✅ Projects list se city, state, category find karo
+    const matchedProject = projects.find(p => p.id === projectId);
+    
+    const safeParse = (value) => {
+      if (!value) return [];
+      if (Array.isArray(value)) return value;
+      if (typeof value === 'object') return value;
+      try {
+        return JSON.parse(value);
+      } catch (e) {
+        return [];
+      }
+    };
+
+    const imagesArray = safeParse(projectData.images);
+    const parsedPropertyChainPapers = safeParse(projectData.property_chain_papers);
+
+    setSelectedProject({
+      ...projectData,
+      // ✅ Correct way - pehle matchedProject se lo, nahi toh projectData se
+      city_name: matchedProject?.city_name || projectData.city_name || "N/A",
+      state_name: matchedProject?.state_name || projectData.state_name || "N/A",
+      project_category_name: matchedProject?.project_category_name || projectData.project_category_name || "N/A",
+      property_chain_papers: parsedPropertyChainPapers,
+    });
+    setViewModalImages(imagesArray);
+    setShowViewModal(true);
+  } catch (err) {
+    console.error("View project error:", err);
+    showCustomMessageModal(
+      "Error",
+      err.message || "Failed to fetch project details.",
+      "error",
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleEditProject = async (projectId) => {
     setLoading(true);
@@ -366,32 +421,33 @@ function InactiveProjectList() {
       const data = await response.json();
       const projectData = data.data;
 
-      const parsedAmenities = projectData.aminities
-        ? JSON.parse(projectData.aminities).map((a) => String(a.id))
-        : [];
-      const parsedKeyTransports = projectData.key_transport
-        ? JSON.parse(projectData.key_transport)
-        : [];
+      // Find category name if not provided
+      let categoryName = projectData.category_name || "";
+      if (!categoryName && projectData.category_id && categories.length > 0) {
+        const foundCategory = categories.find(cat => String(cat.id) === String(projectData.category_id));
+        categoryName = foundCategory ? foundCategory.category_name : "";
+      }
 
-      const imagesArrayRaw = projectData.images
-        ? JSON.parse(projectData.images)
+      const parsedAmenities = projectData.aminities
+        ? safeParse(projectData.aminities).map((a) => String(a.id))
         : [];
+      const parsedKeyTransports = safeParse(projectData.key_transport);
+
+      const imagesArrayRaw = safeParse(projectData.images);
 
       const imagesArray = imagesArrayRaw.filter((file) =>
-        /\.(jpe?g|png|gif|bmp|webp)$/i.test(file.image),
+        /\.(jpe?g|png|gif|bmp|webp)$/i.test(file.image || file),
       );
 
       const pdfsArray = imagesArrayRaw
-        .filter((file) => /\.pdf$/i.test(file.image))
+        .filter((file) => /\.pdf$/i.test(file.image || file))
         .map((file) => ({
           ...file,
-          pdf: file.image,
+          pdf: file.image || file,
           thumbnail: "assets/pdf-thumbnail.png",
         }));
 
-      const parsedPropertyChainPapers = projectData.property_chain_papers
-        ? JSON.parse(projectData.property_chain_papers)
-        : [];
+      const parsedPropertyChainPapers = safeParse(projectData.property_chain_papers);
 
       setEditFormData({
         name: projectData.name || "",
@@ -399,6 +455,8 @@ function InactiveProjectList() {
         status: projectData.status || "inactive",
         project_status: projectData.project_status || "ongoing",
         project_id: projectData.id || "",
+        category_id: projectData.category_id || "",
+        // category_name: categoryName,
         newImages: [],
         images: imagesArray,
         pdfs: pdfsArray,
@@ -416,7 +474,6 @@ function InactiveProjectList() {
         state: projectData.state || "",
         landmark: projectData.land_mark || "",
         youtube_links: projectData.youtube_links || "",
-        // propertyChainPapers: [],
         propertyChainPapers: parsedPropertyChainPapers,
         amenities: parsedAmenities,
         keyTransports: parsedKeyTransports,
@@ -428,7 +485,7 @@ function InactiveProjectList() {
       showCustomMessageModal(
         "Error",
         err.message ||
-          "An unexpected error occurred while fetching project for editing.",
+        "An unexpected error occurred while fetching project for editing.",
         "error",
       );
     } finally {
@@ -543,7 +600,6 @@ function InactiveProjectList() {
           fetchProjects(currentPage, searchName);
         } catch (err) {
           console.error("Delete image error:", err);
-          // showCustomMessageModal("Error", err.message || "An unexpected error occurred while deleting image.", "error");
         } finally {
           setLoading(false);
         }
@@ -645,7 +701,7 @@ function InactiveProjectList() {
           showCustomMessageModal(
             "Error",
             err.message ||
-              "An unexpected error occurred while deleting the main project image.",
+            "An unexpected error occurred while deleting the main project image.",
             "error",
           );
         } finally {
@@ -691,7 +747,7 @@ function InactiveProjectList() {
           showCustomMessageModal(
             "Error",
             err.message ||
-              "An unexpected error occurred while deleting the main project image.",
+            "An unexpected error occurred while deleting the main project image.",
             "error",
           );
         } finally {
@@ -750,74 +806,6 @@ function InactiveProjectList() {
     }));
   };
 
-  // const handleUpdateProject = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setError(null);
-
-  //   try {
-  //     const token = getAuthToken();
-  //     if (!token) {
-  //       showCustomMessageModal("Authentication Error", "Authentication token not found. Please log in.", "error");
-  //       return;
-  //     }
-  //     const formData = new FormData();
-  //     formData.append("project_id", editFormData.project_id);
-  //     formData.append("total_township_area", editFormData.project_size);
-  //     formData.append("project_rera_no", editFormData.rera_registration_no);
-  //     formData.append("location", editFormData.location);
-  //     formData.append("bussiness_volume", editFormData.businessVolume);
-  //     formData.append("description", editFormData.description);
-  //     formData.append("approve_authority", editFormData.legality);
-  //     formData.append("state", editFormData.state);
-  //     formData.append("city", editFormData.city);
-  //     formData.append("land_mark", editFormData.landmark);
-  //     const amenitiesArrayOfObjects = editFormData.amenities.map(id => ({ id: String(id) }));
-  //     formData.append("aminities", JSON.stringify(amenitiesArrayOfObjects));
-  //     formData.append("key_transport", JSON.stringify(editFormData.keyTransports));
-  //     formData.append("status", editFormData.status);
-  //     if (editFormData.singleImageFile) {
-  //       formData.append("thumbnail", editFormData.singleImageFile);
-  //     }
-
-  //     if (editFormData.imageprojectmap) {
-  //       formData.append("map_pdf", editFormData.imageprojectmap);
-  //     }
-
-  //     formData.append("project_status", editFormData.project_status);
-
-  //     editFormData.propertyChainPapers.forEach((file) => {
-  //       formData.append("property_chain_papers[]", file);
-  //     });
-
-  //     editFormData.images.forEach((imageFile) => {
-  //       formData.append("image[]", imageFile);
-  //     });
-
-  //     const response = await fetch(`${API_URL}/project-update`, {
-  //       method: "POST",
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       body: formData,
-  //     });
-
-  //     if (!response.ok) {
-  //       const errorData = await response.json();
-  //       throw new Error(errorData.message || "Failed to update project.");
-  //     }
-
-  //     showCustomMessageModal("Success", "Project updated successfully!", "success");
-  //     setShowEditModal(false);
-  //     fetchProjects(currentPage, searchName);
-  //   } catch (err) {
-  //     console.error("Update project error:", err);
-  //     showCustomMessageModal("Error", err.message || "An unexpected error occurred while updating project.", "error");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleUpdateProject = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -848,6 +836,8 @@ function InactiveProjectList() {
       formData.append("youtube_links", editFormData.youtube_links);
       formData.append("project_status", editFormData.project_status);
       formData.append("status", editFormData.status);
+      formData.append("category_id", editFormData.category_id);
+      // formData.append("category_name", editFormData.category_name);
 
       if (editFormData.singleImageFile) {
         formData.append("thumbnail", editFormData.singleImageFile);
@@ -965,7 +955,7 @@ function InactiveProjectList() {
           showCustomMessageModal(
             "Error",
             err.message ||
-              "An unexpected error occurred while updating project status.",
+            "An unexpected error occurred while updating project status.",
             "error",
           );
         } finally {
@@ -1029,7 +1019,7 @@ function InactiveProjectList() {
           showCustomMessageModal(
             "Error",
             err.message ||
-              "An unexpected error occurred while updating project status.",
+            "An unexpected error occurred while updating project status.",
             "error",
           );
         } finally {
@@ -1083,7 +1073,7 @@ function InactiveProjectList() {
           showCustomMessageModal(
             "Error",
             err.message ||
-              "An unexpected error occurred while deleting project.",
+            "An unexpected error occurred while deleting project.",
             "error",
           );
         } finally {
@@ -1108,6 +1098,8 @@ function InactiveProjectList() {
       status: "",
       project_status: "",
       project_id: "",
+      category_id: "",
+      // category_name: "",
       newImages: [],
       images: [],
       singleImageFile: null,
@@ -1211,15 +1203,7 @@ function InactiveProjectList() {
                   className={`filter-toggle-btn ${isFilterActive ? "active" : ""}`}
                   onClick={handleToggle}
                 >
-                  {isFilterActive ? (
-                    <>
-                      <MdFilterAltOff />
-                    </>
-                  ) : (
-                    <>
-                      <MdFilterAlt />
-                    </>
-                  )}
+                  {isFilterActive ? <MdFilterAltOff /> : <MdFilterAlt />}
                 </button>
               </div>
             </div>
@@ -1259,48 +1243,49 @@ function InactiveProjectList() {
             </thead>
             <tbody>
               {projects?.length > 0 ? (
-                [...projects].reverse().map((project, i) => {
-                  const imageUrls = project.images
-                    ? JSON.parse(project.images)
-                    : [];
-                  const mainImageUrl = project.image;
-
+                projects.map((project, i) => {
+                  const globalIndex = (currentPage - 1) * 10 + i + 1;
                   return (
                     <tr key={project.id}>
-                      <td>{i + 1}</td>
-                      <td>{project.name}</td>
+                      <td>{globalIndex}</td>
+                      <td>
+                        {project.name
+                          ? project.name.charAt(0).toUpperCase() +
+                          project.name.slice(1).toLowerCase()
+                          : ""}
+                      </td>
+                      <td>{project.project_category_name || "NA"}</td>
                       <td>{project.total_township_area}</td>
                       <td>
                         <div className="table-cell-remark">
-                          {project.location}
+                          {project.location
+                            ? project.location.charAt(0).toUpperCase() +
+                            project.location.slice(1).toLowerCase()
+                            : ""}
                         </div>
                       </td>
-
                       <td>{project.bussiness_volume}</td>
                       <td>
                         <div className="table-cell-remark">
-                          {project.approve_authority}
+                          {project.approve_authority
+                            ? project.approve_authority
+                              .charAt(0)
+                              .toUpperCase() +
+                            project.approve_authority.slice(1).toLowerCase()
+                            : ""}
                         </div>
                       </td>
                       <td>{project.date}</td>
                       <td>
                         <span
-                          className={`badge ${
-                            project.status === "active"
-                              ? "bg-success"
-                              : "bg-danger"
-                          }`}
+                          className={`badge ${project.status === "active" ? "bg-success" : "bg-danger"}`}
                         >
                           {project.status === "active" ? "Show" : "Hide"}
                         </span>
                       </td>
                       <td>
                         <span
-                          className={`badge ${
-                            project.project_status === "ongoing"
-                              ? "bg-info"
-                              : "bg-primary"
-                          }`}
+                          className={`badge ${project.project_status === "ongoing" ? "bg-info" : "bg-primary"}`}
                         >
                           {project.project_status}
                         </span>
@@ -1316,7 +1301,6 @@ function InactiveProjectList() {
                           >
                             <BsThreeDots size={20} />
                           </button>
-
                           <ul
                             className="dropdown-menu"
                             aria-labelledby="dropdownMenuButton"
@@ -1341,61 +1325,26 @@ function InactiveProjectList() {
                             </li>
                             <li className="dropdown-item">
                               <Button
-                                variant={
-                                  project.status === "active"
-                                    ? "danger"
-                                    : "success"
-                                }
+                                variant={project.status === "active" ? "danger" : "success"}
                                 size="sm"
                                 className="me-1"
-                                onClick={() =>
-                                  handleStatusUpdate(project.id, project.status)
-                                }
-                                title={
-                                  project.status === "active"
-                                    ? "Deactivate Project"
-                                    : "Activate Project"
-                                }
+                                onClick={() => handleStatusUpdate(project.id, project.status)}
+                                title={project.status === "active" ? "Deactivate Project" : "Activate Project"}
                               >
-                                {project.status === "active" ? (
-                                  <MdAirplanemodeInactive />
-                                ) : (
-                                  <MdAirplanemodeActive />
-                                )}
-                                {project.status === "active"
-                                  ? "Deactivate"
-                                  : "Activate"}
+                                {project.status === "active" ? <MdAirplanemodeInactive /> : <MdAirplanemodeActive />}
+                                {project.status === "active" ? "Deactivate" : "Activate"}
                               </Button>
                             </li>
                             <li className="dropdown-item">
                               <Button
-                                variant={
-                                  project.project_status === "ongoing"
-                                    ? "bg-success"
-                                    : "bg-info"
-                                }
+                                variant={project.project_status === "ongoing" ? "outline-primary" : "outline-info"}
                                 size="sm"
                                 className="me-1"
-                                onClick={() =>
-                                  handleProjectStatusUpdate(
-                                    project.id,
-                                    project.project_status,
-                                  )
-                                }
-                                title={
-                                  project.project_status === "ongoing"
-                                    ? "Mark as Completed"
-                                    : "Mark as ongoing"
-                                }
+                                onClick={() => handleProjectStatusUpdate(project.id, project.project_status)}
+                                title={project.project_status === "ongoing" ? "Mark as Completed" : "Mark as ongoing"}
                               >
-                                {project.project_status === "ongoing" ? (
-                                  <MdUpcoming />
-                                ) : (
-                                  <MdOutlineUpcoming />
-                                )}
-                                {project.project_status === "ongoing"
-                                  ? "Mark Completed"
-                                  : "Mark ongoing"}
+                                {project.project_status === "ongoing" ? <MdUpcoming /> : <MdOutlineUpcoming />}
+                                {project.project_status === "ongoing" ? "Mark Completed" : "Mark ongoing"}
                               </Button>
                             </li>
                             <li className="dropdown-item">
@@ -1415,7 +1364,7 @@ function InactiveProjectList() {
                 })
               ) : (
                 <tr>
-                  <td colSpan="8" className="text-center">
+                  <td colSpan="11" className="text-center">
                     No projects found.
                   </td>
                 </tr>
@@ -1432,12 +1381,10 @@ function InactiveProjectList() {
                   className="page-link"
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  aria-label="Previous"
                 >
                   <HiOutlineChevronLeft />
                 </button>
               </li>
-
               {[...Array(totalPages)].map((_, index) => (
                 <li key={index + 1} className="page-item">
                   <button
@@ -1448,13 +1395,11 @@ function InactiveProjectList() {
                   </button>
                 </li>
               ))}
-
               <li className="page-item">
                 <button
                   className="page-link"
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  aria-label="Next"
                 >
                   <HiChevronRight />
                 </button>
@@ -1463,277 +1408,562 @@ function InactiveProjectList() {
           </nav>
         </div>
 
-        <Modal
-          show={showViewModal}
-          onHide={handleCloseViewModal}
-          centered
-          size="lg"
-        >
-          <Modal.Header closeButton>
-            <Modal.Title>Project Details</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {selectedProject && (
-              <Row>
-                <Col md={7}>
-                  {/* <p><strong>ID:</strong> {selectedProject.id}</p> */}
-                  <div className="table-responsive">
-                    <table className="table">
-                      <tr>
-                        <th>Name</th>
-                        <td>{selectedProject.name || "NA"}</td>
-                      </tr>
-
-                       <tr>
-                        <th>Category Name</th>
-                        <td>{selectedProject.category_name || "NA"}</td>
-                      </tr>
-
-                      <tr>
-                        <th>Total Townships(Sq. Yard)</th>
-                        <td>{selectedProject.total_township_area}</td>
-                      </tr>
-                      <tr>
-                        <th>Project RERA Number</th>
-                        <td>{selectedProject.project_rera_no}</td>
-                      </tr>
-                      <tr>
-                        <th>Bussiness Volume</th>
-                        <td>{selectedProject.bussiness_volume}</td>
-                      </tr>
-
-                      <tr>
-                        <th>Approve Authority</th>
-                        <td>{selectedProject.approve_authority}</td>
-                      </tr>
-                      <tr>
-                        <th>Location</th>
-                        <td>{selectedProject.location}</td>
-                      </tr>
-                      <tr>
-                        <th>State</th>
-                        <td>{selectedProject.state_name}</td>
-                      </tr>
-
-                      <tr>
-                        <th>City</th>
-                        <td>{selectedProject.city_name}</td>
-                      </tr>
-
-                      <tr>
-                        <th>LandMark</th>
-                        <td>{selectedProject.land_mark}</td>
-                      </tr>
-                      <tr>
-                        <th>Key Transport</th>
-                        <td>
-                          {selectedProject.key_transport
-                            ? JSON.parse(selectedProject.key_transport).map(
-                                (item, index) => (
-                                  <div key={index}>
-                                    {item.name} - {item.distance}
-                                  </div>
-                                ),
-                              )
-                            : "N/A"}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>Aminities</th>
-                        <td>
-                          {selectedProject.aminities
-                            ? JSON.parse(selectedProject.aminities).map(
-                                (item, index) => (
-                                  <div key={index}>{item.name}</div>
-                                ),
-                              )
-                            : "N/A"}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>Status</th>
-                        <td>
-                          <span
-                            className={`badge ${
-                              selectedProject.status === "active"
-                                ? "bg-success"
-                                : "bg-danger"
-                            }`}
-                          >
-                            {selectedProject.status === "active"
-                              ? "Show"
-                              : selectedProject.status === "inactive"
-                                ? "Hide"
-                                : selectedProject.status}
-                          </span>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <th>Project Status</th>
-                        <td>
-                          <span
-                            className={`badge  text-white  ${
-                              selectedProject.project_status === "ongoing"
-                                ? "bg-info"
-                                : "bg-primary"
-                            }`}
-                          >
-                            {selectedProject.project_status}
-                          </span>
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-                </Col>
-                <Col md={5}>
-                  {selectedProject.thumbnail && (
-                    <div className="mb-3">
-                      <strong>Thumbnail Image:</strong>
-                      <br />
-                      <img
-                        src={`${imageAPIURL}/project/${selectedProject.thumbnail}`}
-                        alt={`${selectedProject.name} Main`}
-                        className="img-fluid rounded mt-2"
-                        style={{
-                          maxWidth: "200px",
-                          maxHeight: "150px",
-                          objectFit: "cover",
-                        }}
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src =
-                            "https://placehold.co/200x150/cccccc/000000?text=No+Main+Image";
-                        }}
-                      />
-                    </div>
-                  )}
-                  {!selectedProject.thumbnail && (
-                    <div className="mb-3">
-                      <strong>Thumbnail Image:</strong>
-                      <br />
-                      <span>No Thumbnail image available.</span>
-                    </div>
-                  )}
-
-                  {selectedProject.map_pdf && (
-                    <div className="mb-3">
-                      <strong>Map PDF:</strong>
-                      <br />
-                      <a
-                        href={`${selectedimagePath}${selectedProject.map_pdf}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="d-inline-block mt-2"
-                      >
-                        <div
-                          style={{
-                            width: "200px",
-                            height: "150px",
-                            background: "#f0f0f0",
-                            borderRadius: "5px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <i className="fas fa-file-pdf fa-3x text-danger"></i>
-                        </div>
-                        <span className="d-block mt-1 text-center">
-                          View PDF
-                        </span>
-                      </a>
-                    </div>
-                  )}
-                  {!selectedProject.map_pdf && (
-                    <div className="mb-3">
-                      <strong>Map PDF:</strong>
-                      <br />
-                      <span>No Map PDF available.</span>
-                    </div>
-                  )}
-
-                  <div className="mb-3">
-                    <strong>Gallery Images:</strong>
-                    <br />
-                    {imageFiles.length > 0 ? (
-                      <div className="d-flex flex-wrap gap-2">
-                        {imageFiles.map((imgName, idx) => (
-                          <img
-                            key={idx}
-                            src={`${imageAPIURL}/project/${imgName}`}
-                            alt={`Gallery ${idx + 1}`}
-                            className="img-fluid rounded mt-2"
-                            style={{
-                              maxWidth: "100px",
-                              maxHeight: "100px",
-                              objectFit: "cover",
-                            }}
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src =
-                                "https://placehold.co/100x50/cccccc/333333?text=No+Image";
-                            }}
-                          />
-                        ))}
-                      </div>
-                    ) : (
-                      <span>No gallery images available.</span>
-                    )}
-                  </div>
-
-                  {/* Property Chain Paper */}
-                  <div className="mb-3">
-                    <strong>Property Chain Paper:</strong>
-                    <br />
-                    {pdfFiles.length > 0 ? (
-                      <ul className="ps-3">
-                        {pdfFiles.map((pdfName, idx) => (
-                          <li key={idx}>
-                            <a
-                              href={`${selectedimagePath}${pdfName}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              View PDF {idx + 1}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <span>No PDF documents available.</span>
-                    )}
-                  </div>
-                </Col>
-                <Col xs={12}>
-                  <hr />
-                  <p>
-                    <strong>Description:</strong>
-                  </p>
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: selectedProject.description,
-                    }}
-                  />
-                </Col>
-              </Row>
-            )}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleCloseViewModal}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
+        {/* View Modal */}
+      <Modal
+                 show={showViewModal}
+                 onHide={handleCloseViewModal}
+                 centered
+                 size="xl"
+               >
+                 <Modal.Header closeButton>
+                   <Modal.Title>Project Details</Modal.Title>
+                 </Modal.Header>
+                 <Modal.Body
+                   style={{
+                     overflowX: "hidden",
+                     padding: "20px",
+                     maxHeight: "80vh",
+                     overflowY: "auto",
+                   }}
+                 >
+                   {selectedProject && (
+                     <div style={{ width: "100%" }}>
+                       {/* Project Name & Status Header */}
+                       <div
+                         style={{
+                           display: "flex",
+                           justifyContent: "space-between",
+                           alignItems: "start",
+                           flexWrap: "wrap",
+                           marginBottom: "20px",
+                           paddingBottom: "15px",
+                           borderBottom: "2px solid #e9ecef",
+                         }}
+                       >
+                         <div>
+                           <h4 style={{ margin: "0 0 8px 0", color: "#0d6efd" }}>
+                             {selectedProject.name
+                               ? selectedProject.name.charAt(0).toUpperCase() +
+                               selectedProject.name.slice(1).toLowerCase()
+                               : ""}
+                           </h4>
+                           <span
+                             style={{
+                               background: "#0dcaf0",
+                               color: "#fff",
+                               padding: "5px 12px",
+                               borderRadius: "20px",
+                               fontSize: "13px",
+                               fontWeight: "500",
+                               display: "inline-block",
+                             }}
+                           >
+                             {selectedProject.project_category_name
+                               ? selectedProject.project_category_name.charAt(0).toUpperCase() +
+                               selectedProject.project_category_name.slice(1).toLowerCase()
+                               : "NA"}
+                           </span>
+                         </div>
+                         <div style={{ display: "flex", gap: "10px" }}>
+                           <span
+                             style={{
+                               background: selectedProject.status === "active" ? "#198754" : "#dc3545",
+                               color: "#fff",
+                               padding: "5px 12px",
+                               borderRadius: "20px",
+                               fontSize: "13px",
+                               fontWeight: "500",
+                             }}
+                           >
+                             {selectedProject.status === "active" ? "Show" : "Hide"}
+                           </span>
+                           <span
+                             style={{
+                               background: selectedProject.project_status === "ongoing" ? "#0dcaf0" : "#0d6efd",
+                               color: "#fff",
+                               padding: "5px 12px",
+                               borderRadius: "20px",
+                               fontSize: "13px",
+                               fontWeight: "500",
+                             }}
+                           >
+                             {selectedProject.project_status}
+                           </span>
+                         </div>
+                       </div>
+       
+                       <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+                         {/* Left Column - Table Details */}
+                         <div style={{ flex: "7", minWidth: "280px" }}>
+                           <div style={{ width: "100%", overflowX: "visible" }}>
+                             <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                               <tbody>
+                                 <tr>
+                                   <th
+                                     style={{
+                                       width: "35%",
+                                       backgroundColor: "#f8f9fa",
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                       textAlign: "left",
+                                     }}
+                                   >
+                                     Project Name
+                                   </th>
+                                   <td
+                                     style={{
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                     }}
+                                   >
+                                     {selectedProject.name
+                                       ? selectedProject.name.charAt(0).toUpperCase() +
+                                       selectedProject.name.slice(1).toLowerCase()
+                                       : ""}
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <th
+                                     style={{
+                                       backgroundColor: "#f8f9fa",
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                       textAlign: "left",
+                                     }}
+                                   >
+                                     Category Name
+                                   </th>
+                                   <td
+                                     style={{
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                     }}
+                                   >
+                                     {selectedProject.project_category_name
+                                       ? selectedProject.project_category_name
+                                         .charAt(0)
+                                         .toUpperCase() +
+                                       selectedProject.project_category_name
+                                         .slice(1)
+                                         .toLowerCase()
+                                       : "NA"}
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <th
+                                     style={{
+                                       backgroundColor: "#f8f9fa",
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                       textAlign: "left",
+                                     }}
+                                   >
+                                     Total Townships(Sq. Yard)
+                                   </th>
+                                   <td
+                                     style={{
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                     }}
+                                   >
+                                     {selectedProject.total_township_area}
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <th
+                                     style={{
+                                       backgroundColor: "#f8f9fa",
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                       textAlign: "left",
+                                     }}
+                                   >
+                                     Project RERA Number
+                                   </th>
+                                   <td
+                                     style={{
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                     }}
+                                   >
+                                     {selectedProject.project_rera_no}
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <th
+                                     style={{
+                                       backgroundColor: "#f8f9fa",
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                       textAlign: "left",
+                                     }}
+                                   >
+                                     Business Volume
+                                   </th>
+                                   <td
+                                     style={{
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                     }}
+                                   >
+                                     {selectedProject.bussiness_volume}
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <th
+                                     style={{
+                                       backgroundColor: "#f8f9fa",
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                       textAlign: "left",
+                                     }}
+                                   >
+                                     Approve Authority
+                                   </th>
+                                   <td
+                                     style={{
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                     }}
+                                   >
+                                     {selectedProject.approve_authority
+                                       ? selectedProject.approve_authority
+                                         .charAt(0)
+                                         .toUpperCase() +
+                                       selectedProject.approve_authority
+                                         .slice(1)
+                                         .toLowerCase()
+                                       : ""}
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <th
+                                     style={{
+                                       backgroundColor: "#f8f9fa",
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                       textAlign: "left",
+                                     }}
+                                   >
+                                     Location
+                                   </th>
+                                   <td
+                                     style={{
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                     }}
+                                   >
+                                     {selectedProject.location
+                                       ? selectedProject.location.charAt(0).toUpperCase() +
+                                       selectedProject.location.slice(1).toLowerCase()
+                                       : ""}
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <th style={{ backgroundColor: "#f8f9fa" }}>State</th>
+                                   <td>
+                                     {selectedProject.state_name
+                                       ? selectedProject.state_name.charAt(0).toUpperCase() + selectedProject.state_name.slice(1).toLowerCase()
+                                       : "N/A"}
+                                   </td>
+                                 </tr>
+       
+                                 {/* City */}
+                                 <tr>
+                                   <th style={{ backgroundColor: "#f8f9fa" }}>City</th>
+                                   <td>
+                                     {selectedProject.city_name
+                                       ? selectedProject.city_name.charAt(0).toUpperCase() + selectedProject.city_name.slice(1).toLowerCase()
+                                       : "N/A"}
+                                   </td>
+                                 </tr>
+       
+                                 {/* Category Name */}
+                                 
+                                 <tr>
+                                   <th
+                                     style={{
+                                       backgroundColor: "#f8f9fa",
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                       textAlign: "left",
+                                     }}
+                                   >
+                                     LandMark
+                                   </th>
+                                   <td
+                                     style={{
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                     }}
+                                   >
+                                     {selectedProject.land_mark
+                                       ? selectedProject.land_mark
+                                         .charAt(0)
+                                         .toUpperCase() +
+                                       selectedProject.land_mark.slice(1).toLowerCase()
+                                       : ""}
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <th
+                                     style={{
+                                       backgroundColor: "#f8f9fa",
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                       textAlign: "left",
+                                     }}
+                                   >
+                                     Key Transport
+                                   </th>
+                                   <td
+                                     style={{
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                     }}
+                                   >
+                                     {selectedProject.key_transport
+                                       ? (() => {
+                                         try {
+                                           return JSON.parse(
+                                             selectedProject.key_transport
+                                           ).map((item, index) => (
+                                             <div key={index}>
+                                               {item.name} - {item.distance}
+                                             </div>
+                                           ));
+                                         } catch (e) {
+                                           return "N/A";
+                                         }
+                                       })()
+                                       : "N/A"}
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <th
+                                     style={{
+                                       backgroundColor: "#f8f9fa",
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                       textAlign: "left",
+                                     }}
+                                   >
+                                     Amenities
+                                   </th>
+                                   <td
+                                     style={{
+                                       padding: "10px",
+                                       border: "1px solid #dee2e6",
+                                     }}
+                                   >
+                                     {selectedProject.aminities
+                                       ? (() => {
+                                         try {
+                                           return JSON.parse(
+                                             selectedProject.aminities
+                                           ).map((item, index) => (
+                                             <div key={index}>
+                                               <span
+                                                 style={{
+                                                   display: "inline-block",
+                                                   background: "#e7f1ff",
+                                                   color: "#0d6efd",
+                                                   padding: "3px 10px",
+                                                   margin: "3px",
+                                                   borderRadius: "15px",
+                                                   fontSize: "12px",
+                                                 }}
+                                               >
+                                                 {item.name}
+                                               </span>
+                                             </div>
+                                           ));
+                                         } catch (e) {
+                                           return "N/A";
+                                         }
+                                       })()
+                                       : "N/A"}
+                                   </td>
+                                 </tr>
+                               </tbody>
+                             </table>
+                           </div>
+                         </div>
+       
+                         {/* Right Column - Images */}
+                         <div style={{ flex: "5", minWidth: "250px" }}>
+                           {/* Thumbnail */}
+                           {selectedProject.thumbnail && (
+                             <div style={{ marginBottom: "20px" }}>
+                               <strong style={{ fontSize: "14px" }}>Thumbnail Image:</strong>
+                               <br />
+                               <img
+                                 src={`${imageAPIURL}/project/${selectedProject.thumbnail}`}
+                                 alt="Thumbnail"
+                                 style={{
+                                   width: "100%",
+                                   maxWidth: "250px",
+                                   height: "150px",
+                                   objectFit: "cover",
+                                   borderRadius: "8px",
+                                   border: "1px solid #dee2e6",
+                                   marginTop: "8px",
+                                 }}
+                                 onError={(e) => {
+                                   e.target.onerror = null;
+                                   e.target.src =
+                                     "https://placehold.co/250x150/cccccc/000000?text=No+Image";
+                                 }}
+                               />
+                             </div>
+                           )}
+       
+                           {/* Map PDF */}
+                           {/* Map PDF */}
+                           {/* Map PDF - Inline Preview */}
+                           {selectedProject.map_pdf && (
+                             <div className="mb-3">
+                               <strong>Map PDF:</strong>
+                               <br />
+                               <div
+                                 style={{
+                                   width: "100%",
+                                   height: "500px",
+                                   background: "#f5f5f5",
+                                   borderRadius: "8px",
+                                   border: "1px solid #dee2e6",
+                                   marginTop: "8px",
+                                   overflow: "hidden",
+                                 }}
+                               >
+                                 <iframe
+                                   src={`${imageAPIURL}/project/${selectedProject.map_pdf}`}
+                                   style={{
+                                     width: "100%",
+                                     height: "100%",
+                                     border: "none",
+                                   }}
+                                   title="Map PDF Preview"
+                                 />
+                               </div>
+                               <div className="text-center mt-2">
+                                 <a
+                                   href={`${imageAPIURL}/project/${selectedProject.map_pdf}`}
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   className="btn btn-sm btn-primary"
+                                   style={{ textDecoration: "none" }}
+                                 >
+                                   <i className="fas fa-download"></i> Download PDF
+                                 </a>
+                               </div>
+                             </div>
+                           )}
+       
+                           {/* Gallery Images */}
+                           <div style={{ marginBottom: "20px" }}>
+                             <strong style={{ fontSize: "14px" }}>Gallery Images:</strong>
+                             <br />
+                             <div
+                               style={{
+                                 display: "grid",
+                                 gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))",
+                                 gap: "8px",
+                                 marginTop: "8px",
+                               }}
+                             >
+                               {imageFiles.length > 0 ? (
+                                 imageFiles.map((imgName, idx) => (
+                                   <img
+                                     key={idx}
+                                     src={`${imageAPIURL}/project/${imgName}`}
+                                     alt={`Gallery ${idx + 1}`}
+                                     style={{
+                                       width: "100%",
+                                       height: "70px",
+                                       objectFit: "cover",
+                                       borderRadius: "6px",
+                                       cursor: "pointer",
+                                       border: "1px solid #dee2e6",
+                                     }}
+                                     onClick={() =>
+                                       window.open(`${imageAPIURL}/project/${imgName}`, "_blank")
+                                     }
+                                     onError={(e) => {
+                                       e.target.onerror = null;
+                                       e.target.src =
+                                         "https://placehold.co/80x70/cccccc/333333?text=No+Image";
+                                     }}
+                                   />
+                                 ))
+                               ) : (
+                                 <span>No gallery images available.</span>
+                               )}
+                             </div>
+                           </div>
+       
+                           {/* Property Chain Papers */}
+                           <div style={{ marginBottom: "20px" }}>
+                             <strong style={{ fontSize: "14px" }}>Property Chain Paper:</strong>
+                             <br />
+                             {pdfFiles.length > 0 ? (
+                               <ul
+                                 style={{
+                                   marginTop: "8px",
+                                   paddingLeft: "20px",
+                                 }}
+                               >
+                                 {pdfFiles.map((pdfName, idx) => (
+                                   <li key={idx} style={{ marginBottom: "5px" }}>
+                                     <a
+                                       href={`${imageAPIURL}/project/${pdfName}`}
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       style={{ color: "#0d6efd", textDecoration: "none" }}
+                                     >
+                                       View PDF {idx + 1}
+                                     </a>
+                                   </li>
+                                 ))}
+                               </ul>
+                             ) : (
+                               <span>No PDF documents available.</span>
+                             )}
+                           </div>
+                         </div>
+                       </div>
+       
+                       {/* Description Section */}
+                       <div style={{ marginTop: "20px" }}>
+                         <hr />
+                         <strong style={{ fontSize: "14px" }}>Description:</strong>
+                         <div
+                           style={{
+                             background: "#f8f9fa",
+                             padding: "15px",
+                             borderRadius: "8px",
+                             fontSize: "14px",
+                             lineHeight: "1.6",
+                             marginTop: "8px",
+                           }}
+                           dangerouslySetInnerHTML={{
+                             __html: selectedProject.description,
+                           }}
+                         />
+                       </div>
+                     </div>
+                   )}
+                 </Modal.Body>
+                 <Modal.Footer>
+                   <Button variant="danger" onClick={handleCloseViewModal}>
+                     Close
+                   </Button>
+                 </Modal.Footer>
+               </Modal>
+    
 
         {/* Edit Project Modal */}
-        <Modal
-          show={showEditModal}
-          onHide={handleCloseEditModal}
-          centered
-          size="lg"
-          className="formselectnewdesign"
-        >
+        <Modal show={showEditModal} onHide={handleCloseEditModal} centered size="lg" className="formselectnewdesign">
           <Modal.Header closeButton>
             <Modal.Title>Edit Project</Modal.Title>
           </Modal.Header>
@@ -1741,586 +1971,229 @@ function InactiveProjectList() {
             <Form onSubmit={handleUpdateProject}>
               <Row>
                 <Col md={6}>
-                  <Form.Group className="mb-3" controlId="editProjectName">
+                  <Form.Group className="mb-3">
                     <Form.Label>Name</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="name"
-                      value={editFormData.name}
-                      onChange={handleEditFormChange}
-                      required
-                    />
+                    <Form.Control type="text" name="name" value={editFormData.name} onChange={handleEditFormChange} disabled />
                   </Form.Group>
                 </Col>
-
                 <Col md={6}>
-                  <Form.Group
-                    className="mb-3"
-                    controlId="editTotalTownshipArea"
-                  >
+                  <Form.Group className="mb-3">
+                    <Form.Label>Category</Form.Label>
+                    <Form.Select
+                      name="category_id"
+                      value={editFormData.category_id}
+                      onChange={(e) => {
+                        const selectedCategoryId = e.target.value;
+                        const selectedCategory = categories.find(cat => String(cat.id) === selectedCategoryId);
+                        setEditFormData((prev) => ({
+                          ...prev,
+                          category_id: selectedCategoryId,
+                          category_name: selectedCategory ? selectedCategory.category_name : "",
+                        }));
+                      }}
+                    >
+                      <option value="">Select Category</option>
+                      {categories.map((cat) => (
+                        <option key={cat.id} value={cat.id}>{cat.category_name}</option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
                     <Form.Label>Total Township Area</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="project_size"
-                      value={editFormData.project_size}
-                      onChange={handleEditFormChange}
-                      required
-                    />
+                    <Form.Control type="text" name="project_size" value={editFormData.project_size} onChange={handleEditFormChange} required />
                   </Form.Group>
                 </Col>
-              </Row>
-
-              <Row>
                 <Col md={6}>
-                  <Form.Group
-                    className="mb-3"
-                    controlId="editReraRegistrationNo"
-                  >
+                  <Form.Group className="mb-3">
                     <Form.Label>Project RERA Number</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="rera_registration_no"
-                      value={editFormData.rera_registration_no}
-                      onChange={handleEditFormChange}
-                    />
+                    <Form.Control type="text" name="rera_registration_no" value={editFormData.rera_registration_no} onChange={handleEditFormChange} />
                   </Form.Group>
                 </Col>
+              </Row>
 
+              <Row>
                 <Col md={6}>
-                  <Form.Group className="mb-3" controlId="editLocation">
+                  <Form.Group className="mb-3">
                     <Form.Label>Location</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="location"
-                      value={editFormData.location}
-                      onChange={handleEditFormChange}
-                      required
-                    />
+                    <Form.Control type="text" name="location" value={editFormData.location} onChange={handleEditFormChange} required />
                   </Form.Group>
                 </Col>
-              </Row>
-
-              <Row>
                 <Col md={6}>
-                  <Form.Group className="mb-3" controlId="editBusinessVolume">
+                  <Form.Group className="mb-3">
                     <Form.Label>Business Volume</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="businessVolume"
-                      value={editFormData.businessVolume}
-                      onChange={handleEditFormChange}
-                    />
+                    <Form.Control type="text" name="businessVolume" value={editFormData.businessVolume} onChange={handleEditFormChange} />
                   </Form.Group>
                 </Col>
+              </Row>
 
+              <Row>
                 <Col md={6}>
-                  <Form.Group className="mb-3" controlId="editState">
+                  <Form.Group className="mb-3">
                     <Form.Label>State</Form.Label>
-                    <Form.Select
-                      name="state"
-                      value={editFormData.state}
-                      onChange={handleEditFormChange}
-                      required
-                    >
+                    <Form.Select name="state" value={editFormData.state} onChange={handleEditFormChange} required>
                       <option value="">Select State</option>
-                      {states.map((state) => (
-                        <option key={state.id} value={state.id}>
-                          {state.name}
-                        </option>
-                      ))}
+                      {states.map((state) => <option key={state.id} value={state.id}>{state.name}</option>)}
                     </Form.Select>
                   </Form.Group>
                 </Col>
-              </Row>
-
-              <Row>
                 <Col md={6}>
-                  <Form.Group className="mb-3" controlId="editCity">
+                  <Form.Group className="mb-3">
                     <Form.Label>City</Form.Label>
-                    <Form.Select
-                      name="city"
-                      value={editFormData.city}
-                      onChange={handleEditFormChange}
-                      required
-                      disabled={!editFormData.state || cities.length === 0}
-                    >
+                    <Form.Select name="city" value={editFormData.city} onChange={handleEditFormChange} required disabled={!editFormData.state}>
                       <option value="">Select City</option>
-                      {cities.map((city) => (
-                        <option key={city.id} value={city.id}>
-                          {city.name}
-                        </option>
-                      ))}
+                      {cities.map((city) => <option key={city.id} value={city.id}>{city.name}</option>)}
                     </Form.Select>
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="mb-3" controlId="editLandmark">
-                    <Form.Label>Landmark</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="landmark"
-                      value={editFormData.landmark}
-                      onChange={handleEditFormChange}
-                    />
                   </Form.Group>
                 </Col>
               </Row>
 
               <Row>
                 <Col md={6}>
-                  <Form.Group className="mb-3" controlId="editAmenities">
+                  <Form.Group className="mb-3">
+                    <Form.Label>Landmark</Form.Label>
+                    <Form.Control type="text" name="landmark" value={editFormData.landmark} onChange={handleEditFormChange} />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Approval Authority</Form.Label>
+                    <Form.Control type="text" name="legality" value={editFormData.legality} onChange={handleEditFormChange} />
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
                     <Form.Label>Amenities</Form.Label>
-                    <Form.Control
-                      as="select"
-                      multiple
-                      name="amenities"
-                      value={editFormData.amenities}
-                      onChange={handleAmenitiesChange}
-                      style={{ minHeight: "150px" }}
-                    >
-                      {amenitiesList.map((amenity) => (
-                        <option key={amenity.id} value={amenity.id}>
-                          {amenity.name}
-                        </option>
-                      ))}
+                    <Form.Control as="select" multiple name="amenities" value={editFormData.amenities} onChange={handleAmenitiesChange} style={{ minHeight: "150px" }}>
+                      {amenitiesList.map((amenity) => <option key={amenity.id} value={amenity.id}>{amenity.name}</option>)}
                     </Form.Control>
-                    <Form.Text className="text-muted">
-                      Hold Ctrl (Windows) or Command (Mac) to select multiple
-                      amenities.
-                    </Form.Text>
                   </Form.Group>
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
                     <Form.Label>Key Transports</Form.Label>
                     {editFormData.keyTransports.map((kt, index) => (
-                      <Row key={index} className="mb-2 align-items-center">
-                        <Col md={5}>
-                          <Form.Control
-                            type="text"
-                            placeholder="Transport Name (e.g., Bank, Mall)"
-                            value={kt.name}
-                            onChange={(e) =>
-                              handleKeyTransportChange(
-                                index,
-                                "name",
-                                e.target.value,
-                              )
-                            }
-                            required
-                          />
-                        </Col>
-                        <Col md={5}>
-                          <Form.Control
-                            type="text"
-                            placeholder="Distance (e.g., 2KM, 190M)"
-                            value={kt.distance}
-                            onChange={(e) =>
-                              handleKeyTransportChange(
-                                index,
-                                "distance",
-                                e.target.value,
-                              )
-                            }
-                            required
-                          />
-                        </Col>
-                        <Col md={2}>
-                          <Button
-                            variant="danger"
-                            onClick={() => removeKeyTransport(index)}
-                            size="sm"
-                          >
-                            <RiDeleteBin3Fill />
-                          </Button>
-                        </Col>
+                      <Row key={index} className="mb-2">
+                        <Col md={5}><Form.Control type="text" placeholder="Name" value={kt.name} onChange={(e) => handleKeyTransportChange(index, "name", e.target.value)} /></Col>
+                        <Col md={5}><Form.Control type="text" placeholder="Distance" value={kt.distance} onChange={(e) => handleKeyTransportChange(index, "distance", e.target.value)} /></Col>
+                        <Col md={2}><Button variant="danger" size="sm" onClick={() => removeKeyTransport(index)}><RiDeleteBin3Fill /></Button></Col>
                       </Row>
                     ))}
-                    <Button
-                      variant="outline-primary"
-                      onClick={addKeyTransport}
-                      size="sm"
-                    >
-                      Add Key Transport
-                    </Button>
+                    <Button variant="outline-primary" size="sm" onClick={addKeyTransport}>Add Transport</Button>
                   </Form.Group>
                 </Col>
               </Row>
 
-              <Form.Group className="mb-3" controlId="editLegality">
-                <Form.Label>Approval Authority</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="legality"
-                  value={editFormData.legality}
-                  onChange={handleEditFormChange}
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3" controlId="editDescription">
+              <Form.Group className="mb-3">
                 <Form.Label>Description</Form.Label>
-                {/* <CKEditor
-                  editor={ClassicEditor}
-                  data={editFormData.description}
-                  onChange={handleDescriptionChange}
-                  config={{
-                    toolbar: [
-                      'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', '|',
-                      'undo', 'redo'
-                    ],
-                    licenseKey: 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NTQ0MzgzOTksImp0aSI6Ijk4MGNlZTU4LTA0ZTUtNDVkMi1iZmI4LWZmZTNjNjMwNjA4MCIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6IjVmZjc5NDUxIn0.0ckOvFDI8r8h1g0YVW4Vlx4PmiF2bYkIaAqdSYuM_8RC8Wl3cO4jIfkMAd57z6Fo_6JPmlmDfLjafu4EnnByzQ',
-                  }}
-                /> */}
-                <Form.Control
-                  as="textarea"
-                  name="description"
-                  value={editFormData.description}
-                  onChange={handleEditFormChange}
-                />
+                <Form.Control as="textarea" rows="4" name="description" value={editFormData.description} onChange={handleEditFormChange} />
               </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label>Thumbnail Image</Form.Label>
                 {editFormData.current_single_image_url && (
-                  <div className="mb-2 d-flex align-items-center">
-                    <img
-                      src={`${imageAPIURL}/project/${editFormData.current_single_image_url}`}
-                      alt="Current Thumbnail"
-                      className="img-thumbnail me-2"
-                      style={{
-                        width: "100px",
-                        height: "100px",
-                        objectFit: "cover",
-                      }}
-                    />
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() =>
-                        handleDeleteExistingSingleImage(editFormData.project_id)
-                      }
-                    >
-                      Delete Current
-                    </Button>
+                  <div className="mb-2">
+                    <img src={`${imageAPIURL}/project/${editFormData.current_single_image_url}`} alt="Thumbnail" style={{ width: "100px" }} />
+                    <Button variant="danger" size="sm" className="ms-2" onClick={() => handleDeleteExistingSingleImage(editFormData.project_id)}>Remove</Button>
                   </div>
                 )}
-                <Form.Control
-                  type="file"
-                  name="singleImageFile"
-                  onChange={handleNewSingleImageChange}
-                  ref={newSingleImageInputRef}
-                />
-                <Form.Text className="text-muted">
-                  Upload a new image to replace the existing thumbnail.
-                </Form.Text>
+                <Form.Control type="file" onChange={handleNewSingleImageChange} ref={newSingleImageInputRef} />
               </Form.Group>
 
-              {/* Project Map Image */}
               <Form.Group className="mb-3">
                 <Form.Label>Map PDF</Form.Label>
                 {editFormData.imageprojectmap_image_url && (
-                  <div className="mb-2 d-flex align-items-center">
-                    <img
-                      src={`${imageAPIURL}/project/${editFormData.imageprojectmap_image_url}`}
-                      alt="Current Map"
-                      className="img-thumbnail me-2"
-                      style={{
-                        width: "100px",
-                        height: "100px",
-                        objectFit: "cover",
-                      }}
-                    />
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() =>
-                        handleDeleteExistingMapImage(editFormData.project_id)
-                      }
-                    >
-                      Delete Current
-                    </Button>
+                  <div className="mb-2">
+                    <Button variant="danger" size="sm" onClick={() => handleDeleteExistingMapImage(editFormData.project_id)}>Remove Current Map</Button>
                   </div>
                 )}
-                <Form.Control
-                  type="file"
-                  name="imageprojectmap"
-                  onChange={handleNewMapImageChange}
-                  ref={newMapImageInputRef}
-                />
-                <Form.Text className="text-muted">
-                  Upload a new image to replace the existing project map.
-                </Form.Text>
+                <Form.Control type="file" onChange={handleNewMapImageChange} ref={newMapImageInputRef} />
               </Form.Group>
 
-              {/* Multiple Project Images */}
               <Form.Group className="mb-3">
                 <Form.Label>Project Images</Form.Label>
-                {editFormData.images.length > 0 ? (
-                  <Row className="mb-2">
-                    {editFormData.images.map((image, index) => (
-                      <Col
-                        xs={4}
-                        sm={3}
-                        md={2}
-                        key={image.id}
-                        className="position-relative"
-                      >
-                        <img
-                          src={`${imageAPIURL}/project/${image.image}`}
-                          alt={`Project Image ${index + 1}`}
-                          className="img-thumbnail mb-2"
-                          style={{
-                            width: "100%",
-                            height: "80px",
-                            objectFit: "cover",
-                          }}
-                        />
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          className="position-absolute top-0 end-0 m-1"
-                          onClick={() =>
-                            handleDeleteExistingMultiImage(image.id)
-                          }
-                          data-bs-toggle="tooltip"
-                          title="Delete Image"
-                        >
-                          <RiDeleteBin3Fill />
-                        </Button>
-                      </Col>
-                    ))}
-                  </Row>
-                ) : (
-                  <p>No existing multi-images.</p>
-                )}
-                <Form.Label>Project Images (New)</Form.Label>
-                <Form.Control
-                  type="file"
-                  multiple
-                  name="newImages"
-                  onChange={handleNewMultiImageChange}
-                  ref={newMultiImageInputRef}
-                />
-                <Form.Text className="text-muted">
-                  Select multiple new images to add to the project.
-                </Form.Text>
-                {editFormData.newImages.length > 0 && (
-                  <div className="mt-2">
-                    <h6>New Images to Upload:</h6>
-                    <ul className="list-unstyled d-flex flex-wrap">
-                      {editFormData.newImages.map((file, index) => (
-                        <li
-                          key={index}
-                          className="me-2 mb-2 d-flex align-items-center"
-                        >
-                          <span>{file.name}</span>
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            className="ms-2"
-                            onClick={() => removeNewMultiImage(index)}
-                          >
-                            X
-                          </Button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                <div className="d-flex flex-wrap gap-2 mb-2">
+                  {editFormData.images.map(img => (
+                    <div key={img.id} className="position-relative">
+                      <img src={`${imageAPIURL}/project/${img.image}`} alt="Project" style={{ width: "80px", height: "80px", objectFit: "cover" }} />
+                      <Button variant="danger" size="sm" className="position-absolute top-0 end-0" onClick={() => handleDeleteExistingMultiImage(img.id)}>X</Button>
+                    </div>
+                  ))}
+                </div>
+                <Form.Control type="file" multiple onChange={handleNewMultiImageChange} ref={newMultiImageInputRef} />
               </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label>Project PDFs</Form.Label>
-
-                {/* Show existing PDFs */}
-                {editFormData.pdfs && editFormData.pdfs.length > 0 ? (
-                  <ul className="list-unstyled">
-                    {editFormData.pdfs.map((pdf, index) => (
-                      <li
-                        key={pdf.id}
-                        className="d-flex align-items-center justify-content-between mb-2"
-                      >
-                        <a
-                          href={`${selectedimagePath}/${pdf.pdf}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {pdf.pdf}
-                        </a>
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          onClick={() => handleDeleteExistingPDF(pdf.id)}
-                          title="Delete PDF"
-                        >
-                          <RiDeleteBin3Fill />
-                        </Button>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No existing PDFs.</p>
-                )}
-
-                {/* Upload new PDFs */}
-                <Form.Label>Project PDFs (New)</Form.Label>
-                <Form.Control
-                  type="file"
-                  multiple
-                  name="newPDFs"
-                  accept="application/pdf"
-                  onChange={handleNewMultiPDFChange}
-                  ref={newMultiPDFInputRef}
-                />
-                <Form.Text className="text-muted">
-                  Select multiple new PDFs to add to the project.
-                </Form.Text>
-
-                {/* Show new PDFs to upload */}
-                {editFormData.newPDFs && editFormData.newPDFs.length > 0 && (
-                  <div className="mt-2">
-                    <h6>New PDFs to Upload:</h6>
-                    <ul className="list-unstyled">
-                      {editFormData.newPDFs.map((file, index) => (
-                        <li
-                          key={index}
-                          className="d-flex align-items-center justify-content-between mb-2"
-                        >
-                          <span>{file.name}</span>
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => removeNewMultiPDF(index)}
-                          >
-                            X
-                          </Button>
-                        </li>
-                      ))}
-                    </ul>
+                {editFormData.pdfs.map(pdf => (
+                  <div key={pdf.id} className="d-flex justify-content-between mb-1">
+                    <a href={`${selectedimagePath}/${pdf.pdf}`} target="_blank" rel="noopener noreferrer">{pdf.pdf}</a>
+                    <Button variant="danger" size="sm" onClick={() => handleDeleteExistingPDF(pdf.id)}><RiDeleteBin3Fill /></Button>
                   </div>
-                )}
+                ))}
+                <Form.Control type="file" multiple accept="application/pdf" onChange={handleNewMultiPDFChange} ref={newMultiPDFInputRef} />
               </Form.Group>
 
-              <Form.Group className="mb-3" controlId="editStatus">
-                <Form.Label>Project Status</Form.Label>
-                <Form.Select
-                  name="status"
-                  value={editFormData.status}
-                  onChange={handleEditFormChange}
-                  required
-                >
-                  <option value="active">Show</option>
-                  <option value="inactive">Hide</option>
-                </Form.Select>
+              <Row>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Status</Form.Label>
+                    <Form.Select name="status" value={editFormData.status} onChange={handleEditFormChange}>
+                      <option value="active">Show</option>
+                      <option value="inactive">Hide</option>
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Project Status</Form.Label>
+                    <Form.Select name="project_status" value={editFormData.project_status} onChange={handleEditFormChange}>
+                      <option value="ongoing">Ongoing</option>
+                      <option value="complete">Complete</option>
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Form.Group className="mb-3">
+                <Form.Label>YouTube Link</Form.Label>
+                <Form.Control type="text" name="youtube_links" value={editFormData.youtube_links} onChange={handleEditFormChange} />
               </Form.Group>
 
-              <Form.Group className="mb-3" controlId="editProjectStatus">
-                <Form.Label>Project Status</Form.Label>
-                <Form.Select
-                  name="project_status"
-                  value={editFormData.project_status}
-                  onChange={handleEditFormChange}
-                  required
-                >
-                  <option value="ongoing">Ongoing</option>
-                  <option value="complete">Complete</option>
-                </Form.Select>
-              </Form.Group>
-
-              <Form.Group className="mb-3" controlId="editYoutube">
-                <Form.Label>Youtube Link</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="youtube_links"
-                  value={editFormData.youtube_links}
-                  onChange={handleEditFormChange}
-                />
-              </Form.Group>
-
-              <Button
-                variant="primary"
-                type="submit"
-                className="w-100"
-                disabled={loading}
-              >
+              <Button variant="primary" type="submit" className="w-100" disabled={loading}>
                 {loading ? "Updating..." : "Update Project"}
               </Button>
             </Form>
           </Modal.Body>
         </Modal>
 
+        {/* Message Modal */}
         {showMessageModal && (
-          <div
-            className="modal d-block"
-            tabIndex="1"
-            style={{
-              backgroundColor: "rgba(0,0,0,0.5)",
-              position: "fixed",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              zIndex: 9999,
-            }}
-          >
+          <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)', position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 9999 }}>
             <div className="modal-dialog modal-dialog-centered">
-              <div
-                className={`modal-content border-0 ${messageModalContent.type === "success" ? "" : messageModalContent.type === "error" ? "" : ""}`}
-              >
-                <div className="modal-header d-flex justify-content-between align-items-center">
-                  <h5
-                    className={`modal-title ${messageModalContent.type === "success" ? "text-white" : messageModalContent.type === "error" ? "text-white" : "text-white"}`}
-                  >
-                    {messageModalContent.title}
-                  </h5>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    aria-label="Close"
-                    onClick={closeCustomMessageModal}
-                  ></button>
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5>{messageModalContent.title}</h5>
+                  <button className="btn-close" onClick={closeCustomMessageModal}></button>
                 </div>
-                <div className="modal-body text-secondary">
+                <div className="modal-body">
                   <p>{messageModalContent.text}</p>
                 </div>
                 <div className="modal-footer justify-content-center">
                   {messageModalContent.confirmAction ? (
                     <>
-                      <Button
-                        className="buttondesign confimbutton"
-                        variant={
-                          messageModalContent.type === "btn-primary-custum"
-                            ? "btn-primary-custum"
-                            : "info"
-                        }
-                        onClick={() => {
-                          messageModalContent.confirmAction();
-                          closeCustomMessageModal();
-                        }}
-                      >
-                        Confirm
-                      </Button>
-                      <button
-                        className="buttondesign cancelbutton"
-                        onClick={closeCustomMessageModal}
-                      >
-                        Cancel
-                      </button>
+                      <Button variant="info" onClick={() => { messageModalContent.confirmAction(); closeCustomMessageModal(); }}>Confirm</Button>
+                      <Button variant="secondary" onClick={closeCustomMessageModal}>Cancel</Button>
                     </>
                   ) : (
-                    <Button
-                      className="buttondesign okbutton"
-                      variant={
-                        messageModalContent.type === "btn-primary-custum"
-                          ? "btn-primary-custum"
-                          : messageModalContent.type === "error"
-                            ? "danger"
-                            : "success"
-                      }
-                      onClick={closeCustomMessageModal}
-                    >
-                      OK
-                    </Button>
+                    <Button variant={messageModalContent.type === 'error' ? 'danger' : 'success'} onClick={closeCustomMessageModal}>OK</Button>
                   )}
                 </div>
               </div>

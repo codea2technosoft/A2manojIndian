@@ -3,12 +3,13 @@ import { useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import api from 'utils/api';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button, Row, Col, DatePicker, Card, Tabs, Table, Tag, message, Modal, Select, Form, Input } from 'antd';
+import { Button, Row, Col, DatePicker, Card, Tabs, Table, Tag, message, Modal, Select, Form, Input,Popover } from 'antd';
 import walletIcon from 'assets/images/Wallet 1.png';
 import { parseQueryParams, stringifyQueryParams } from 'utils/url';
 import { toast } from 'react-toast';
 import { omitBy, isEmpty, debounce } from 'lodash';
 import 'assets/styles/orders.scss';
+import { EyeOutlined } from '@ant-design/icons';
 // request
 import { getBanklist, payinPayoutList, exportOrders } from 'requests/order';
 
@@ -280,13 +281,15 @@ function InstantTransfer() {
             setIsTransferLoading(true);
             // Validate the form fields
             const values = await form.validateFields();
-            const { amount, bank_id, mode } = values;
+            const { amount, bank_id, mode, remark } = values;
+            
             const response = await api.post('/Payment-transfer-payout-bank', {
                 amount,
                 bank_id,
                 mode,
+                remark,
             });
-            console.warn(response);
+            // console.warn(response);
             if (response.data.status == true) {
                 Modal.success({
                     title: 'Payment Transfer ',
@@ -366,7 +369,7 @@ function InstantTransfer() {
             key: 'bankDetails',
             render: (text, record) => (
                 <div>
-                     Benifical Name : {record.benificalname}
+                    Benifical Name : {record.benificalname}
                     <br></br>
 
                     Account : {record.accountnumber}
@@ -387,6 +390,34 @@ function InstantTransfer() {
                     Order ID: {record.orderid}
                     <br></br>Txn ID: {record.tid}
                     <br></br>UTR Number: {record.utr ? record.utr : 'null'}
+                    <div style={{ marginTop: 5 }}>
+                    <b>Remark:</b>
+
+                    <Popover
+                        content={
+                            <div style={{ maxWidth: 250 }}>
+                                {record.remark_fintech || 'No Remark Available'}
+                            </div>
+                        }
+                        title="Remark Details"
+                        trigger="click"
+                    >
+                        <span
+                            style={{
+                                marginLeft: 8,
+                                cursor: 'pointer',
+                                color: '#1890ff',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4,
+                                fontWeight: 500
+                            }}
+                        >
+                            <EyeOutlined />
+                            View
+                        </span>
+                    </Popover>
+                </div>
                 </div>
             ),
         },
@@ -592,6 +623,16 @@ function InstantTransfer() {
                         rules={[{ required: true, message: 'Please enter the amount' }]}
                     >
                         <Input placeholder="Enter your Amount" type="number" />
+                    </Form.Item>
+                    <Form.Item
+                        name="remark"
+                        label="Remark"
+                        rules={[{ required: true, message: 'Please enter remark' }]}
+                    >
+                        <Input.TextArea
+                            placeholder="Enter your Remark"
+                            rows={4}
+                        />
                     </Form.Item>
                 </Form>
             </Modal>

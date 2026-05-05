@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Row, Col, Tabs, Form, Upload, Modal, Button, Card, Input } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, BankOutlined } from '@ant-design/icons';
 import api from 'utils/api';
 import 'assets/styles/orders.scss';
 import WalletPendingTransaction from './WalletPendingTransaction';
@@ -11,6 +11,7 @@ import WalletFailedTransaction from './WalletFailedTransaction';
 function WalletReport() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+    const [isBankModalOpen, setIsBankModalOpen] = useState(false);
     const [isTransferLoading, setIsTransferLoading] = useState(false);
     const [form] = Form.useForm();
 
@@ -20,6 +21,10 @@ function WalletReport() {
 
     const showModalBulk = () => {
         setIsBulkModalOpen(true);
+    };
+
+    const showBankModal = () => {
+        setIsBankModalOpen(true);
     };
 
     const handleBulkOk = () => {
@@ -36,6 +41,10 @@ function WalletReport() {
 
     const handleBulkCancel = () => {
         setIsBulkModalOpen(false);
+    };
+
+    const handleBankCancel = () => {
+        setIsBankModalOpen(false);
     };
 
     const handleFileUpload = (file) => {
@@ -113,7 +122,7 @@ function WalletReport() {
                         title: 'Topup',
                         content: `${response.data.message}`,
                     });
-                    setIsModalOpen(false);
+                    setIsBulkModalOpen(false);
                     setTimeout(() => {
                     Modal.destroyAll();
                     window.location.reload();
@@ -124,7 +133,7 @@ function WalletReport() {
                         title: 'Topup',
                         content: `Payment transfer failed: ${response.data.message}`,
                     });
-                    setIsModalOpen(false);
+                    setIsBulkModalOpen(false);
                     setTimeout(() => {
                     Modal.destroyAll();
                     window.location.reload();
@@ -180,13 +189,21 @@ function WalletReport() {
     };
     return (
         <div className="wrap-orders">
-            <Row>
+            <Row gutter={[16, 16]}>
 
                 <Col xs={24} md={8} lg={6} xl={5}>
                     <Card className="round_card">
-                        <Button type="primary" size="large" onClick={showModalBulk}>
-                            Request Topup
-                        </Button>
+                        <Button type="primary" size="large" onClick={showModalBulk} style={{ width: '100%' }}>
+                            Request Topup 
+                        </Button> 
+                    </Card>
+                </Col>
+
+                <Col xs={24} md={8} lg={6} xl={5}>
+                    <Card className="round_card">
+                        <Button type="primary" size="large" onClick={showBankModal} icon={<BankOutlined />} style={{ width: '100%' }}>
+                            Bank Details 
+                        </Button> 
                     </Card>
                 </Col>
 
@@ -199,6 +216,60 @@ function WalletReport() {
                     />
                 </Col>
             </Row>
+
+            {/* Bank Details Modal */}
+            <Modal
+                open={isBankModalOpen}
+                onCancel={handleBankCancel}
+                title="Bank Account Details"
+                footer={[
+                    <Button key="close" onClick={handleBankCancel} type="primary">
+                        Close
+                    </Button>,
+                ]}
+                width={500}
+            >
+                <div style={{ padding: '20px 0' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <tbody>
+                            <tr style={{ borderBottom: '1px solid #f0f0f0' }}>
+                                <td style={{ padding: '12px 8px', fontWeight: 'bold', width: '40%' }}>Bank Name :</td>
+                                <td style={{ padding: '12px 8px' }}>FEDERAL BANK</td>
+                            </tr>
+                            <tr style={{ borderBottom: '1px solid #f0f0f0' }}>
+                                <td style={{ padding: '12px 8px', fontWeight: 'bold' }}>Account Name :</td>
+                                <td style={{ padding: '12px 8px' }}>MTM PAYMENT SERVICES PRIVATE LIMITED</td>
+                            </tr>
+                            <tr style={{ borderBottom: '1px solid #f0f0f0' }}>
+                                <td style={{ padding: '12px 8px', fontWeight: 'bold' }}>Account Number :</td>
+                                <td style={{ padding: '12px 8px' }}>14450200010024</td>
+                            </tr>
+                            <tr>
+                                <td style={{ padding: '12px 8px', fontWeight: 'bold' }}>IFSC Code :</td>
+                                <td style={{ padding: '12px 8px' }}>FDRL0001445</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    {/* Copy button for easy copying */}
+                    <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                        <Button 
+                            onClick={() => {
+                                const bankDetails = `Bank Name: FEDERAL BANK\nAccount Name: MTM PAYMENT SERVICES PRIVATE LIMITED\nAccount Number: 14450200010024\nIFSC Code: FDRL0001445`;
+                                navigator.clipboard.writeText(bankDetails);
+                                Modal.success({
+                                    content: 'Bank details copied to clipboard!',
+                                    duration: 2
+                                });
+                            }}
+                        >
+                            Copy Details
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
+
+            {/* Topup Request Modal */}
             <Modal
                 open={isBulkModalOpen}
                 onOk={handleBulkOk}
@@ -235,12 +306,11 @@ function WalletReport() {
                     
                     <Col g={12} md={12} sm={24} xs={24}>
                     <Form.Item name="amount" label="Amount"  rules={[{ required: true, message: 'Amount is required' }]}>
-                        <Input />
+                        <Input type="number" />
                     </Form.Item>
                     </Col>
                     </Row>
                     <Form.Item className="mb-0 inputfile_custum"  label="Upload Receipt" name="topup_file" rules={[{ required: true, }]}>
-                        {/* <label>Upload Image:</label> */}
                         <Upload beforeUpload={handleFileUpload} className='uploadfile'>
                             <Button icon={<UploadOutlined />}>Click to Upload</Button>
                         </Upload>

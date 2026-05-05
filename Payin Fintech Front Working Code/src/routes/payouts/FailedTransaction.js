@@ -8,23 +8,59 @@ import TableBar from 'components/TableBar';
 import { parseQueryParams, stringifyQueryParams } from 'utils/url';
 import { toast } from 'react-toast';
 import { omitBy, isEmpty, debounce } from 'lodash';
-import { Table } from 'antd';
+import { Table,Popover  } from 'antd';
+import { EyeOutlined } from '@ant-design/icons';
 
 // styles
 import 'assets/styles/orders.scss';
 // request
-import { getOrders, getInprocessreport, exportOrdersInprocess } from 'requests/order';
+import { getOrders, getFailedreport, exportOrdersFLD } from 'requests/order';
 
 const { RangePicker } = DatePicker;
 
 const titles = [{ title: 'All Transaction' }];
 
 const columns = [
-    {
-        title: 'Order Id',
-        key: 'orderid',
-        dataIndex: 'orderid',
-    },
+ {
+    title: 'Order Id / TID',
+    key: 'orderid',
+    render: (_, record) => {
+        return (
+            <>
+                Order ID : {record.orderid || '-'}<br />
+                TID  : {record.tid || '-'}<br />
+               <div style={{ marginTop: 5 }}>
+                    <b>Remark:</b>
+
+                    <Popover
+                        content={
+                            <div style={{ maxWidth: 250 }}>
+                                {record.remark_fintech || 'No Remark Available'}
+                            </div>
+                        }
+                        title="Remark Details"
+                        trigger="click"
+                    >
+                        <span
+                            style={{
+                                marginLeft: 8,
+                                cursor: 'pointer',
+                                color: '#1890ff',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4,
+                                fontWeight: 500
+                            }}
+                        >
+                            <EyeOutlined />
+                            View
+                        </span>
+                    </Popover>
+                </div>
+            </>
+        );
+    }
+},
 
     {
         title: 'Account Number',
@@ -72,7 +108,7 @@ const columns = [
     },
 ];
 
-function PendingTransaction() {
+function FailedTransaction() {
     const location = useLocation();
     const navigate = useNavigate();
     const searchRef = useRef(null);
@@ -113,7 +149,7 @@ function PendingTransaction() {
     const getRecords = async (query) => {
         try {
             setIsTableLoading(true);
-            const response = await getInprocessreport(query);
+            const response = await getFailedreport(query);
 
             setOrderOverview({
                 total_records: response.total_records,
@@ -150,7 +186,7 @@ function PendingTransaction() {
             let query = parseQueryParams(location);
             setIsTableLoading(true);
             if (query.start && query.end) {
-                const response = await exportOrdersInprocess(query);
+                const response = await exportOrdersFLD(query);
                 if (response && response.filepath) {
                     // alert(process.env.REACT_APP_ASSET_URL);
                     // alert(response.filepath);
@@ -164,7 +200,7 @@ function PendingTransaction() {
                 const defaultDateMax = today.endOf('day');
                 query.start = defaultDateMin.format('YYYY-MM-DD');
                 query.end = defaultDateMax.format('YYYY-MM-DD');
-                const response = await exportOrdersInprocess(query);
+                const response = await exportOrdersFLD(query);
 
                 if (response && response.filepath) {
                     // alert(process.env.REACT_APP_ASSET_URL);
@@ -176,9 +212,7 @@ function PendingTransaction() {
             }
         } catch (err) {
             console.error(err);
-            toast.error('An error occurred. Please try again.', {
-                className: 'your-class-name',
-            });
+            toast.error('An error occurred. Please try again.');
         } finally {
             setIsTableLoading(false);
         }
@@ -337,4 +371,4 @@ function PendingTransaction() {
     );
 }
 
-export default PendingTransaction;
+export default FailedTransaction;
