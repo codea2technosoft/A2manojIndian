@@ -48,7 +48,7 @@ const Profile = () => {
     pan_number: "",
     adhar_number: "",
     pincode: "",
-    adhar_front_image: null,
+    adhar_fornt_image: null,
     adhar_back_image: null,
     pan_card_image: null,
   });
@@ -170,8 +170,8 @@ const Profile = () => {
     formData.append('pincode', editForm.pincode || '');
 
     // Add image files if they exist
-    if (editForm.adhar_front_image instanceof File) {
-      formData.append('adhar_front_image', editForm.adhar_front_image);
+    if (editForm.adhar_fornt_image instanceof File) {
+      formData.append('adhar_fornt_image', editForm.adhar_fornt_image);
     }
     if (editForm.adhar_back_image instanceof File) {
       formData.append('adhar_back_image', editForm.adhar_back_image);
@@ -490,11 +490,11 @@ const Profile = () => {
                       <div className="card document-card h-100">
                         <div className="card-body text-center p-2">
                           <h6 className="card-title">Aadhar Front</h6>
-                          {profile?.adhar_front_image ? (
+                          {profile?.adhar_fornt_image ? (
                             <>
                               <div className="document-preview mb-2">
                                 <img
-                                  src={`${profileImage}${profile.adhar_front_image}`}
+                                  src={`${profileImage}${profile.adhar_fornt_image}`}
                                   alt="Aadhar Front"
                                   className="img-fluid rounded"
                                   style={{
@@ -503,7 +503,7 @@ const Profile = () => {
                                     objectFit: "contain",
                                     cursor: "pointer"
                                   }}
-                                  onClick={() => openImageModal(`${profileImage}${profile.adhar_front_image}`)}
+                                  onClick={() => openImageModal(`${profileImage}${profile.adhar_fornt_image}`)}
                                 />
                               </div>
 
@@ -861,14 +861,14 @@ const Profile = () => {
                             type="file"
                             accept="image/*"
                             className="form-control"
-                            onChange={(e) => handleFileChange(e, 'adhar_front_image')}
+                            onChange={(e) => handleFileChange(e, 'adhar_fornt_image')}
                           />
-                          {editForm.adhar_front_image && (
+                          {editForm.adhar_fornt_image && (
                             <span className="text-success">✓ Selected</span>
                           )}
                         </div>
                         <img
-                          src={`${profileImage}${profile.adhar_front_image}`}
+                          src={`${profileImage}${profile.adhar_fornt_image}`}
                           alt="Aadhar Front"
                           className="img-fluid rounded my-1"
                           style={{
@@ -879,7 +879,7 @@ const Profile = () => {
                           }}
 
                           onClick={() => {
-                            setSelectedImage(`${profileImage}${profile.adhar_front_image}`);
+                            setSelectedImage(`${profileImage}${profile.adhar_fornt_image}`);
                             setShowImageModal(true);
                           }}
                         />

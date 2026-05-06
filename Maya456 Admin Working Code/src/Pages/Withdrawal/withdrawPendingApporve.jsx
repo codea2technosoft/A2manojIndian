@@ -10,6 +10,9 @@ const Pending = ({ userId }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [checkingStatusId, setCheckingStatusId] = useState(null);
+  const [isCheckingStatus, setIsCheckingStatus] = useState(false);
+
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const limit = 10;
@@ -255,7 +258,68 @@ const Pending = ({ userId }) => {
 
   // Check Status Function
   // Check Status Function
+  // const handleCheckStatus = async (id) => {
+  //   setCheckingStatusId(id);
+  //   try {
+  //     const response = await fetch(`${process.env.REACT_APP_API_URL}/payout-by-getway-checkstatus`, {
+  //       method: "POST",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         id: id
+  //       }),
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (data.success === "1") {
+  //       Swal.fire({
+  //         icon: "success",
+  //         title: "Success",
+  //         confirmButtonColor: "#28a745",
+  //       }).then(() => {
+  //         // OK button click के बाद reload
+  //         fetchWithdrawList(currentPage);
+  //       });
+  //     } else if (data.success === "2") {
+  //       Swal.fire({
+  //         icon: "warning",
+  //         title: "Pending",
+  //         confirmButtonColor: "#94a728",
+  //       }).then(() => {
+  //         // OK button click के बाद reload
+  //         fetchWithdrawList(currentPage);
+  //       });
+  //     } else {
+  //       Swal.fire({
+  //         icon: "error",
+  //         title: "Failed",
+  //         text: data.message || "Failed to check status",
+  //         confirmButtonColor: "#dc3545",
+  //       }).then(() => {
+  //         // OK button click के बाद reload
+  //         fetchWithdrawList(currentPage);
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Status check error:", error);
+  //     await Swal.fire({
+  //       icon: "error",
+  //       title: "Error",
+  //       text: "Something went wrong while checking status.",
+  //       confirmButtonColor: "#dc3545",
+  //     });
+  //     fetchWithdrawList(currentPage);
+  //   } finally {
+  //     setCheckingStatusId(null); // Re-enable button after operation completes
+  //   }
+  // };
+
   const handleCheckStatus = async (id) => {
+    setCheckingStatusId(id);
+
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/payout-by-getway-checkstatus`, {
         method: "POST",
@@ -271,45 +335,44 @@ const Pending = ({ userId }) => {
       const data = await response.json();
 
       if (data.success === "1") {
-        Swal.fire({
+        await Swal.fire({
           icon: "success",
           title: "Success",
           confirmButtonColor: "#28a745",
-        }).then(() => {
-          // OK button click के बाद reload
-          fetchWithdrawList(currentPage);
         });
-      }else if (data.success === "2") {
-        Swal.fire({
+        await fetchWithdrawList(currentPage);
+        setCheckingStatusId(null); // ✅ Yahan add karo
+
+      } else if (data.success === "2") {
+        await Swal.fire({
           icon: "warning",
           title: "Pending",
           confirmButtonColor: "#94a728",
-        }).then(() => {
-          // OK button click के बाद reload
-          fetchWithdrawList(currentPage);
         });
+        await fetchWithdrawList(currentPage);
+        setCheckingStatusId(null); // ✅ Yahan add karo
+
       } else {
-        Swal.fire({
+        await Swal.fire({
           icon: "error",
           title: "Failed",
           text: data.message || "Failed to check status",
           confirmButtonColor: "#dc3545",
-        }).then(() => {
-          // OK button click के बाद reload
-          fetchWithdrawList(currentPage);
         });
+        await fetchWithdrawList(currentPage);
+        setCheckingStatusId(null); // ✅ Yahan add karo
+
       }
     } catch (error) {
       console.error("Status check error:", error);
-      Swal.fire({
+      await Swal.fire({
         icon: "error",
         title: "Error",
         text: "Something went wrong while checking status.",
         confirmButtonColor: "#dc3545",
-      }).then(() => {
-        // OK button click के बाद reload
-        fetchWithdrawList(currentPage);
       });
+      await fetchWithdrawList(currentPage);
+      setCheckingStatusId(null); // ✅ Yahan add karo
     }
   };
   return (
@@ -318,7 +381,7 @@ const Pending = ({ userId }) => {
         <div className="card-header bg-color-black">
           <div className="d-flex align-items-center justify-content-between">
             <h3 className="card-title text-white">
-              Withdraw Approve Pending List
+              Withdraw Pre Approved Pending List
             </h3>
             <div className="buttonlist">
               <div className="fillterbutton" onClick={fillterdata}>
@@ -383,10 +446,10 @@ const Pending = ({ userId }) => {
                           <td>
                             <span
                               className={`badge ${item.status === "pending"
-                                  ? "bg-warning text-white"
-                                  : item.status === "success"
-                                    ? "bg-success"
-                                    : "bg-danger"
+                                ? "bg-warning text-white"
+                                : item.status === "success"
+                                  ? "bg-success"
+                                  : "bg-danger"
                                 }`}
                             >
                               {item.status?.toUpperCase()}
@@ -395,12 +458,12 @@ const Pending = ({ userId }) => {
                           <td>
                             <span
                               className={`badge ${item.getway_status == "pending" || !item.getway_status
-                                  ? "bg-warning text-white"
-                                  : item.getway_status == "success"
-                                    ? "bg-success"
-                                    : item.getway_status == "failed"
-                                      ? "bg-danger"
-                                      : "bg-secondary"
+                                ? "bg-warning text-white"
+                                : item.getway_status == "success"
+                                  ? "bg-success"
+                                  : item.getway_status == "failed"
+                                    ? "bg-danger"
+                                    : "bg-secondary"
                                 }`}
                             >
                               {item.getway_status?.toUpperCase() || "N/A"}
@@ -414,33 +477,40 @@ const Pending = ({ userId }) => {
                           </td>
                           <td>
                             <div className="d-flex gap-2">
-                             
+
 
                               {/* Show Gateway button only if getway_status is pending or not exists */}
                               {/* Gateway button logic */}
                               {!item.getway_status ? (
                                 <>  <button
-                                className="btn btn-sm btn-success"
-                                onClick={() =>
-                                  handleAction(item._id, "success")
-                                }
-                              >
-                                Approve
-                              </button>
-
-                                <button
                                   className="btn btn-sm btn-success"
-                                  onClick={() => handleGateway(item._id)}
+                                  onClick={() =>
+                                    handleAction(item._id, "success")
+                                  }
                                 >
-                                  Gateway
-                                </button></>
-                               
+                                  Approve
+                                </button>
+
+                                  <button
+                                    className="btn btn-sm btn-success"
+                                    onClick={() => handleGateway(item._id)}
+                                  >
+                                    Gateway
+                                  </button></>
+
                               ) : (
+                                // <button
+                                //   className="btn btn-sm btn-info"
+                                //   onClick={() => handleCheckStatus(item._id)}
+                                // >
+                                //   Check Status
+                                // </button>
                                 <button
                                   className="btn btn-sm btn-info"
                                   onClick={() => handleCheckStatus(item._id)}
+                                  disabled={checkingStatusId === item._id}
                                 >
-                                  Check Status
+                                  {checkingStatusId === item._id ? "Checking..." : "Check Status"}
                                 </button>
                               )}
 
