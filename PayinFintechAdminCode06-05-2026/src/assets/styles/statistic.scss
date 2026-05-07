@@ -1,0 +1,66 @@
+.ant-statistic-content {
+    display: flex;
+    align-items: stretch;
+}
+
+.statistic-card--orange {
+    background-color: #fff7e6;
+    border-color: #fff7e6;
+
+    .ant-statistic-title, .ant-statistic-content {
+        color: #fa8c16 !important;
+    }
+}
+
+.statistic-card--blue {
+    background-color: #e6f4ff;
+    border-color: #e6f4ff;
+
+    .ant-statistic-title, .ant-statistic-content {
+        color: #1677ff !important;
+    }
+}
+
+.statistic-card--purple {
+    background-color: #f9f0ff;
+    border-color: #f9f0ff;
+
+    .ant-statistic-title, .ant-statistic-content {
+        color: #722ed1 !important;
+    }
+}
+
+.statistic-card--yellow {
+    background-color: #feffe6;
+    border-color: #feffe6;
+
+    .ant-statistic-title, .ant-statistic-content {
+        color: #fadb14 !important;
+    }
+}
+
+.statistic-card--green {
+    background-color: #f6ffed;
+    border-color: #f6ffed;
+
+    .ant-statistic-title, .ant-statistic-content {
+        color: #52c41a !important;
+    }
+}
+
+.statistic-card--red {
+    background-color: #fff2e8;
+    border-color: #fff2e8;
+
+    .ant-statistic-title, .ant-statistic-content {
+        color: #fa541c !important;
+    }
+}
+
+.statistic-value--small {
+    font-size: 18px;
+}
+
+.ant-statistic-title {
+    font-size: 12px !important;
+}

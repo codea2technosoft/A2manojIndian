@@ -1,0 +1,234 @@
+@import "./base.scss";
+
+@media screen and (max-width: 1100px) and (min-width: 992px) {
+  .Login_Left {
+    padding: 70px 15px 0px;
+    max-width: 425px;
+  }
+
+  .ant-btn {
+    font-size: 13px;
+  }
+
+  .app-sidebar {
+    width: 250px !important;
+  }
+
+  .ant-layout-content {
+    margin-left: 0;
+  }
+
+  .stats {
+    .ant-card-body {
+      padding: 24px 15px;
+      .data {
+        flex-flow: wrap;
+        .icon {
+          padding: 8px;
+          svg {
+            transform: scale(1.3);
+          }
+        }
+      }
+    }
+    .value {
+      font-size: 25px;
+    }
+    .title {
+      margin-top: 0;
+      .name {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .ant-tabs-tab + .ant-tabs-tab {
+    margin: 0 0 0 10px;
+  }
+}
+
+@media screen and (max-width: 991px) and (min-width: 768px) {
+  .Login_Page .login-wrapper {
+    padding: 15px 30px;
+    min-height: auto;
+    .login-form {
+      max-width: 350px;
+      min-width: 350px;
+      padding: 10px 15px;
+      margin: 0 10px 0 auto;
+    }
+    .login_Logo {
+      margin: 0 0 50px;
+      width: 170px;
+    }
+    .Login_Left {
+      max-width: 350px;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .Login_Page .login-wrapper {
+    background: none;
+    min-height: auto;
+    .Login_Left {
+      display: none;
+    }
+    .login_Logo {
+      margin: auto;
+    }
+  }
+
+  #preloader {
+    img {
+      width: 25px;
+    }
+  }
+
+  .ant-tabs-tab + .ant-tabs-tab {
+    margin: 0 0 0 8px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .login-wrapper {
+    padding: 0 12px !important;
+
+    .login-form {
+      max-width: calc(100vw - 24px) !important;
+      min-width: calc(100vw - 24px) !important;
+    }
+  }
+}
+
+@media screen and (max-width: 575px) {
+  .Login_Page .login-wrapper {
+    .login_Logo {
+      width: 150px;
+    }
+  }
+  .app-sidebar {
+    width: 72px !important;
+    max-width: 72px !important;
+    min-width: 72px !important;
+    margin: 10px 0;
+    height: 98%;
+    padding: 0 !important;
+  }
+
+  .app-sidebar .sidebar-menu {
+    margin-top: 45px;
+    .ant-menu-item {
+      padding: 0 24px !important;
+    }
+  }
+
+  .app-sidebar .sidebar-menu .ant-menu-item.menu-item--collapse.toggle {
+    top: 30px;
+    right: 12px;
+  }
+
+  .ant-layout-sider-collapsed.app-sidebar
+    .sidebar-menu
+    .ant-menu-item.menu-item--collapse.toggle {
+    top: 45px;
+  }
+
+  .ant-menu-item:not(.toggle) {
+    border-radius: 0 !important;
+    .ant-menu-title-content {
+      overflow: visible;
+      position: absolute;
+      right: 0px;
+      top: 15px;
+      left: 0;
+      font-size: 9px;
+      font-weight: 600;
+      margin: 0;
+      text-align: center;
+      padding: 0 3px;
+    }
+  }
+  .ant-menu-item.ant-menu-item-selected {
+    border-radius: 1rem !important;
+  }
+
+  .app-sidebar .sidebar-menu .ant-menu-submenu {
+    padding: 0 5px;
+  }
+
+  .main {
+    margin-left: 70px;
+  }
+
+  .logo {
+    margin: auto auto 15px;
+    width: 70px;
+    padding: 15px 5px 0;
+  }
+
+  h1.ant-typography{
+    font-size: 18px !important;
+  }
+
+  h2.ant-typography {
+    font-size: 20px;
+  }
+
+  .ant-layout-content {
+    padding: 5px 20px !important;
+    margin-left: 0;
+  }
+
+  .app-sidebar .sidebar-menu .ant-menu-item:not(.ant-menu-item-only-child),
+  .app-sidebar .sidebar-menu .ant-menu-submenu-title {
+    height: 50px !important;
+  }
+
+  .ant-tabs-nav
+    .ant-tabs-nav-wrap
+    .ant-tabs-nav-list
+    .ant-tabs-tab
+    .ant-tabs-tab-btn {
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+
+  .ant-table-wrapper {
+    table {
+      tr {
+        td {
+          padding: 0px 5px;
+        }
+        th {
+          padding: 5px 8px !important;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .ant-btn-lg {
+    font-size: 14px;
+    padding: 5px 8px;
+  }
+}
+
+@media screen and (max-width: 385px) {
+
+  .ant-picker-input > input {
+    font-size: 12px;
+  }
+
+  .ant-tabs-nav
+    .ant-tabs-nav-wrap
+    .ant-tabs-nav-list
+    .ant-tabs-tab
+    .ant-tabs-tab-btn {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+}
