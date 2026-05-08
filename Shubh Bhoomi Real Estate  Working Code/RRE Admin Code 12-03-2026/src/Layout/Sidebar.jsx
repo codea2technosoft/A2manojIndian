@@ -10,6 +10,7 @@ import { IoIosGitNetwork } from "react-icons/io";
 import { TbWorldWww } from "react-icons/tb";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { MdOutlineLocationOn } from "react-icons/md";
+import { MdSupportAgent } from "react-icons/md";
 
 const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
 
@@ -51,6 +52,23 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
           icon: <LuLayoutDashboard />,
           checked: true
         },
+
+          {
+              id: "ticket_support",
+              title: "Ticket Support",
+              dropdown: true,
+              icon: <MdSupportAgent />,
+              checked: false,
+              children: [
+                {
+                  id: "ticket_support_list",
+                  title: "Ticket Support List",
+                  href: "/created-ticket-support-list",
+                  checked: false,
+                },
+              ],
+            },
+
 
 
         // {

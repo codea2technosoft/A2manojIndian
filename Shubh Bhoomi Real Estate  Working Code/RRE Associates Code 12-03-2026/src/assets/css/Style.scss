@@ -41,7 +41,9 @@ body {
     color: $white-color;
   }
 }
-
+.table td{
+  vertical-align: top!important;
+}
 .table thead tr {
   background: $gradientcolor !important;
 }

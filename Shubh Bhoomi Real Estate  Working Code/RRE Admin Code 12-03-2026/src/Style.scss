@@ -2084,8 +2084,11 @@ input.form-control {
 }
 
 .table tr td {
-  white-space: pre-wrap;
-  word-break: break-all;
+padding: 14px 13px !important;
+    font-size: 14px;
+    text-align: left;
+    vertical-align: middle;
+    border: 1px solid #dee2e6;
 }
 
 .table .table-cell-remark {
@@ -3097,9 +3100,12 @@ $withdraw-bg: #dc3545;
   padding: 10px;
 }
 
+.table td{
+  vertical-align: top!important;
+}
 .table td,
 .table th {
-  white-space: nowrap !important;
+  // white-space: nowrap !important;
 }
 
 .form_design_all {

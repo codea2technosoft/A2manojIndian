@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { HiOutlineChevronLeft } from "react-icons/hi";
 import { HiChevronRight } from "react-icons/hi2";
-
+import { Link } from "react-router-dom";
+import { FaPlus, FaEye, FaEdit } from "react-icons/fa";
 
 const API_URL = process.env.REACT_APP_API_URL;
+const profileImage = `${process.env.REACT_APP_IMAGE_API_URL}/uploads/support_tickets/`;
+const documentImage = `${process.env.REACT_APP_IMAGE_API_URL}/uploads/documents/`;
 
 function AllCreatedTicketSupport() {
   const [loading, setLoading] = useState(true);
@@ -12,6 +15,8 @@ function AllCreatedTicketSupport() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [TicketSupportLists, setTicketSupportLists] = useState([]);
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState("");
   const getAuthToken = () => {
     return localStorage.getItem("token");
   };
@@ -20,7 +25,7 @@ function AllCreatedTicketSupport() {
     setIsFilterActive(!isFilterActive);
   };
   const fetchCreatedTicketSupport = async (page = 1) => {
-    setLoading(true);  
+    setLoading(true);
     setError(null);
 
     try {
@@ -49,10 +54,10 @@ function AllCreatedTicketSupport() {
     } catch (err) {
       console.error(err);
       setError(err.message);
-      setTicketSupportLists([]); 
+      setTicketSupportLists([]);
       Swal.fire("Error", err.message, "error");
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -64,6 +69,11 @@ function AllCreatedTicketSupport() {
     if (!totalPages || pageNumber < 1 || pageNumber > totalPages) return;
     setCurrentPage(pageNumber);
     fetchCreatedTicketSupport(pageNumber);
+  };
+
+  const openImageModal = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setShowImageModal(true);
   };
 
   if (loading) {
@@ -84,38 +94,132 @@ function AllCreatedTicketSupport() {
             <div className="titlepage">
               <h3>All Created Ticket Support Lists</h3>
             </div>
+                <div className="createnewadmin">
+              <Link
+                to="/create-ticket-support"
+                className="btn btn-success d-inline-flex align-items-center"
+              >
+                <FaPlus className="me-1" /> Create Ticket Support
+              </Link>
+            </div>
+
           </div>
         </div>
         <div className="card-body">
           <div className="table-responsive">
-            <table className="table table-striped table-bordered table-hover shadow-sm">
+           <table className="table table-striped table-bordered table-hover shadow-sm fixed-table">
+
               <thead className="bg-primary text-white">
                 <tr>
                   <th>S.N</th>
-                  <th>Priority</th>
-                  <th>Description</th>
-                  <th>Assigned To</th>
-                  <th>Status</th>
+                  <th>Ticket No</th>
                   <th>Subject</th>
-                  <th>Remark</th>
+                  <th>Description</th>
+                  <th>Priority</th>
+                  
+                  <th>Status</th>
+                  <th>Attachment</th>
+                  <th>Assigned To</th>
+                  <th>Resolution</th>
+                  <th>Created Date</th>
                 </tr>
               </thead>
+
               <tbody>
                 {TicketSupportLists.length > 0 ? (
                   TicketSupportLists.map((item, index) => (
                     <tr key={item.id}>
-                      <td>{index + 1}</td>
-                      <td>{item.priority || "NA"}</td>
-                      <td>{item.description || "NA"}</td>
-                      <td>{item.assigned_to || "NA"}</td>
-                      <td>{item.Status || "NA"}</td>
-                      <td>{item.subject || "NA"}</td>
-                      <td>{item.Remark || "NA"}</td>
+                      <td>
+                        {(currentPage - 1) * 10 + index + 1}
+                      </td>
+                      <td>
+                        #{item.ticket_no || "NA"}
+                      </td>
+                      <td className="table-cell-remark"  style={{ minWidth: "350px" }}>
+                        {item.subject || "NA"}
+                      </td>
+                      <td className="table-cell-remark" style={{ minWidth: "350px" }}>
+                        {item.description || "NA"}
+                      </td>
+                      <td>
+                        <span
+                          className={`badge ${item.priority === "low"
+                            ? "bg-secondary"
+                            : item.priority === "medium"
+                              ? "bg-info"
+                              : item.priority === "high"
+                                ? "bg-warning text-dark"
+                                : item.priority === "urgent"
+                                  ? "bg-danger"
+                                  : "bg-secondary"
+                            }`}
+                        >
+                          {item.priority || "NA"}
+                        </span>
+                      </td>
+                      <td>
+                        <span
+                          className={`badge ${item.status === "open"
+                            ? "bg-danger"
+                            : item.status === "in_progress"
+                              ? "bg-warning text-dark"
+                              : item.status === "resolved"
+                                ? "bg-success"
+                                : item.status === "closed"
+                                  ? "bg-dark"
+                                  : "bg-secondary"
+                            }`}
+                        >
+                          {item.status || "NA"}
+                        </span>
+                      </td>
+                      <td>
+                        {item.attachment ? (
+                          item.attachment.endsWith(".pdf") ? (
+                            <a
+                              href={`${profileImage}/${item.attachment}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              📄 View PDF
+                            </a>
+                          ) : (
+                            <a
+                              href={`${profileImage}/${item.attachment}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <img
+                                src={`${profileImage}/${item.attachment}`}
+                                width="50px"
+                                height="50px"
+                                style={{ objectFit: "cover", cursor: "pointer" }}
+                              />
+                            </a>
+                          )
+                        ) : (
+                          "NA"
+                        )}
+                      </td>
+                       <td>
+                        {item.assigned_to || "Admin"}
+                      </td>
+                      <td style={{ minWidth: "250px" }}>
+                        {item.resolution || "---"}
+                      </td>
+                      <td>
+                        {item.created_at
+                          ? new Date(item.created_at).toLocaleDateString()
+                          : "NA"}
+                      </td>
+
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="7" className="text-center">No data found.</td>
+                    <td colSpan="10" className="text-center">
+                      No data found.
+                    </td>
                   </tr>
                 )}
               </tbody>

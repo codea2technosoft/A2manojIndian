@@ -183,6 +183,7 @@ import HomeDashboard from "./Pages/HomeDashboard";
 
 import AssociatesBimaAchieverFormEntriesLists from "./Pages/createAssociate/AssociatesBimaAchieverFormEntriesLists";
 import AssociatesBonusAchieverFormEntriesLists from "./Pages/createAssociate/AssociatesBonusAchieverFormEntriesLists";
+import AllCreatedTicketSupport from "./Pages/ticketSupport/AllCreatedTicketSupport";
 
 
 
@@ -850,6 +851,13 @@ const App = () => {
 
         <Route path="/associates-bima-achiever-form-entries-lists" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AssociatesBimaAchieverFormEntriesLists /> </Layout></PrivateRoute>} />
         <Route path="/associates-bonus-achiever-form-entries-lists" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AssociatesBonusAchieverFormEntriesLists /> </Layout></PrivateRoute>} />
+
+
+
+        <Route path="/created-ticket-support-list" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AllCreatedTicketSupport /> </Layout></PrivateRoute>} />
+
+
+
 
 
 

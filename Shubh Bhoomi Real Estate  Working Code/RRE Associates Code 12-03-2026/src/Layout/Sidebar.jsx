@@ -117,9 +117,33 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
           ),
         },
 
+
+         {
+              id: "ticket_support",
+              title: "Ticket Support",
+              dropdown: true,
+              icon: <MdSupportAgent />,
+              checked: false,
+              children: [
+                {
+                  id: "create_ticket_support",
+                  title: "Create Ticket",
+                  href: "/create-ticket-support",
+                  checked: false,
+                },
+                {
+                  id: "ticket_support_list",
+                  title: "Created Ticket Lists",
+                  href: "/created-ticket-support-list",
+                  checked: false,
+                },
+              ],
+            },
+
+
         {
           id: "achiever_lists",
-          title: "Eligibilities Lists",
+          title: "Bonus / Bema Entries",
           dropdown: true,
           icon: <MdSupportAgent />,
           checked: false,
@@ -658,28 +682,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
             //   ],
             // },
 
-            {
-              id: "ticket_support",
-              title: "Ticket Support",
-              dropdown: true,
-              icon: <MdSupportAgent />,
-              checked: false,
-              children: [
-                {
-                  id: "create_ticket_support",
-                  title: "Create Ticket Support",
-                  href: "/create-ticket-support",
-                  checked: false,
-                },
-                {
-                  id: "ticket_support_list",
-                  title: "Ticket Support List",
-                  href: "/created-ticket-support-list",
-                  checked: false,
-                },
-              ],
-            },
-
+           
             {
               id: "advance-payments-to-associates",
               title: "Advance Payments",
