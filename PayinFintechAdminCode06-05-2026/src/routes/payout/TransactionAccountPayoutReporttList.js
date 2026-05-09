@@ -24,9 +24,7 @@ import "assets/styles/orders.scss";
 import { payoutgetPartnerSummary } from "requests/statistic";
 
 const { RangePicker } = DatePicker;
-
 const titles = [{ title: "Account Payout Report" }];
-
 function TransactionAccountPayoutReporttList() {
   const [isTableLoading, setIsTableLoading] = useState(false);
   const [page, setPage] = useState();
@@ -47,6 +45,8 @@ function TransactionAccountPayoutReporttList() {
   const [isStatusModalVisible, setIsStatusModalVisible] = useState(false);
   const [currentId, setCurrentId] = useState(null);
   const [currentRemark, setCurrentRemark] = useState(null);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [totalSubtotal, setTotalSubtotal] = useState(0);
 
   const [formData1, setFormData] = useState({
     status: "",
@@ -87,6 +87,55 @@ function TransactionAccountPayoutReporttList() {
   };
 
   // Submit function to call API
+  // const handleSubmit = async () => {
+  //   if (!MerchantId) {
+  //     toast.error("Please select a merchant first");
+  //     return;
+  //   }
+
+  //   if (!submitStartDate || !submitEndDate) {
+  //     toast.error("Please select both start and end dates");
+  //     return;
+  //   }
+
+  //   setIsSubmitLoading(true);
+  //   try {
+  //     const formattedStartDate = submitStartDate.format("YYYY-MM-DD");
+  //     const formattedEndDate = submitEndDate.format("YYYY-MM-DD");
+
+  //     const response = await api.get(
+  //       `admin/partner/payout-partners-list-accountwaise?start=${formattedStartDate}&end=${formattedEndDate}&merchantid=${MerchantId}`
+  //     );
+
+  //     console.log("API Response:", response.data);
+
+  //     // Set response to table
+  //     if (response.data && response.data.record) {
+  //       setSubmitRecords(response.data.record);
+  //       setTotalCount(response.data.total_records || response.data.record.length);
+  //     } else if (response.data && Array.isArray(response.data)) {
+  //       setSubmitRecords(response.data);
+  //       setTotalCount(response.data.length);
+  //     } else if (response.data && response.data.data) {
+  //       setSubmitRecords(response.data.data);
+  //       setTotalCount(response.data.total || response.data.data.length);
+  //     } else {
+  //       setSubmitRecords([]);
+  //       setTotalCount(0);
+  //     }
+
+  //     toast.success("Data fetched successfully");
+  //   } catch (err) {
+  //     console.error("Error:", err);
+  //     toast.error(err.response?.data?.message || "Failed to fetch data");
+  //     setSubmitRecords([]);
+  //     setTotalCount(0);
+  //   } finally {
+  //     setIsSubmitLoading(false);
+  //   }
+  // };
+
+
   const handleSubmit = async () => {
     if (!MerchantId) {
       toast.error("Please select a merchant first");
@@ -98,41 +147,9 @@ function TransactionAccountPayoutReporttList() {
       return;
     }
 
-    setIsSubmitLoading(true);
-    try {
-      const formattedStartDate = submitStartDate.format("YYYY-MM-DD");
-      const formattedEndDate = submitEndDate.format("YYYY-MM-DD");
-
-      const response = await api.get(
-        `admin/partner/payout-partners-list-accountwaise?start=${formattedStartDate}&end=${formattedEndDate}&merchantid=${MerchantId}`
-      );
-
-      console.log("API Response:", response.data);
-
-      // Set response to table
-      if (response.data && response.data.record) {
-        setSubmitRecords(response.data.record);
-        setTotalCount(response.data.total_records || response.data.record.length);
-      } else if (response.data && Array.isArray(response.data)) {
-        setSubmitRecords(response.data);
-        setTotalCount(response.data.length);
-      } else if (response.data && response.data.data) {
-        setSubmitRecords(response.data.data);
-        setTotalCount(response.data.total || response.data.data.length);
-      } else {
-        setSubmitRecords([]);
-        setTotalCount(0);
-      }
-
-      toast.success("Data fetched successfully");
-    } catch (err) {
-      console.error("Error:", err);
-      toast.error(err.response?.data?.message || "Failed to fetch data");
-      setSubmitRecords([]);
-      setTotalCount(0);
-    } finally {
-      setIsSubmitLoading(false);
-    }
+    setPage(1);
+    setPerPage(process.env.REACT_APP_RECORDS_PER_PAGE);
+    await handleSubmitWithPagination(1, process.env.REACT_APP_RECORDS_PER_PAGE);
   };
 
   useEffect(() => {
@@ -208,67 +225,76 @@ function TransactionAccountPayoutReporttList() {
   };
 
   const columns = [
-     {
-    title: "S.No",
-    key: "index",
-    render: (text, record, index) => (
-      <div>
-        <strong>{index + 1}.</strong>
-      </div>
-    ),
-  },
+    {
+      title: "S.No",
+      key: "index",
+      render: (text, record, index) => (
+        <div>
+          <strong>{(page - 1) * perPage + index + 1}.</strong>
+        </div>
+      ),
+    },
 
-   
 
-  {
-  title: "Account Details",
-  render: (text, record) => (
-    <div style={{ lineHeight: "1.6" }}>
-      <div><strong>Account No:</strong> {record.accountnumber || "-"}</div>
-      <div><strong>Bank:</strong> {record.bankname || "-"}</div>
-      <div><strong>Name:</strong> {record.benificalname || "-"}</div>
-      <div><strong>IFSC:</strong> {record.Ifsc || "-"}</div>
-    </div>
-  ),
-},
+
+    {
+      title: "Account Details",
+      render: (text, record) => (
+        <div style={{ lineHeight: "1.6" }}>
+          <div><strong>Account No:</strong> {record.accountnumber || "-"}</div>
+          <div><strong>Bank:</strong> {record.bankname || "-"}</div>
+          <div><strong>Name:</strong> {record.benificalname || "-"}</div>
+          <div><strong>IFSC:</strong> {record.Ifsc || "-"}</div>
+        </div>
+      ),
+    },
 
     {
       title: "Total Amount",
       render: (text, record) => (
         <div>
-          <strong>₹</strong> {record.total_amount}
+          <strong></strong> {record.total_amount ? Number(record.total_amount).toFixed(2) : '0.00'}
           <br></br>
         </div>
       ),
     },
-    
 
-    
     {
       title: "Sub Total Amount",
       render: (text, record) => (
         <div>
-          <strong>₹</strong> {record.total_subtotal}
+          <strong></strong> {record.total_subtotal ? Number(record.total_subtotal).toFixed(2) : '0.00'}
           <br></br>
         </div>
       ),
     },
 
+    {
+      title: "Action",
+      render: (text, record) => (
+        <Button
+          type="primary"
+          onClick={() => {
+            // Get dates from state
+            const startDate = submitStartDate ? submitStartDate.format("YYYY-MM-DD") : "";
+            const endDate = submitEndDate ? submitEndDate.format("YYYY-MM-DD") : "";
 
-     
-   {
-  title: "Action",
-  render: (text, record) => (
-    <Button
-      type="primary"
-      onClick={() => navigate(`/transaction-account-payout-report-details/${record.accountnumber}`)}
-    >
-      View Details
-    </Button>
-  ),
-}
+            // Build URL with dates
+            let url = `/transaction-account-payout-report-details/${record.accountnumber}/${record.userId}`;
 
-    
+            if (startDate && endDate) {
+              url += `?start=${startDate}&end=${endDate}`;
+            }
+
+            navigate(url);
+          }}
+        >
+          View Details
+        </Button>
+      ),
+    }
+
+
 
     // {
     //   title: "Transfer Amount",
@@ -398,19 +424,80 @@ function TransactionAccountPayoutReporttList() {
   //   }
   // };
 
-  const onChangeTable = (pagination) => {
-    let query = parseQueryParams(location);
-    query = {
-      ...query,
-      page: pagination.current,
-      per_page: pagination.pageSize,
-    };
+  // const onChangeTable = (pagination) => {
+  //   let query = parseQueryParams(location);
+  //   query = {
+  //     ...query,
+  //     page: pagination.current,
+  //     per_page: pagination.pageSize,
+  //   };
 
-    navigate({
-      pathname: location.pathname,
-      search: stringifyQueryParams(query),
-    });
+  //   navigate({
+  //     pathname: location.pathname,
+  //     search: stringifyQueryParams(query),
+  //   });
+  // };
+
+  const onChangeTable = (pagination) => {
+    setPage(pagination.current);
+    setPerPage(pagination.pageSize);
+    // Call the API again with new pagination
+    handleSubmitWithPagination(pagination.current, pagination.pageSize);
   };
+
+
+  const handleSubmitWithPagination = async (pageNum, perPageNum) => {
+    if (!MerchantId) {
+      toast.error("Please select a merchant first");
+      return;
+    }
+
+    if (!submitStartDate || !submitEndDate) {
+      toast.error("Please select both start and end dates");
+      return;
+    }
+
+    setIsSubmitLoading(true);
+    try {
+      const formattedStartDate = submitStartDate.format("YYYY-MM-DD");
+      const formattedEndDate = submitEndDate.format("YYYY-MM-DD");
+
+      const response = await api.get(
+        `admin/partner/payout-partners-list-accountwaise?start=${formattedStartDate}&end=${formattedEndDate}&merchantid=${MerchantId}&page=${pageNum}&per_page=${perPageNum}`
+      );
+
+      console.log("API Response:", response.data);
+      setTotalAmount(response.data.totalAmount || 0);
+      setTotalSubtotal(response.data.totalSubtotal || 0);
+
+      if (response.data && response.data.record) {
+        setSubmitRecords(response.data.record);
+        setTotalCount(response.data.total_records || response.data.record.length);
+      } else if (response.data && Array.isArray(response.data)) {
+        setSubmitRecords(response.data);
+        setTotalCount(response.data.length);
+      } else if (response.data && response.data.data) {
+        setSubmitRecords(response.data.data);
+        setTotalCount(response.data.total || response.data.data.length);
+      } else {
+        setSubmitRecords([]);
+        setTotalCount(0);
+      }
+
+      toast.success("Data fetched successfully");
+    } catch (err) {
+      console.error("Error:", err);
+      toast.error(err.response?.data?.message || "Failed to fetch data");
+      setSubmitRecords([]);
+      setTotalCount(0);
+      setTotalAmount(0);
+      setTotalSubtotal(0);
+    } finally {
+      setIsSubmitLoading(false);
+    }
+  };
+
+
 
   const onToggleFilter = () => {
     setIsShowFilter(!isShowFilter);
@@ -628,6 +715,8 @@ function TransactionAccountPayoutReporttList() {
               setSubmitEndDate(null);
               setSubmitRecords([]);
               setTotalCount(0);
+              setTotalAmount(0);      // Add this
+              setTotalSubtotal(0);    // Add this
             }}
             placeholder={['Start Date', 'End Date']}
             style={{ width: '250px' }}  // Width 350px
@@ -648,6 +737,91 @@ function TransactionAccountPayoutReporttList() {
 
         </Col>
       </Row>
+
+      {(totalAmount > 0 || totalSubtotal > 0) && (
+        <Row gutter={[24, 24]} style={{ marginBottom: 24, marginTop: 16 }}>
+          <Col xs={24} sm={12} md={12} lg={12} xl={12}>
+            <Card
+              style={{
+                borderRadius: 16,
+                background: 'linear-gradient(145deg, #134e5e 0%, #71b280 100%)',
+                boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
+                border: 'none'
+              }}
+            >
+              <div style={{ padding: '20px', textAlign: 'center' }}>
+                <div style={{
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  color: 'rgba(255,255,255,0.85)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '2px',
+                  marginBottom: '15px'
+                }}>
+                  TOTAL AMOUNT
+                </div>
+                <div style={{
+                  fontSize: '38px',
+                  fontWeight: 'bold',
+                  color: '#fff',
+                  letterSpacing: '1px'
+                }}>
+                   {totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+                <div style={{
+                  width: '40px',
+                  height: '3px',
+                  background: '#fff',
+                  margin: '15px auto 0 auto',
+                  borderRadius: '2px',
+                  opacity: 0.5
+                }}></div>
+              </div>
+            </Card>
+          </Col>
+
+          <Col xs={24} sm={12} md={12} lg={12} xl={12}>
+            <Card
+              style={{
+                borderRadius: 16,
+                background: 'linear-gradient(145deg, #0b3d3a 0%, #2ba35a 100%)',
+                boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
+                border: 'none'
+              }}
+            >
+              <div style={{ padding: '20px', textAlign: 'center' }}>
+                <div style={{
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  color: 'rgba(255,255,255,0.85)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '2px',
+                  marginBottom: '15px'
+                }}>
+                  TOTAL SUBTOTAL
+                </div>
+                <div style={{
+                  fontSize: '38px',
+                  fontWeight: 'bold',
+                  color: '#fff',
+                  letterSpacing: '1px'
+                }}>
+                 {totalSubtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+                <div style={{
+                  width: '40px',
+                  height: '3px',
+                  background: '#fff',
+                  margin: '15px auto 0 auto',
+                  borderRadius: '2px',
+                  opacity: 0.5
+                }}></div>
+              </div>
+            </Card>
+          </Col>
+        </Row>
+      )}
+
 
       <Table
         loading={isSubmitLoading || isTableLoading}

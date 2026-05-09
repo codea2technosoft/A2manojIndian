@@ -153,7 +153,7 @@ const AppRoutes = () => {
         <Route exact path="/Overview" element={<Overview />} />
         <Route exact path="/overviewpayin" element={<OverviewPayin />} />
         <Route exact path="/transaction" element={<Transaction />} />
-        <Route exact path="/account-payout-report" element={<AccountPayoutReport/>} />
+        <Route exact path="/account-payout-report" element={<AccountPayoutReport />} />
         <Route exact path="/transactionspayin" element={<TransactionPayin />} />
         <Route
           exact
@@ -306,7 +306,7 @@ const AppRoutes = () => {
           element={<TransactionAccountPayoutReporttList />}
         />
 
-          <Route
+        <Route
           exact
           path="/payout-transaction"
           element={<TransactionPayoutList />}
@@ -331,8 +331,10 @@ const AppRoutes = () => {
           element={<MerchantLimitPayin />}
         />
         <Route path="/freeze-amount/:id" element={<FreezeAmount />} />
-
-        <Route path="/transaction-account-payout-report-details/:accountnumber" element={<TransactionAccountPayoutReportDetails />} />
+        <Route
+          path="/transaction-account-payout-report-details/:accountnumber/:userId"
+          element={<TransactionAccountPayoutReportDetails />}
+        />
 
 
         <Route

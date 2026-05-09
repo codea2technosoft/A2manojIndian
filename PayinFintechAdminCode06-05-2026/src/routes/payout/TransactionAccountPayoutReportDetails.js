@@ -69,12 +69,17 @@ function TransactionAccountPayoutReportDetails() {
   const [isStatusModalVisible, setIsStatusModalVisible] = useState(false);
   const [currentId, setCurrentId] = useState(null);
   const [currentRemark, setCurrentRemark] = useState(null);
-  const { accountnumber } = useParams();  
+  const { accountnumber, userId } = useParams(); // Route params
 
   const [formData1, setFormData] = useState({
     // company_id: "",
     status: "",
   });
+
+
+  const queryParams = new URLSearchParams(location.search);
+  const startDate = queryParams.get('start');  // "2026-05-01"
+  const endDate = queryParams.get('end');      // "2026-06-06"
 
   const [dates, setDates] = useState([dayjs(), dayjs()]);
   const [mode, setMode] = useState("today");
@@ -369,14 +374,18 @@ function TransactionAccountPayoutReportDetails() {
     try {
       setIsTableLoading(true);
 
-      // Prepare parameters in required format
       const params = {
         start: dates[0].format("YYYY-MM-DD"),
         end: dates[1].format("YYYY-MM-DD"),
         user_id: MerchantId,
-        accountnumber: accountnumber,  
+        accountnumber: accountnumber,
+        userId: userId,
         ...query,
       };
+
+      // Remove any unwanted date parameters
+      delete params.created_at_date_min;
+      delete params.created_at_date_max;
 
       const response = await payoutgetPartnerSummarySecond(params);
       setRecords(response.record);
@@ -391,13 +400,16 @@ function TransactionAccountPayoutReportDetails() {
   };
 
   useEffect(() => {
-  if (accountnumber) {
-    const query = {
-      accountnumber: accountnumber,
-    };
-    getData(query);
-  }
-}, [accountnumber]);
+    if (accountnumber && userId) {
+      const params = {
+        start: startDate,
+        end: endDate,
+        accountnumber: accountnumber,
+        userId: userId,
+      };
+      getData(params);
+    }
+  }, [accountnumber, userId, startDate, endDate]);
 
 
   const onChangeTable = (pagination) => {
@@ -435,15 +447,23 @@ function TransactionAccountPayoutReportDetails() {
   const onChangeDates = (dates) => {
     let query = parseQueryParams(location);
 
-    if (dates) {
+    if (dates && dates[0] && dates[1]) {
+      // Update URL with start and end dates
       query = {
         ...query,
-        created_at_date_min: dayjs(dates[0]).format("YYYY-MM-DD"),
-        created_at_date_max: dayjs(dates[1]).format("YYYY-MM-DD"),
+        start: dayjs(dates[0]).format("YYYY-MM-DD"),
+        end: dayjs(dates[1]).format("YYYY-MM-DD"),
       };
-    } else {
       delete query.created_at_date_min;
       delete query.created_at_date_max;
+
+      // Also update the dates state
+      setDates([dayjs(dates[0]), dayjs(dates[1])]);
+    } else {
+      delete query.start;
+      delete query.end;
+      // Reset dates to default (today)
+      setDates([dayjs(), dayjs()]);
     }
 
     navigate({
@@ -558,73 +578,74 @@ function TransactionAccountPayoutReportDetails() {
   //     setIsTableLoading(false);
   //   }
   // };
-const onExport = async (format) => {
-  if (!format) return;
+  const onExport = async (format) => {
+    if (!format) return;
 
-  try {
-    setIsTableLoading(true);
+    try {
+      setIsTableLoading(true);
 
-    const exportParams = {
-      start: dates[0].format("YYYY-MM-DD"),
-      end: dates[1].format("YYYY-MM-DD"),
-      accountnumber: accountnumber,
-    };
+      const exportParams = {
+        start: dates[0].format("YYYY-MM-DD"),
+        end: dates[1].format("YYYY-MM-DD"),
+        accountnumber: accountnumber,
+        userId: userId,  // Add this line
+      };
 
-    const response = await exportOrdersPayoutSecond(exportParams);
+      const response = await exportOrdersPayoutSecond(exportParams);
 
-    console.log("API Data:", response);
+      console.log("API Data:", response);
 
-    // 🔥 IMPORTANT FIX
-    const allPayouts = response?.record || [];
+      // 🔥 IMPORTANT FIX
+      const allPayouts = response?.record || [];
 
-    if (!Array.isArray(allPayouts) || allPayouts.length === 0) {
-      toast.error("No data available to export");
-      return;
+      if (!Array.isArray(allPayouts) || allPayouts.length === 0) {
+        toast.error("No data available to export");
+        return;
+      }
+
+      const processedData = processPayoutData(allPayouts);
+
+      // 🔥 FORMAT SWITCH
+      switch (format) {
+        case "csv":
+          exportPayoutsAsCSV(processedData);
+          break;
+
+        // case "excel":
+        //   exportPayoutsAsExcel(processedData);
+        //   break;
+
+        // case "pdf":
+        //   exportPayoutsAsPDF(processedData);
+        //   break;
+
+        default:
+          toast.error("Invalid format selected");
+      }
+
+    } catch (err) {
+      console.error("Export error:", err);
+      toast.error("Export failed");
+    } finally {
+      setIsTableLoading(false);
     }
-
-    const processedData = processPayoutData(allPayouts);
-
-    // 🔥 FORMAT SWITCH
-    switch (format) {
-      case "csv":
-        exportPayoutsAsCSV(processedData);
-        break;
-
-      // case "excel":
-      //   exportPayoutsAsExcel(processedData);
-      //   break;
-
-      // case "pdf":
-      //   exportPayoutsAsPDF(processedData);
-      //   break;
-
-      default:
-        toast.error("Invalid format selected");
-    }
-
-  } catch (err) {
-    console.error("Export error:", err);
-    toast.error("Export failed");
-  } finally {
-    setIsTableLoading(false);
-  }
-};
- const processPayoutData = (data) => {
-  return data.map((item) => ({
-    ID: item.id,
-    OrderID: item.orderid,
-    TID: item.tid,
-    Name: item?.userdetails?.full_name,
-    Mobile: item.mobile,
-    Amount: item.amount,
-    Status: item.status,
-    Bank: item.bankname,
-    Account: item.accountnumber,
-    IFSC: item.Ifsc,
-    Mode: item.mode,
-    Date: item.created_at,
-  }));
-};
+  };
+  const processPayoutData = (data) => {
+    return data.map((item) => ({
+      ID: item.id,
+      OrderID: item.orderid,
+      TID: item.tid,
+      Name: item?.userdetails?.full_name,
+      Mobile: item.mobile,
+      Amount: item.amount,
+      Status: item.status,
+      Bank: item.bankname,
+      Account: item.accountnumber,
+      IFSC: item.Ifsc,
+      Mode: item.mode,
+      Date: item.created_at,
+    }));
+  };
   function formatAmount(value) {
     const num = parseFloat(value) || 0;
     return num === 0 ? 0 : parseFloat(num.toFixed(2));
@@ -877,7 +898,7 @@ const onExport = async (format) => {
   return (
     <div>
       <Row gutter={[8, 8]} justify={"space-between"} align={"middle"}>
-        <Col xs={24} md={24} lg={8} xl={5}>
+        {/* <Col xs={24} md={24} lg={8} xl={5}>
           <Card className="small_card">
             <SelectOptionExample
               options={payStatuses}
@@ -887,8 +908,8 @@ const onExport = async (format) => {
               }}
             />
           </Card>
-        </Col>
-        <Col xs={24} md={24} lg={8} xl={5}>
+        </Col> */}
+        {/* <Col xs={24} md={24} lg={8} xl={5}>
           <Card className="small_card">
             <TableBar
               placeholderInput="Customer details/ Merchant details"
@@ -912,9 +933,9 @@ const onExport = async (format) => {
               showFilter={false}
             />
           </Card>
-        </Col>
+        </Col> */}
 
-        <Col xs={24} sm={24} md={24} lg={11} xl={7}>
+        {/* <Col xs={24} sm={24} md={24} lg={11} xl={7}>
           <Card className="small_card">
             <Select
               className="filter_selects bg-transparent"
@@ -931,44 +952,48 @@ const onExport = async (format) => {
                 ))}
             </Select>
           </Card>
-        </Col>
+        </Col> */}
 
-        <Col xs={24} md={24} lg={10} xl={7}>
-          <Card className="small_card">
-            <Space>
+        <Col xs={24} md={24} lg={20} xl={18}>
+        
+           <Space style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
               <RangePicker
-                onCalendarChange={(newDates) => onChangeDates(newDates)}
+                value={dates}
+                onChange={onChangeDates}
+                format="YYYY-MM-DD"
+                style={{ width: '100%' }}
+                      size="large"
               />
 
-              <Dropdown
-                placement="bottomRight"
-                menu={{
-                  items: [
-                    // {
-                    //   key: "excel",
-                    //   label: "Export as Excel",
-                    //   onClick: () => onExport("excel"),
-                    // },
-                    {
-                      key: "csv",
-                      label: "Export as CSV",
-                      onClick: () => onExport("csv"),
-                    },
-                    // {
-                    //   key: "pdf",
-                    //   label: "Export as PDF",
-                    //   onClick: () => onExport("pdf"),
-                    // },
-                  ],
-                }}
-                trigger={["click"]}
-              >
-                <Button type="primary" size="large">
-                  Export
-                </Button>
-              </Dropdown>
+              {/* <Dropdown
+              placement="bottomRight"
+              menu={{
+                items: [
+                  // {
+                  //   key: "excel",
+                  //   label: "Export as Excel",
+                  //   onClick: () => onExport("excel"),
+                  // },
+                  // {
+                  //   key: "csv",
+                  //   label: "Export as CSV",
+                  //   onClick: () => onExport("csv"),
+                  // },
+                  // {
+                  //   key: "pdf",
+                  //   label: "Export as PDF",
+                  //   onClick: () => onExport("pdf"),
+                  // },
+                ],
+              }}
+              trigger={["click"]}
+            >
+              <Button type="primary" size="large">
+                Export
+              </Button>
+            </Dropdown> */}
             </Space>
-          </Card>
+         
         </Col>
       </Row>
 

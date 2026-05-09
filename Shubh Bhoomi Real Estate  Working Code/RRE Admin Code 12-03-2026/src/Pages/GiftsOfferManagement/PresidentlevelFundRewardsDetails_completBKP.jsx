@@ -4,23 +4,6 @@ import { Table, Card, Button, Badge, Row, Col } from "react-bootstrap";
 import { FaChevronDown, FaChevronRight, FaUserFriends, FaSitemap, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 /* =====================
-   HELPER FUNCTION TO FILTER USERS WITH CHILD AREA
-===================== */
-const filterUsersWithChildArea = (users) => {
-  if (!users || !Array.isArray(users)) return [];
-  
-  // Filter users who have child_area > 0 (actual team performance)
-  return users.filter(user => {
-    const childArea = user.child_area || user.team_area || 0;
-    const selfArea = user.buysqrt || user.self_area || 0;
-    
-    // Only show users who have team/child area greater than 0
-    // This ensures we only show users with actual team performance
-    return childArea > 0;
-  });
-};
-
-/* =====================
    INDIVIDUAL USER ROW
 ===================== */
 const UserRow = ({ user, level = 0, hasChildren, isOpen, onToggle, isMainUser = false, relationship = "" }) => {
@@ -68,7 +51,7 @@ const UserRow = ({ user, level = 0, hasChildren, isOpen, onToggle, isMainUser = 
         <Badge bg="primary">{user.buysqrt || user.self_area || "0.00"}</Badge>
       </td>
       <td>
-        <Badge bg="success">{user.child_area || user.team_area || "0.00"}</Badge>
+        <Badge bg="success">{user.child_area || user.self_area || "0.00"}</Badge>
       </td>
       <td>
         <Badge bg="warning" text="dark">{user.required || "0.00"}</Badge>
@@ -83,19 +66,16 @@ const UserRow = ({ user, level = 0, hasChildren, isOpen, onToggle, isMainUser = 
 const buildHierarchy = (users) => {
   if (!users || users.length === 0) return [];
   
-  // Filter users before building hierarchy
-  const filteredUsers = filterUsersWithChildArea(users);
-  
   const userMap = {};
   const roots = [];
   
   // Create map of users
-  filteredUsers.forEach(user => {
+  users.forEach(user => {
     userMap[user.id] = { ...user, children: [] };
   });
   
   // Build tree based on parent_id
-  filteredUsers.forEach(user => {
+  users.forEach(user => {
     if (user.parent_id) {
       const parent = Object.values(userMap).find(u => u.mobile === user.parent_id);
       if (parent) {
@@ -153,15 +133,12 @@ const ContributingUsers = ({ users, title, level = 0 }) => {
 
   useEffect(() => {
     if (users && users.length > 0) {
-      // Filter users before building hierarchy
-      const filteredUsers = filterUsersWithChildArea(users);
-      const hierarchy = buildHierarchy(filteredUsers);
+      const hierarchy = buildHierarchy(users);
       setHierarchicalUsers(hierarchy);
     }
   }, [users]);
 
-  const filteredCount = filterUsersWithChildArea(users).length;
-  const hasUsers = filteredCount > 0;
+  const hasUsers = users && users.length > 0;
 
   if (!hasUsers) return null;
 
@@ -182,7 +159,7 @@ const ContributingUsers = ({ users, title, level = 0 }) => {
                   {title}
                 </strong>
                 <Badge bg="secondary" className="ms-2">
-                  {filteredCount} users
+                  {users.length} users
                 </Badge>
               </div>
             </div>
@@ -225,9 +202,7 @@ const TeamDetail = ({ teamDetail, title, lineNumber, level = 0 }) => {
   
   if (!teamDetail) return null;
 
-  // Filter contributing users
-  const filteredContributingUsers = filterUsersWithChildArea(teamDetail.all_contributing_users);
-  const hasContributingUsers = filteredContributingUsers.length > 0;
+  const hasContributingUsers = teamDetail.all_contributing_users && teamDetail.all_contributing_users.length > 0;
 
   return (
     <Card className="mb-4">
@@ -280,8 +255,8 @@ const TeamDetail = ({ teamDetail, title, lineNumber, level = 0 }) => {
               
               {hasContributingUsers && (
                 <ContributingUsers
-                  users={filteredContributingUsers}
-                  title={`All Contributing Users (${filteredContributingUsers.length})`}
+                  users={teamDetail.all_contributing_users}
+                  title={`All Contributing Users (${teamDetail.all_contributing_users.length})`}
                   level={level + 1}
                 />
               )}
@@ -325,49 +300,42 @@ function PresidentlevelFundRewardsDetails() {
     
     const allUsers = [];
     
-    // Add remaining children (filtered)
+    // Add self
+    if (selfDetail.self) {
+      allUsers.push({
+        ...selfDetail.self,
+        level: 0,
+        relationship: "self",
+        buysqrt: selfDetail.self.buysqrt || selfDetail.self.self_area,
+        child_area: selfDetail.self.buysqrt || selfDetail.self.self_area
+      });
+    }
+    
+    // Add remaining children
     if (selfDetail.remaining_children && selfDetail.remaining_children.length > 0) {
       selfDetail.remaining_children.forEach(child => {
-        // Only add child if they have child_area
-        const childArea = child.child_area || child.team_area || 0;
-        if (childArea > 0) {
-          allUsers.push({
-            ...child,
-            level: 1,
-            relationship: "direct_child"
-          });
-          
-          // Add child's contributing users (filtered)
-          if (child.all_contributing_users) {
-            const filteredContributors = filterUsersWithChildArea(child.all_contributing_users);
-            allUsers.push(...filteredContributors);
-          }
+        allUsers.push({
+          ...child,
+          level: 1,
+          relationship: "direct_child"
+        });
+        
+        // Add child's contributing users if exists
+        if (child.all_contributing_users) {
+          allUsers.push(...child.all_contributing_users);
         }
       });
     }
     
-    // Add all contributing users (filtered)
+    // Add all contributing users
     if (selfDetail.all_contributing_users) {
-      const filteredContributors = filterUsersWithChildArea(selfDetail.all_contributing_users);
-      allUsers.push(...filteredContributors);
+      allUsers.push(...selfDetail.all_contributing_users);
     }
     
-    // Remove duplicates based on user id
-    const uniqueUsers = [];
-    const userIds = new Set();
-    
-    allUsers.forEach(user => {
-      if (user.id && !userIds.has(user.id)) {
-        userIds.add(user.id);
-        uniqueUsers.push(user);
-      }
-    });
-    
-    return uniqueUsers;
+    return allUsers;
   };
 
   const selfRemainingUsers = getSelfRemainingUsers();
-  const hasSelfRemainingUsers = selfRemainingUsers.length > 0;
 
   return (
     <div className="padding_15">
@@ -474,6 +442,37 @@ function PresidentlevelFundRewardsDetails() {
             </Col>
           </Row>
 
+          {/* Eligibility Status */}
+          {/* <Card className="mb-4">
+            <Card.Body className="text-center">
+              <h4>
+                Overall Status: 
+                <Badge 
+                  bg={isEligible ? "success" : "danger"} 
+                  className="ms-3 px-4 py-2"
+                  style={{ fontSize: '1.2em' }}
+                >
+                  {isEligible ? (
+                    <>
+                      <FaCheckCircle className="me-2" />
+                      ELIGIBLE FOR PRESIDENT LEVEL FUND REWARD
+                    </>
+                  ) : (
+                    <>
+                      <FaTimesCircle className="me-2" />
+                      NOT ELIGIBLE FOR PRESIDENT LEVEL FUND REWARD
+                    </>
+                  )}
+                </Badge>
+              </h4>
+              <p className="text-muted mt-2">
+                {isEligible 
+                  ? "Congratulations! This user meets all criteria for the President Level Fund reward." 
+                  : "This user does not meet the eligibility criteria for the President Level Fund reward."}
+              </p>
+            </Card.Body>
+          </Card> */}
+
           {/* Team Structure Details */}
           <Card>
             <Card.Header className="d-flex align-items-center justify-content-between">
@@ -498,7 +497,7 @@ function PresidentlevelFundRewardsDetails() {
             </Card.Header>
             
             <Card.Body>
-              {/* Line 1 Team */}
+              {/* Line 1 Team - Manish Dhaked */}
               <TeamDetail
                 teamDetail={breakdown.child1_team_detail}
                 title="Line 1 Team"
@@ -506,7 +505,7 @@ function PresidentlevelFundRewardsDetails() {
                 level={1}
               />
 
-              {/* Line 2 Team */}
+              {/* Line 2 Team - Pradeep Mittal */}
               <TeamDetail
                 teamDetail={breakdown.child2_team_detail}
                 title="Line 2 Team"
@@ -514,7 +513,7 @@ function PresidentlevelFundRewardsDetails() {
                 level={1}
               />
 
-              {/* Self & Remaining Team */}
+              {/* Self & Remaining Team - Arvind Kumar */}
               {breakdown.self_and_remaining_detail && (
                 <Card className="mb-4">
                   <Card.Header 
@@ -559,7 +558,7 @@ function PresidentlevelFundRewardsDetails() {
                         </tr>
                       </thead>
                       <tbody>
-                        {/* Self - Main User */}
+                        {/* Self - Arvind Kumar */}
                         {breakdown.self_and_remaining_detail.self && (
                           <UserRow
                             user={{
@@ -568,7 +567,7 @@ function PresidentlevelFundRewardsDetails() {
                               child_area: breakdown.self_and_remaining_detail.self.buysqrt || breakdown.self_and_remaining_detail.self.self_area
                             }}
                             level={1}
-                            hasChildren={hasSelfRemainingUsers}
+                            hasChildren={selfRemainingUsers.length > 0}
                             isOpen={false}
                             onToggle={() => {}}
                             relationship="self"
@@ -576,41 +575,33 @@ function PresidentlevelFundRewardsDetails() {
                           />
                         )}
                         
-                        {/* Remaining Children - Filtered (Only show those with Child Area > 0) */}
+                        {/* Remaining Children - Bahadur Singh */}
                         {breakdown.self_and_remaining_detail.remaining_children && 
                          breakdown.self_and_remaining_detail.remaining_children.length > 0 && (
-                          breakdown.self_and_remaining_detail.remaining_children
-                            .filter(child => {
-                              const childArea = child.child_area || child.team_area || 0;
-                              return childArea > 0;
-                            })
-                            .map((child, index) => {
-                              const filteredChildUsers = filterUsersWithChildArea(child.all_contributing_users);
-                              return (
-                                <React.Fragment key={index}>
-                                  <UserRow
-                                    user={child}
-                                    level={2}
-                                    hasChildren={filteredChildUsers.length > 0}
-                                    isOpen={false}
-                                    onToggle={() => {}}
-                                    relationship="direct_child"
-                                  />
-                                  
-                                  {filteredChildUsers.length > 0 && (
-                                    <ContributingUsers
-                                      users={filteredChildUsers}
-                                      title={`${child.username}'s Contributing Users (${filteredChildUsers.length})`}
-                                      level={3}
-                                    />
-                                  )}
-                                </React.Fragment>
-                              );
-                            })
+                          breakdown.self_and_remaining_detail.remaining_children.map((child, index) => (
+                            <React.Fragment key={index}>
+                              <UserRow
+                                user={child}
+                                level={2}
+                                hasChildren={child.all_contributing_users && child.all_contributing_users.length > 0}
+                                isOpen={false}
+                                onToggle={() => {}}
+                                relationship="direct_child"
+                              />
+                              
+                              {child.all_contributing_users && child.all_contributing_users.length > 0 && (
+                                <ContributingUsers
+                                  users={child.all_contributing_users}
+                                  title={`${child.username}'s Contributing Users (${child.all_contributing_users.length})`}
+                                  level={3}
+                                />
+                              )}
+                            </React.Fragment>
+                          ))
                         )}
                         
                         {/* All Contributing Users for Self & Remaining */}
-                        {hasSelfRemainingUsers && (
+                        {selfRemainingUsers.length > 0 && (
                           <ContributingUsers
                             users={selfRemainingUsers}
                             title={`All Self & Remaining Contributing Users (${selfRemainingUsers.length})`}
@@ -624,6 +615,82 @@ function PresidentlevelFundRewardsDetails() {
               )}
             </Card.Body>
           </Card>
+
+          {/* Breakdown Summary */}
+          {/* <Card className="mt-4">
+            <Card.Header>
+              <h5 className="mb-0">Breakdown Achieved Summary</h5>
+            </Card.Header>
+            <Card.Body>
+              <Row>
+                <Col md={4} className="text-center">
+                  <Card className="h-100">
+                    <Card.Body>
+                      <h6>Line 1 Area (30%)</h6>
+                      <h4>
+                        <Badge bg={eligibility.child1_check ? "success" : "danger"}>
+                          {breakdownAchieved.child1_area || "0.00"}
+                        </Badge>
+                      </h4>
+                      <div className="small text-muted mb-2">
+                        Required: {breakdown.child1_team_detail?.required || "0.00"}
+                      </div>
+                      <Badge bg={eligibility.child1_check ? "success" : "danger"}>
+                        {eligibility.child1_check ? "PASS" : "FAIL"}
+                      </Badge>
+                      <div className="mt-2 small">
+                        {breakdown.child1_team_detail?.username || "N/A"}
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+                
+                <Col md={4} className="text-center">
+                  <Card className="h-100">
+                    <Card.Body>
+                      <h6>Line 2 Area (30%)</h6>
+                      <h4>
+                        <Badge bg={eligibility.child2_check ? "success" : "danger"}>
+                          {breakdownAchieved.child2_area || "0.00"}
+                        </Badge>
+                      </h4>
+                      <div className="small text-muted mb-2">
+                        Required: {breakdown.child2_team_detail?.required || "0.00"}
+                      </div>
+                      <Badge bg={eligibility.child2_check ? "success" : "danger"}>
+                        {eligibility.child2_check ? "PASS" : "FAIL"}
+                      </Badge>
+                      <div className="mt-2 small">
+                        {breakdown.child2_team_detail?.username || "N/A"}
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+                
+                <Col md={4} className="text-center">
+                  <Card className="h-100">
+                    <Card.Body>
+                      <h6>Self & Remaining (40%)</h6>
+                      <h4>
+                        <Badge bg={eligibility.self_remaining_check ? "success" : "danger"}>
+                          {breakdownAchieved.self_and_remaining_area || "0.00"}
+                        </Badge>
+                      </h4>
+                      <div className="small text-muted mb-2">
+                        Required: {breakdown.self_and_remaining_detail?.required || "0.00"}
+                      </div>
+                      <Badge bg={eligibility.self_remaining_check ? "success" : "danger"}>
+                        {eligibility.self_remaining_check ? "PASS" : "FAIL"}
+                      </Badge>
+                      <div className="mt-2 small">
+                        {breakdown.self_and_remaining_detail?.self?.username || "N/A"}
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card> */}
         </Card.Body>
       </Card>
     </div>

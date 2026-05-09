@@ -73,6 +73,9 @@ import AssociatesBimaAchieverLists from "./Pages/BimaRegistrationForm/Associates
 import WelcomeBonusRegistrationForm from "./Pages/WelcomeBonusRegistrationForm/WelcomeBonusRegistrationForm.jsx";
 import WelcomeBonusAchieverLists from "./Pages/WelcomeBonusRegistrationForm/WelcomeBonusAchieverLists.jsx";
 
+import UploadPropertyLeadCSV from "./Pages/LeadManagement/UploadPropertyLeadCSV"
+import CallingLeadReport from "./Pages/LeadManagement/CallingLeadReport.jsx"
+
 
 const App = () => {
   const [userType, setUserType] = useState(() => {
@@ -713,6 +716,26 @@ const App = () => {
             </Layout>
           }
         />
+
+           <Route
+          path="/upload-property-lead-csv" 
+          element={
+            <Layout userType={userType} mobile={mobile}>
+              <UploadPropertyLeadCSV/>
+            </Layout>
+          }
+        />
+
+
+           <Route
+          path="/calling-lead-report" 
+          element={
+            <Layout userType={userType} mobile={mobile}>
+              <CallingLeadReport/>
+            </Layout>
+          }
+        />
+
 
 
 

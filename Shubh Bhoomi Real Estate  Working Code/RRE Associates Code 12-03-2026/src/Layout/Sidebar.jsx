@@ -99,6 +99,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
       section: "Menu",
       items: [
         {
+
           id: "dashboard",
           title: "Dashboard",
           href: "/dashboard",
@@ -116,100 +117,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
             </svg>
           ),
         },
-
-
-         {
-              id: "ticket_support",
-              title: "Ticket Support",
-              dropdown: true,
-              icon: <MdSupportAgent />,
-              checked: false,
-              children: [
-                {
-                  id: "create_ticket_support",
-                  title: "Create Ticket",
-                  href: "/create-ticket-support",
-                  checked: false,
-                },
-                {
-                  id: "ticket_support_list",
-                  title: "Created Ticket Lists",
-                  href: "/created-ticket-support-list",
-                  checked: false,
-                },
-              ],
-            },
-
-
-        {
-          id: "achiever_lists",
-          title: "Bonus / Bema Entries",
-          dropdown: true,
-          icon: <MdSupportAgent />,
-          checked: false,
-          children: [
-            {
-              id: "achiever_lists",
-              title: "Bima From Entries",
-              href: "/associates-bima-achiever-lists",
-              checked: false,
-            },
-             {
-              id: "welcome-bonus-achiever-lists",
-              title: "Bonus From Entries",
-              href: "/associates-welcome-bonus-achiever-lists",
-              checked: false,
-            },
-
-          ],
-        },
-
-        {
-          id: "Account",
-          title: "Bank Account",
-          dropdown: true,
-          icon: (
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-              <path d="M16 3h-8v4h8V3z"></path>
-            </svg>
-          ),
-          children: [
-            {
-              id: "Account List",
-              title: "Bank Account List",
-              href: "/account-list",
-            },
-            {
-              id: "WithdrawalRequest",
-              title: "Withdrawal Request",
-              href: "/add-withdrawal-request",
-            },
-
-            {
-              id: "withdrawalhistory",
-              title: "Withdrawal History",
-              href: "/withdrawal-history",
-            },
-
-            {
-              id: "tdsreport",
-              title: "TDS Report",
-              href: "/get-tsd-report-for-associate",
-            },
-
-
-
-          ],
-        },
-
 
         {
           id: "wallet_ledger",
@@ -244,7 +151,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
           ],
         },
 
-         
+
 
 
 
@@ -296,6 +203,32 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         //   ],
         // },
 
+
+        {
+          id: "projectManagement",
+          title: "Projects",
+          dropdown: true,
+          icon: (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 3h-8v4h8V3z"></path>
+            </svg>
+          ),
+          children: [
+            {
+              id: "all-project",
+              title: "All Projects",
+              href: "/all-project",
+            },
+          ],
+        },
 
 
 
@@ -355,6 +288,12 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
 
 
+       
+
+
+
+
+
         // {
         //   id: "myteam",
         //   title: "My Teams",
@@ -363,31 +302,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         // },
 
 
-        {
-          id: "projectManagement",
-          title: "Projects",
-          dropdown: true,
-          icon: (
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-              <path d="M16 3h-8v4h8V3z"></path>
-            </svg>
-          ),
-          children: [
-            {
-              id: "all-project",
-              title: "All Projects",
-              href: "/all-project",
-            },
-          ],
-        },
+
 
 
 
@@ -451,7 +366,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
         {
           id: "Lead_Management",
-          title: "Leads",
+          title: "Property Leads",
           dropdown: true,
           icon: (
             <svg
@@ -474,6 +389,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
               href: "/property-lead-list",
             },
 
+
             // {
             //   id: "loan-list",
             //   title: "Loan Lead",
@@ -491,6 +407,155 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
               // title: "Child Commission",
               title: "Downline Commission",
               href: "/child-commission",
+              checked: false,
+            },
+
+          ],
+        },
+
+        {
+          id: "self gifts lists",
+          // title: "Self / Team Gifts SQYD",
+          title: "Gifts Sales",
+          dropdown: true,
+          icon: <FaWallet />,
+          checked: false,
+          children: [
+            {
+              id: "self_gifts_lists",
+              title: "Gifts Sales",
+              href: "/self-gifts-lists",
+              checked: false,
+            },
+            {
+              id: "total_SQYD_sales",
+              title: "Total SQYD Sales",
+              href: "/total-sales",
+              checked: false,
+            },
+            {
+              id: "total_SQYD_self_sales",
+              title: "Total SQYD Self Sales",
+              href: "/total-self-sales",
+              checked: false,
+            },
+            {
+              id: "total_SQYD_team_sales",
+              title: "Total SQYD Team Sales",
+              href: "/total-team-sales",
+              checked: false,
+            },
+            {
+              id: "total_sales_earning",
+              title: "Total Sales Earning",
+              href: "/total-sales-earning",
+              checked: false,
+            },
+            {
+              id: "total_self_sales_earning",
+              title: "Total Self Sales Earning",
+              href: "/total-self-salesEarning",
+              checked: false,
+            },
+            {
+              id: "total_team_sales_earning",
+              title: "Total Team Sales Earning",
+              href: "/total-team-salesEarning",
+              checked: false,
+            },
+          ],
+        },
+
+         {
+          id: "Account",
+          title: "Bank Account",
+          dropdown: true,
+          icon: (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 3h-8v4h8V3z"></path>
+            </svg>
+          ),
+          children: [
+            {
+              id: "Account List",
+              title: "Bank Account List",
+              href: "/account-list",
+            },
+            {
+              id: "WithdrawalRequest",
+              title: "Withdrawal Request",
+              href: "/add-withdrawal-request",
+            },
+
+            {
+              id: "withdrawalhistory",
+              title: "Withdrawal History",
+              href: "/withdrawal-history",
+            },
+
+            {
+              id: "tdsreport",
+              title: "TDS Report",
+              href: "/get-tsd-report-for-associate",
+            },
+
+
+
+          ],
+        },
+
+
+
+        {
+          id: "Calling_Lead_Management",
+          title: "Calling Leads",
+          dropdown: true,
+          icon: (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M17 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M7 21v-2a4 4 0 0 1 3-3.87" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          ),
+          children: [
+
+            { id: "upload_property_lead_csv", title: "Calling Leads", href: "/upload-property-lead-csv", checked: false },
+            { id: "calling_lead_report", title: "Calling Leads Report", href: "/calling-lead-report", checked: false },
+          ],
+        },
+
+        {
+          id: "achiever_lists",
+          title: "Bonus / Bema Entries",
+          dropdown: true,
+          icon: <MdSupportAgent />,
+          checked: false,
+          children: [
+            {
+              id: "achiever_lists",
+              title: "Bima From Entries",
+              href: "/associates-bima-achiever-lists",
+              checked: false,
+            },
+            {
+              id: "welcome-bonus-achiever-lists",
+              title: "Bonus From Entries",
+              href: "/associates-welcome-bonus-achiever-lists",
               checked: false,
             },
 
@@ -612,58 +677,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
             //     },
             //   ],
             // },
-            {
-              id: "self gifts lists",
-              // title: "Self / Team Gifts SQYD",
-              title: "Gifts Sales",
-              dropdown: true,
-              icon: <FaWallet />,
-              checked: false,
-              children: [
-                {
-                  id: "self_gifts_lists",
-                  title: "Gifts Sales",
-                  href: "/self-gifts-lists",
-                  checked: false,
-                },
-                {
-                  id: "total_SQYD_sales",
-                  title: "Total SQYD Sales",
-                  href: "/total-sales",
-                  checked: false,
-                },
-                {
-                  id: "total_SQYD_self_sales",
-                  title: "Total SQYD Self Sales",
-                  href: "/total-self-sales",
-                  checked: false,
-                },
-                {
-                  id: "total_SQYD_team_sales",
-                  title: "Total SQYD Team Sales",
-                  href: "/total-team-sales",
-                  checked: false,
-                },
-                {
-                  id: "total_sales_earning",
-                  title: "Total Sales Earning",
-                  href: "/total-sales-earning",
-                  checked: false,
-                },
-                {
-                  id: "total_self_sales_earning",
-                  title: "Total Self Sales Earning",
-                  href: "/total-self-salesEarning",
-                  checked: false,
-                },
-                {
-                  id: "total_team_sales_earning",
-                  title: "Total Team Sales Earning",
-                  href: "/total-team-salesEarning",
-                  checked: false,
-                },
-              ],
-            },
 
             // {
             //   id: "property-awards-winner-histories",
@@ -682,7 +695,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
             //   ],
             // },
 
-           
+
             {
               id: "advance-payments-to-associates",
               title: "Advance Payments",
@@ -697,7 +710,31 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
                   checked: false,
                 },
               ],
-            }
+            },
+
+            {
+              id: "ticket_support",
+              title: "Ticket Support",
+              dropdown: true,
+              icon: <MdSupportAgent />,
+              checked: false,
+              children: [
+                {
+                  id: "create_ticket_support",
+                  title: "Create Ticket",
+                  href: "/create-ticket-support",
+                  checked: false,
+                },
+                {
+                  id: "ticket_support_list",
+                  title: "Created Ticket Lists",
+                  href: "/created-ticket-support-list",
+                  checked: false,
+                },
+              ],
+            },
+
+
 
 
 
