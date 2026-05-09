@@ -99,8 +99,6 @@ function UploadPropertyLeadCSV() {
   const handleToggle = () => {
     setIsFilterActive(!isFilterActive);
   };
-
-  // Handle individual checkbox selection
   const handleCheckboxChange = (leadId) => {
     setSelectedLeads(prev =>
       prev.includes(leadId)
@@ -108,8 +106,6 @@ function UploadPropertyLeadCSV() {
         : [...prev, leadId]
     );
   };
-
-  // Handle select all checkbox
   const handleSelectAll = () => {
     if (selectAll) {
       setSelectedLeads([]);
@@ -119,8 +115,6 @@ function UploadPropertyLeadCSV() {
     }
     setSelectAll(!selectAll);
   };
-
-  // Delete selected leads
   const handleDeleteSelected = async () => {
     if (selectedLeads.length === 0) {
       Swal.fire("Warning", "Please select at least one lead to delete", "warning");
@@ -183,7 +177,6 @@ function UploadPropertyLeadCSV() {
         setLeads(data.data || []);
         setPage(currentPage);
         setTotalPages(data.totalPages || 1);
-        // Reset selection when leads change
         setSelectedLeads([]);
         setSelectAll(false);
       } else {
@@ -323,24 +316,21 @@ function UploadPropertyLeadCSV() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Failed to fetch data");
-      const json = await res.json(); // JSON data
+      const json = await res.json();
       const ws = XLSX.utils.json_to_sheet(json.data);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Leads");
-      XLSX.writeFile(wb, "leads.xlsx");
+      XLSX.writeFile(wb, "SocialMediaCallingLeads.xlsx");
     } catch (err) {
       console.error(err);
       alert("Excel download failed");
     }
   };
-
-  // Empty state component with table structure
   const EmptyState = () => (
     <>
       <Table striped bordered hover responsive>
         <thead>
           <tr>
-            {/* Checkbox column - Only show when status=New */}
             {isNewStatusPage() && (
               <th>
                 Check All
@@ -733,7 +723,7 @@ function UploadPropertyLeadCSV() {
                               <MdSecurityUpdateGood className="me-2" /> Update
                             </button>
                           </li>
-                          <li className="dropdown-item">
+                          {/* <li className="dropdown-item">
                             <button
                               className="btn edit_btn btn-sm me-1"
                               onClick={() => navigate(`/convert-calling-lead/${lead.id}`)}
@@ -750,7 +740,7 @@ function UploadPropertyLeadCSV() {
                             >
                               <MdOutlineHistoryToggleOff className="me-2" /> Calling Remark History
                             </button>
-                          </li>
+                          </li> */}
                         </ul>
                       </div>
                     </td>

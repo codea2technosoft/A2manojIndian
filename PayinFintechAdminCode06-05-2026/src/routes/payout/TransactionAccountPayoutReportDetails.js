@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import { EyeOutlined } from '@ant-design/icons';
+
 
 import {
   Button,
@@ -13,6 +15,7 @@ import {
   Modal,
   Select,
   Dropdown,
+  Popover
 } from "antd";
 import dayjs from "dayjs";
 import PageTitle from "components/PageTitle";
@@ -207,23 +210,72 @@ function TransactionAccountPayoutReportDetails() {
       ),
     },
 
+    // {
+    //   title: "Customer Details",
+    //   render: (text, record) => (
+    //     <div>
+    //       {record.userdetails && record.userdetails.email ? (
+    //         <div>
+    //           <a href={`tel:${record.userdetails.email}`}>
+    //             {record.userdetails.email}
+    //           </a>
+    //         </div>
+    //       ) : null}
+    //       {record.userdetails && record.userdetails.full_name ? (
+    //         <div>{record.userdetails.full_name}</div>
+    //       ) : null}
+    //     </div>
+        
+    //   ),
+    // },
+
     {
-      title: "Customer Details",
-      render: (text, record) => (
+  title: "Customer Details",
+  render: (text, record) => (
+    <div>
+      {record.userdetails && record.userdetails.email ? (
         <div>
-          {record.userdetails && record.userdetails.email ? (
-            <div>
-              <a href={`tel:${record.userdetails.email}`}>
-                {record.userdetails.email}
-              </a>
-            </div>
-          ) : null}
-          {record.userdetails && record.userdetails.full_name ? (
-            <div>{record.userdetails.full_name}</div>
-          ) : null}
+          <a href={`mailto:${record.userdetails.email}`}>
+            {record.userdetails.email}
+          </a>
         </div>
-      ),
-    },
+      ) : null}
+
+      {record.userdetails && record.userdetails.full_name ? (
+        <div>{record.userdetails.full_name}</div>
+      ) : null}
+
+      <div style={{ marginTop: 5 }}>
+        <b>Remark:</b>
+
+        <Popover
+          content={
+            <div style={{ maxWidth: 250 }}>
+              {record.remark_fintech || "No Remark Available"}
+            </div>
+          }
+          title="Remark Details"
+          trigger="click"
+        >
+          <span
+            style={{
+              marginLeft: 8,
+              cursor: "pointer",
+              color: "#1890ff",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 4,
+              fontWeight: 500,
+            }}
+          >
+            <EyeOutlined />
+            View
+          </span>
+        </Popover>
+      </div>
+    </div>
+  ),
+},
 
     {
       title: "Transaction ID/ Order ID",

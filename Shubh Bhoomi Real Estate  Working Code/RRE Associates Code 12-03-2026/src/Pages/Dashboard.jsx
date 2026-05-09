@@ -314,7 +314,7 @@ const Dashboard = ({ userType }) => {
             lastDate: data.bonus?.lastDate || "--",
             leadDate: data.bonus?.leadDate || "--",
             targetDate: data.bonus?.targetDate || "--",
-            approveDate: data.bonus?.approveDate || "--", 
+            approveDate: data.bonus?.approveDate || "--",
             approved: data.bonus?.approved || false
           }
 
@@ -482,12 +482,13 @@ const Dashboard = ({ userType }) => {
     }
   };
 
+  // Replace this entire function
   const fetchRoyaltyRewardsEligibility = async () => {
     try {
       setLoadingRoyaltyEligibility(true);
       const token = getAuthToken();
       const response = await fetch(
-        `${API_URL}/royalty-rewards-list-associate-eligibility`,
+        `${API_URL}/royalty-rewards-eligibility-associate`,
         {
           method: "GET",
           headers: {
@@ -497,18 +498,23 @@ const Dashboard = ({ userType }) => {
         }
       );
 
-      const data = await response.json();;
-      if (data.success === true) {
+      const data = await response.json();
+      console.log("Royalty Eligibility API Response:", data);
+
+      // FIXED: Check for status === "1" instead of success === true
+      if (data.status === "1" && data.data && data.data.length > 0) {
         setRoyaltyEligibilityData(data.data);
       } else {
         setRoyaltyEligibilityData([]);
       }
     } catch (error) {
+      console.error("Royalty eligibility error:", error);
       setRoyaltyEligibilityData([]);
     } finally {
       setLoadingRoyaltyEligibility(false);
     }
   };
+
   useEffect(() => {
     fetchDashboardData();
     fetchGiftList();
@@ -634,7 +640,7 @@ const Dashboard = ({ userType }) => {
           },
           summary: {
             total_buysqft: parseFloat(data.summary?.total_team_area) || 0,
-            total_members: (data.lines?.others?.lines_count || 0) + 2, 
+            total_members: (data.lines?.others?.lines_count || 0) + 2,
             total_lines: data.summary?.total_direct_lines || 0,
           },
         };
@@ -1615,7 +1621,7 @@ const Dashboard = ({ userType }) => {
     );
   };
 
-    //old code commented 25-04-2026
+  //old code commented 25-04-2026
   // Team Gift Progress Component
   // const TeamProgressBar = () => {
   //   if (loadingTeamGifts) {
@@ -1984,7 +1990,7 @@ const Dashboard = ({ userType }) => {
 
 
 
-//old code commented 25-04-2026
+  //old code commented 25-04-2026
   //   if (loadingLifetimeRewards || loadingLifetimeEligibility) {
   //     return (
   //       <div className="gift-progress-loading">
@@ -3096,115 +3102,365 @@ const Dashboard = ({ userType }) => {
 
   // };
 
-const RoyaltyRewardsProgressBar = () => {
-  if (loadingRoyaltyRewards) {
-    return (
-      <div className="gift-progress-loading">
-        <div className="gift-spinner" role="status">
-          <span className="gift-spinner-text">Loading Royalty Rewards...</span>
-        </div>
-        <p className="gift-loading-text">Loading Royalty Rewards progress...</p>
-      </div>
-    );
-  }
+  // const RoyaltyRewardsProgressBar = () => {
+  //   if (loadingRoyaltyRewards) {
+  //     return (
+  //       <div className="gift-progress-loading">
+  //         <div className="gift-spinner" role="status">
+  //           <span className="gift-spinner-text">Loading Royalty Rewards...</span>
+  //         </div>
+  //         <p className="gift-loading-text">Loading Royalty Rewards progress...</p>
+  //       </div>
+  //     );
+  //   }
+  //   if (royaltyRewardsList.length === 0) {
+  //     return <NoDataMessage message="Sorry, no royalty rewards data found" />;
+  //   }
 
-  // Use API data directly
-  if (royaltyRewardsList.length === 0) {
-    return <NoDataMessage message="Sorry, no royalty rewards data found" />;
-  }
+  //   const currentSqyd = 0; // You can update this from eligibility API if available
 
-  const currentSqyd = 0; // You can update this from eligibility API if available
+  //   return (
+  //     <div className="gift-progress-wrapper">
+  //       <div className="gift-progress-header">
+  //         <h5 className="gift-progress-title">
+  //           <FaGift className="gift-title-icon" />
+  //           Royalty Rewards Progress
+  //         </h5>
+  //       </div>
 
-  return (
-    <div className="gift-progress-wrapper">
-      <div className="gift-progress-header">
-        <h5 className="gift-progress-title">
-          <FaGift className="gift-title-icon" />
-          Royalty Rewards Progress
-        </h5>
-      </div>
+  //       <div className="gift-progress-container">
+  //         <div className="gift-progress-track">
+  //           <div className="gift-progress-line">
+  //             <div className="gift-progress-fill"></div>
+  //           </div>
 
-      <div className="gift-progress-container">
-        <div className="gift-progress-track">
-          <div className="gift-progress-line">
-            <div className="gift-progress-fill"></div>
+  //           <div className="gift-steps-scroll-container">
+  //             <div className="gift-steps-flex-container">
+  //               <div className="gift-step-flex-item gift-step-blank">
+  //                 <div className="gift-step-content-wrapper">
+  //                   <div className="gift-step-marker gift-step-marker-blank">
+  //                     <span>
+  //                       <img src={Start} alt="Start" width="50" />
+  //                     </span>
+  //                   </div>
+  //                   <div className="gift-step-content">
+  //                     <div className="gift-step-name">Start Point</div>
+  //                     <div className="gift-step-target">0 SQYD</div>
+  //                   </div>
+  //                 </div>
+  //               </div>
+
+  //               {royaltyRewardsList.map((reward, index) => {
+  //                 const rewardSqyd = parseFloat(reward.total_area);
+  //                 const maxArea = parseFloat(reward.max_area);
+  //                 const isCompleted = currentSqyd >= rewardSqyd;
+
+  //                 return (
+  //                   <div
+  //                     key={reward.id || index}
+  //                     className={`gift-step-flex-item ${isCompleted ? "gift-step-completed" : ""}`}
+  //                   >
+  //                     <div className="gift-step-content-wrapper">
+  //                       <div
+  //                         className={`gift-step-marker ovel ${isCompleted ? "bg-success" : "bg-danger"}`}
+  //                       >
+  //                         {isCompleted ? "Qualified" : "Not Qualified"}
+  //                       </div>
+  //                       <div className="gift-step-content">
+  //                         <div className="gift-step-name">
+  //                           {reward.reward_name || `Royalty Rewards ${index + 1}`}
+  //                         </div>
+  //                         <div className="gift-step-target">
+  //                           {reward.offer_item || `Rewards ${index + 1}`}
+  //                         </div>
+  //                         <div className="gift-step-target text-dark">
+  //                           <strong>{rewardSqyd}</strong> - <strong>{maxArea === 999999999 ? "∞" : maxArea}</strong> SQYD
+  //                         </div>
+
+  //                         {reward.item_amount && (
+  //                           <div className="gift-step-target text-primary">
+  //                             <strong>{reward.item_amount}</strong>
+  //                           </div>
+  //                         )}
+
+  //                         <div className="gift-step-target gift_content">
+  //                           {reward.terms || reward.terms_conditions || "Terms & conditions apply"}
+  //                         </div>
+
+  //                         <div className="gift-step-target text-muted small mt-1">
+  //                           <strong>Type:</strong> {reward.reward_type?.replace(/_/g, ' ').toUpperCase() || "-"}
+  //                         </div>
+  //                       </div>
+  //                     </div>
+  //                   </div>
+  //                 );
+  //               })}
+
+  //               <div className="gift-step-flex-item gift-step-blank">
+  //                 <div className="gift-step-content-wrapper">
+  //                   <div className="gift-step-marker gift-step-marker-blank">
+  //                     <span>
+  //                       <img src={Endimage} alt="Endimage" width="50" />
+  //                     </span>
+  //                   </div>
+  //                   <div className="gift-step-content">
+  //                     <div className="gift-step-name">End Point</div>
+  //                     <div className="gift-step-target">
+  //                       {royaltyRewardsList.length > 0
+  //                         ? `${royaltyRewardsList[royaltyRewardsList.length - 1]?.max_area === 999999999 ? "∞" : royaltyRewardsList[royaltyRewardsList.length - 1]?.max_area} SQYD`
+  //                         : "0 SQYD"}
+  //                     </div>
+  //                   </div>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+
+  //       {/* Table to display all royalty rewards */}
+  //       <Table bordered hover responsive className="mt-3">
+  //         <thead className="table-light">
+  //           <tr>
+  //             <th>#</th>
+  //             <th>Reward Type</th>
+  //             <th>Reward Name</th>
+  //             <th>Total Area (SQYD)</th>
+  //             <th>Max Area (SQYD)</th>
+  //             <th>Offer Item</th>
+  //             <th>Item Amount / Royalty</th>
+  //             <th>Terms</th>
+  //           </tr>
+  //         </thead>
+  //         <tbody>
+  //           {royaltyRewardsList.map((data, index) => (
+  //             <tr key={index}>
+  //               <td>{index + 1}</td>
+  //               <td className="text-capitalize">
+  //                 {data.reward_type?.replace(/_/g, ' ') || "-"}
+  //               </td>
+  //               <td className="text-success fw-bold">{data.reward_name || "-"}</td>
+  //               <td className="text-danger">{data.total_area || "-"}</td>
+  //               <td className="text-danger">
+  //                 {data.max_area === 999999999 ? "∞" : data.max_area || "-"}
+  //               </td>
+  //               <td className="text-primary">{data.offer_item || "-"}</td>
+  //               <td className="text-warning">{data.item_amount || "-"}</td>
+  //               <td className="text-muted">{data.terms || "-"}</td>
+  //             </tr>
+  //           ))}
+  //         </tbody>
+  //       </Table>
+  //     </div>
+  //   );
+  // };
+
+
+
+
+  const RoyaltyRewardsProgressBar = () => {
+    if (loadingRoyaltyRewards || loadingRoyaltyEligibility) {
+      return (
+        <div className="gift-progress-loading">
+          <div className="gift-spinner" role="status">
+            <span className="gift-spinner-text">Loading Royalty Rewards...</span>
           </div>
+          <p className="gift-loading-text">Loading Royalty Rewards progress...</p>
+        </div>
+      );
+    }
 
-          <div className="gift-steps-scroll-container">
-            <div className="gift-steps-flex-container">
-              <div className="gift-step-flex-item gift-step-blank">
-                <div className="gift-step-content-wrapper">
-                  <div className="gift-step-marker gift-step-marker-blank">
-                    <span>
-                      <img src={Start} alt="Start" width="50" />
-                    </span>
-                  </div>
-                  <div className="gift-step-content">
-                    <div className="gift-step-name">Start Point</div>
-                    <div className="gift-step-target">0 SQYD</div>
+    if (royaltyRewardsList.length === 0) {
+      return <NoDataMessage message="Sorry, no royalty rewards data found" />;
+    }
+
+    // Get max achieved area from eligibility data
+    let maxAchievedArea = 0;
+
+    // FUTURE USE - Commented for now
+    // const achievedRewardTypes = new Set();
+
+    if (royaltyEligibilityData && royaltyEligibilityData.length > 0) {
+      royaltyEligibilityData.forEach((item) => {
+        const achieved = parseFloat(item.achieved_area) || 0;
+        if (achieved > maxAchievedArea) {
+          maxAchievedArea = achieved;
+        }
+        // FUTURE USE - Commented for now
+        // if (item.status === "achieved") {
+        //   achievedRewardTypes.add(item.reward_type);
+        // }
+      });
+    }
+
+    // Static royalty leg data - same as lifetime rewards
+    const royaltyLegData = [
+      { leg: "Leg 1", amount: 300, value: 100, status: "inactive" },
+      { leg: "Leg 2", amount: 300, value: 150, status: "active" },
+      { leg: "Leg 3", amount: 400, value: 200, status: "inactive" },
+    ];
+
+    // Check if reward is eligible - ONLY AREA CHECK
+    const isRewardEligible = (rewardTotalArea) => {
+      // FUTURE USE - Type check (uncomment when needed)
+      // if (achievedRewardTypes.has(rewardType)) {
+      //   return true;
+      // }
+      // Only area condition check
+      if (maxAchievedArea >= rewardTotalArea) {
+        return true;
+      }
+      return false;
+    };
+
+    // Get achievement details
+    const getAchievementDetails = () => {
+      if (!royaltyEligibilityData) return null;
+      return royaltyEligibilityData[0] || null;
+    };
+
+    return (
+      <div className="gift-progress-wrapper">
+        <div className="gift-progress-header">
+          <h5 className="gift-progress-title">
+            <FaGift className="gift-title-icon" />
+            Royalty Rewards Progress
+          </h5>
+          <div className="mt-2 w-50">
+            <Row>
+              <Col sm={12} className="mb-3 text-end">
+                <div className="fs-5 d-block">Your Achieved Area</div>
+                <span className="text-success fw-bold fs-4">
+                  {maxAchievedArea.toFixed(2)} SQYD
+                </span>
+              </Col>
+            </Row>
+          </div>
+        </div>
+
+        <div className="gift-progress-container">
+          <div className="gift-progress-track">
+            <div className="gift-progress-line">
+              <div className="gift-progress-fill"></div>
+            </div>
+
+            <div className="gift-steps-scroll-container">
+              <div className="gift-steps-flex-container">
+                <div className="gift-step-flex-item gift-step-blank">
+                  <div className="gift-step-content-wrapper">
+                    <div className="gift-step-marker gift-step-marker-blank">
+                      <span>
+                        <img src={Start} alt="Start" width="50" />
+                      </span>
+                    </div>
+                    <div className="gift-step-content">
+                      <div className="gift-step-name">Start Point</div>
+                      <div className="gift-step-target">0 SQYD</div>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {royaltyRewardsList.map((reward, index) => {
-                const rewardSqyd = parseFloat(reward.total_area);
-                const maxArea = parseFloat(reward.max_area);
-                const isCompleted = currentSqyd >= rewardSqyd;
+                {royaltyRewardsList.map((reward, index) => {
+                  const rewardTotalArea = parseFloat(reward.total_area);
+                  const maxArea = parseFloat(reward.max_area);
+                  const isEligible = isRewardEligible(rewardTotalArea);
+                  const achievementDetails = getAchievementDetails();
 
-                return (
-                  <div
-                    key={reward.id || index}
-                    className={`gift-step-flex-item ${isCompleted ? "gift-step-completed" : ""}`}
-                  >
-                    <div className="gift-step-content-wrapper">
-                      <div
-                        className={`gift-step-marker ovel ${isCompleted ? "bg-success" : "bg-danger"}`}
-                      >
-                        {isCompleted ? "Qualified" : "Not Qualified"}
-                      </div>
-                      <div className="gift-step-content">
-                        <div className="gift-step-name">
-                          {reward.reward_name || `Royalty Rewards ${index + 1}`}
-                        </div>
-                        <div className="gift-step-target">
-                          {reward.offer_item || `Rewards ${index + 1}`}
-                        </div>
-                        <div className="gift-step-target text-dark">
-                          <strong>{rewardSqyd}</strong> - <strong>{maxArea === 999999999 ? "∞" : maxArea}</strong> SQYD
+                  return (
+                    <div
+                      key={reward.id || index}
+                      className={`gift-step-flex-item ${isEligible ? "gift-step-completed" : ""}`}
+                    >
+                      <div className="gift-step-content-wrapper">
+                        {/* Leg Data - Same as Lifetime Rewards */}
+                        <div className="gift-step-target gift_content mb-2">
+                          <ul className="leg_content">
+                            {royaltyLegData.map((item, idx) => (
+                              <li key={idx}>
+                                <span className="text_leg">{item.leg} :</span>
+                                {item.amount} - {item.value}
+                                <span
+                                  className={`status ${item.status}`}
+                                  style={{
+                                    marginLeft: "10px",
+                                    color: item.status === "active" ? "green" : "red",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  {item.status === "active" ? "Active" : "Inactive"}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
                         </div>
 
-                        {reward.item_amount && (
-                          <div className="gift-step-target text-primary">
-                            <strong>{reward.item_amount}</strong>
+                        <div
+                          className={`gift-step-marker ovel ${isEligible ? "bg-success" : "bg-danger"}`}
+                        >
+                          {isEligible ? "✓ Eligible" : "✗ Not Eligible"}
+                        </div>
+                        <div className="gift-step-content">
+                          <div className="gift-step-name fw-bold">
+                            {reward.reward_name || `Royalty Rewards ${index + 1}`}
                           </div>
-                        )}
+                          <div className="gift-step-target">
+                            {reward.offer_item || `Rewards ${index + 1}`}
+                          </div>
+                          <div className="gift-step-target text-dark">
+                            <strong>Target: {rewardTotalArea} SQYD</strong> |
+                            <strong> Max: {maxArea === 999999999 ? "∞" : maxArea} SQYD</strong>
+                          </div>
 
-                        <div className="gift-step-target gift_content">
-                          {reward.terms || reward.terms_conditions || "Terms & conditions apply"}
-                        </div>
+                          {/* Reward amount - Commented as per requirement */}
+                          {/* {reward.item_amount && (
+                          <div className="gift-step-target text-primary">
+                            <strong>🎁 {reward.item_amount}</strong>
+                          </div>
+                        )} */}
+                          <br></br>
 
-                        <div className="gift-step-target text-muted small mt-1">
-                          <strong>Type:</strong> {reward.reward_type?.replace(/_/g, ' ').toUpperCase() || "-"}
+                          {achievementDetails && achievementDetails.achievement_date && isEligible && (
+                            <div className="gift-step-target text-success">
+                              <strong>
+                                📅 Achieved:{" "}
+                                {(() => {
+                                  const d = new Date(achievementDetails.achievement_date);
+                                  const day = String(d.getDate()).padStart(2, "0");
+                                  const month = String(d.getMonth() + 1).padStart(2, "0");
+                                  const year = d.getFullYear();
+                                  return `${day}-${month}-${year}`;
+                                })()}
+                              </strong>
+                            </div>
+                          )}
+
+                          <div className="gift-step-target gift_content small mt-2">
+                            📝 {reward.terms || reward.terms_conditions || "Terms & conditions apply"}
+                          </div>
+
+                          <div className="gift-step-target text-muted small mt-1">
+                            <strong>🏷️ Type:</strong> {reward.reward_type?.replace(/_/g, ' ').toUpperCase() || "-"}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
 
-              <div className="gift-step-flex-item gift-step-blank">
-                <div className="gift-step-content-wrapper">
-                  <div className="gift-step-marker gift-step-marker-blank">
-                    <span>
-                      <img src={Endimage} alt="Endimage" width="50" />
-                    </span>
-                  </div>
-                  <div className="gift-step-content">
-                    <div className="gift-step-name">End Point</div>
-                    <div className="gift-step-target">
-                      {royaltyRewardsList.length > 0 
-                        ? `${royaltyRewardsList[royaltyRewardsList.length - 1]?.max_area === 999999999 ? "∞" : royaltyRewardsList[royaltyRewardsList.length - 1]?.max_area} SQYD`
-                        : "0 SQYD"}
+                <div className="gift-step-flex-item gift-step-blank">
+                  <div className="gift-step-content-wrapper">
+                    <div className="gift-step-marker gift-step-marker-blank">
+                      <span>
+                        <img src={Endimage} alt="Endimage" width="50" />
+                      </span>
+                    </div>
+                    <div className="gift-step-content">
+                      <div className="gift-step-name">End Point</div>
+                      <div className="gift-step-target">
+                        {royaltyRewardsList.length > 0
+                          ? `${royaltyRewardsList[royaltyRewardsList.length - 1]?.max_area === 999999999 ? "∞" : royaltyRewardsList[royaltyRewardsList.length - 1]?.max_area} SQYD`
+                          : "0 SQYD"}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -3212,44 +3468,68 @@ const RoyaltyRewardsProgressBar = () => {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Table to display all royalty rewards */}
-      <Table bordered hover responsive className="mt-3">
-        <thead className="table-light">
-          <tr>
-            <th>#</th>
-            <th>Reward Type</th>
-            <th>Reward Name</th>
-            <th>Total Area (SQYD)</th>
-            <th>Max Area (SQYD)</th>
-            <th>Offer Item</th>
-            <th>Item Amount / Royalty</th>
-            <th>Terms</th>
-          </tr>
-        </thead>
-        <tbody>
-          {royaltyRewardsList.map((data, index) => (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td className="text-capitalize">
-                {data.reward_type?.replace(/_/g, ' ') || "-"}
-              </td>
-              <td className="text-success fw-bold">{data.reward_name || "-"}</td>
-              <td className="text-danger">{data.total_area || "-"}</td>
-              <td className="text-danger">
-                {data.max_area === 999999999 ? "∞" : data.max_area || "-"}
-              </td>
-              <td className="text-primary">{data.offer_item || "-"}</td>
-              <td className="text-warning">{data.item_amount || "-"}</td>
-              <td className="text-muted">{data.terms || "-"}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    </div>
-  );
-};
+        <div className="table-responsive mt-3">
+          <table className="table table-bordered table-hover">
+            <thead className="table-light">
+              <tr>
+                <th>#</th>
+                <th>Reward Type</th>
+                <th>Reward Name</th>
+                <th>Target Area (SQYD)</th>
+                <th>Max Area (SQYD)</th>
+                <th>Offer Item</th>
+                <th>Reward Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {royaltyRewardsList.map((data, index) => {
+                const rewardTotalArea = parseFloat(data.total_area);
+                const isEligible = isRewardEligible(rewardTotalArea);
+
+                return (
+                  <tr key={index} className={isEligible ? "table-success" : ""}>
+                    <td>{index + 1}</td>
+                    <td className="text-capitalize">
+                      {data.reward_type?.replace(/_/g, ' ') || "-"}
+                    </td>
+                    <td className="fw-bold">{data.reward_name || "-"}</td>
+                    <td className="text-danger fw-bold">{data.total_area || "-"}</td>
+                    <td className="text-danger">
+                      {data.max_area === 999999999 ? "∞" : data.max_area || "-"}
+                    </td>
+                    <td>{data.offer_item || "-"}</td>
+                    <td>{data.item_amount || "-"}</td>
+                    <td className={isEligible ? "text-success fw-bold" : "text-danger fw-bold"}>
+                      {isEligible ? "✅ ELIGIBLE" : "❌ NOT ELIGIBLE"}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Success message when eligible */}
+        {maxAchievedArea > 0 && (
+          <div className="alert alert-success mt-3 small">
+            <strong>🎉 Congratulations!</strong> You have achieved <strong>{maxAchievedArea} SQYD</strong>.
+            {(() => {
+              const eligibleRewards = royaltyRewardsList.filter(reward =>
+                isRewardEligible(parseFloat(reward.total_area))
+              );
+              if (eligibleRewards.length > 0) {
+                return ` You are eligible for ${eligibleRewards.length} reward(s): ${eligibleRewards.map(r => r.reward_name).join(", ")}.`;
+              }
+              return "";
+            })()}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <>
       <div id="Breadcrumb" className="">
@@ -3331,7 +3611,7 @@ const RoyaltyRewardsProgressBar = () => {
           dashboardData.map((item, index) => {
             const IconComponent = iconMap[item.icon];
 
-        
+
             //without clicable code  commented 24-04-2026
             // if (item.customContent && item.title === "Welcome Bonus") {
             //   const bonusData = dashboard?.bonus || {};

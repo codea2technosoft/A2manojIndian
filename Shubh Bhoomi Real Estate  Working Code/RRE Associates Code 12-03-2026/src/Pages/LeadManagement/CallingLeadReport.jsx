@@ -215,7 +215,7 @@ const CallingLeadReport = () => {
                   <MdIncompleteCircle className="fs-2 text-white"></MdIncompleteCircle>
                 </div>
                 <div className="d-flex align-items-center justify-content-between w-100">
-                  <h6 className="stats-label">Total Calling Leads</h6>
+                  <h6 className="stats-label">Total Assigned Calling Leads : </h6>
                   <h2 className="stats-number">{completeCount}</h2>
                 </div>
               </div>
