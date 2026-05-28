@@ -8,6 +8,7 @@ import { RiArrowLeftRightLine } from 'react-icons/ri';
 import wallet from 'assets/images/wallet2.png';
 import DatePicker from 'components/DatePicker';
 import { Wallet, Chart, Buy, TickSquare, Swap } from 'react-iconly';
+import walletIcon from 'assets/images/Wallet 1.png';
 import dayjs from 'dayjs';
 // import walletIcon from 'assets/images/SDFDSAFSD.png';
 import { formatCurrency } from 'utils/common';
@@ -27,13 +28,14 @@ const OverviewCardByDate = (props) => {
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(false);
     const [TotalAmts, TotalAmt_show] = useState('0');
+    const [AvailableAmount, setAvailableAmount] = useState(0);
 
     const availableModes = [
         { key: 'today', label: 'Today' },
         { key: 'yesterday', label: 'Yesterday' },
         // { key: 'last7days', label: 'Last 7 days' },
         { key: 'last30days', label: 'Last 30 days' },
-        // { key: 'last90days', label: 'Last 90 days' },
+
     ];
 
     useEffect(() => {
@@ -51,6 +53,7 @@ const OverviewCardByDate = (props) => {
             const response = await getPayoutOverviewSummary(filters);
             console.warn(response);
             setData(response);
+            setAvailableAmount(response.AvailableAmount);
         } catch (err) {
             toast.error('An error occurred. Please try again.');
         } finally {
@@ -128,8 +131,12 @@ const OverviewCardByDate = (props) => {
 
     return (
         <div>
-            <Row gutter={[8, 8]} align="middle" justify={{ md: 'center', lg: 'space-between' }} className="bgred">
-                <Col xs={24} md={24} lg={15} xl={17}>
+            <Row gutter={[2, 2]} align="middle" justify={{ md: 'center', lg: 'space-between' }} className="bgred">
+
+
+
+
+                <Col xs={24} md={8} lg={6} xl={8}>
                     <Row gutter={[8, 8]} justify={{ md: 'center', lg: 'space-between' }} align={'middle'}>
                         <Col xs={24} sm={20} md={18} lg={15} xl={12}>
                             <Card className="filter">
@@ -155,7 +162,18 @@ const OverviewCardByDate = (props) => {
                         </Col> */}
                     </Row>
                 </Col>
-
+                <Col xs={24} md={14} lg={5} xl={6}>
+                    <Card className="round_card p-0" style={{minHeight:"auto"}}>
+                        <div className="walletamount">
+                             <img src={walletIcon} className="walletimg mr-8" />
+                            <p>
+                                Available Amount
+                                <br />
+                                <b> Rs. {AvailableAmount}</b>
+                            </p>
+                        </div>
+                    </Card>
+                </Col>
                 <Col xs={24} md={16} lg={9} xl={7}>
                     <Card className="wallet_box">
                         <RangePicker value={dates} onCalendarChange={(newDates) => onSetDatesByDatePicker(newDates)} />

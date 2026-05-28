@@ -876,7 +876,7 @@ function TransactionAccountPayoutReportDetails() {
     setIsTableLoading(true);
     try {
       const response = await api.post(
-        `https://api.click4pay.in/webhook/payout/checkstatus`,
+        `https://api.payinfintech.com/webhook/payout/checkstatus`,
         formData,
         {
           headers: {
@@ -899,7 +899,7 @@ function TransactionAccountPayoutReportDetails() {
     setIsTableLoading(true);
     try {
       const response = await api.post(
-        `https://api.click4pay.in/admin/partner/resend-update-status-payout`,
+        `https://api.payinfintech.com/admin/partner/resend-update-status-payout`,
         formData,
         {
           headers: {

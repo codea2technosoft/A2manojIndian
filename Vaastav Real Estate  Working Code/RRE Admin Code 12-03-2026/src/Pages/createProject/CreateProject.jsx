@@ -332,7 +332,7 @@ function CreateProject() {
 
     setIsLoading(true);
     const formData = new FormData();
-    formData.append("category_name", name);
+    formData.append("name", name);
     formData.append("category_id", categoryId);
     const selectedCategory = categories.find(cat => cat.id == categoryId);
     if (selectedCategory) {

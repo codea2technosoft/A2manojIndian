@@ -51,7 +51,8 @@ function MyTeamTree() {
 
   const buildTreeStructure = (nodes) =>
     nodes.map((node) => ({
-      name: `${node.username} (${node.mobile})`,
+      // name: `${node.username} (${node.mobile})`,
+      name: `${node.username}`,
       role: node.user_type,
       level: node.level,
       date: node.date,

@@ -483,10 +483,10 @@ const Dashboard = ({ userType }) => {
   };
 
   // Replace this entire function
-  const fetchRoyaltyRewardsEligibility = async () => {
+    const fetchRoyaltyRewardsEligibility = async () => {
     try {
       setLoadingRoyaltyEligibility(true);
-      const token = getAuthToken();
+      const token = getAuthToken(); 
       const response = await fetch(
         `${API_URL}/royalty-rewards-eligibility-associate`,
         {
@@ -501,8 +501,8 @@ const Dashboard = ({ userType }) => {
       const data = await response.json();
       console.log("Royalty Eligibility API Response:", data);
 
-      // FIXED: Check for status === "1" instead of success === true
       if (data.status === "1" && data.data && data.data.length > 0) {
+        // Backend array response ko direct state mein mount kiya
         setRoyaltyEligibilityData(data.data);
       } else {
         setRoyaltyEligibilityData([]);
@@ -523,7 +523,6 @@ const Dashboard = ({ userType }) => {
     fetchLifetimeRewardsEligibility();
     fetchmyteamLinesSummaryAssociate();
     fetchAssociateProfile();
-
     fetchRoyaltyRewardsList();
     fetchRoyaltyRewardsEligibility();
   }, []);
@@ -3258,7 +3257,7 @@ const Dashboard = ({ userType }) => {
 
 
 
-  const RoyaltyRewardsProgressBar = () => {
+   const RoyaltyRewardsProgressBar = () => {
     if (loadingRoyaltyRewards || loadingRoyaltyEligibility) {
       return (
         <div className="gift-progress-loading">
@@ -3270,54 +3269,22 @@ const Dashboard = ({ userType }) => {
       );
     }
 
-    if (royaltyRewardsList.length === 0) {
+    // Fallback checking framework data
+    const displayList = royaltyEligibilityData.length > 0 ? royaltyEligibilityData : royaltyRewardsList;
+
+    if (displayList.length === 0) {
       return <NoDataMessage message="Sorry, no royalty rewards data found" />;
     }
 
-    // Get max achieved area from eligibility data
+    // Backend Response data array ke metrics ko extract kiya
+    // Total Achieved Area calculate karne ke liye hum check karte hain ki kis boundary range tak user pahuncha hai
     let maxAchievedArea = 0;
-
-    // FUTURE USE - Commented for now
-    // const achievedRewardTypes = new Set();
-
-    if (royaltyEligibilityData && royaltyEligibilityData.length > 0) {
-      royaltyEligibilityData.forEach((item) => {
-        const achieved = parseFloat(item.achieved_area) || 0;
-        if (achieved > maxAchievedArea) {
-          maxAchievedArea = achieved;
-        }
-        // FUTURE USE - Commented for now
-        // if (item.status === "achieved") {
-        //   achievedRewardTypes.add(item.reward_type);
-        // }
-      });
+    if (royaltyEligibilityData.length > 0) {
+      maxAchievedArea = royaltyEligibilityData.reduce((max, item) => {
+        const currentTotal = parseFloat(item.total_progress?.achieved || 0);
+        return currentTotal > max ? currentTotal : max;
+      }, 0);
     }
-
-    // Static royalty leg data - same as lifetime rewards
-    const royaltyLegData = [
-      { leg: "Leg 1", amount: 300, value: 100, status: "inactive" },
-      { leg: "Leg 2", amount: 300, value: 150, status: "active" },
-      { leg: "Leg 3", amount: 400, value: 200, status: "inactive" },
-    ];
-
-    // Check if reward is eligible - ONLY AREA CHECK
-    const isRewardEligible = (rewardTotalArea) => {
-      // FUTURE USE - Type check (uncomment when needed)
-      // if (achievedRewardTypes.has(rewardType)) {
-      //   return true;
-      // }
-      // Only area condition check
-      if (maxAchievedArea >= rewardTotalArea) {
-        return true;
-      }
-      return false;
-    };
-
-    // Get achievement details
-    const getAchievementDetails = () => {
-      if (!royaltyEligibilityData) return null;
-      return royaltyEligibilityData[0] || null;
-    };
 
     return (
       <div className="gift-progress-wrapper">
@@ -3329,7 +3296,7 @@ const Dashboard = ({ userType }) => {
           <div className="mt-2 w-50">
             <Row>
               <Col sm={12} className="mb-3 text-end">
-                <div className="fs-5 d-block">Your Achieved Area</div>
+                <div className="fs-5 d-block">Your Total Achieved Area</div>
                 <span className="text-success fw-bold fs-4">
                   {maxAchievedArea.toFixed(2)} SQYD
                 </span>
@@ -3346,6 +3313,7 @@ const Dashboard = ({ userType }) => {
 
             <div className="gift-steps-scroll-container">
               <div className="gift-steps-flex-container">
+                {/* START STEP */}
                 <div className="gift-step-flex-item gift-step-blank">
                   <div className="gift-step-content-wrapper">
                     <div className="gift-step-marker gift-step-marker-blank">
@@ -3360,82 +3328,68 @@ const Dashboard = ({ userType }) => {
                   </div>
                 </div>
 
-                {royaltyRewardsList.map((reward, index) => {
-                  const rewardTotalArea = parseFloat(reward.total_area);
-                  const maxArea = parseFloat(reward.max_area);
-                  const isEligible = isRewardEligible(rewardTotalArea);
-                  const achievementDetails = getAchievementDetails();
+                {/* DYNAMIC MAP RENDER ITERATION */}
+                {displayList.map((reward, index) => {
+                  const isEligible = reward.achieved === true;
+                  const targetArea = reward.total_progress?.required || 0;
+                  const legs = reward.legs_progress || {};
+
+                  // Dynamic Legs structure map translation layer
+                  const formattedLegs = [
+                    { name: "Leg 1", ...legs.leg1 },
+                    { name: "Leg 2", ...legs.leg2 },
+                    { name: "Leg 3", ...legs.leg3 },
+                  ];
 
                   return (
                     <div
-                      key={reward.id || index}
+                      key={reward.reward_type || index}
                       className={`gift-step-flex-item ${isEligible ? "gift-step-completed" : ""}`}
                     >
                       <div className="gift-step-content-wrapper">
-                        {/* Leg Data - Same as Lifetime Rewards */}
+                        {/* Dynamic Real-Time Legs UI Block */}
                         <div className="gift-step-target gift_content mb-2">
-                          <ul className="leg_content">
-                            {royaltyLegData.map((item, idx) => (
-                              <li key={idx}>
-                                <span className="text_leg">{item.leg} :</span>
-                                {item.amount} - {item.value}
-                                <span
-                                  className={`status ${item.status}`}
-                                  style={{
-                                    marginLeft: "10px",
-                                    color: item.status === "active" ? "green" : "red",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  {item.status === "active" ? "Active" : "Inactive"}
-                                </span>
-                              </li>
-                            ))}
+                          <ul className="leg_content" style={{ listStyle: 'none', paddingLeft: 0 }}>
+                            {formattedLegs.map((legItem, idx) => {
+                              const legActive = (legItem.achieved >= legItem.required) && legItem.required > 0;
+                              return (
+                                <li key={idx} className="mb-1">
+                                  <span className="text_leg">{legItem.name}: </span>
+                                  <strong>{legItem.achieved || 0}</strong> / {legItem.required || 0}
+                                  <span
+                                    className={`status ${legActive ? "active" : "inactive"}`}
+                                    style={{
+                                      marginLeft: "10px",
+                                      color: legActive ? "green" : "red",
+                                      fontWeight: "bold",
+                                      fontSize: "0.85em"
+                                    }}
+                                  >
+                                    ({legActive ? "Target Met" : `${legItem.remaining || 0} left`})
+                                  </span>
+                                </li>
+                              );
+                            })}
                           </ul>
                         </div>
 
-                        <div
-                          className={`gift-step-marker ovel ${isEligible ? "bg-success" : "bg-danger"}`}
-                        >
+                        {/* Status Check Badge */}
+                        <div className={`gift-step-marker ovel ${isEligible ? "bg-success" : "bg-danger"}`} style={{ color: '#fff', padding: '4px 8px', borderRadius: '4px', textAlign: 'center' }}>
                           {isEligible ? "✓ Eligible" : "✗ Not Eligible"}
                         </div>
-                        <div className="gift-step-content">
+
+                        <div className="gift-step-content mt-2">
                           <div className="gift-step-name fw-bold">
-                            {reward.reward_name || `Royalty Rewards ${index + 1}`}
+                            {reward.reward_name || "Royalty Milestone"}
                           </div>
-                          <div className="gift-step-target">
-                            {reward.offer_item || `Rewards ${index + 1}`}
+                          
+                          <div className="gift-step-target text-dark mt-1">
+                            <strong>Required: {targetArea} SQYD</strong> | 
+                            <span className="text-muted"> Current: {reward.total_progress?.achieved || 0} SQYD</span>
                           </div>
-                          <div className="gift-step-target text-dark">
-                            <strong>Target: {rewardTotalArea} SQYD</strong> |
-                            <strong> Max: {maxArea === 999999999 ? "∞" : maxArea} SQYD</strong>
-                          </div>
-
-                          {/* Reward amount - Commented as per requirement */}
-                          {/* {reward.item_amount && (
-                          <div className="gift-step-target text-primary">
-                            <strong>🎁 {reward.item_amount}</strong>
-                          </div>
-                        )} */}
-                          <br></br>
-
-                          {achievementDetails && achievementDetails.achievement_date && isEligible && (
-                            <div className="gift-step-target text-success">
-                              <strong>
-                                📅 Achieved:{" "}
-                                {(() => {
-                                  const d = new Date(achievementDetails.achievement_date);
-                                  const day = String(d.getDate()).padStart(2, "0");
-                                  const month = String(d.getMonth() + 1).padStart(2, "0");
-                                  const year = d.getFullYear();
-                                  return `${day}-${month}-${year}`;
-                                })()}
-                              </strong>
-                            </div>
-                          )}
 
                           <div className="gift-step-target gift_content small mt-2">
-                            📝 {reward.terms || reward.terms_conditions || "Terms & conditions apply"}
+                            📝 {reward.terms || "Leg matrix distributions apply (30:30:40)"}
                           </div>
 
                           <div className="gift-step-target text-muted small mt-1">
@@ -3447,6 +3401,7 @@ const Dashboard = ({ userType }) => {
                   );
                 })}
 
+                {/* END STEP */}
                 <div className="gift-step-flex-item gift-step-blank">
                   <div className="gift-step-content-wrapper">
                     <div className="gift-step-marker gift-step-marker-blank">
@@ -3457,37 +3412,36 @@ const Dashboard = ({ userType }) => {
                     <div className="gift-step-content">
                       <div className="gift-step-name">End Point</div>
                       <div className="gift-step-target">
-                        {royaltyRewardsList.length > 0
-                          ? `${royaltyRewardsList[royaltyRewardsList.length - 1]?.max_area === 999999999 ? "∞" : royaltyRewardsList[royaltyRewardsList.length - 1]?.max_area} SQYD`
+                        {displayList.length > 0
+                          ? `${displayList[displayList.length - 1]?.total_progress?.required || 0} SQYD`
                           : "0 SQYD"}
                       </div>
                     </div>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
         </div>
 
-        <div className="table-responsive mt-3">
-          <table className="table table-bordered table-hover">
+        {/* DETAILS TABLE BREAKDOWN */}
+        <div className="table-responsive mt-4">
+          <table className="table table-bordered table-hover alignment-middle">
             <thead className="table-light">
               <tr>
                 <th>#</th>
                 <th>Reward Type</th>
                 <th>Reward Name</th>
                 <th>Target Area (SQYD)</th>
-                <th>Max Area (SQYD)</th>
-                <th>Offer Item</th>
-                <th>Reward Amount</th>
+                <th>Legs Breakdown (Achieved / Required)</th>
+                <th>Your Total Progress</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {royaltyRewardsList.map((data, index) => {
-                const rewardTotalArea = parseFloat(data.total_area);
-                const isEligible = isRewardEligible(rewardTotalArea);
-
+              {displayList.map((data, index) => {
+                const isEligible = data.achieved === true;
                 return (
                   <tr key={index} className={isEligible ? "table-success" : ""}>
                     <td>{index + 1}</td>
@@ -3495,12 +3449,18 @@ const Dashboard = ({ userType }) => {
                       {data.reward_type?.replace(/_/g, ' ') || "-"}
                     </td>
                     <td className="fw-bold">{data.reward_name || "-"}</td>
-                    <td className="text-danger fw-bold">{data.total_area || "-"}</td>
-                    <td className="text-danger">
-                      {data.max_area === 999999999 ? "∞" : data.max_area || "-"}
+                    <td className="text-primary fw-bold">{data.total_progress?.required || 0}</td>
+                    <td>
+                      <small>
+                        L1: {data.legs_progress?.leg1?.achieved}/{data.legs_progress?.leg1?.required} | 
+                        L2: {data.legs_progress?.leg2?.achieved}/{data.legs_progress?.leg2?.required} | 
+                        L3: {data.legs_progress?.leg3?.achieved}/{data.legs_progress?.leg3?.required}
+                      </small>
                     </td>
-                    <td>{data.offer_item || "-"}</td>
-                    <td>{data.item_amount || "-"}</td>
+                    <td>
+                      <span className="fw-bold text-success">{data.total_progress?.achieved || 0}</span>
+                      <span className="text-muted"> / {data.total_progress?.required || 0}</span>
+                    </td>
                     <td className={isEligible ? "text-success fw-bold" : "text-danger fw-bold"}>
                       {isEligible ? "✅ ELIGIBLE" : "❌ NOT ELIGIBLE"}
                     </td>
@@ -3510,22 +3470,6 @@ const Dashboard = ({ userType }) => {
             </tbody>
           </table>
         </div>
-
-        {/* Success message when eligible */}
-        {maxAchievedArea > 0 && (
-          <div className="alert alert-success mt-3 small">
-            <strong>🎉 Congratulations!</strong> You have achieved <strong>{maxAchievedArea} SQYD</strong>.
-            {(() => {
-              const eligibleRewards = royaltyRewardsList.filter(reward =>
-                isRewardEligible(parseFloat(reward.total_area))
-              );
-              if (eligibleRewards.length > 0) {
-                return ` You are eligible for ${eligibleRewards.length} reward(s): ${eligibleRewards.map(r => r.reward_name).join(", ")}.`;
-              }
-              return "";
-            })()}
-          </div>
-        )}
       </div>
     );
   };

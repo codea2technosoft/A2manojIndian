@@ -202,53 +202,53 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         },
 
 
-        {
-          id: "myteam",
-          title: "My Team",
-          dropdown: true,
-          icon: (
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-              <path d="M16 3h-8v4h8V3z"></path>
-            </svg>
-          ),
-          children: [
+        // {
+        //   id: "myteam",
+        //   title: "My Team",
+        //   dropdown: true,
+        //   icon: (
+        //     <svg
+        //       width="24"
+        //       height="24"
+        //       viewBox="0 0 24 24"
+        //       fill="none"
+        //       stroke="currentColor"
+        //       strokeWidth="2"
+        //     >
+        //       <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+        //       <path d="M16 3h-8v4h8V3z"></path>
+        //     </svg>
+        //   ),
+        //   children: [
 
-            ...(userType !== "channel"
-              ? [
-                {
-                  id: "my-associates",
-                  title: "Direct All Associates",
-                  href: "/my-associates",
-                },
-              ]
-              : []),
+        //     ...(userType !== "channel"
+        //       ? [
+        //         {
+        //           id: "my-associates",
+        //           title: "Direct All Associates",
+        //           href: "/my-associates",
+        //         },
+        //       ]
+        //       : []),
 
-            {
-              id: "all-channel-list",
-              title: "Direct All Channel Partners",
-              href: "/all-channel-list",
-            },
+        //     {
+        //       id: "all-channel-list",
+        //       title: "Direct All Channel Partners",
+        //       href: "/all-channel-list",
+        //     },
 
-            {
-              id: "myteam",
-              title: "My Teams",
-              href: "/my-team",
-            },
-            {
-              id: "levelwiselead",
-              title: "Level Wise Team",
-              href: "/levelwise",
-            },
-          ],
-        },
+        //     {
+        //       id: "myteam",
+        //       title: "My Teams",
+        //       href: "/my-team",
+        //     },
+        //     {
+        //       id: "levelwiselead",
+        //       title: "Level Wise Team",
+        //       href: "/levelwise",
+        //     },
+        //   ],
+        // },
 
 
 
@@ -345,36 +345,36 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
 
 
-        ...(userType !== "channel"
-          ? [
-              {
-                id: "my-associates",
-                title: "Direct Associates",
-                dropdown: true,
-                icon: (
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M17 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M7 21v-2a4 4 0 0 1 3-3.87" />
-                    <circle cx="12" cy="7" r="4" />
-                  </svg>
-                ),
-                children: [
-                  {
-                    id: "my-associates",
-                    title: "Direct All Associates",
-                    href: "/my-associates",
-                  },
-                ],
-              },
-            ]
-          : []),
+        // ...(userType !== "channel"
+        //   ? [
+        //       {
+        //         id: "my-associates",
+        //         title: "Direct Associates",
+        //         dropdown: true,
+        //         icon: (
+        //           <svg
+        //             width="24"
+        //             height="24"
+        //             viewBox="0 0 24 24"
+        //             fill="none"
+        //             stroke="currentColor"
+        //             strokeWidth="2"
+        //           >
+        //             <path d="M17 21v-2a4 4 0 0 0-3-3.87" />
+        //             <path d="M7 21v-2a4 4 0 0 1 3-3.87" />
+        //             <circle cx="12" cy="7" r="4" />
+        //           </svg>
+        //         ),
+        //         children: [
+        //           {
+        //             id: "my-associates",
+        //             title: "Direct All Associates",
+        //             href: "/my-associates",
+        //           },
+        //         ],
+        //       },
+        //     ]
+        //   : []),
 
         {
           id: "projectChannel",
@@ -504,18 +504,18 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         },
 
 
-        {
-                  id: "income Managment",
-                  title: "Income Management",
-                  dropdown: true,
-                  icon: <FaWallet />,
-                  checked: false,
-                  children: [
-                    { id: "property_income_list", title: "Property Income List", href: "/property-income-list", checked: false },
-                    { id: "child-commission", title: "Child Commission", href: "/child-commission", checked: false },
+        // {
+        //           id: "income Managment",
+        //           title: "Income Management",
+        //           dropdown: true,
+        //           icon: <FaWallet />,
+        //           checked: false,
+        //           children: [
+        //             { id: "property_income_list", title: "Property Income List", href: "/property-income-list", checked: false },
+        //             { id: "child-commission", title: "Child Commission", href: "/child-commission", checked: false },
 
-                  ]
-                },
+        //           ]
+        //         },
 
 
                   {

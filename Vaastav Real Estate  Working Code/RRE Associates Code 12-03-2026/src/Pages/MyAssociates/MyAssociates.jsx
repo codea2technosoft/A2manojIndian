@@ -201,7 +201,7 @@ function MyAssociates() {
               <div className="form_design w-100">
                 <input
                   type="text"
-                  placeholder="username or mobile"
+                  placeholder="username"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -240,11 +240,11 @@ function MyAssociates() {
                   <tr>
                      <th>#</th>
                       <th>Name</th>
-                      <th>Mobile</th>
+                      {/* <th>Mobile</th> */}
                       <th>Type</th>
                       <th>KYC Status</th>
                       <th>Parent Name</th>
-                      <th>Parent ID</th>
+                      {/* <th>Parent ID</th> */}
                       <th>Status</th>
                       <th>Joining Date</th>
                       <th>Action</th>
@@ -269,11 +269,11 @@ function MyAssociates() {
                     <tr>
                       <th>#</th>
                       <th>Name</th>
-                      <th>Mobile</th>
+                      {/* <th>Mobile</th> */}
                       <th>Type</th>
                       <th>KYC Status</th>
                       <th>Parent Name</th>
-                      <th>Parent ID</th>
+                      {/* <th>Parent ID</th> */}
                       <th>Status</th>
                       <th>Joining Date</th>
                       <th>Action</th>
@@ -284,7 +284,7 @@ function MyAssociates() {
                       <tr key={user.id}>
                         <td>{(currentPage - 1) * LIMIT + index + 1}</td>
                         <td>{toSentenceCase(user.username)}</td>
-                        <td>{user.mobile}</td>
+                        {/* <td>{user.mobile}</td> */}
                         <td>{toSentenceCase(user.user_type)}</td>
                         {/* <td>{toSentenceCase(user.kyc)}</td> */}
                         <td>
@@ -305,7 +305,7 @@ function MyAssociates() {
                         </td>
 
                         <td>{user.parent_name}</td>
-                        <td>{user.parent_id}</td>
+                        {/* <td>{user.parent_id}</td> */}
                         <td>
                           <Badge
                             bg={
@@ -421,12 +421,12 @@ function MyAssociates() {
                       <input type="text" value={toSentenceCase(selectedUser.username)} disabled />
                     </div>
                   </div>
-                  <div className="col-md-6 col-12 col-lg-4">
+                  {/* <div className="col-md-6 col-12 col-lg-4">
                     <div className="form-group form_modal">
                       <label htmlFor="">Mobile</label>
                       <input type="text" value={selectedUser.mobile} disabled />
                     </div>
-                  </div>
+                  </div> */}
                   <div className="col-md-6 col-12 col-lg-4">
                     <div className="form-group form_modal">
                       <label htmlFor="">Email</label>
@@ -476,12 +476,12 @@ function MyAssociates() {
                       <input type="text" value={selectedUser.parent_name} disabled />
                     </div>
                   </div>
-                  <div className="col-md-6 col-12 col-lg-4">
+                  {/* <div className="col-md-6 col-12 col-lg-4">
                     <div className="form-group form_modal">
                       <label htmlFor="">Parent ID</label>
                       <input type="text" value={selectedUser.parent_id || "-"} disabled />
                     </div>
-                  </div>
+                  </div> */}
                   <div className="col-md-6 col-12 col-lg-4">
                     <div className="form-group form_modal">
                       <label htmlFor="">Register By</label>
@@ -513,12 +513,12 @@ function MyAssociates() {
                       <input type="text" value={selectedUser.pincode} disabled />
                     </div>
                   </div>
-                  <div className="col-md-6 col-12 col-lg-4">
+                  {/* <div className="col-md-6 col-12 col-lg-4">
                     <div className="form-group form_modal">
                       <label htmlFor="">Whatsapp No</label>
                       <input type="text" value={selectedUser.whatsapp_number} disabled />
                     </div>
-                  </div>
+                  </div> */}
                   <div className="col-md-6 col-12 col-lg-4">
                     <div className="form-group form_modal">
                       <label htmlFor="">Marriage Date</label>

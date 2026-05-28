@@ -496,8 +496,8 @@ function ALLPropertyIncomeList() {
                   <th>Customer Name</th>
                   <th>Customer Mobile</th>
 
-                     <th>Associates Name</th>
-                  <th>Associates Mobile</th>
+                     {/* <th>Associates Name</th> */}
+                  {/* <th>Associates Mobile</th> */}
 
                   <th>Project Name</th>
                   <th>Colony/Block Name</th>
@@ -508,7 +508,7 @@ function ALLPropertyIncomeList() {
                   <th>BV (%)</th>
                   <th>Level</th>
                   <th>Associate Name</th>
-                  <th>Associate Mobile</th>
+                  {/* <th>Associate Mobile</th> */}
                   <th>Old SQYD</th>
                   <th>New SQYD</th>
                   <th>Old Slab</th>
@@ -560,8 +560,8 @@ function ALLPropertyIncomeList() {
                     </td>
                     <td>{record.customer_mobile}</td>
 
-                      <td>{record.associate_name || "NA"}</td>
-                    <td>{record.associate_mobile || "Na"}</td>
+                      {/* <td>{record.associate_name || "NA"}</td>
+                    <td>{record.associate_mobile || "Na"}</td> */}
 
                     <td>{record.project_name}</td>
                     <td>
@@ -605,7 +605,7 @@ function ALLPropertyIncomeList() {
                         : ""}
                     </td>
 
-                    <td>{record.associate_mobile}</td>
+                    {/* <td>{record.associate_mobile}</td> */}
                     <td>{record.old_sqyd}</td>
                     <td>{record.new_sqyd}</td>
                     <td>{record.old_slab}</td>

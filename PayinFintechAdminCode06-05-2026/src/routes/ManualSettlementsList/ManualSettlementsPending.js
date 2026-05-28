@@ -128,7 +128,7 @@ function WalletPending() {
 
         if (response && response.filepath) {
           window.open(
-            `https://api.click4pay.in/files/${response.filepath}`,
+            `https://api.payinfintech.com/files/${response.filepath}`,
             "_blank",
           );
         } else {

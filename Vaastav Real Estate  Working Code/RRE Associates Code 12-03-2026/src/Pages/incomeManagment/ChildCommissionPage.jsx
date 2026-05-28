@@ -212,14 +212,14 @@ function ParentCommissionPage() {
                 onChange={(e) => setFilterName(e.target.value)}
               />
             </Col>
-            <Col md={6} className="">
+            {/* <Col md={6} className="">
               <Form.Control
                 type="text"
                 placeholder="Associates Mobile"
                 value={filterMobile}
                 onChange={(e) => setFilterMobile(e.target.value)}
               />
-            </Col>
+            </Col> */}
 
             <Col md={3}>
               <input
@@ -298,14 +298,14 @@ function ParentCommissionPage() {
                 onChange={(e) => setFilterName(e.target.value)}
               />
             </Col>
-            <Col md={4}>
+            {/* <Col md={4}>
               <Form.Control
                 type="text"
                 placeholder="Associates Mobile"
                 value={filterMobile}
                 onChange={(e) => setFilterMobile(e.target.value)}
               />
-            </Col>
+            </Col> */}
             <Col md={4}>
               <Form.Control
                 type="number"
@@ -380,7 +380,7 @@ function ParentCommissionPage() {
                   <th>Date</th>
                   <th>Lead ID</th>
                   <th>Associates Name</th>
-                  <th>Associates Mobile</th>
+                  {/* <th>Associates Mobile</th> */}
 
                    <th>Customer Name</th>
                   <th>Customer Mobile</th>
@@ -421,7 +421,7 @@ function ParentCommissionPage() {
                     <td>{record.lead_id || "N/A"}</td>
 
                     <td>{record.customname}</td>
-                    <td>{record.custommobile}</td>
+                    {/* <td>{record.custommobile}</td> */}
                      <td>{record.customer_name}</td>
                     <td>{record.customer_mobile}</td>
 

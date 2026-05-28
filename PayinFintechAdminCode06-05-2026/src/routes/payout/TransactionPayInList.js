@@ -695,7 +695,7 @@ function TransactionPayInList() {
     setIsTableLoading(true);
     try {
       const response = await api.get(
-        `https://api.click4pay.in/webhook/payment/ChkOrderStatus/${id}`,
+        `https://api.payinfintech.com/webhook/payment/ChkOrderStatus/${id}`,
         {
           headers: {
             "Content-Type": "multipart/form-data",

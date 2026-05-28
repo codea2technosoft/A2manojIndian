@@ -3,13 +3,15 @@ import { useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import api from 'utils/api';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button, Row, Col, DatePicker, Card, Tabs, Table, Tag, message, Modal, Select, Form, Input,Popover } from 'antd';
+import { Button, Row, Col, DatePicker, Card, Tabs, Table, Tag, message, Modal, Select, Form, Input, Popover } from 'antd';
 import walletIcon from 'assets/images/Wallet 1.png';
 import { parseQueryParams, stringifyQueryParams } from 'utils/url';
 import { toast } from 'react-toast';
 import { omitBy, isEmpty, debounce } from 'lodash';
 import 'assets/styles/orders.scss';
 import { EyeOutlined } from '@ant-design/icons';
+import Swal from "sweetalert2";
+// import toast, { Toaster } from "react-hot-toast";
 // request
 import { getBanklist, payinPayoutList, exportOrders } from 'requests/order';
 
@@ -282,7 +284,7 @@ function InstantTransfer() {
             // Validate the form fields
             const values = await form.validateFields();
             const { amount, bank_id, mode, remark } = values;
-            
+
             const response = await api.post('/Payment-transfer-payout-bank', {
                 amount,
                 bank_id,
@@ -391,33 +393,33 @@ function InstantTransfer() {
                     <br></br>Txn ID: {record.tid}
                     <br></br>UTR Number: {record.utr ? record.utr : 'null'}
                     <div style={{ marginTop: 5 }}>
-                    <b>Remark:</b>
+                        <b>Remark:</b>
 
-                    <Popover
-                        content={
-                            <div style={{ maxWidth: 250 }}>
-                                {record.remark_fintech || 'No Remark Available'}
-                            </div>
-                        }
-                        title="Remark Details"
-                        trigger="click"
-                    >
-                        <span
-                            style={{
-                                marginLeft: 8,
-                                cursor: 'pointer',
-                                color: '#1890ff',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 4,
-                                fontWeight: 500
-                            }}
+                        <Popover
+                            content={
+                                <div style={{ maxWidth: 250 }}>
+                                    {record.remark_fintech || 'No Remark Available'}
+                                </div>
+                            }
+                            title="Remark Details"
+                            trigger="click"
                         >
-                            <EyeOutlined />
-                            View
-                        </span>
-                    </Popover>
-                </div>
+                            <span
+                                style={{
+                                    marginLeft: 8,
+                                    cursor: 'pointer',
+                                    color: '#1890ff',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 4,
+                                    fontWeight: 500
+                                }}
+                            >
+                                <EyeOutlined />
+                                View
+                            </span>
+                        </Popover>
+                    </div>
                 </div>
             ),
         },
@@ -440,13 +442,50 @@ function InstantTransfer() {
             title: 'Status',
             key: 'Status',
             render: (text, record) => (
-                <div style={{ color: color[record.status] }}>
-                    {record.status === 'pending' ? 'initiated' : record.status.toUpperCase()}
-                    {record.status === 'pending' || record.status === 'inprocess' ? (
+                <>
+                    <div style={{ color: color[record.status] }}>
+                        {record.status === 'pending' ? 'initiated' : record.status.toUpperCase()}
+                        {record.status === 'pending' || record.status === 'inprocess' ? (
+                            <div>
+                                <p
+                                    id={`cchkstttu_${record.orderid}`}
+                                    onClick={() => chhkstatus(record.orderid)}
+                                    style={{
+                                        padding: '5px 10px',
+                                        cursor: 'pointer',
+                                        backgroundColor: '#0dcaf0',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '5px',
+                                    }}
+                                >
+                                    Check Status
+                                </p>
+                                <img
+                                    id={`cchkstttu11_${record.orderid}`}
+                                    // src={dancingloader}
+                                    style={{
+                                        display: 'none',
+                                        height: '10px',
+                                        objectFit: 'cover',
+                                        objectPosition: 'center',
+                                        WebkitTransform: 'scale(1.9)',
+                                        transform: 'scale(1.9)',
+                                        width: '100%',
+                                    }}
+                                />
+                            </div>
+                        ) : (
+                            <p></p>
+                        )}
+                    </div>
+                    <div style={{ color: color[record.status] }}>
+
+
                         <div>
                             <p
                                 id={`cchkstttu_${record.orderid}`}
-                                onClick={() => chhkstatus(record.orderid)}
+                                onClick={() => sendWebhook(record.orderid)}
                                 style={{
                                     padding: '5px 10px',
                                     cursor: 'pointer',
@@ -456,7 +495,7 @@ function InstantTransfer() {
                                     borderRadius: '5px',
                                 }}
                             >
-                                Check Status
+                                Send Webhook
                             </p>
                             <img
                                 id={`cchkstttu11_${record.orderid}`}
@@ -472,10 +511,9 @@ function InstantTransfer() {
                                 }}
                             />
                         </div>
-                    ) : (
-                        <p></p>
-                    )}
-                </div>
+
+                    </div>
+                </>
             ),
         },
     ];
@@ -499,6 +537,28 @@ function InstantTransfer() {
                 statusElement.style.display = 'block';
                 loaderElement.style.display = 'none';
             }
+        }
+    };
+    const sendWebhook = async (orderId) => {
+
+
+        try {
+            const response = await api.post(process.env.REACT_APP_API_URL + 'webhook/payout/send-webhook-merchant-panel', {
+                orderid: orderId,
+            });
+
+            if (response.data.message == "success") {
+
+                Swal.fire({
+                    title: "Success!",
+                    text: "Webhook Sent Successfully",
+                    icon: "success",
+                });
+            }
+            getRecords();
+        } catch (error) {
+            console.error('Error fetching data:', error);
+
         }
     };
 

@@ -223,7 +223,7 @@ function Levelwiselead() {
                                         }
                                     />
                                 </div> */}
-                                <div className="form_design">
+                                {/* <div className="form_design">
                                     <input
                                         type="number"
                                         name="mobile"
@@ -236,8 +236,8 @@ function Levelwiselead() {
                                             })
                                         }
                                     />
-                                </div>
-                                <div className="form_design">
+                                </div> */}
+                                {/* <div className="form_design">
                                     <input
                                         type="number"
                                         name="parentId"
@@ -250,7 +250,7 @@ function Levelwiselead() {
                                             })
                                         }
                                     />
-                                </div>
+                                </div> */}
 
                                 <div>
                                     <select
@@ -311,7 +311,7 @@ function Levelwiselead() {
                                         }
                                     />
                                 </div> */}
-                                <div className="form_design">
+                                {/* <div className="form_design">
                                     <input
                                         type="number"
                                         name="mobile"
@@ -324,8 +324,8 @@ function Levelwiselead() {
                                             })
                                         }
                                     />
-                                </div>
-                                <div className="form_design">
+                                </div> */}
+                                {/* <div className="form_design">
                                     <input
                                         type="number"
                                         name="parentId"
@@ -338,7 +338,7 @@ function Levelwiselead() {
                                             })
                                         }
                                     />
-                                </div>
+                                </div> */}
 
                                 <div className="form_design">
                                     <select
@@ -386,10 +386,10 @@ function Levelwiselead() {
                                         <tr>
                                             <th>#</th>
                                             <th>Name</th>
-                                            <th>Mobile</th>
+                                            {/* <th>Mobile</th> */}
                                             {/* <th>Level</th> */}
                                             <th>Parent Name</th>
-                                            <th>Parent ID</th>
+                                            {/* <th>Parent ID</th> */}
                                             <th>Type</th>
                                             <th>KYC Status</th>
                                             <th>Joining Date</th>
@@ -400,10 +400,10 @@ function Levelwiselead() {
                                             <tr key={user.id}>
                                                 <td>{(currentPage - 1) * LIMIT + index + 1}</td>
                                                 <td>{toSentenceCase(user.username)}</td>
-                                                <td>{user.mobile}</td>
+                                                {/* <td>{user.mobile}</td> */}
                                                 {/* <td>{user.level}</td> */}
                                                 <td>{toSentenceCase(user.parent_name)}</td>
-                                                <td>{toSentenceCase(user.parent_id)}</td>
+                                                {/* <td>{toSentenceCase(user.parent_id)}</td> */}
                                                 <td>{toSentenceCase(user.user_type)}</td>
                                                 <td>
                                                     <span

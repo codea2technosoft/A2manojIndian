@@ -35,6 +35,7 @@ const OverviewCardByDate = (props) => {
   const [data, setData] = useState({});
   const [payincount, setpayincount] = useState({});
   const [payinAmt, setpayinAmt] = useState({});
+  const [totalPayoutWalletBalance, settotalPayoutWalletBalance] = useState({});
   const [payintobank, setpayintobank] = useState({});
   const [payintopayout, setpayintopayout] = useState({});
   const [payouttobankcount, setpayouttobankcount] = useState({});
@@ -97,6 +98,7 @@ const OverviewCardByDate = (props) => {
       setpayouttobankPendingSum(response.payouttobankPendingSum);
       setpayouttobankinprocesscount(response.payouttobankinprocesscount);
       setpayouttobankinprocessSum(response.payouttobankinprocessSum);
+      settotalPayoutWalletBalance(response.totalPayoutWalletBalance);
 
       // setgsttotal(response.gsttotal);
     } catch (err) {
@@ -207,8 +209,26 @@ const OverviewCardByDate = (props) => {
       <h2>PayOut</h2>
       <Spin spinning={loading}>
         <Row gutter={[16, 16]}>
+
           <Col xs={24} sm={24} md={12} lg={6}>
             <Card className="box1 stats">
+              <div className="data">
+                <div className="icon">
+                  <FaArrowRightArrowLeft set="light" width={36} height={36} />
+                </div>
+                <div>
+                  <p className="value">{parseFloat(totalPayoutWalletBalance).toFixed(2)}</p>
+                </div>
+              </div>
+              <div className="title">
+                <p className="name">Wallet Balance</p>
+              </div>
+            </Card>
+          </Col>
+
+
+          <Col xs={24} sm={24} md={12} lg={6}>
+            <Card className="box3 stats">
               <div className="data">
                 <div className="icon">
                   <FaArrowRightArrowLeft set="light" width={36} height={36} />
@@ -239,23 +259,7 @@ const OverviewCardByDate = (props) => {
               </div>
             </Card>
           </Col>
-          <Col xs={24} sm={24} md={12} lg={6}>
-            <Card className="box3 stats">
-              <div className="data">
-                <div className="icon">
-                  <FaRupeeSign set="light" width={36} height={36} />
-                </div>
-                <div>
-                  <p className="value">
-                    {parseFloat(payouttobankFail).toFixed(2)}
-                  </p>
-                </div>
-              </div>
-              <div className="title">
-                <p className="name">Failed Transaction Amount</p>
-              </div>
-            </Card>
-          </Col>
+         
           <Col xs={24} sm={24} md={12} lg={6}>
             <Card className="box4 stats">
               <div className="data">
@@ -291,6 +295,25 @@ const OverviewCardByDate = (props) => {
               </div>
             </Card>
           </Col>
+
+           <Col xs={24} sm={24} md={12} lg={6}>
+            <Card className="box3 stats">
+              <div className="data">
+                <div className="icon">
+                  <FaRupeeSign set="light" width={36} height={36} />
+                </div>
+                <div>
+                  <p className="value">
+                    {parseFloat(payouttobankFail).toFixed(2)}
+                  </p>
+                </div>
+              </div>
+              <div className="title">
+                <p className="name">Failed Transaction Amount</p>
+              </div>
+            </Card>
+          </Col>
+
           <Col xs={24} sm={24} md={12} lg={6}>
             <Card className="box2 stats">
               <div className="data">
@@ -307,7 +330,7 @@ const OverviewCardByDate = (props) => {
             </Card>
           </Col>
           <Col xs={24} sm={24} md={12} lg={6}>
-            <Card className="box3 stats">
+            <Card className="box4 stats">
               <div className="data">
                 <div className="icon">
                   <FaRupeeSign set="light" width={36} height={36} />
@@ -323,23 +346,7 @@ const OverviewCardByDate = (props) => {
               </div>
             </Card>
           </Col>
-          <Col xs={24} sm={24} md={12} lg={6}>
-            <Card className="box4 stats">
-              <div className="data">
-                <div className="icon">
-                  <FaRupeeSign set="light" width={36} height={36} />
-                </div>
-                <div>
-                  <p className="value">
-                    {parseFloat(resellerComsiion).toFixed(2)}
-                  </p>
-                </div>
-              </div>
-              <div className="title">
-                <p className="name">Reseller Amount</p>
-              </div>
-            </Card>
-          </Col>
+         
         </Row>
         <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
           <Col xs={24} sm={24} md={12} lg={6}>
@@ -360,7 +367,7 @@ const OverviewCardByDate = (props) => {
             </Card>
           </Col>
           <Col xs={24} sm={24} md={12} lg={6}>
-            <Card className="box2 stats">
+            <Card className="box3 stats">
               <div className="data">
                 <div className="icon">
                   <FaRupeeSign set="light" width={36} height={36} />
@@ -377,7 +384,7 @@ const OverviewCardByDate = (props) => {
             </Card>
           </Col>
           <Col xs={24} sm={24} md={12} lg={6}>
-            <Card className="box3 stats">
+            <Card className="box2 stats">
               <div className="data">
                 <div className="icon">
                   <FaArrowRightArrowLeft set="light" width={36} height={36} />
@@ -410,6 +417,25 @@ const OverviewCardByDate = (props) => {
               </div>
             </Card>
           </Col>
+
+           {/* <Col xs={24} sm={24} md={12} lg={6}>
+            <Card className="box4 stats">
+              <div className="data">
+                <div className="icon">
+                  <FaRupeeSign set="light" width={36} height={36} />
+                </div>
+                <div>
+                  <p className="value">
+                    {parseFloat(resellerComsiion).toFixed(2)}
+                  </p>
+                </div>
+              </div>
+              <div className="title">
+                <p className="name">Reseller Amount</p>
+              </div>
+            </Card>
+          </Col> */}
+
         </Row>
       </Spin>
     </div>

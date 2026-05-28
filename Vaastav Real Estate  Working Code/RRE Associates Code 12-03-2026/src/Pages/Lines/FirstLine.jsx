@@ -164,7 +164,7 @@ function FirstLine() {
         'S.No',
         'Approved Date',
         'Associate Name',
-        'Associate Mobile',
+        // 'Associate Mobile',
         'Customer Name',
         'Customer Mobile',
         'Project Name',
@@ -184,7 +184,7 @@ function FirstLine() {
           index + 1,
           formatDate(record.date),
           record.user_name || '-',
-          record.user_mobile || '-',
+          // record.user_mobile || '-',
           record.customer_name || '-',
           record.customer_mobile || '-',
           record.project_name || '-',
@@ -274,7 +274,7 @@ function FirstLine() {
     'S.No',
     'Approved Date',
     'Associate Name',
-    'Associate Mobile',
+    // 'Associate Mobile',
     'Customer Name',
     'Customer Mobile',
     'Project Name',
@@ -447,7 +447,7 @@ function FirstLine() {
                             <td>{(currentPage - 1) * recordsPerPage + index + 1}</td>
                             <td>{formatDate(record.date)}</td>
                             <td>{record.user_name || '-'}</td>
-                            <td>{record.user_mobile || '-'}</td>
+                            {/* <td>{record.user_mobile || '-'}</td> */}
                             <td>{record.customer_name || '-'}</td>
                             <td>{record.customer_mobile || '-'}</td>
                             <td>{record.project_name || '-'}</td>

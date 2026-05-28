@@ -219,52 +219,52 @@ function TransactionPayoutList() {
     // },
 
     {
-  title: "Customer Details",
-  render: (text, record) => (
-    <div>
-      {record.userdetails && record.userdetails.email ? (
+      title: "Customer Details",
+      render: (text, record) => (
         <div>
-          <a href={`mailto:${record.userdetails.email}`}>
-            {record.userdetails.email}
-          </a>
-        </div>
-      ) : null}
-
-      {record.userdetails && record.userdetails.full_name ? (
-        <div>{record.userdetails.full_name}</div>
-      ) : null}
-
-      <div style={{ marginTop: 5 }}>
-        <b>Remark:</b>
-
-        <Popover
-          content={
-            <div style={{ maxWidth: 250 }}>
-              {record.remark_fintech || "No Remark Available"}
+          {record.userdetails && record.userdetails.email ? (
+            <div>
+              <a href={`mailto:${record.userdetails.email}`}>
+                {record.userdetails.email}
+              </a>
             </div>
-          }
-          title="Remark Details"
-          trigger="click"
-        >
-          <span
-            style={{
-              marginLeft: 8,
-              cursor: "pointer",
-              color: "#1890ff",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 4,
-              fontWeight: 500,
-            }}
-          >
-            <EyeOutlined />
-            View
-          </span>
-        </Popover>
-      </div>
-    </div>
-  ),
-},
+          ) : null}
+
+          {record.userdetails && record.userdetails.full_name ? (
+            <div>{record.userdetails.full_name}</div>
+          ) : null}
+
+          <div style={{ marginTop: 5 }}>
+            <b>Remark:</b>
+
+            <Popover
+              content={
+                <div style={{ maxWidth: 250 }}>
+                  {record.remark_fintech || "No Remark Available"}
+                </div>
+              }
+              title="Remark Details"
+              trigger="click"
+            >
+              <span
+                style={{
+                  marginLeft: 8,
+                  cursor: "pointer",
+                  color: "#1890ff",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 4,
+                  fontWeight: 500,
+                }}
+              >
+                <EyeOutlined />
+                View
+              </span>
+            </Popover>
+          </div>
+        </div>
+      ),
+    },
 
 
     {
@@ -333,7 +333,7 @@ function TransactionPayoutList() {
             >
               {record.status}
             </div>
-            {record.status == "inprocess" ? (
+            {/* {record.status == "inprocess" ? (
               <>
                 <div class="btn btn-primary">
                   <Button
@@ -346,16 +346,19 @@ function TransactionPayoutList() {
               </>
             ) : record.status == "pending" && record.transation_hit == "yes" ? (
               <div class="btn btn-primary">
-                {/* <Button
+                 <Button
                   type="primary"
                   onClick={() => handleResend(record.orderid)}
                 >
                   ReSend
-                </Button> */}
+                </Button> 
               </div>
             ) : (
               <></>
-            )}
+            )} */}
+
+            
+
 
             <br />
             <div class="btn btn-primary">
@@ -384,6 +387,23 @@ function TransactionPayoutList() {
                 Change Status
               </Button>
             </div>
+            <br />
+            {(record.status == "inprocess" ||
+              record.status == "pending") ? (
+              <>
+                <div class="btn btn-primary">
+                  <Button
+                    type="primary"
+                    onClick={() => handleCheckStatus(record.orderid)}
+                  >
+                    Check Status
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <></>
+            )}
+            
           </>
         );
       },
@@ -833,7 +853,7 @@ function TransactionPayoutList() {
     setIsTableLoading(true);
     try {
       const response = await api.post(
-        `https://api.click4pay.in/webhook/payout/checkstatus`,
+        `https://api.payinfintech.com/webhook/payout/checkstatus`,
         formData,
         {
           headers: {
@@ -856,7 +876,7 @@ function TransactionPayoutList() {
     setIsTableLoading(true);
     try {
       const response = await api.post(
-        `https://api.click4pay.in/admin/partner/resend-update-status-payout`,
+        `https://api.payinfintech.com/webhook/payout/checkstatus`,
         formData,
         {
           headers: {
