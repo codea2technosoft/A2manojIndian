@@ -29,6 +29,7 @@ function AdminTDSReport() {
   const [teamLoading, setTeamLoading] = useState(true);
   const [teamCurrentPage, setTeamCurrentPage] = useState(1);
   const [teamTotalPages, setTeamTotalPages] = useState(1);
+  const [updatingStatusId, setUpdatingStatusId] = useState(null);
 
   // Customers section state
   const [customersLedger, setCustomersLedger] = useState([]);
@@ -923,6 +924,77 @@ function AdminTDSReport() {
     }
   };
 
+
+  const toggleTeamOfferStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === 1 ? 0 : 1;
+    const statusText = newStatus === 1 ? "ON" : "OFF";
+
+    const confirmToggle = await Swal.fire({
+      title: "Are you sure?",
+      text: `Do you want to turn ${statusText} this offer?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: `Yes, turn ${statusText}`,
+    });
+
+    if (!confirmToggle.isConfirmed) return;
+
+    try {
+      setUpdatingStatusId(id);
+      Swal.fire({
+        title: "Please wait...",
+        text: "Updating status...",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      const response = await fetch(`${API_URL}/self_offer_manage_status`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: id,
+          status: newStatus,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success === "1") {
+        Swal.fire({
+          icon: "success",
+          title: "Updated!",
+          text: result.message || `Offer status turned ${statusText} successfully.`,
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        // Refresh the team gifts list
+        fetchTeamLedger(teamCurrentPage);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error!",
+          text: result.message || "Failed to update status.",
+        });
+      }
+    } catch (error) {
+      console.error("Status update error:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error!",
+        text: "Failed to update status. Please try again.",
+      });
+    } finally {
+      setUpdatingStatusId(null);
+    }
+  };
+
+
   return (
     <div className="padding_15">
       <div className="userlist mb-5">
@@ -1051,7 +1123,7 @@ function AdminTDSReport() {
                         <td>
                           {item.gift_type
                             ? item.gift_type.charAt(0).toUpperCase() +
-                              item.gift_type.slice(1).toLowerCase()
+                            item.gift_type.slice(1).toLowerCase()
                             : "-"}
                         </td>
                         <td>{item.area_sqyd || "-"}</td>
@@ -1199,6 +1271,7 @@ function AdminTDSReport() {
                       <th>Item Amount</th>
                       <th>Offer Project Name</th>
                       <th>Terms Conditions</th>
+                      <th>Self Offer Manage Status</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -1212,7 +1285,7 @@ function AdminTDSReport() {
                         <td>
                           {item.gift_type
                             ? item.gift_type.charAt(0).toUpperCase() +
-                              item.gift_type.slice(1).toLowerCase()
+                            item.gift_type.slice(1).toLowerCase()
                             : "-"}
                         </td>
                         <td>{item.area_sqyd || "-"}</td>
@@ -1221,6 +1294,22 @@ function AdminTDSReport() {
                         <td> {item.item_amount || 0.0}</td>
                         <td>{item.offer_project_name}</td>
                         <td> {item.terms_conditions}</td>
+                        <td>
+                          <Button
+                            variant={item.self_offer_manage_status === 1 ? "success" : "secondary"}
+                            size="sm"
+                            onClick={() => toggleTeamOfferStatus(item.id, item.self_offer_manage_status)}
+                            disabled={updatingStatusId === item.id}
+                            className="toggle-status-btn"
+                            style={{ minWidth: "60px" }}
+                          >
+                            {updatingStatusId === item.id ? (
+                              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            ) : (
+                              item.self_offer_manage_status === 1 ? "ON" : "OFF"
+                            )}
+                          </Button>
+                        </td>
                         <td className="d-flex gap-1">
                           <Button
                             variant="warning"
@@ -1378,7 +1467,7 @@ function AdminTDSReport() {
                         <td>
                           {item.gift_type
                             ? item.gift_type.charAt(0).toUpperCase() +
-                              item.gift_type.slice(1).toLowerCase()
+                            item.gift_type.slice(1).toLowerCase()
                             : "-"}
                         </td>
                         <td>{item.area_sqyd || "-"}</td>

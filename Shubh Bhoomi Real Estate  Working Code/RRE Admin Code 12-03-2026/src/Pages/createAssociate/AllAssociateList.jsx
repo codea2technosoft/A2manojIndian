@@ -73,6 +73,7 @@ function AllAssociateList() {
     city: "",
     area: "",
     dob: "",
+    date: "",
     marriage_anniversary_date: "",
     rera_number: "",
     address: "",
@@ -442,6 +443,9 @@ function AllAssociateList() {
         city: cityId,
         area: associateData.area || "",
         dob: associateData.dob || "",
+        date: associateData.date
+          ? associateData.date.split("-").reverse().join("-")
+          : "",
         marriage_anniversary_date:
           associateData.marriage_anniversary_date || "",
         rera_number: associateData.rera_number || "",
@@ -507,6 +511,7 @@ function AllAssociateList() {
       formData.append("city", editFormData.city || "");
       formData.append("area", editFormData.area || "");
       formData.append("dob", editFormData.dob || "");
+      formData.append("date", editFormData.date || "");
       formData.append(
         "marriage_anniversary_date",
         editFormData.marriage_anniversary_date || "",
@@ -597,7 +602,7 @@ function AllAssociateList() {
           }
 
           const result = await response.json();
-          if ((result.success = "1")) {
+          if (result.success === "1") {
             showCustomMessageModal(
               "Success",
               "Associate status has been updated successfully!",
@@ -640,6 +645,7 @@ function AllAssociateList() {
       city: "",
       area: "",
       dob: "",
+      date: "",
       marriage_anniversary_date: "",
       rera_number: "",
       address: "",
@@ -934,7 +940,7 @@ function AllAssociateList() {
                       <td>
                         {associate.username
                           ? associate.username.charAt(0).toUpperCase() +
-                            associate.username.slice(1).toLowerCase()
+                          associate.username.slice(1).toLowerCase()
                           : ""}
                       </td>
                       <td>{associate.mobile || "NA"}</td>
@@ -942,13 +948,13 @@ function AllAssociateList() {
                       <td>
                         {associate.kyc
                           ? associate.kyc.charAt(0).toUpperCase() +
-                            associate.kyc.slice(1).toLowerCase()
+                          associate.kyc.slice(1).toLowerCase()
                           : ""}
                       </td>
                       <td>
                         {associate.parent_name
                           ? associate.parent_name.charAt(0).toUpperCase() +
-                            associate.parent_name.slice(1)
+                          associate.parent_name.slice(1)
                           : "NA"}
                       </td>
                       <td>{associate.parent_id}</td>
@@ -1164,8 +1170,8 @@ function AllAssociateList() {
                       <td>
                         {selectedAssociate.state
                           ? states.find(
-                              (s) => s.id === Number(selectedAssociate.state),
-                            )?.name || selectedAssociate.state
+                            (s) => s.id === Number(selectedAssociate.state),
+                          )?.name || selectedAssociate.state
                           : "NA"}
                       </td>
                     </tr>
@@ -1191,20 +1197,20 @@ function AllAssociateList() {
                       <td>
                         {selectedAssociate.dob
                           ? (() => {
-                              const date = new Date(selectedAssociate.dob);
-                              if (!isNaN(date.getTime())) {
-                                const day = String(date.getDate()).padStart(
-                                  2,
-                                  "0",
-                                );
-                                const month = String(
-                                  date.getMonth() + 1,
-                                ).padStart(2, "0");
-                                const year = date.getFullYear();
-                                return `${day}-${month}-${year}`;
-                              }
-                              return selectedAssociate.dob;
-                            })()
+                            const date = new Date(selectedAssociate.dob);
+                            if (!isNaN(date.getTime())) {
+                              const day = String(date.getDate()).padStart(
+                                2,
+                                "0",
+                              );
+                              const month = String(
+                                date.getMonth() + 1,
+                              ).padStart(2, "0");
+                              const year = date.getFullYear();
+                              return `${day}-${month}-${year}`;
+                            }
+                            return selectedAssociate.dob;
+                          })()
                           : "NA"}
                       </td>
                     </tr>
@@ -1213,22 +1219,22 @@ function AllAssociateList() {
                       <td>
                         {selectedAssociate.marriage_anniversary_date
                           ? (() => {
-                              const date = new Date(
-                                selectedAssociate.marriage_anniversary_date,
+                            const date = new Date(
+                              selectedAssociate.marriage_anniversary_date,
+                            );
+                            if (!isNaN(date.getTime())) {
+                              const day = String(date.getDate()).padStart(
+                                2,
+                                "0",
                               );
-                              if (!isNaN(date.getTime())) {
-                                const day = String(date.getDate()).padStart(
-                                  2,
-                                  "0",
-                                );
-                                const month = String(
-                                  date.getMonth() + 1,
-                                ).padStart(2, "0");
-                                const year = date.getFullYear();
-                                return `${day}-${month}-${year}`;
-                              }
-                              return selectedAssociate.marriage_anniversary_date;
-                            })()
+                              const month = String(
+                                date.getMonth() + 1,
+                              ).padStart(2, "0");
+                              const year = date.getFullYear();
+                              return `${day}-${month}-${year}`;
+                            }
+                            return selectedAssociate.marriage_anniversary_date;
+                          })()
                           : "NA"}
                       </td>
                     </tr>
@@ -1461,6 +1467,7 @@ function AllAssociateList() {
               </Col>
             </Row>
 
+
             <Row>
               <Col md={6}>
                 <Form.Group className="mb-3">
@@ -1528,7 +1535,21 @@ function AllAssociateList() {
             </Row>
 
             <Row>
+
               <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Joining Date</Form.Label>
+                  <Form.Control
+                    type="date"
+                    name="date"
+                    value={editFormData.date || ""}
+                    onChange={handleEditFormChange}
+                  />
+                </Form.Group>
+              </Col>
+
+              <Col md={6}>
+
                 <Form.Group className="mb-3">
                   <Form.Label>Associate RERA Number</Form.Label>
                   <Form.Control

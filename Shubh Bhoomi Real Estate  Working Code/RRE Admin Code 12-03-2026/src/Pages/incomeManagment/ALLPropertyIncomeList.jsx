@@ -589,6 +589,7 @@ function ALLPropertyIncomeList() {
                   <th>#</th>
                   <th>Show</th>
                   <th>Excel</th>
+                  <th>Booking Date</th>
                   <th>Date</th>
                   <th>Lead ID</th>
                   <th>Customer Name</th>
@@ -642,24 +643,56 @@ function ALLPropertyIncomeList() {
                         </Button>
                       </OverlayTrigger>
                     </td>
+
+
                     <td>
-                      {record.date
-                        ? `${new Date(record.date).getDate().toString().padStart(2, "0")}-${(
-                            new Date(record.date).getMonth() + 1
-                          )
-                            .toString()
-                            .padStart(
-                              2,
-                              "0",
-                            )}-${new Date(record.date).getFullYear()}`
+                      {record.lead_property_date
+                        ? (() => {
+                          const dateStr = record.lead_property_date;
+
+                          let date;
+
+                          // DD-MM-YYYY format
+                          if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
+                            const [day, month, year] = dateStr.split("-");
+                            date = new Date(`${year}-${month}-${day}`);
+                          } else {
+                            // Other formats like ISO, YYYY-MM-DD etc.
+                            date = new Date(dateStr);
+                          }
+
+                          // Invalid date check
+                          if (isNaN(date.getTime())) return "-";
+
+                          const day = String(date.getDate()).padStart(2, "0");
+                          const month = String(date.getMonth() + 1).padStart(2, "0");
+                          const year = date.getFullYear();
+
+                          return `${day}-${month}-${year}`;
+                        })()
+                        : "-"}
+                    </td>
+
+                    <td>
+                      {record.pdi_date
+                        ? `${new Date(record.pdi_date).getDate().toString().padStart(2, "0")}-${(
+                          new Date(record.pdi_date).getMonth() + 1
+                        )
+                          .toString()
+                          .padStart(
+                            2,
+                            "0",
+                          )}-${new Date(record.pdi_date).getFullYear()}`
                         : ""}
                     </td>
+
+
                     <td>{record.lead_id || "N/A"}</td>
 
                     <td>
                       {record.customer_name
                         ? record.customer_name.charAt(0).toUpperCase() +
-                          record.customer_name.slice(1).toLowerCase()
+                        record.customer_name.slice(1).toLowerCase()
                         : ""}
                     </td>
                     <td>{record.customer_mobile}</td>
@@ -669,13 +702,13 @@ function ALLPropertyIncomeList() {
                     <td>
                       {record.colony_name
                         ? record.colony_name.charAt(0).toUpperCase() +
-                          record.colony_name.slice(1).toLowerCase()
+                        record.colony_name.slice(1).toLowerCase()
                         : ""}
                     </td>
                     <td>
                       {record.plot_no
                         ? record.plot_no.charAt(0).toUpperCase() +
-                          record.plot_no.slice(1).toLowerCase()
+                        record.plot_no.slice(1).toLowerCase()
                         : ""}
                     </td>
                     <td>{record.total_plot_area}</td>
@@ -707,7 +740,7 @@ function ALLPropertyIncomeList() {
                     <td>
                       {record.associate_name
                         ? record.associate_name.charAt(0).toUpperCase() +
-                          record.associate_name.slice(1).toLowerCase()
+                        record.associate_name.slice(1).toLowerCase()
                         : ""}
                     </td>
 

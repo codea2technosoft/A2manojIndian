@@ -518,7 +518,7 @@ function CreateProject() {
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3" controlId="businessVolume">
-                    <Form.Label>Business Volume(%)</Form.Label>
+                    <Form.Label>Business Volume(%) Optional</Form.Label>
                     <Form.Control
                       type="number"
                       value={businessVolume}

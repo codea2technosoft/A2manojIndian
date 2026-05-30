@@ -158,9 +158,10 @@ function ParentCommissionPage() {
           <div className="table-responsive">
             <Table bordered className="mb-0">
               <thead className="headerallnew">
-               <tr>
-                 <th>#</th>
-                   <th>Date</th>
+                <tr>
+                  <th>#</th>
+                  {/* <th>Booking Date</th> */}
+                  <th>Date</th>
                   <th>Lead ID</th>
                   <th>Customer Name</th>
                   <th>Customer Mobile</th>
@@ -181,43 +182,72 @@ function ParentCommissionPage() {
                   <th>Gross Payout</th>
                   <th>Net Payout</th>
                   <th>Gross Payment</th>
-               </tr>
+                </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>{(currentPage - 1) * ITEMS_PER_PAGE  + 1}</td>
-                   <td>
-                    {sourceDetails.status_date 
+                  <td>{(currentPage - 1) * ITEMS_PER_PAGE + 1}</td>
+
+                  {/* <td>
+                    {sourceDetails.lead_property_date
+                      ? (() => {
+                        const dateStr = sourceDetails.lead_property_date;
+
+                        let date;
+
+                        // DD-MM-YYYY format
+                        if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
+                          const [day, month, year] = dateStr.split("-");
+                          date = new Date(`${year}-${month}-${day}`);
+                        } else {
+                          // Other formats like ISO, YYYY-MM-DD etc.
+                          date = new Date(dateStr);
+                        }
+
+                        // Invalid date check
+                        if (isNaN(date.getTime())) return "-";
+
+                        const day = String(date.getDate()).padStart(2, "0");
+                        const month = String(date.getMonth() + 1).padStart(2, "0");
+                        const year = date.getFullYear();
+
+                        return `${day}-${month}-${year}`;
+                      })()
+                      : "-"}
+                  </td> */}
+
+                  <td>
+                    {sourceDetails.status_date
                       ? `${new Date(sourceDetails.status_date).getDate().toString().padStart(2, "0")}-${(
-                          new Date(sourceDetails.status_date).getMonth() + 1
-                        ).toString().padStart(2, "0")}-${new Date(sourceDetails.status_date).getFullYear()}`
+                        new Date(sourceDetails.status_date).getMonth() + 1
+                      ).toString().padStart(2, "0")}-${new Date(sourceDetails.status_date).getFullYear()}`
                       : "N/A"}
                   </td>
                   <td>{sourceDetails.lead_id || "N/A"}</td>
                   <td>{sourceDetails.customer_name || "N/A"}</td>
                   <td>{sourceDetails.customer_mobile || "N/A"}</td>
-                   <td>{sourceDetails.user_details?.username || "N/A"}</td>
+                  <td>{sourceDetails.user_details?.username || "N/A"}</td>
                   <td>{sourceDetails.user_details?.mobile || "N/A"}</td>
                   <td>{sourceDetails.colony_name || "N/A"}</td>
-                    <td>{sourceDetails.plot_no || "N/A"}</td>
-                    <td>{sourceDetails.total_plot_area || "N/A"}</td>
-                    <td>{sourceDetails.total_plot_area || "N/A"}</td>
-                    <td>{sourceDetails.rate || "N/A"}</td>
-                    <td>{sourceDetails.bv || "N/A"}</td>
-                    <td>{sourceDetails.level || "N/A"}</td>
-                    <td>{sourceDetails.old_sqyd || "N/A"}</td>
-                    <td>{sourceDetails.new_sqyd || "0.00"}</td>
-                    <td>{sourceDetails.old_slab || "N/A"}</td> 
-                    <td>{sourceDetails.payable_bv || "N/A"}</td> 
+                  <td>{sourceDetails.plot_no || "N/A"}</td>
+                  <td>{sourceDetails.total_plot_area || "N/A"}</td>
+                  <td>{sourceDetails.total_plot_area || "N/A"}</td>
+                  <td>{sourceDetails.rate || "N/A"}</td>
+                  <td>{sourceDetails.bv || "N/A"}</td>
+                  <td>{sourceDetails.level || "N/A"}</td>
+                  <td>{sourceDetails.old_sqyd || "N/A"}</td>
+                  <td>{sourceDetails.new_sqyd || "0.00"}</td>
+                  <td>{sourceDetails.old_slab || "N/A"}</td>
+                  <td>{sourceDetails.payable_bv || "N/A"}</td>
                   <td>{sourceDetails.new_slab || "N/A"}</td>
                   <td>{sourceDetails.gross_payout || "N/A"}</td>
                   <td>{sourceDetails.net_payout || "N/A"}</td>
                   <td>
-                      ₹ {(sourceDetails.payable_amount = sourceDetails.net_payout - sourceDetails.advance_balance).toFixed(2)}
-                    </td>
-                 
+                    ₹ {(sourceDetails.payable_amount = sourceDetails.net_payout - sourceDetails.advance_balance).toFixed(2)}
+                  </td>
+
                 </tr>
-               
+
               </tbody>
             </Table>
           </div>
@@ -297,7 +327,7 @@ function ParentCommissionPage() {
             </Col>
           </Row>
         )}
-        
+
         <div className="d-none d-md-block card mb-3">
           <Row className="gy-2 card-body">
             <Col md={6}>
@@ -448,8 +478,8 @@ function ParentCommissionPage() {
                     <td>
                       {record.date
                         ? `${new Date(record.date).getDate().toString().padStart(2, "0")}-${(
-                            new Date(record.date).getMonth() + 1
-                          ).toString().padStart(2, "0")}-${new Date(record.date).getFullYear()}`
+                          new Date(record.date).getMonth() + 1
+                        ).toString().padStart(2, "0")}-${new Date(record.date).getFullYear()}`
                         : ""}
                     </td>
                     <td>{record.lead_id || "N/A"}</td>

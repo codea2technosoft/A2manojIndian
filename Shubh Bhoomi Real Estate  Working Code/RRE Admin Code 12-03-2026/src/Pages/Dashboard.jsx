@@ -134,7 +134,7 @@ const Dashboard = () => {
           { title: "Total Plots", value: rawData.AllPlot?.[0]?.total || 0, icon: "PiListNumbersFill", color: "primary", link:"/all-plot" },
           { title: "Available Plots", value: rawData.ActivePlot?.[0]?.total || 0, icon: "PiListNumbersFill", color: "success", link:"/active-plot-list" },
           { title: "Sold Plots", value: rawData.InactivePlot?.[0]?.total || 0, icon: "RiCloseCircleLine", color: "danger", link:"/inactive-plot-list" },
-          { title: "Total Property Lead", value: rawData.TotalPropertyLead?.[0]?.total || 0, icon: "GoProjectRoadmap", color: "primary"},
+          { title: "Total Property Lead", value: rawData.TotalPropertyLead?.[0]?.total || 0, icon: "GoProjectRoadmap", color: "primary", link:"/lead-list"},
           { title: "Today Property Lead", value: rawData.TodayPropertyLead?.[0]?.total || 0, icon: "GoProjectRoadmap", color: "primary"},
           { title: "Total Loan Lead", value: rawData.TotalLoanLead?.[0]?.total || 0, icon: "PiListNumbersFill", color: "primary"},
           { title: "Today Loan Lead", value: rawData.TodayLoanLead?.[0]?.total || 0, icon: "PiListNumbersFill", color: "primary"},

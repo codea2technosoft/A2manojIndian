@@ -2,6 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Route, Routes, Outlet, useLocation } from 'react-router-dom';
 // layouts
+import {
+    LOGIN,
+    REGISTER,
+    GET_AUTH_USER,
+    UPDATE_AUTH_USER,
+    LOGOUT
+} from 'redux/actions/types';
+import { removeCookie, setCookie } from "utils/cookie";
 import AppLayout from 'layout/app';
 import CheckoutLayout from 'layout/checkout';
 // actions
@@ -90,7 +98,17 @@ const AppRoutes = () => {
         async function getData() {
             try {
                 await dispatch(getConfig());
-                await dispatch(getAuthUser());
+                const data = await dispatch(getAuthUser());
+                console.log("uuuuuuuuuuu",data);
+                const cookieToken = document.cookie
+                .split("; ")
+                .find(row => row.startsWith("sob_token="))
+                ?.split("=")[1];
+                if(data.access_token != cookieToken){
+                        dispatch({ type: LOGOUT });
+                 removeCookie(process.env.REACT_APP_TOKEN_NAME);
+                    window.location.replace("/signin");
+                }
             } catch (error) {
                 console.log(error);
             } finally {
@@ -100,6 +118,56 @@ const AppRoutes = () => {
 
         getData();
     }, []);
+
+//     useEffect(() => {
+//     async function getData() {
+//         try {
+//             // await dispatch(getConfig());
+
+//             var responsedata = await dispatch(getAuthUser());
+//             console.warn('opoppp',responsedata);
+//             // 🔥 GET LOCAL STORAGE TOKEN
+//             const accessToken = localStorage.getItem("access_token");
+
+//             // 🔥 GET COOKIE TOKEN
+//             const cookieToken = document.cookie
+//                 .split("; ")
+//                 .find(row => row.startsWith("sob_token="))
+//                 ?.split("=")[1];
+
+//             console.log("ACCESS TOKEN 👉", accessToken);
+//             console.log("COOKIE TOKEN 👉", cookieToken);
+
+//             // 🔴 LOGOUT CONDITION (MISMATCH)
+//             if (
+//                 !accessToken ||
+//                 !cookieToken ||
+//                 accessToken !== cookieToken
+//             ) {
+//                 // dispatch({ type: LOGOUT });
+//                 //    removeCookie(process.env.REACT_APP_TOKEN_NAME);
+
+//                 // window.location.replace("/signin");
+//                 // return;
+//             }
+
+//         } catch (error) {
+//             console.log(error);
+
+//             localStorage.clear();
+
+//             document.cookie =
+//                 "sob_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+//             window.location.replace("/signin");
+
+//         } finally {
+//             setLoading(false);
+//         }
+//     }
+
+//     getData();
+// }, []);
 
     if (loading) return <Loading />;
 

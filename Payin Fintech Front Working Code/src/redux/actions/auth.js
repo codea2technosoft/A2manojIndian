@@ -44,7 +44,14 @@ export const getAuthUserAction = () => (dispatch) => {
     return new Promise((resolve, reject) => {
         return getAuthUser().then(response => {
             dispatch({ type: GET_AUTH_USER, payload: response.data });
-            setCookie(process.env.REACT_APP_TOKEN_NAME, response.data.access_token, 1);
+            if (response.data?.access_token) {
+                    localStorage.setItem(
+                        "access_token",
+                        response.data.access_token
+                    );
+                }
+
+            // setCookie(process.env.REACT_APP_TOKEN_NAME, response.data.access_token, 1);
             resolve(response.data);
         }).catch(err => {
             reject(err);

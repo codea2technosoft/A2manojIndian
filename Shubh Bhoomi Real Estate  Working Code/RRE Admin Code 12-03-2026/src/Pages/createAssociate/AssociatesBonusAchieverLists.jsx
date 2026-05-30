@@ -585,8 +585,15 @@ function AssociatesBonusAchieverLists() {
                       <td>{(currentPage - 1) * perPage + index + 1}</td>
                       <td>{person.user_name || "-"}</td>
                       <td>{person.user_mobile || "-"}</td>
-                      <td>{person.joining_date ? new Date(person.joining_date).toLocaleDateString("en-GB")
-                        : "-"}</td>
+                      <td>
+                        {person.joining_date
+                          ? (() => {
+                            const [day, month, year] = person.joining_date.split("-");
+                            const date = new Date(year, month - 1, day);
+                            return date.toLocaleDateString("en-GB");
+                          })()
+                          : "-"}
+                      </td>
                       <td>{person.leaddate ? new Date(person.leaddate).toLocaleDateString("en-GB")
                         : "-"}</td>
                       <td>{person.leadapprove_date ? new Date(person.leadapprove_date).toLocaleDateString("en-GB")
