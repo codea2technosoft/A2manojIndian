@@ -122,9 +122,9 @@ const CreatePayoutsBeneficiaryAccountForm = ({ users, visible, onClose, onSubmit
                             <Form.Item label="Account number" name="account_number" className="last" rules={[{ required: true }]}>
                                 <Input />
                             </Form.Item>
-                            <Button type="primary" onClick={handleVerifyAccountNumber} className='mt-8'>
+                            {/* <Button type="primary" onClick={handleVerifyAccountNumber} className='mt-8'>
                                     Verify Account Number
-                            </Button>
+                            </Button> */}
                         </Col>
                         </Row>
                         </React.Fragment>

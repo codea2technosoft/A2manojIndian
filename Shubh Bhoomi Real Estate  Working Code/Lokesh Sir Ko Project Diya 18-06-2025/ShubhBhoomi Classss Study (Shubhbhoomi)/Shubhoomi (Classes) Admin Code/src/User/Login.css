@@ -1,0 +1,26 @@
+.error-text {
+  color: red !important;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+.error-input {
+  border: 1px solid red !important;
+}
+.password-wrapper {
+  position: relative;
+}
+.password-wrapper input {
+  padding-right: 40px;
+}
+.eye-icon {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #555;
+  user-select: none;
+  z-index: 1;
+}

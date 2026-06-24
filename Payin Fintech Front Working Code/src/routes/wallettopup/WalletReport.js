@@ -185,7 +185,7 @@ function WalletReport() {
                 <Col xs={24} md={8} lg={6} xl={5}>
                     <Card className="round_card">
                         <Button type="primary" size="large" onClick={showModalBulk}>
-                            Request Topup
+                            Request Topup 
                         </Button>
                     </Card>
                 </Col>

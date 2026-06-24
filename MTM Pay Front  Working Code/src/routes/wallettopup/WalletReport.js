@@ -26,6 +26,9 @@ function WalletReport() {
     const showBankModal = () => {
         setIsBankModalOpen(true);
     };
+const PayNow = () => {
+    window.location.href = "https://dashboard.checkmykyc.com/api/mtmpay-gateway";
+};
 
     const handleBulkOk = () => {
         setIsModalOpen(false);
@@ -199,10 +202,19 @@ function WalletReport() {
                     </Card>
                 </Col>
 
-                <Col xs={24} md={8} lg={6} xl={5}>
+                {/* <Col xs={24} md={8} lg={6} xl={5}>
                     <Card className="round_card">
                         <Button type="primary" size="large" onClick={showBankModal} icon={<BankOutlined />} style={{ width: '100%' }}>
                             Bank Details 
+                        </Button> 
+                    </Card>
+                </Col> */}
+
+
+                <Col xs={24} md={8} lg={6} xl={5}>
+                    <Card className="round_card">
+                        <Button type="primary" size="large" onClick={PayNow} style={{ width: '100%' }}>
+                          Pay Now
                         </Button> 
                     </Card>
                 </Col>

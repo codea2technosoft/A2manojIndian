@@ -269,7 +269,7 @@ function MyAssociates() {
                     <tr>
                       <th>#</th>
                       <th>Name</th>
-                      {/* <th>Mobile</th> */}
+                      <th>Mobile</th>
                       <th>Type</th>
                       <th>KYC Status</th>
                       <th>Parent Name</th>
@@ -284,7 +284,7 @@ function MyAssociates() {
                       <tr key={user.id}>
                         <td>{(currentPage - 1) * LIMIT + index + 1}</td>
                         <td>{toSentenceCase(user.username)}</td>
-                        {/* <td>{user.mobile}</td> */}
+                        <td>{user.mobile}</td>
                         <td>{toSentenceCase(user.user_type)}</td>
                         {/* <td>{toSentenceCase(user.kyc)}</td> */}
                         <td>
