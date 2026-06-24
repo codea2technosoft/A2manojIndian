@@ -1,15 +1,29 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
-  FiSearch, FiEdit2, FiMoreVertical, FiUser, FiUserCheck,
-  FiUserX, FiLock, FiTrash2, FiSlash, FiPlusCircle,
-  FiMinusCircle, FiChevronLeft, FiChevronRight,
-  FiChevronsLeft, FiChevronsRight, FiEye, FiEyeOff, FiCopy
+  FiSearch,
+  FiEdit2,
+  FiMoreVertical,
+  FiUser,
+  FiUserCheck,
+  FiUserX,
+  FiLock,
+  FiTrash2,
+  FiSlash,
+  FiPlusCircle,
+  FiMinusCircle,
+  FiChevronLeft,
+  FiChevronRight,
+  FiChevronsLeft,
+  FiChevronsRight,
+  FiEye,
+  FiEyeOff,
+  FiCopy,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Button } from "react-bootstrap";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
@@ -35,18 +49,18 @@ function AgentMaster() {
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingType, setProcessingType] = useState("");
-  const [itemsPerPageOptions] = useState([10, 20, 30, 40,50]);
+  const [itemsPerPageOptions] = useState([10, 20, 30, 40, 50]);
   const [showOTP, setShowOTP] = useState({});
   const [showPassword, setShowPassword] = useState({});
   const [passwordData, setPasswordData] = useState({
     oldPassword: "",
     newPassword: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
   const [showPasswords, setShowPasswords] = useState({
     oldPassword: false,
     newPassword: false,
-    confirmPassword: false
+    confirmPassword: false,
   });
   const [depositAmount, setDepositAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
@@ -61,10 +75,10 @@ function AgentMaster() {
     total_records: 0,
     total_pages: 1,
     current_page: 1,
-    limit: 50
+    limit: 50,
   });
   const [open, setOpen] = useState(false);
-const { adminId } = useParams();
+  const { adminId } = useParams();
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -75,8 +89,8 @@ const { adminId } = useParams();
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
   const admin_id = localStorage.getItem("admin_id");
-  const superAdminRole = localStorage.getItem("role")
-  const master_role = "2"
+  const superAdminRole = localStorage.getItem("role");
+  const master_role = "2";
   const role = "5";
   const token = localStorage.getItem("token");
   const dropdownRef = useRef(null);
@@ -122,16 +136,16 @@ const { adminId } = useParams();
   };
 
   const togglePasswordVisibility = (field) => {
-    setShowPasswords(prev => ({
+    setShowPasswords((prev) => ({
       ...prev,
-      [field]: !prev[field]
+      [field]: !prev[field],
     }));
   };
 
   const handlePasswordDataChange = (field, value) => {
-    setPasswordData(prev => ({
+    setPasswordData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
   const handleNext = () => {
@@ -148,7 +162,6 @@ const { adminId } = useParams();
       fetchAgentData(prevPage, itemsPerPage, searchTerm, filters);
     }
   };
-
 
   const handlePageClick = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -181,7 +194,12 @@ const { adminId } = useParams();
     return pageNumbers;
   };
 
-  const fetchAgentData = async (page = currentPage, limit = itemsPerPage, search = searchTerm, filterParams = filters) => {
+  const fetchAgentData = async (
+    page = currentPage,
+    limit = itemsPerPage,
+    search = searchTerm,
+    filterParams = filters,
+  ) => {
     try {
       setIsSearching(true);
       const requestData = {
@@ -190,7 +208,6 @@ const { adminId } = useParams();
         limit: limit,
         role: "5",
         admin_id: adminId || null,
-      
       };
       if (search && search.trim() !== "") {
         requestData.search = search.trim();
@@ -208,10 +225,10 @@ const { adminId } = useParams();
         requestData,
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
@@ -228,8 +245,12 @@ const { adminId } = useParams();
           admin_otp: agent.otp || "0",
           share: `${agent.match_share}%`,
           // commType: agent.commission_type === "1" ? "Flat" : "Percent",
-          commType: agent.commission_type === "1" ? "BBB" :
-            agent.commission_type === "0" ? "NOS" : "N/A",
+          commType:
+            agent.commission_type === "1"
+              ? "BBB"
+              : agent.commission_type === "0"
+                ? "NOS"
+                : "N/A",
           commission_type: agent.commission_type,
           commMatch: `${agent.match_comm}%`,
           commSession: `${agent.session_comm}%`,
@@ -238,16 +259,25 @@ const { adminId } = useParams();
           status: agent.active === 1 ? "Active" : "Inactive",
           is_blocked: agent.is_blocked,
           super_agent_id: agent.super_agent_id || agent.admin_id,
-          originalData: agent // Store original data for editing
+          originalData: agent, // Store original data for editing
         }));
 
         setAgentData(formattedData);
         // Update pagination info from API response
         if (response.data.pagination) {
           setPaginationData(response.data.pagination);
-          setTotalItems(response.data.pagination.total_records || response.data.pagination.total);
-          setTotalPages(response.data.pagination.total_pages || response.data.pagination.totalPages);
-          setCurrentPage(response.data.pagination.current_page || response.data.pagination.currentPage);
+          setTotalItems(
+            response.data.pagination.total_records ||
+              response.data.pagination.total,
+          );
+          setTotalPages(
+            response.data.pagination.total_pages ||
+              response.data.pagination.totalPages,
+          );
+          setCurrentPage(
+            response.data.pagination.current_page ||
+              response.data.pagination.currentPage,
+          );
           setItemsPerPage(response.data.pagination.limit || limit);
         }
 
@@ -261,13 +291,14 @@ const { adminId } = useParams();
       }
     } catch (error) {
       console.error("Error fetching agent data:", error);
-      showErrorToast("Failed to load agent data. Please check your connection.");
+      showErrorToast(
+        "Failed to load agent data. Please check your connection.",
+      );
     } finally {
       setLoading(false);
       setIsSearching(false);
     }
   };
-
 
   //   const fetchAdminData = async () => {
   //     try {
@@ -296,7 +327,6 @@ const { adminId } = useParams();
   //       console.error("Error fetching admin data:", error);
   //     }
   //   };
-
 
   //  const [adminData, setAdminData] = useState({});
 
@@ -332,17 +362,22 @@ const { adminId } = useParams();
   };
 
   const handleSearchKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };
-
 
   const blockInvalidKeys = (e) => {
     const key = e.key;
 
     // Allowed: Only digits + backspace + tab + arrows
-    const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
+    const allowedKeys = [
+      "Backspace",
+      "Delete",
+      "ArrowLeft",
+      "ArrowRight",
+      "Tab",
+    ];
 
     // ❌ If key is not a digit AND not an allowed special key → block it
     if (!/^\d$/.test(key) && !allowedKeys.includes(key)) {
@@ -376,17 +411,16 @@ const { adminId } = useParams();
   };
 
   const toggleTablePasswordVisibility = (adminId) => {
-    setShowPassword(prev => ({
+    setShowPassword((prev) => ({
       ...prev,
-      [adminId]: !prev[adminId]
+      [adminId]: !prev[adminId],
     }));
   };
 
-
   const toggleOTPVisibility = (adminId) => {
-    setShowOTP(prev => ({
+    setShowOTP((prev) => ({
       ...prev,
-      [adminId]: !prev[adminId]
+      [adminId]: !prev[adminId],
     }));
   };
 
@@ -405,26 +439,28 @@ const { adminId } = useParams();
         {
           admin_id: selectedAgent.admin_id,
           role: role,
-          active: newStatus
+          active: newStatus,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
-        showSuccessToast(`Agent ${newStatus === 1 ? "activated" : "deactivated"} successfully`);
+        showSuccessToast(
+          `Agent ${newStatus === 1 ? "activated" : "deactivated"} successfully`,
+        );
 
         // Update local state
-        setAgentData(prevData =>
-          prevData.map(agent =>
+        setAgentData((prevData) =>
+          prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? { ...agent, status: newStatus === 1 ? "Active" : "Inactive" }
-              : agent
-          )
+              : agent,
+          ),
         );
 
         setShowStatusModal(false);
@@ -449,32 +485,36 @@ const { adminId } = useParams();
         {
           admin_id: selectedAgent.admin_id,
           role: role,
-          is_blocked: newBlockStatus
+          is_blocked: newBlockStatus,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success == true) {
-        showSuccessToast(`Agent ${newBlockStatus == 1 ? "blocked" : "unblocked"} successfully`);
+        showSuccessToast(
+          `Agent ${newBlockStatus == 1 ? "blocked" : "unblocked"} successfully`,
+        );
 
         // Update local state
-        setAgentData(prevData =>
-          prevData.map(agent =>
+        setAgentData((prevData) =>
+          prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? { ...agent, is_blocked: newBlockStatus }
-              : agent
-          )
+              : agent,
+          ),
         );
 
         setShowBlockModal(false);
         setSelectedAgent(null);
       } else {
-        showErrorToast(response.data.message || "Failed to update block status");
+        showErrorToast(
+          response.data.message || "Failed to update block status",
+        );
       }
     } catch (error) {
       console.error("Error updating block status:", error);
@@ -492,14 +532,14 @@ const { adminId } = useParams();
  `,
         {
           admin_id: selectedAgent.admin_id,
-          role: role
+          role: role,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
@@ -544,37 +584,36 @@ const { adminId } = useParams();
           oldPassword: selectedAgent.password,
           newPassword: passwordData.newPassword,
 
-
           // confirmPassword: passwordData.confirmPassword
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
         showSuccessToast(response.data.message);
-        setAgentData(prevData =>
-          prevData.map(agent =>
+        setAgentData((prevData) =>
+          prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? { ...agent, password: passwordData.newPassword }
-              : agent
-          )
+              : agent,
+          ),
         );
         setShowPasswordModal(false);
         setSelectedAgent(null);
         setPasswordData({
           oldPassword: "",
           newPassword: "",
-          confirmPassword: ""
+          confirmPassword: "",
         });
         setShowPasswords({
           oldPassword: false,
           newPassword: false,
-          confirmPassword: false
+          confirmPassword: false,
         });
       } else {
         showErrorToast(response.data.message);
@@ -614,36 +653,39 @@ const { adminId } = useParams();
           role: role,
           // master_role: master_role,
           agent_id: selectedAgent.agent_id,
-          rem_role: superAdminRole
-
+          rem_role: superAdminRole,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
-        showSuccessToast(`₹${depositAmount} deposited successfully to ${selectedAgent.name}`);
+        showSuccessToast(
+          `₹${depositAmount} deposited successfully to ${selectedAgent.name}`,
+        );
         await fetchAgentData(currentPage, itemsPerPage, searchTerm, filters);
-        setAgentData(prevData =>
-          prevData.map(agent =>
+        setAgentData((prevData) =>
+          prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? {
-                ...agent,
-                chips: (Number(agent.chips) + depositValue).toString()
-              }
-              : agent
-          )
+                  ...agent,
+                  chips: (Number(agent.chips) + depositValue).toString(),
+                }
+              : agent,
+          ),
         );
         setShowDepositModal(false);
         setSelectedAgent(null);
         setDepositAmount("");
       } else {
         if (response.data.message === "Insufficient balance in Master Admin") {
-          showErrorToast("Master Admin has insufficient balance. Please add funds to your account first.");
+          showErrorToast(
+            "Master Admin has insufficient balance. Please add funds to your account first.",
+          );
         } else {
           showErrorToast(response.data.message);
         }
@@ -652,14 +694,21 @@ const { adminId } = useParams();
       console.error("Error depositing amount:", error);
 
       if (error.response) {
-        if (error.response.data && error.response.data.message === "Insufficient balance in Master Admin") {
-          showErrorToast("Master Admin has insufficient balance. Please add funds to your account first.");
+        if (
+          error.response.data &&
+          error.response.data.message === "Insufficient balance in Master Admin"
+        ) {
+          showErrorToast(
+            "Master Admin has insufficient balance. Please add funds to your account first.",
+          );
         } else {
-          showErrorToast(error.response.data?.message || "Failed to deposit amount. Please try again.");
+          showErrorToast(
+            error.response.data?.message ||
+              "Failed to deposit amount. Please try again.",
+          );
         }
       }
-    }
-    finally {
+    } finally {
       setIsProcessing(false);
       setProcessingType("");
     }
@@ -668,14 +717,20 @@ const { adminId } = useParams();
   const handleWithdrawFromAgent = async () => {
     if (!selectedAgent) return;
 
-    if (!withdrawAmount || isNaN(withdrawAmount) || Number(withdrawAmount) <= 0) {
+    if (
+      !withdrawAmount ||
+      isNaN(withdrawAmount) ||
+      Number(withdrawAmount) <= 0
+    ) {
       showErrorToast("Please enter a valid amount");
       return;
     }
 
     const withdrawValue = parseFloat(withdrawAmount);
     if (withdrawValue > Number(selectedAgent.credit)) {
-      showErrorToast(`Insufficient balance. Maximum withdrawable amount is ₹${selectedAgent.credit}`);
+      showErrorToast(
+        `Insufficient balance. Maximum withdrawable amount is ₹${selectedAgent.credit}`,
+      );
       return;
     }
 
@@ -689,31 +744,33 @@ const { adminId } = useParams();
           role: role,
           amount: withdrawValue,
           admin_id: selectedAgent.admin_id,
-          rem_role: superAdminRole
+          rem_role: superAdminRole,
           // master_admin_id: admin_id,
           // master_role: master_role,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
-        showSuccessToast(`₹${withdrawAmount} withdrawn successfully from ${selectedAgent.name}`);
+        showSuccessToast(
+          `₹${withdrawAmount} withdrawn successfully from ${selectedAgent.name}`,
+        );
         await fetchAgentData(currentPage, itemsPerPage, searchTerm, filters);
         // Update local state
-        setAgentData(prevData =>
-          prevData.map(agent =>
+        setAgentData((prevData) =>
+          prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? {
-                ...agent,
-                chips: (Number(agent.chips) - withdrawValue).toString()
-              }
-              : agent
-          )
+                  ...agent,
+                  chips: (Number(agent.chips) - withdrawValue).toString(),
+                }
+              : agent,
+          ),
         );
         setShowWithdrawModal(false);
         setSelectedAgent(null);
@@ -724,8 +781,7 @@ const { adminId } = useParams();
     } catch (error) {
       console.error("Error withdrawing amount:", error);
       showErrorToast("Failed to withdraw amount. Please try again.");
-    }
-    finally {
+    } finally {
       setIsProcessing(false);
       setProcessingType("");
     }
@@ -746,7 +802,6 @@ const { adminId } = useParams();
   const handleUpdateSuperAgent = (agent) => {
     navigate(`/Updatesuperagentmyuser/${agent.admin_id}`);
     localStorage.setItem("super_agent_idnew", agent.agent_id);
-
   };
   const handleDeletedUser = () => {
     navigate("/block-users-lists");
@@ -767,7 +822,8 @@ USER LOGIN DETAILS
 User Code: ${agent.admin_id || "N/A"}
 Password: ${agent.password || "N/A"}
 Login URL:${COPY_API_URL}`;
-    navigator.clipboard.writeText(textToCopy)
+    navigator.clipboard
+      .writeText(textToCopy)
       .then(() => {
         showSuccessToast("USER Login details copied!");
       })
@@ -778,15 +834,18 @@ Login URL:${COPY_API_URL}`;
   };
 
   const hasActiveFilters = filters.code !== "" || filters.name !== "";
-useEffect(() => {
-  fetchAgentData();
-}, [token, adminId]);
+  useEffect(() => {
+    fetchAgentData();
+  }, [token, adminId]);
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setOpenFilter(null);
       }
-      if (actionDropdownRef.current && !actionDropdownRef.current.contains(e.target)) {
+      if (
+        actionDropdownRef.current &&
+        !actionDropdownRef.current.contains(e.target)
+      ) {
         setDropdownOpen(null);
       }
     };
@@ -796,7 +855,10 @@ useEffect(() => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }}
+      >
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
@@ -807,17 +869,15 @@ useEffect(() => {
   return (
     <>
       <div className="card agentmaster">
-        <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+        <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
           <h5 className="card-title mb-0"> User Details</h5>
           <div className="d-flex gap-2">
-            <button
-              className="btn btn-success btn-sm"
-              onClick={handleCreateAgent}
-            >
+            <button className="btn btn-light" onClick={handleCreateAgent}>
               Create
             </button>
           </div>
         </div>
+
         <div className="card-body">
           <div className="row mb-3">
             <div className="col-md-6">
@@ -832,19 +892,13 @@ useEffect(() => {
                     onKeyPress={handleSearchKeyPress}
                   />
                   <button
-                    className="btn btn-outline-primary"
+                    className="btn btn-outline-success"
                     type="button"
                     onClick={handleSearch}
                     disabled={isSearching}
                   >
                     <FiSearch />
                   </button>
-
-
-
-
-
-
 
                   {(searchTerm || hasActiveFilters) && (
                     <button
@@ -858,9 +912,7 @@ useEffect(() => {
                 </div>
                 {hasActiveFilters && (
                   <div className="d-flex align-items-center">
-                    <span className="badge bg-info me-2">
-                      Filters Active
-                    </span>
+                    <span className="badge bg-info me-2">Filters Active</span>
                   </div>
                 )}
               </div>
@@ -899,7 +951,7 @@ useEffect(() => {
                     fetchAgentData(1, newItemsPerPage, searchTerm, filters);
                   }}
                 >
-                  {itemsPerPageOptions.map(option => (
+                  {itemsPerPageOptions.map((option) => (
                     <option key={option} value={option}>
                       {option}
                     </option>
@@ -920,9 +972,15 @@ useEffect(() => {
             <table className="table table-bordered table-hover">
               <thead className="table-dark">
                 <tr>
-                  <th rowSpan={2} className="text-center align-middle">SR.NO.</th>
-                  <th rowSpan={2} className="text-center align-middle">COPY</th>
-                  <th rowSpan={2} className="text-center align-middle">Action</th>
+                  <th rowSpan={2} className="text-center align-middle">
+                    SR.NO.
+                  </th>
+                  <th rowSpan={2} className="text-center align-middle">
+                    COPY
+                  </th>
+                  <th rowSpan={2} className="text-center align-middle">
+                    Action
+                  </th>
                   {/* Code */}
                   <th rowSpan={2} className="position-relative">
                     <div className="d-flex justify-content-between align-items-center">
@@ -951,7 +1009,9 @@ useEffect(() => {
                   {/* <th rowSpan={2}>Password</th> */}
                   {/* <th rowSpan={2}>OTP</th> */}
                   {/* <th rowSpan={2}>Share</th> */}
-                  <th colSpan={3} className="text-center">Comm %</th>
+                  <th colSpan={3} className="text-center">
+                    Comm %
+                  </th>
                   <th rowSpan={2}>Expo</th>
                   <th rowSpan={2}>chips</th>
                   <th rowSpan={2}>Status</th>
@@ -967,7 +1027,9 @@ useEffect(() => {
                 {agentData.length > 0 ? (
                   agentData.map((row, index) => (
                     <tr key={row.id}>
-                      <td className="text-center">{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                      <td className="text-center">
+                        {(currentPage - 1) * itemsPerPage + index + 1}
+                      </td>
                       <td className="text-center">
                         <button
                           className="viewdetailsbutton"
@@ -1008,14 +1070,20 @@ useEffect(() => {
                                   }}
                                 >
                                   <FiPlusCircle className="me-2" />
-                                  DEPOSIT
+                                  Deposit
                                 </div>
                               </li>
-                              <li className="dropdown-item custum_new_ul"
-                                onClick={() => navigate(`/Usertransaction/${row.admin_id}`)} x
-                              >
-                                <FiPlusCircle className="me-2" />
-                                Lena Dena
+                              <li>
+                                <div
+                                  className="dropdown-item custum_new_ul"
+                                  onClick={() =>
+                                    navigate(`/Usertransaction/${row.admin_id}`)
+                                  }
+                                  x
+                                >
+                                  <FiPlusCircle className="me-2" />
+                                  Lena Dena
+                                </div>
                               </li>
                               <li>
                                 <div
@@ -1027,9 +1095,8 @@ useEffect(() => {
                                   }}
                                 >
                                   <FiMinusCircle className="me-2" />
-                                  WITHDRAW
+                                  Withdraw
                                 </div>
-
                               </li>
                               <li>
                                 {row.status === "Active" ? (
@@ -1041,7 +1108,7 @@ useEffect(() => {
                                     }}
                                   >
                                     <FiUserX className="me-2" />
-                                    INACTIVE
+                                    Inactive
                                   </div>
                                 ) : (
                                   <div
@@ -1052,7 +1119,7 @@ useEffect(() => {
                                     }}
                                   >
                                     <FiUserCheck className="me-2" />
-                                    ACTIVE
+                                    Active
                                   </div>
                                 )}
                               </li>
@@ -1066,7 +1133,7 @@ useEffect(() => {
                                     }}
                                   >
                                     <FiSlash className="me-2" />
-                                    UNBLOCK
+                                    Unblock
                                   </div>
                                 ) : (
                                   <div
@@ -1077,7 +1144,7 @@ useEffect(() => {
                                     }}
                                   >
                                     <FiSlash className="me-2" />
-                                    BLOCK
+                                    Block
                                   </div>
                                 )}
                               </li>
@@ -1091,12 +1158,12 @@ useEffect(() => {
                                     setPasswordData({
                                       oldPassword: "",
                                       newPassword: "",
-                                      confirmPassword: ""
+                                      confirmPassword: "",
                                     });
                                     setShowPasswords({
                                       oldPassword: false,
                                       newPassword: false,
-                                      confirmPassword: false
+                                      confirmPassword: false,
                                     });
                                     setShowPasswordModal(true);
                                   }}
@@ -1118,7 +1185,6 @@ useEffect(() => {
                                   DELETE AGENT
                                 </button> */}
 
-
                               {/* View Details */}
                               {/* <button
                                   className="dropdown-item"
@@ -1130,17 +1196,13 @@ useEffect(() => {
 
                               {/* Update Super Agent */}
 
-
-
-
-
                               <li>
                                 <div
                                   className="dropdown-item custum_new_ul"
                                   onClick={() => handleUpdateSuperAgent(row)}
                                 >
                                   <FiUser className="me-2" />
-                                  EDIT
+                                  Edit
                                 </div>
                               </li>
                               <li>
@@ -1149,7 +1211,7 @@ useEffect(() => {
                                   onClick={() => handleStatementmasterlist(row)}
                                 >
                                   <FiUser className="me-2" />
-                                  STATEMENT
+                                  Statement
                                 </div>
                               </li>
                               {/* <li>
@@ -1164,7 +1226,9 @@ useEffect(() => {
                               <li>
                                 <div
                                   className="dropdown-item custum_new_ul"
-                                  onClick={() => handleStatementmasterlistoperation(row)}
+                                  onClick={() =>
+                                    handleStatementmasterlistoperation(row)
+                                  }
                                 >
                                   <FiUser className="me-2" />
                                   Account Operations
@@ -1205,14 +1269,17 @@ useEffect(() => {
 </td> */}
                       <td className="text-center">
                         {row?.originalData?.createdAt
-                          ? new Date(row.originalData.createdAt).toLocaleString("en-GB", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: true,
-                          })
+                          ? new Date(row.originalData.createdAt).toLocaleString(
+                              "en-GB",
+                              {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              },
+                            )
                           : "--"}
                       </td>
 
@@ -1266,18 +1333,19 @@ useEffect(() => {
                             : "N/A"}
                       </td>
 
-
-
                       <td className="text-center">{row.commMatch}</td>
                       <td className="text-center">{row.commSession}</td>
 
                       <td
                         className="text-center text-success"
-                        onClick={() => navigate("/user-exposer", { state: { user_id: row.originalData._id } })}
+                        onClick={() =>
+                          navigate("/user-exposer", {
+                            state: { user_id: row.originalData._id },
+                          })
+                        }
                       >
                         ₹{row.originalData?.exposer || "0"}
                       </td>
-
 
                       {/* <button
                         className="btn btn-sm btn-primary"
@@ -1289,37 +1357,45 @@ useEffect(() => {
                       <td className="text-center">
                         <div className="d-flex align-items-center justify-content-center">
                           {/* <span className="me-2">₹{row.credit}</span> */}
-                          <span className="me-2">
-                            ₹{(Number(row?.credit || 0) - Number(row?.originalData?.exposer || 0)).toFixed(2)}
-                          </span>
+                          <div className="me-2 w-50">
+                            ₹
+                            {(
+                              Number(row?.credit || 0) -
+                              Number(row?.originalData?.exposer || 0)
+                            ).toFixed(2)}
+                          </div>
 
-                          <button
-                            className="btn btn-sm btn-outline-success p-1 me-1"
-                            onClick={() => {
-                              setSelectedAgent(row);
-                              setDepositAmount("");
-                              setShowDepositModal(true);
-                            }}
-                            title="Deposit Balance"
-                          >
-                            <FiPlusCircle size={14} />
-                          </button>
-                          <button
-                            className="btn btn-sm btn-outline-danger p-1"
-                            onClick={() => {
-                              setSelectedAgent(row);
-                              setWithdrawAmount("");
-                              setShowWithdrawModal(true);
-                            }}
-                            title="Withdraw Balance"
-                          >
-                            <FiMinusCircle size={14} />
-                          </button>
+                          <div className="d-flex gap-1">
+                            <button
+                              className="btn btn-sm btn-outline-success"
+                              onClick={() => {
+                                setSelectedAgent(row);
+                                setDepositAmount("");
+                                setShowDepositModal(true);
+                              }}
+                              title="Deposit Balance"
+                            >
+                              <FiPlusCircle size={14} />
+                            </button>
+                            <button
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => {
+                                setSelectedAgent(row);
+                                setWithdrawAmount("");
+                                setShowWithdrawModal(true);
+                              }}
+                              title="Withdraw Balance"
+                            >
+                              <FiMinusCircle size={14} />
+                            </button>
+                          </div>
                         </div>
                       </td>
 
                       <td className="text-center">
-                        <span className={`${row.status === "Active" ? "activebadge" : "inactivebadge"}`}>
+                        <span
+                          className={`${row.status === "Active" ? "activebadge" : "inactivebadge"}`}
+                        >
                           {row.status}
                         </span>
                       </td>
@@ -1386,17 +1462,12 @@ useEffect(() => {
             </div>
           )} */}
 
-
-
           {totalPages > 1 && (
             <div className="d-flex justify-content-between align-items-center mt-4">
               <div className="sohwingallentries d-flex align-items-center gap-3">
-
-
-
                 {/* Showing entries text */}
                 <div>
-                  Showing {((currentPage - 1) * itemsPerPage) + 1} to{" "}
+                  Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
                   {Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
                   {totalItems} entries
                 </div>
@@ -1428,12 +1499,15 @@ useEffect(() => {
                   <MdOutlineKeyboardArrowRight />
                 </button>
               </div>
-
             </div>
           )}
         </div>
         {showStatusModal && selectedAgent && (
-          <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div
+            className="modal show d-block"
+            tabIndex="-1"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          >
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
                 <div className="modal-header">
@@ -1450,14 +1524,20 @@ useEffect(() => {
                 <div className="modal-body">
                   <p>
                     Are you sure you want to change the status of agent{" "}
-                    <strong>{selectedAgent.name}</strong> ({selectedAgent.code}) to{" "}
-                    <strong>{selectedAgent.status === "Active" ? "Inactive" : "Active"}</strong>?
+                    <strong>{selectedAgent.name}</strong> ({selectedAgent.code})
+                    to{" "}
+                    <strong>
+                      {selectedAgent.status === "Active"
+                        ? "Inactive"
+                        : "Active"}
+                    </strong>
+                    ?
                   </p>
                 </div>
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowStatusModal(false);
                       setSelectedAgent(null);
@@ -1467,7 +1547,7 @@ useEffect(() => {
                   </button>
                   <button
                     type="button"
-                    className="btn btn-primary"
+                    className="btn btn-success"
                     onClick={handleStatusChange}
                   >
                     Confirm
@@ -1478,7 +1558,11 @@ useEffect(() => {
           </div>
         )}
         {showBlockModal && selectedAgent && (
-          <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div
+            className="modal show d-block"
+            tabIndex="-1"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          >
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
                 <div className="modal-header">
@@ -1495,14 +1579,17 @@ useEffect(() => {
                 <div className="modal-body">
                   <p>
                     Are you sure you want to{" "}
-                    <strong>{selectedAgent.is_blocked === 1 ? "unblock" : "block"}</strong> agent{" "}
-                    <strong>{selectedAgent.name}</strong> ({selectedAgent.code})?
+                    <strong>
+                      {selectedAgent.is_blocked === 1 ? "unblock" : "block"}
+                    </strong>{" "}
+                    agent <strong>{selectedAgent.name}</strong> (
+                    {selectedAgent.code})?
                   </p>
                 </div>
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowBlockModal(false);
                       setSelectedAgent(null);
@@ -1524,7 +1611,11 @@ useEffect(() => {
         )}
 
         {showDeleteModal && selectedAgent && (
-          <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div
+            className="modal show d-block"
+            tabIndex="-1"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          >
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
                 <div className="modal-header">
@@ -1541,9 +1632,12 @@ useEffect(() => {
                 <div className="modal-body">
                   <p>
                     Are you sure you want to delete agent{" "}
-                    <strong>{selectedAgent.name}</strong> ({selectedAgent.code})?
+                    <strong>{selectedAgent.name}</strong> ({selectedAgent.code}
+                    )?
                     <br />
-                    <strong className="text-danger">This action cannot be undone.</strong>
+                    <strong className="text-danger">
+                      This action cannot be undone.
+                    </strong>
                   </p>
                 </div>
                 <div className="modal-footer">
@@ -1765,87 +1859,120 @@ useEffect(() => {
             </div>
           </div>
         )} */}
-{showPasswordModal && selectedAgent && (
-  <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-    <div className="modal-dialog modal-dialog-centered">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h5 className="modal-title">Reset Password - {selectedAgent.admin_id}</h5>
-          <button
-            type="button"
-            className="btn-close"
-            onClick={() => {
-              setShowPasswordModal(false);
-              setSelectedAgent(null);
-              setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
-            }}
-          />
-        </div>
-        <div className="modal-body">
-          {/* Dummy inputs to prevent auto-fill */}
-          <input type="text" style={{ display: 'none' }} />
-          <input type="password" style={{ display: 'none' }} />
-          
-          {/* Old Password - Backend value */}
-          <div className="mb-3">
-            <label className="form-label">Old Password</label>
-            <div className="input-group">
-              <input
-                type={showPasswords.oldPassword ? "text" : "password"}
-                className="form-control"
-                value={selectedAgent.password}
-                readOnly
-                style={{ backgroundColor: '#f5f5f5' }}
-              />
-              <button
-                className="btn btn-outline-secondary"
-                type="button"
-                onClick={() => togglePasswordVisibility("oldPassword")}
-              >
-                {showPasswords.oldPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
-              </button>
-            </div>
-            <small className="text-muted">Current password</small>
-          </div>
-          <div className="mb-3">
-            <label className="form-label">New Password</label>
-            <div className="input-group">
-              <input
-                type={showPasswords.newPassword ? "text" : "password"}
-                className="form-control"
-                value={passwordData.newPassword}
-                onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
-                placeholder="Enter new password (min. 6 characters)"
-                autoComplete="new-password"
-              />
-              <button
-                className="btn btn-outline-secondary"
-                type="button"
-                onClick={() => togglePasswordVisibility("newPassword")}
-              >
-                {showPasswords.newPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-secondary" onClick={() => setShowPasswordModal(false)}>
-            Cancel
-          </button>
-          <button 
-            className="btn btn-primary" 
-            onClick={handlePasswordChange}
-            disabled={!passwordData.newPassword || passwordData.newPassword.length < 6}
+        {showPasswordModal && selectedAgent && (
+          <div
+            className="modal show d-block"
+            tabIndex="-1"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
           >
-            Reset Password
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-)} 
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">
+                    Reset Password - {selectedAgent.admin_id}
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => {
+                      setShowPasswordModal(false);
+                      setSelectedAgent(null);
+                      setPasswordData({
+                        oldPassword: "",
+                        newPassword: "",
+                        confirmPassword: "",
+                      });
+                    }}
+                  />
+                </div>
+                <div className="modal-body">
+                  {/* Dummy inputs to prevent auto-fill */}
+                  <input type="text" style={{ display: "none" }} />
+                  <input type="password" style={{ display: "none" }} />
+
+                  {/* Old Password - Backend value */}
+                  <div className="mb-3">
+                    <label className="form-label">Old Password</label>
+                    <div className="input-group">
+                      <input
+                        type={showPasswords.oldPassword ? "text" : "password"}
+                        className="form-control"
+                        value={selectedAgent.password}
+                        readOnly
+                        style={{ backgroundColor: "#f5f5f5" }}
+                      />
+                      <button
+                        className="btn btn-outline-secondary"
+                        type="button"
+                        onClick={() => togglePasswordVisibility("oldPassword")}
+                      >
+                        {showPasswords.oldPassword ? (
+                          <FiEyeOff size={18} />
+                        ) : (
+                          <FiEye size={18} />
+                        )}
+                      </button>
+                    </div>
+                    <small className="text-muted">Current password</small>
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">New Password</label>
+                    <div className="input-group">
+                      <input
+                        type={showPasswords.newPassword ? "text" : "password"}
+                        className="form-control"
+                        value={passwordData.newPassword}
+                        onChange={(e) =>
+                          setPasswordData({
+                            ...passwordData,
+                            newPassword: e.target.value,
+                          })
+                        }
+                        placeholder="Enter new password (min. 6 characters)"
+                        autoComplete="new-password"
+                      />
+                      <button
+                        className="btn btn-outline-secondary"
+                        type="button"
+                        onClick={() => togglePasswordVisibility("newPassword")}
+                      >
+                        {showPasswords.newPassword ? (
+                          <FiEyeOff size={18} />
+                        ) : (
+                          <FiEye size={18} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => setShowPasswordModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="btn btn-info"
+                    onClick={handlePasswordChange}
+                    disabled={
+                      !passwordData.newPassword ||
+                      passwordData.newPassword.length < 6
+                    }
+                  >
+                    Reset Password
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         {showDepositModal && selectedAgent && (
-          <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div
+            className="modal show d-block"
+            tabIndex="-1"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          >
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
                 <div className="modal-header">
@@ -1864,7 +1991,8 @@ useEffect(() => {
                 </div>
                 <div className="modal-body">
                   <p>
-                    Deposit Balance to User: <strong>{selectedAgent.name}</strong>
+                    Deposit Balance to User:{" "}
+                    <strong>{selectedAgent.name}</strong>
                   </p>
                   <p className="mb-3">
                     Current Balance: <strong>₹{selectedAgent.credit}</strong>
@@ -1877,32 +2005,34 @@ useEffect(() => {
                       value={depositAmount}
                       onKeyDown={blockInvalidKeys}
                       onChange={(e) => setDepositAmount(e.target.value)}
-
                       placeholder="Enter amount to deposit"
                       min="1"
                       step="0.01"
                     />
                     <div className="form-text">
-                      Enter the amount you want to deposit to this user's account.
+                      Enter the amount you want to deposit to this user's
+                      account.
                     </div>
                   </div>
                   {depositAmount && !isNaN(depositAmount) && (
                     <div className="alert alert-info">
-                      <strong>New Balance:</strong> ₹{(Number(selectedAgent.credit) + Number(depositAmount)).toLocaleString()}
+                      <strong>New Balance:</strong> ₹
+                      {(
+                        Number(selectedAgent.credit) + Number(depositAmount)
+                      ).toLocaleString()}
                     </div>
                   )}
                 </div>
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowDepositModal(false);
                       setSelectedAgent(null);
                       setDepositAmount("");
                       setIsProcessing(false);
                       setProcessingType("");
-
                     }}
                   >
                     Cancel
@@ -1930,7 +2060,11 @@ useEffect(() => {
                   >
                     {isProcessing && processingType === "deposit" ? (
                       <>
-                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
                         Processing...
                       </>
                     ) : (
@@ -1940,7 +2074,6 @@ useEffect(() => {
                       </>
                     )}
                   </button>
-
                 </div>
               </div>
             </div>
@@ -1948,7 +2081,11 @@ useEffect(() => {
         )}
 
         {showWithdrawModal && selectedAgent && (
-          <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div
+            className="modal show d-block"
+            tabIndex="-1"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          >
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
                 <div className="modal-header">
@@ -1962,13 +2099,13 @@ useEffect(() => {
                       setWithdrawAmount("");
                       setIsProcessing(false);
                       setProcessingType("");
-
                     }}
                   ></button>
                 </div>
                 <div className="modal-body">
                   <p>
-                    Withdraw Balance from User: <strong>{selectedAgent.name}</strong>
+                    Withdraw Balance from User:{" "}
+                    <strong>{selectedAgent.name}</strong>
                   </p>
                   <p className="mb-3">
                     Current Balance: <strong>₹{selectedAgent.credit}</strong>
@@ -1992,19 +2129,24 @@ useEffect(() => {
                   </div>
                   {withdrawAmount && !isNaN(withdrawAmount) && (
                     <div className="alert alert-info">
-                      <strong>New Balance:</strong> ₹{(Number(selectedAgent.credit) - Number(withdrawAmount)).toLocaleString()}
+                      <strong>New Balance:</strong> ₹
+                      {(
+                        Number(selectedAgent.credit) - Number(withdrawAmount)
+                      ).toLocaleString()}
                     </div>
                   )}
-                  {withdrawAmount && Number(withdrawAmount) > Number(selectedAgent.credit) && (
-                    <div className="alert alert-danger">
-                      <strong>Error:</strong> Withdraw amount cannot exceed current balance
-                    </div>
-                  )}
+                  {withdrawAmount &&
+                    Number(withdrawAmount) > Number(selectedAgent.credit) && (
+                      <div className="alert alert-danger">
+                        <strong>Error:</strong> Withdraw amount cannot exceed
+                        current balance
+                      </div>
+                    )}
                 </div>
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowWithdrawModal(false);
                       setSelectedAgent(null);
@@ -2025,7 +2167,7 @@ useEffect(() => {
 
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className="btn btn-success"
                     onClick={handleWithdrawFromAgent}
                     disabled={
                       !withdrawAmount ||
@@ -2037,7 +2179,11 @@ useEffect(() => {
                   >
                     {isProcessing && processingType === "withdraw" ? (
                       <>
-                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
                         Processing...
                       </>
                     ) : (
@@ -2047,7 +2193,6 @@ useEffect(() => {
                       </>
                     )}
                   </button>
-
                 </div>
               </div>
             </div>
@@ -2055,7 +2200,11 @@ useEffect(() => {
         )}
 
         {showEditModal && selectedAgent && (
-          <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div
+            className="modal show d-block"
+            tabIndex="-1"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          >
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
                 <div className="modal-header">
@@ -2070,12 +2219,15 @@ useEffect(() => {
                   ></button>
                 </div>
                 <div className="modal-body">
-                  <p>Edit functionality would go here for agent: {selectedAgent.name}</p>
+                  <p>
+                    Edit functionality would go here for agent:{" "}
+                    {selectedAgent.name}
+                  </p>
                 </div>
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowEditModal(false);
                       setSelectedAgent(null);
@@ -2085,7 +2237,7 @@ useEffect(() => {
                   </button>
                   <button
                     type="button"
-                    className="btn btn-primary"
+                    className="btn btn-success"
                     onClick={() => {
                       showSuccessToast("Agent updated successfully");
                       setShowEditModal(false);
@@ -2099,7 +2251,6 @@ useEffect(() => {
             </div>
           </div>
         )}
-
       </div>
 
       <ToastContainer

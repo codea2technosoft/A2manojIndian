@@ -10,13 +10,9 @@ import { IoChatbubbleEllipsesSharp } from "react-icons/io5";
 import Swal from "sweetalert2";
 import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios"; // Add axios import
-import {
-  encryptData,
-  decryptData,
-  generateHMAC,
-} from "../Utils/encryption";
-import { addSuperAdminCoins } from "../Server/api"
-import logo from '../asset/image/logo.png'
+import { encryptData, decryptData, generateHMAC } from "../Utils/encryption";
+import { addSuperAdminCoins } from "../Server/api";
+import logo from "../asset/image/logo.png";
 
 function Header({ onToggleSidebar }) {
   const [darkMode, setDarkMode] = useState(false);
@@ -26,7 +22,7 @@ function Header({ onToggleSidebar }) {
   // console.log("hgh",passwordnew)
   // alert(passwordnew)
   const [coins, setCoins] = useState(0);
-  console.log("coins", coins)
+  console.log("coins", coins);
   const [AdminNotifiaction, setAdminNotifiaction] = useState(0);
   const [adminData, setAdminData] = useState(null);
   const socketRef = useRef(null);
@@ -91,7 +87,6 @@ function Header({ onToggleSidebar }) {
   //       setCoins(adminProfile.coins || 0);
   //       localStorage.setItem("adminProfile", JSON.stringify(adminProfile));
 
-
   // const check = localStorage.getItem("check");
 
   // // 🔥 MAIN LOGIC
@@ -106,8 +101,6 @@ function Header({ onToggleSidebar }) {
 
   //   }
   // };
-
-
 
   const fetchAdminProfile = async () => {
     try {
@@ -128,14 +121,14 @@ function Header({ onToggleSidebar }) {
         `${process.env.REACT_APP_API_URL}/get-data`,
         {
           role,
-          admin_id
+          admin_id,
         },
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
-        }
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
@@ -144,7 +137,11 @@ function Header({ onToggleSidebar }) {
 
         // ✅ Password check FIRST (important)
         if (check !== adminProfile.password) {
-          console.log("Password mismatch ramraj ❌", check, adminProfile.password);
+          console.log(
+            "Password mismatch ramraj ❌",
+            check,
+            adminProfile.password,
+          );
 
           // cleanup
           localStorage.clear();
@@ -167,7 +164,6 @@ function Header({ onToggleSidebar }) {
 
         navigate("/login");
       }
-
     } catch (error) {
       console.error("Error fetching profile:", error);
 
@@ -193,7 +189,7 @@ function Header({ onToggleSidebar }) {
           title: "Success",
           text: message,
           icon: "success",
-          confirmButtonText: "OK"
+          confirmButtonText: "OK",
         }).then((result) => {
           if (result.isConfirmed) {
             setShowDepositModal(false);
@@ -207,16 +203,11 @@ function Header({ onToggleSidebar }) {
         Swal.fire("Error", message || "Failed to add coins", "error");
       }
     } catch (error) {
-      Swal.fire(
-        "Error",
-        error?.response?.data?.message,
-        "error"
-      );
+      Swal.fire("Error", error?.response?.data?.message, "error");
     } finally {
       setIsLoading(false);
     }
   };
-
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -430,7 +421,7 @@ function Header({ onToggleSidebar }) {
     setIsLoading(true);
 
     try {
-      const admin_id = localStorage.getItem("admin_id")
+      const admin_id = localStorage.getItem("admin_id");
       const token = localStorage.getItem("token");
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/change-password`,
@@ -446,7 +437,7 @@ function Header({ onToggleSidebar }) {
             password: newPassword,
             // confirmPassword,
           }),
-        }
+        },
       );
 
       const resJson = await response.json();
@@ -456,7 +447,6 @@ function Header({ onToggleSidebar }) {
           icon: "success",
           title: "Success",
           text: resJson.message,
-
         });
         localStorage.setItem("check", newPassword);
       } else {
@@ -466,7 +456,6 @@ function Header({ onToggleSidebar }) {
           text: resJson.message,
         });
       }
-
     } catch (err) {
       Swal.fire({
         icon: "error",
@@ -478,9 +467,6 @@ function Header({ onToggleSidebar }) {
       setIsOpen(false);
     }
   };
-
-
-
 
   useEffect(() => {
     let startY = 0;
@@ -560,19 +546,12 @@ function Header({ onToggleSidebar }) {
     };
   }, []);
 
-
   return (
     <div className="header" id="header">
-
       <div className="d-flex justify-content-between px-2 w-100">
         <div className="logo-box d-xl-none d-md-none d-sm-block">
-
           <a href="/dashboard">
-            <img
-              src={logo}
-              alt="logo"
-              className="logo-lg"
-            />
+            <img src={logo} alt="logo" className="logo-lg" />
           </a>
         </div>
 
@@ -582,13 +561,11 @@ function Header({ onToggleSidebar }) {
           </div>
         </div>
         <div className="linksmode">
-
-
           {/* Coins Display */}
           <div className="coins-display d-flex gap-2">
-            <div className="d-flex">
+            <div className="d-flex gap-1 align-items-center">
               <FaCoins className="text-warning" />
-              <span className="fw-bold">Coin:</span>
+              <span className="fw-bold">Coin :</span>
             </div>
             <span className="">{coins}</span>
           </div>
@@ -603,7 +580,6 @@ function Header({ onToggleSidebar }) {
             {darkMode ? <FaSun /> : <FaMoon />}
           </div> */}
 
-
           <div className="profilie" ref={dropdownRef}>
             <div className="profile-header" onClick={toggleDropdown}>
               {/* <div className="profileimage">
@@ -613,13 +589,12 @@ function Header({ onToggleSidebar }) {
                 />
               </div> */}
               <div className="desktop_device">
-
                 <div className="name d-flex flex-column">
                   <span>
-                    {username?.split(" ")
-                      .map(word => word.charAt(0).toUpperCase())
+                    {username
+                      ?.split(" ")
+                      .map((word) => word.charAt(0).toUpperCase())
                       .join("")}
-
                   </span>
                   {/* <small className="text-muted d-flex align-items-center gap-1"> */}
                   {/* <FaCoins size={12} /> {coins} Coinsffffffffffff */}
@@ -627,8 +602,9 @@ function Header({ onToggleSidebar }) {
                 </div>
               </div>
               <div
-                className={`arrowprofile transition-transform duration-300 ${dropdownOpen ? "rotate-180" : ""
-                  }`}
+                className={`arrowprofile transition-transform duration-300 ${
+                  dropdownOpen ? "rotate-180" : ""
+                }`}
               >
                 <IoIosArrowDown />
               </div>
@@ -658,7 +634,10 @@ function Header({ onToggleSidebar }) {
                 >
                   <FiUser /> Change Password
                 </div>
-                <div className="dropdown-item flex items-center gap-2" onClick={() => setShowDepositModal(true)}>
+                <div
+                  className="dropdown-item flex items-center gap-2"
+                  onClick={() => setShowDepositModal(true)}
+                >
                   <FaCoins size={14} /> Add Coins
                 </div>
                 <div
@@ -678,7 +657,12 @@ function Header({ onToggleSidebar }) {
           </div>
         </div>
       </div>
-      <Modal show={isOpen} onHide={() => setIsOpen(false)} centered backdrop="static">
+      <Modal
+        show={isOpen}
+        onHide={() => setIsOpen(false)}
+        centered
+        backdrop="static"
+      >
         <Modal.Header closeButton>
           <Modal.Title>Change Password</Modal.Title>
         </Modal.Header>
@@ -719,7 +703,11 @@ function Header({ onToggleSidebar }) {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setIsOpen(false)} disabled={isLoading}>
+          <Button
+            variant="secondary"
+            onClick={() => setIsOpen(false)}
+            disabled={isLoading}
+          >
             Cancel
           </Button>
           <Button variant="primary" onClick={handleSubmit} disabled={isLoading}>
@@ -727,7 +715,12 @@ function Header({ onToggleSidebar }) {
           </Button>
         </Modal.Footer>
       </Modal>
-      <Modal show={showDepositModal} onHide={() => setShowDepositModal(false)} centered backdrop="static">
+      <Modal
+        show={showDepositModal}
+        onHide={() => setShowDepositModal(false)}
+        centered
+        backdrop="static"
+      >
         <Modal.Header closeButton>
           <Modal.Title>Deposit Coins</Modal.Title>
         </Modal.Header>
@@ -757,10 +750,18 @@ function Header({ onToggleSidebar }) {
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDepositModal(false)} disabled={isLoading}>
+          <Button
+            variant="secondary"
+            onClick={() => setShowDepositModal(false)}
+            disabled={isLoading}
+          >
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleDeposit} disabled={isLoading}>
+          <Button
+            variant="primary"
+            onClick={handleDeposit}
+            disabled={isLoading}
+          >
             {isLoading ? "Processing..." : "Deposit"}
           </Button>
         </Modal.Footer>

@@ -756,13 +756,13 @@ Login URL: ${COPY_API_URL}
   return (
     <>
       <div className="card agentmaster">
-        <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+        <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
           <h5 className="card-title mb-0">Masters Lists</h5>
           <div className="d-flex gap-2">
-            <button className="btn btn-success" onClick={handleCreateAgent}>
+            <button className="btn btn-light" onClick={handleCreateAgent}>
               Create
             </button>
-            <button className="btn btn-light" onClick={handleBack}>
+            <button className="btn btn-outline-light" onClick={handleBack}>
               Back
             </button>
           </div>
@@ -962,22 +962,22 @@ Login URL: ${COPY_API_URL}
                                   }}
                                 >
                                   <FiPlusCircle className="me-2" />
-                                  DEPOSIT
+                                  Deposit
                                 </div>
                               </li>
 
-                              <li
-                                className="dropdown-item custum_new_ul"
-                                onClick={() => {
-                                  //  setSelectedAgent(row)
-                                  navigate(
-                                    `/master-transaction/${row.admin_id}`,
-                                  );
-                                }}
-                                style={{ cursor: "pointer" }}
-                              >
-                                <FiPlusCircle className="me-2" />
-                                Lena Dena
+                              <li>
+                                <div
+                                  className="dropdown-item custum_new_ul"
+                                  onClick={() => {
+                                    navigate(
+                                      `/master-transaction/${row.admin_id}`,
+                                    );
+                                  }}
+                                >
+                                  <FiPlusCircle className="me-2" />
+                                  Lena Dena
+                                </div>
                               </li>
                               {/* WITHDRAW */}
                               <li>
@@ -991,7 +991,7 @@ Login URL: ${COPY_API_URL}
                                   }}
                                 >
                                   <FiMinusCircle className="me-2" />
-                                  WITHDRAW
+                                  Withdraw
                                 </div>
                               </li>
 
@@ -1019,7 +1019,7 @@ Login URL: ${COPY_API_URL}
                                   }}
                                 >
                                   <FiUserCheck className="me-2" />
-                                  ACCOUNT OPERATION
+                                  Account Operation
                                 </div>
                               </li>
 
@@ -1035,7 +1035,7 @@ Login URL: ${COPY_API_URL}
                                     }}
                                   >
                                     <FiUserX className="me-2" />
-                                    MAKE INACTIVE
+                                    Make Inactive
                                   </div>
                                 ) : (
                                   <div
@@ -1047,7 +1047,7 @@ Login URL: ${COPY_API_URL}
                                     }}
                                   >
                                     <FiUserCheck className="me-2" />
-                                    MAKE ACTIVE
+                                    Make Active
                                   </div>
                                 )}
                               </li>
@@ -1099,7 +1099,7 @@ Login URL: ${COPY_API_URL}
                                   }}
                                 >
                                   <FiLock className="me-2" />
-                                  RESET PASSWORD
+                                  Reset Password
                                 </div>
                               </li>
 
@@ -1142,7 +1142,7 @@ Login URL: ${COPY_API_URL}
                                   }}
                                 >
                                   <FiUser className="me-2" />
-                                  STATEMENT
+                                  Statement
                                 </div>
                               </li>
                             </ul>
@@ -1399,7 +1399,7 @@ Login URL: ${COPY_API_URL}
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowStatusModal(false);
                       setSelectedAgent(null);
@@ -1467,7 +1467,7 @@ Login URL: ${COPY_API_URL}
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowBlockModal(false);
                       setSelectedAgent(null);
@@ -1766,13 +1766,13 @@ Login URL: ${COPY_API_URL}
                 </div>
                 <div className="modal-footer">
                   <button
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => setShowPasswordModal(false)}
                   >
                     Cancel
                   </button>
                   <button
-                    className="btn btn-primary"
+                    className="btn btn-info"
                     onClick={handlePasswordChange}
                     disabled={
                       !passwordData.newPassword ||
@@ -1844,7 +1844,7 @@ Login URL: ${COPY_API_URL}
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowDepositModal(false);
                       setSelectedAgent(null);
@@ -1965,7 +1965,7 @@ Login URL: ${COPY_API_URL}
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowWithdrawModal(false);
                       setSelectedAgent(null);
@@ -1990,7 +1990,7 @@ Login URL: ${COPY_API_URL}
                   </button> */}
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className="btn btn-success"
                     onClick={handleWithdrawFromAgent}
                     onKeyDown={blockInvalidKeys}
                     disabled={
@@ -2053,7 +2053,7 @@ Login URL: ${COPY_API_URL}
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowEditModal(false);
                       setSelectedAgent(null);

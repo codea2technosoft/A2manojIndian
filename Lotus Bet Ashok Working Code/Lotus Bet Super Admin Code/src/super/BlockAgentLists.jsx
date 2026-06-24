@@ -185,9 +185,9 @@ const handleBlockUnblock = async (agent) => {
   return (
     <>
       <div className="card agentmaster">
-        <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
           <h5 className="mb-0">Blocked Agent Lists</h5>
-          <Button size="sm" className="btn-success" onClick={handleBack}>Back</Button>
+          <button className="btn btn-outline-light" onClick={handleBack}>Back</button>
         </div>
 
         <div className="card-body">

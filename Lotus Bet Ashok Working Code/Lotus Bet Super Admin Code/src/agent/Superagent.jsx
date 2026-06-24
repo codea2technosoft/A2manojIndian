@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
-
 function Superagent() {
   const navigate = useNavigate();
 
@@ -104,20 +103,18 @@ function Superagent() {
   return (
     <div className="card agentmaster">
       <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
-        <h5 className="card-title mb-0">Super Agent  Details</h5>
+        <h5 className="card-title mb-0">Super Agent Details</h5>
         <div className="d-flex gap-2">
+          <button className="btn btn-light" onClick={() => navigate("/")}>
+            Create Agent
+          </button>{" "}
+          <button className="btn btn-success">Update</button>
           <button
-            className="btn btn-success btn-sm"
+            className="btn btn-outline-light"
             onClick={() => navigate(-1)}
           >
             Back
           </button>
-          <button
-            className="btn btn-success btn-sm"
-            onClick={() => navigate("/")}
-          >
-            Create Agent
-          </button>        <button className="btn btn-success btn-sm">Update</button>
         </div>
       </div>
 
@@ -126,7 +123,9 @@ function Superagent() {
           <table className="table table-bordered table-hover">
             <thead className="table-dark">
               <tr>
-                <th rowSpan={2} className="text-center align-middle">#</th>
+                <th rowSpan={2} className="text-center align-middle">
+                  #
+                </th>
                 <th rowSpan={2}></th>
 
                 {/* Code */}
@@ -142,15 +141,19 @@ function Superagent() {
                         className="form-control mb-2"
                         placeholder="Search Code"
                         value={filters.code}
-                        onChange={(e) =>
-                          handleChange("code", e.target.value)
-                        }
+                        onChange={(e) => handleChange("code", e.target.value)}
                       />
                       <div className="d-flex gap-2">
-                        <button className="btn btn-sm btn-primary w-100" onClick={handleSearch}>
+                        <button
+                          className="btn btn-sm btn-primary w-100"
+                          onClick={handleSearch}
+                        >
                           Search
                         </button>
-                        <button className="btn btn-sm btn-outline-secondary w-100" onClick={() => handleCancel("code")}>
+                        <button
+                          className="btn btn-sm btn-outline-secondary w-100"
+                          onClick={() => handleCancel("code")}
+                        >
                           Cancel
                         </button>
                       </div>
@@ -171,15 +174,19 @@ function Superagent() {
                         className="form-control mb-2"
                         placeholder="Search Name"
                         value={filters.name}
-                        onChange={(e) =>
-                          handleChange("name", e.target.value)
-                        }
+                        onChange={(e) => handleChange("name", e.target.value)}
                       />
                       <div className="d-flex gap-2">
-                        <button className="btn btn-sm btn-primary w-100" onClick={handleSearch}>
+                        <button
+                          className="btn btn-sm btn-primary w-100"
+                          onClick={handleSearch}
+                        >
                           Search
                         </button>
-                        <button className="btn btn-sm btn-outline-secondary w-100" onClick={() => handleCancel("name")}>
+                        <button
+                          className="btn btn-sm btn-outline-secondary w-100"
+                          onClick={() => handleCancel("name")}
+                        >
                           Cancel
                         </button>
                       </div>
@@ -191,7 +198,9 @@ function Superagent() {
                 <th rowSpan={2}>D.O.J</th>
                 <th rowSpan={2}>Password</th>
                 <th rowSpan={2}>Share</th>
-                <th colSpan={3} className="text-center">Comm %</th>
+                <th colSpan={3} className="text-center">
+                  Comm %
+                </th>
                 <th rowSpan={2}>Chips</th>
                 <th rowSpan={2}>Status</th>
               </tr>
@@ -221,7 +230,9 @@ function Superagent() {
                     <td className="text-center">{row.commSession}</td>
                     <td className="text-center">{row.chips}</td>
                     <td className="text-center">
-                      <span className={`badge ${row.status === "Active" ? "bg-success" : "bg-danger"}`}>
+                      <span
+                        className={`badge ${row.status === "Active" ? "bg-success" : "bg-danger"}`}
+                      >
                         {row.status}
                       </span>
                     </td>

@@ -222,11 +222,11 @@ function InActiveAgentLists() {
   return (
     <>
       <div className="card agentmaster">
-        <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
           <h5 className="mb-0">Inactive Agent List</h5>
           <div className="d-flex gap-2">
             <button
-              className="btn btn-success btn-sm"
+              className="btn btn-outline-light"
               onClick={handleBack}
             >
               Back

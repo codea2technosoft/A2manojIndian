@@ -2,13 +2,8 @@ import { useEffect, useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { getAllEvents } from "../../Server/api";
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-  FiSearch, FiMoreVertical,
-
-} from "react-icons/fi";
-import {
-  getCompletedMatchList,
-} from "../../Server/api";
+import { FiSearch, FiMoreVertical } from "react-icons/fi";
+import { getCompletedMatchList } from "../../Server/api";
 import { IoClose } from "react-icons/io5";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
@@ -29,7 +24,7 @@ export default function Dashboard() {
     totalPages: 1,
   });
   const [page, setPage] = useState(1);
- const [limit, setLimit] = useState(50);
+  const [limit, setLimit] = useState(50);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -43,16 +38,14 @@ export default function Dashboard() {
 
   // safer alias
   const itemsPerPage = pagination.itemsPerPage;
-  const admin_id = localStorage.getItem("admin_id")
+  const admin_id = localStorage.getItem("admin_id");
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const sportId = searchParams.get("sportId");
   const seriesId = searchParams.get("seriesId");
   const navigate = useNavigate();
 
-
-
-  const fetchMatchResultList = async (pageNo = page,limitValue = limit) => {
+  const fetchMatchResultList = async (pageNo = page, limitValue = limit) => {
     try {
       setLoading(true);
 
@@ -68,12 +61,12 @@ export default function Dashboard() {
         setTotalPages(res.data.pages);
         setPage(res.data.page);
         setSummary(res.data.summary);
-         setPagination({
-    currentPage: res.data.page,
-    itemsPerPage: limitValue,
-    totalItems: res.data.total,
-    totalPages: res.data.pages,
-  });
+        setPagination({
+          currentPage: res.data.page,
+          itemsPerPage: limitValue,
+          totalItems: res.data.total,
+          totalPages: res.data.pages,
+        });
       }
     } catch (err) {
       console.error("Match result list error", err);
@@ -82,25 +75,22 @@ export default function Dashboard() {
     }
   };
 
-
   useEffect(() => {
     fetchMatchResultList();
   }, [sportId, seriesId]);
 
-
   const formatDate = (date) => {
     if (!date) return "-";
     const d = new Date(date);
-    const day = d.getDate().toString().padStart(2, '0');
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    const day = d.getDate().toString().padStart(2, "0");
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
     const year = d.getFullYear();
     const hours = d.getHours();
-    const minutes = d.getMinutes().toString().padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const minutes = d.getMinutes().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
     const formattedHours = hours % 12 || 12;
     return `${day}/${month}/${year} ${formattedHours}:${minutes} ${ampm}`;
   };
-
 
   const handleMatchClicknew = (market_id, event_id, e) => {
     e.preventDefault();
@@ -139,7 +129,10 @@ export default function Dashboard() {
         pageNumbers.push(i);
       }
     } else {
-      let start = Math.max(1, pagination.currentPage - Math.floor(maxVisiblePages / 2));
+      let start = Math.max(
+        1,
+        pagination.currentPage - Math.floor(maxVisiblePages / 2),
+      );
       let end = Math.min(pagination.totalPages, start + maxVisiblePages - 1);
 
       if (end - start + 1 < maxVisiblePages) {
@@ -183,11 +176,21 @@ export default function Dashboard() {
           </div>
 
           <div className="modal-links">
-            <p><b>Competition:</b> {game.series_name}</p>
-            <p><b>Open Date:</b> {formatDate(game.openDate)}</p>
-            <p><b>Status:</b> {getStatus(game)}</p>
-            <p><b>Event ID:</b> {game.event_id}</p>
-            <p><b>Market ID:</b> {game.market_id}</p>
+            <p>
+              <b>Competition:</b> {game.series_name}
+            </p>
+            <p>
+              <b>Open Date:</b> {formatDate(game.openDate)}
+            </p>
+            <p>
+              <b>Status:</b> {getStatus(game)}
+            </p>
+            <p>
+              <b>Event ID:</b> {game.event_id}
+            </p>
+            <p>
+              <b>Market ID:</b> {game.market_id}
+            </p>
           </div>
 
           <div className="p-2 d-flex justify-content-end">
@@ -210,7 +213,7 @@ export default function Dashboard() {
 
   const handleMatchBet = (agent) => {
     navigate(`/match_bet/${agent.event_id}`);
-    console.log("agent.event_id", agent.event_id)
+    console.log("agent.event_id", agent.event_id);
   };
 
   const handleSessionBet = (agent) => {
@@ -220,20 +223,20 @@ export default function Dashboard() {
   const handleCompletedSession = (agent) => {
     navigate(`/completed-session/${agent.event_id}`);
   };
-const handleLimitChange = (e) => {
-  const newLimit = Number(e.target.value);
+  const handleLimitChange = (e) => {
+    const newLimit = Number(e.target.value);
 
-  setLimit(newLimit);
-  setPage(1);
+    setLimit(newLimit);
+    setPage(1);
 
-  setPagination((prev) => ({
-    ...prev,
-    currentPage: 1,
-    itemsPerPage: newLimit,
-  }));
+    setPagination((prev) => ({
+      ...prev,
+      currentPage: 1,
+      itemsPerPage: newLimit,
+    }));
 
-  fetchMatchResultList(1, newLimit);
-};
+    fetchMatchResultList(1, newLimit);
+  };
   const handleRejectedBet = (agent) => {
     navigate(`/rejected_bet/${agent.event_id}`);
   };
@@ -242,7 +245,10 @@ const handleLimitChange = (e) => {
     setSearchInput("");
     setSearchTerm("");
     setFilters({ code: "", name: "" });
-    fetchMatchResultList(1, pagination.itemsPerPage, "", { code: "", name: "" });
+    fetchMatchResultList(1, pagination.itemsPerPage, "", {
+      code: "",
+      name: "",
+    });
   };
 
   const handleSearch = () => {
@@ -252,7 +258,6 @@ const handleLimitChange = (e) => {
     // }
     fetchMatchResultList(1, itemsPerPage, searchInput.trim(), filters);
   };
-
 
   const handleClearAllFilters = () => {
     if (filters.code !== "" || filters.name !== "") {
@@ -266,7 +271,7 @@ const handleLimitChange = (e) => {
   };
 
   const handleSearchKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };
@@ -281,9 +286,8 @@ const handleLimitChange = (e) => {
             </div>
           </CardHeader>
           <CardBody>
-
-            <div className="row mb-3 justify-content-end">
-              {/* <div className="col-md-6">
+            {/* <div className="row mb-3 justify-content-end">
+              <div className="col-md-6">
                 <div className="d-flex">
                   <div className="input-group me-2" style={{ width: "300px" }}>
                     <input
@@ -333,10 +337,8 @@ const handleLimitChange = (e) => {
                     </small>
                   </div>
                 )}
-              </div> */}
-
-    
-            </div>
+              </div>
+            </div> */}
             {/* {summary && (
               <div className="rounded bg-light">
 
@@ -371,50 +373,47 @@ const handleLimitChange = (e) => {
               </div>
             )} */}
 
+            {summary && (
+              <div className="rounded bg-light p-2">
+                <div className="d-flex justify-content-between align-items-center text-uppercase">
+                  <div className="d-flex gap-4">
+                    <div>
+                      <strong>P&L: </strong>
+                      <span
+                        style={{
+                          color:
+                            summary.pl > 0
+                              ? "green"
+                              : summary.pl < 0
+                                ? "red"
+                                : "black",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {summary.pl.toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
 
-{summary && (
-  <div className="rounded bg-light p-2">
-
-    <div className="d-flex justify-content-between align-items-center text-uppercase">
-
-      {/* LEFT SIDE : SUMMARY */}
-      <div className="d-flex gap-4">
-
-        <div>
-          <strong>P&L: </strong>
-            <span
-                      style={{
-                        color:summary.pl > 0 ? "green":summary.pl < 0
-                              ? "red"
-                              : "black", fontWeight: "bold",
-                      }}
+                  {/* RIGHT SIDE : PER PAGE LIMIT */}
+                  {/* {marketData.length > 0 &( */}
+                  <div className="d-flex align-items-center gap-2">
+                    <select
+                      className="form-select form-select-sm"
+                      style={{ width: "80px" }}
+                      value={limit}
+                      onChange={handleLimitChange}
                     >
-                      {summary.pl.toFixed(2)}
-                    </span>
-        </div>
-
-      </div>
-
-
-      {/* RIGHT SIDE : PER PAGE LIMIT */}
-      {/* {marketData.length > 0 &( */}
-    <div className="d-flex align-items-center gap-2">
-        <select
-          className="form-select form-select-sm"
-          style={{ width: "80px" }}
-          value={limit}
-          onChange={handleLimitChange}
-        >
-          <option value={10}>10</option>
-          <option value={20}>20</option>
-          <option value={30}>30</option>
-          <option value={50}>50</option>
-        </select>
-      </div>
-      {/* )} */}
-    </div>
-  </div>
-)}
+                      <option value={10}>10</option>
+                      <option value={20}>20</option>
+                      <option value={30}>30</option>
+                      <option value={50}>50</option>
+                    </select>
+                  </div>
+                  {/* )} */}
+                </div>
+              </div>
+            )}
 
             <div className="table-responsive">
               <table className="table table-bordered table-hover">
@@ -434,7 +433,10 @@ const handleLimitChange = (e) => {
                   {gamesLoading ? (
                     <tr>
                       <td colSpan="5" className="text-center">
-                        <div className="spinner-border spinner-border-sm" role="status">
+                        <div
+                          className="spinner-border spinner-border-sm"
+                          role="status"
+                        >
                           <span className="visually-hidden">Loading...</span>
                         </div>
                         Loading matches...
@@ -454,8 +456,12 @@ const handleLimitChange = (e) => {
                             <div
                               className="dropdown-toggle newtoggle"
                               type="button"
-                              onClick={() => toggleActionDropdown(game.id || index)}
-                              aria-expanded={dropdownOpen === (game.id || index)}
+                              onClick={() =>
+                                toggleActionDropdown(game.id || index)
+                              }
+                              aria-expanded={
+                                dropdownOpen === (game.id || index)
+                              }
                             >
                               <FiMoreVertical />
                             </div>
@@ -488,9 +494,8 @@ const handleLimitChange = (e) => {
                                       handleMatchAndSessionPL(game);
                                       // toggleActionDropdown(null);
                                     }}
-
                                   >
-                                   Match&SESSION PL
+                                    Match&SESSION PL
                                     {/* MATCH AND SESSION PL */}
                                   </div>
                                 </li>
@@ -550,11 +555,7 @@ const handleLimitChange = (e) => {
                         <td
                           style={{
                             color:
-                              game.pl > 0
-                                ? "green"
-                                : game.pl < 0
-                                  ? "red"
-                                  : "",
+                              game.pl > 0 ? "green" : game.pl < 0 ? "red" : "",
                             fontWeight: "600",
                           }}
                         >
@@ -585,9 +586,14 @@ const handleLimitChange = (e) => {
             {pagination.totalPages > 1 && (
               <div className="d-flex justify-content-between align-items-center mt-4">
                 <div className="sohwingallentries d-flex align-items-center gap-3">
-                  Showing {((pagination.currentPage - 1) * pagination.itemsPerPage) + 1} to{" "}
-                  {Math.min(pagination.currentPage * pagination.itemsPerPage, pagination.totalItems)} of{" "}
-                  {pagination.totalItems} entries
+                  Showing{" "}
+                  {(pagination.currentPage - 1) * pagination.itemsPerPage + 1}{" "}
+                  to{" "}
+                  {Math.min(
+                    pagination.currentPage * pagination.itemsPerPage,
+                    pagination.totalItems,
+                  )}{" "}
+                  of {pagination.totalItems} entries
                 </div>
 
                 <div className="paginationall d-flex align-items-center gap-2">
@@ -603,7 +609,7 @@ const handleLimitChange = (e) => {
                     {getPageNumbers().map((page) => (
                       <button
                         key={page}
-                        className={`btn btn-sm ${pagination.currentPage === page ? 'btn-primary' : 'btn-outline-primary'}`}
+                        className={`btn btn-sm ${pagination.currentPage === page ? "btn-primary" : "btn-outline-primary"}`}
                         onClick={() => handlePageClick(page)}
                       >
                         {page}
@@ -620,10 +626,8 @@ const handleLimitChange = (e) => {
                     <MdOutlineKeyboardArrowRight />
                   </button>
                 </div>
-
               </div>
             )}
-
           </CardBody>
         </Card>
       </div>

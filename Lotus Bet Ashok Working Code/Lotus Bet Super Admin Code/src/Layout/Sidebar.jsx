@@ -820,13 +820,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         //   ],
         // },
 
-        {
-          id: "slider",
-          title: "Slider",
-          path: "/slider_lists",
-          icon: <FaImages />,
-        },
-
          {
           id: "GameReports",
           title: "Reports",
@@ -886,6 +879,15 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
             },
           ],
         },
+
+        {
+          id: "slider",
+          title: "Slider",
+          path: "/slider_lists",
+          icon: <FaImages />,
+        },
+
+        
 
         // {
         //   id: "Sub_Admin",

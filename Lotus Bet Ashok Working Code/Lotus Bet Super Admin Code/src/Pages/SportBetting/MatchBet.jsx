@@ -139,12 +139,10 @@ function MatchBet() {
 
 
   return (
-    <div className="card mt-4">
-
-      {/* 🔷 Header (MATCH BOOK + BACK BUTTON) */}
+    <div className="card">
       <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
         <h5 className="mb-0 fw-bold">MATCH BETS</h5>
-        <button className="btn btn-sm btn-light"
+        <button className="btn btn-outline-light"
           onClick={() => navigate(-1)}>
           Back</button>
       </div>

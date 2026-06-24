@@ -17,6 +17,7 @@ import {
   Button,
   Badge,
 } from "react-bootstrap";
+import { FaArrowLeft } from "react-icons/fa";
 
 const Accountoperation = () => {
   const navigate = useNavigate();
@@ -235,14 +236,14 @@ const Accountoperation = () => {
           </h5>
           <div className="d-flex align-items-center gap-2">
             <button
-              className="backbutton"
+              className="btn btn-light"
               onClick={refreshData}
               title="Refresh"
             >
               Refresh
             </button>
-            <button className="backbutton" onClick={() => navigate(-1)}>
-              <i className="fas fa-arrow-left me-1"></i> Back
+            <button className="btn btn-outline-light" onClick={() => navigate(-1)}>
+              Back
             </button>
           </div>
         </div>

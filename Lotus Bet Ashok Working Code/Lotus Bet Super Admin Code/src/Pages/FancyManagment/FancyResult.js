@@ -12,7 +12,7 @@ import {
   deleteAllFancyBets,
   deleteFancyBets,
   getFancyByList,
-  deleteFancyBetOddwise
+  deleteFancyBetOddwise,
 } from "../../Server/api";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
@@ -34,7 +34,7 @@ const FancyResult = () => {
   const [searchInput, setSearchInput] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentFancy, setCurrentFancy] = useState(null);
-  const [betType, setBetType] = useState("");   // back / lay
+  const [betType, setBetType] = useState(""); // back / lay
   const [odd, setOdd] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -62,8 +62,7 @@ const FancyResult = () => {
       }
     } catch (err) {
       toast.error("Error fetching fancies");
-    }
-    finally {
+    } finally {
       setLoading(false);
       setIsSearching(false);
     }
@@ -77,7 +76,9 @@ const FancyResult = () => {
         fancy_id: f.fancy_id,
         event_id: f.event_id,
         bet_on: betType || "",
-        startdate: startDate ? moment(startDate).format("YYYY-MM-DD HH:mm:ss") : "",
+        startdate: startDate
+          ? moment(startDate).format("YYYY-MM-DD HH:mm:ss")
+          : "",
         enddate: endDate ? moment(endDate).format("YYYY-MM-DD HH:mm:ss") : "",
         odd: odd || "",
         page: 1,
@@ -103,7 +104,9 @@ const FancyResult = () => {
       const payload = {
         fancy_id: currentFancy.fancy_id,
         event_id: currentFancy.event_id,
-        startdate: startDate ? moment(startDate).format("YYYY-MM-DD HH:mm:ss") : "",
+        startdate: startDate
+          ? moment(startDate).format("YYYY-MM-DD HH:mm:ss")
+          : "",
         enddate: endDate ? moment(endDate).format("YYYY-MM-DD HH:mm:ss") : "",
         bet_on: betType || "",
         odd: odd || "",
@@ -115,11 +118,9 @@ const FancyResult = () => {
 
       const res = await getFancyByList(payload);
       if (res.data.status_code === 1) {
-
-          setViewData(res.data.data);
-            setStartDate("");
-            setEndDate("");
-            
+        setViewData(res.data.data);
+        setStartDate("");
+        setEndDate("");
       } else {
         toast.error(res.data.message);
       }
@@ -128,22 +129,18 @@ const FancyResult = () => {
     }
   };
 
-
-
-
   const getStatusBadge = (f) => {
     if (f.is_rollback) return <span className="badge bg-danger">Rollback</span>;
     // if (f.is_settled) return <span className="badge bg-primary">Settled</span>;
-    if (f.result_val) return <span className="badge bg-success">Result Declared</span>;
+    if (f.result_val)
+      return <span className="badge bg-success">Result Declared</span>;
     return <span className="badge bg-warning text-dark">Pending</span>;
   };
-
-
 
   const handleDeleteBets = async (f) => {
     const ok = await confirmAction(
       "Delete All Bets?",
-      `All bets will be deleted for Fancy: ${f.name}`
+      `All bets will be deleted for Fancy: ${f.name}`,
     );
 
     if (!ok.isConfirmed) return;
@@ -169,15 +166,13 @@ const FancyResult = () => {
     }
   };
 
-
-
   // const handleInputChange = (id, value) =>
   //   setInputValues((prev) => ({ ...prev, [id]: value }));
 
   const handleInputChange = (fancyId, value) => {
-    setInputValues(prev => ({
+    setInputValues((prev) => ({
       ...prev,
-      [fancyId]: value
+      [fancyId]: value,
     }));
   };
   const setBtnLoader = (id, val) => {
@@ -187,7 +182,7 @@ const FancyResult = () => {
   const confirmAction = async (title, htmlMessage) => {
     return await Swal.fire({
       title: title,
-      html: htmlMessage,   // HTML now renders
+      html: htmlMessage, // HTML now renders
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -197,7 +192,6 @@ const FancyResult = () => {
     });
   };
 
-
   const handleUpdateResult = async (f) => {
     // const result_val = inputValues[f.fancy_id];
     const result_val = inputValues[f._id];
@@ -206,7 +200,7 @@ const FancyResult = () => {
 
     const ok = await confirmAction(
       "Update Fancy Result?",
-      `Fancy: ${f.team} (ID: ${f.fancy_id})`
+      `Fancy: ${f.team} (ID: ${f.fancy_id})`,
     );
     if (!ok.isConfirmed) return;
 
@@ -244,7 +238,7 @@ const FancyResult = () => {
       "Delete Bets?",
       `Bets will be deleted for <b>${currentFancy.name}</b> <br/> 
      Bet Type: <b>${betType}</b><br/>
-     Odd: <b>${odd}</b>`
+     Odd: <b>${odd}</b>`,
     );
     if (!ok.isConfirmed) return;
 
@@ -253,7 +247,9 @@ const FancyResult = () => {
 
       const payload = {
         fancy_id: currentFancy.fancy_id,
-        startdate: startDate ? moment(startDate).format("YYYY-MM-DD HH:mm:ss") : "",
+        startdate: startDate
+          ? moment(startDate).format("YYYY-MM-DD HH:mm:ss")
+          : "",
         enddate: endDate ? moment(endDate).format("YYYY-MM-DD HH:mm:ss") : "",
         // bet_on: betType,
         // odd: odd,
@@ -269,7 +265,7 @@ const FancyResult = () => {
         setOdd("");
         setStartDate("");
         setEndDate("");
-        fetchFullFancyList();  // reset & load full list
+        fetchFullFancyList(); // reset & load full list
       } else {
         toast.error(res.data.message);
       }
@@ -308,7 +304,7 @@ const FancyResult = () => {
 
     const ok = await confirmAction(
       `${f.name}`,
-      `<b>Result Value:</b> ${value}`
+      `<b>Result Value:</b> ${value}`,
     );
     if (!ok.isConfirmed) return;
 
@@ -332,7 +328,7 @@ const FancyResult = () => {
         });
 
         fetchFancyList();
-        return
+        return;
       }
 
       if (res.data.status_code === 0) {
@@ -340,7 +336,7 @@ const FancyResult = () => {
           title: "Oops!",
           text: res.data.message,
         });
-        fetchFancyList();  // 👈 Refresh Fancy List (Fail)
+        fetchFancyList(); // 👈 Refresh Fancy List (Fail)
 
         return;
       }
@@ -368,7 +364,7 @@ const FancyResult = () => {
   };
 
   const handleSearchKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };
@@ -381,7 +377,7 @@ const FancyResult = () => {
   const handleRollback = async (f) => {
     const ok = await confirmAction(
       "Rollback Settlement?",
-      `Fancy: ${f.team} (ID: ${f.fancy_id})`
+      `Fancy: ${f.team} (ID: ${f.fancy_id})`,
     );
     if (!ok.isConfirmed) return;
 
@@ -406,7 +402,7 @@ const FancyResult = () => {
   const handleBetDelete = async (f) => {
     const ok = await confirmAction(
       "Delete Bets?",
-      `This bet will be deleted for Fancy: ${f.name}`
+      `This bet will be deleted for Fancy: ${f.name}`,
     );
 
     if (!ok.isConfirmed) return;
@@ -431,31 +427,29 @@ const FancyResult = () => {
     }
   };
   return (
-    <div className="card mt-3">
-      <div className="card-header bg-dark text-white d-flex justify-content-between">
+    <div className="card">
+      <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
         <h5 className="mb-0">Fancy Result Management</h5>
 
-        <div className="d-flex flex-nowrap">
-
+        <div className="d-flex flex-nowrap gap-2">
           <button
             className="backbutton"
-            onClick={() => window.location.href = window.location.href}
+            onClick={() => (window.location.href = window.location.href)}
           >
             <MdRefresh size={20} />
           </button>
 
-
-          <button className="backbutton" onClick={() => navigate(-1)}>
+          <button
+            className="btn btn-outline-light"
+            onClick={() => navigate(-1)}
+          >
             Back
           </button>
-
         </div>
       </div>
       <div className="card-body">
-
         {fancies.length > 0 && (
           <div className="row mb-3 align-items-center">
-
             <div className="col-md-6">
               <div className="d-flex">
                 <div className="input-group me-2" style={{ width: "300px" }}>
@@ -468,7 +462,7 @@ const FancyResult = () => {
                     onKeyPress={handleSearchKeyPress}
                   />
                   <button
-                    className="btn btn-outline-primary"
+                    className="btn btn-outline-success"
                     type="button"
                     onClick={handleSearch}
                     disabled={isSearching}
@@ -478,7 +472,7 @@ const FancyResult = () => {
 
                   {(searchTerm || hasActiveFilters) && (
                     <button
-                      className="btn btn-outline-secondary"
+                      className="btn btn-outline-danger"
                       type="button"
                       onClick={handleClearSearch}
                     >
@@ -508,19 +502,15 @@ const FancyResult = () => {
                 </div>
               )}
             </div>
-
           </div>
         )}
-
-
 
         {loading ? (
           <p>Loading...</p>
         ) : fancies.length === 0 ? (
-          <p>No Fancy Found.</p>
+          <p className="text-center">No Fancy Found.</p>
         ) : (
           <div className="table-responsive">
-
             <table className="table table-striped table-hover">
               <thead className="table-dark">
                 <tr>
@@ -543,13 +533,14 @@ const FancyResult = () => {
                     {/* <td>{f.stake}</td> */}
                     {/* <td>{f.odd}</td> */}
                     <td>
-
                       <button
                         className="btn btn-danger btn-sm mt-1"
                         disabled={btnLoading["delete_" + f.fancy_id]}
                         onClick={() => handleDeleteBets(f)}
                       >
-                        {btnLoading["delete_" + f.fancy_id] ? "Deleting..." : "Abundent"}
+                        {btnLoading["delete_" + f.fancy_id]
+                          ? "Deleting..."
+                          : "Abundent"}
                       </button>
                     </td>
 
@@ -581,7 +572,9 @@ const FancyResult = () => {
                         disabled={btnLoading["settle_" + f.fancy_id]}
                         onClick={() => handleSettle(f)}
                       >
-                        {btnLoading["settle_" + f.fancy_id] ? "Processing..." : "Result"}
+                        {btnLoading["settle_" + f.fancy_id]
+                          ? "Processing..."
+                          : "Result"}
                       </button>
                       {/* //view// */}
                       <button
@@ -589,7 +582,11 @@ const FancyResult = () => {
                         disabled={btnLoading["view_" + f.fancy_id]}
                         onClick={() => handleViewFancy(f)}
                       >
-                        {btnLoading["view_" + f.fancy_id] ? "..." : <AiFillEye size={18} />}
+                        {btnLoading["view_" + f.fancy_id] ? (
+                          "..."
+                        ) : (
+                          <AiFillEye size={18} />
+                        )}
                       </button>
 
                       {/* SETTLE */}
@@ -629,12 +626,19 @@ const FancyResult = () => {
         )}
       </div>
       {showModal && (
-        <div className="modal fade show" style={{ display: "block", background: "rgba(0,0,0,0.5)" }}>
+        <div
+          className="modal fade show"
+          style={{ display: "block", background: "rgba(0,0,0,0.5)" }}
+        >
           <div className="modal-dialog modal-dialog-centered modal-lg">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Fancy Details</h5>
-                <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowModal(false)}
+                ></button>
               </div>
               <div className="modal-body p-1">
                 <div className="row g-2 p-2">
@@ -665,7 +669,9 @@ const FancyResult = () => {
                   </div> */}
                   {/* Start Date */}
                   <div className="col-md-4">
-                    <label className="form-label mb-0"><small>Start Date</small></label>
+                    <label className="form-label mb-0">
+                      <small>Start Date</small>
+                    </label>
                     <input
                       type="datetime-local"
                       step="1"
@@ -677,7 +683,9 @@ const FancyResult = () => {
 
                   {/* End Date */}
                   <div className="col-md-4">
-                    <label className="form-label mb-0"><small>End Date</small></label>
+                    <label className="form-label mb-0">
+                      <small>End Date</small>
+                    </label>
                     <input
                       type="datetime-local"
                       step="1"
@@ -687,12 +695,16 @@ const FancyResult = () => {
                     />
                   </div>
                   <div className="col-md-3 d-flex gap-2 align-items-end">
-                    <button className="refreshbutton" onClick={Applyfilter}>
+                    <button className="btn btn-success" onClick={Applyfilter}>
                       Apply
                     </button>
                     <button
-                      className="refreshbutton"
-                      onClick={() => { setBetType(""); setOdd(""); Applyfilter(); }}
+                      className="btn btn-danger"
+                      onClick={() => {
+                        setBetType("");
+                        setOdd("");
+                        Applyfilter();
+                      }}
                     >
                       Reset
                     </button>
@@ -726,22 +738,25 @@ const FancyResult = () => {
                           <td>{i + 1}</td>
                           <td>
                             {/* {moment(x.created_at).format("DD-MM-YYYY hh:mm:ss A")} */}
-                             {moment(x.created_at).utcOffset("+05:30").format("DD-MM-YYYY HH:mm:ss")}
-
+                            {moment(x.created_at)
+                              .utcOffset("+05:30")
+                              .format("DD-MM-YYYY HH:mm:ss")}
                           </td>
                           <td>{x.admin_id}</td>
                           <td>
                             <span
-                              className={`badge ${x.bet_on === "lay" ? "bg-danger" : "bg-success"
-                                }`}
+                              className={`badge ${
+                                x.bet_on === "lay" ? "bg-danger" : "bg-success"
+                              }`}
                             >
                               {x.bet_on === "lay" ? "NO" : "YES"}
                             </span>
                           </td>
                           <td>{x.stake}</td>
-                          <td>{x.odd}/{x.total}</td>
+                          <td>
+                            {x.odd}/{x.total}
+                          </td>
                           {/* <td>{x.total}</td> */}
-
                         </tr>
                       ))}
                     </tbody>
@@ -750,14 +765,17 @@ const FancyResult = () => {
               </div>
 
               <div className="modal-footer p-1">
-                <button className="refreshbutton" onClick={() => setShowModal(false)}>Close</button>
+                <button
+                  className="btn btn-danger"
+                  onClick={() => setShowModal(false)}
+                >
+                  Close
+                </button>
               </div>
-
             </div>
           </div>
         </div>
       )}
-
     </div>
   );
 };

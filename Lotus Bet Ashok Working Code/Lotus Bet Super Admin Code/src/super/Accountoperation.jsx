@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { MdOutlineKeyboardArrowRight, MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import {
+  MdOutlineKeyboardArrowRight,
+  MdOutlineKeyboardArrowLeft,
+} from "react-icons/md";
 
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
@@ -12,7 +15,7 @@ import {
   Spinner,
   Form,
   Button,
-  Badge
+  Badge,
 } from "react-bootstrap";
 
 const Accountoperation = () => {
@@ -52,10 +55,10 @@ const Accountoperation = () => {
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
@@ -81,12 +84,14 @@ const Accountoperation = () => {
               }
 
               // Format as DD-MM-YYYY HH:MM:SS
-              const day = dateObj.getDate().toString().padStart(2, '0');
-              const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+              const day = dateObj.getDate().toString().padStart(2, "0");
+              const month = (dateObj.getMonth() + 1)
+                .toString()
+                .padStart(2, "0");
               const year = dateObj.getFullYear();
-              const hours = dateObj.getHours().toString().padStart(2, '0');
-              const minutes = dateObj.getMinutes().toString().padStart(2, '0');
-              const seconds = dateObj.getSeconds().toString().padStart(2, '0');
+              const hours = dateObj.getHours().toString().padStart(2, "0");
+              const minutes = dateObj.getMinutes().toString().padStart(2, "0");
+              const seconds = dateObj.getSeconds().toString().padStart(2, "0");
 
               return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
             } catch (error) {
@@ -118,7 +123,7 @@ const Accountoperation = () => {
             performedById: item.performed_by?.admin_id || "N/A",
             adminId: item.admin_id || "N/A",
             operationType: getOperationType(item.operation || ""),
-            rawDate: item.created_at
+            rawDate: item.created_at,
           };
         });
 
@@ -126,11 +131,16 @@ const Accountoperation = () => {
 
         // Apply search filter
         if (searchTerm) {
-          const filtered = formattedData.filter(item =>
-            item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.operation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.performedBy.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.adminId.toLowerCase().includes(searchTerm.toLowerCase())
+          const filtered = formattedData.filter(
+            (item) =>
+              item.description
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
+              item.operation.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              item.performedBy
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
+              item.adminId.toLowerCase().includes(searchTerm.toLowerCase()),
           );
           setFilteredData(filtered);
         } else {
@@ -170,13 +180,13 @@ const Accountoperation = () => {
   // Pagination handlers
   const handleNext = () => {
     if (currentPage < totalPages) {
-      setCurrentPage(prev => prev + 1);
+      setCurrentPage((prev) => prev + 1);
     }
   };
 
   const handlePrev = () => {
     if (currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
+      setCurrentPage((prev) => prev - 1);
     }
   };
 
@@ -254,15 +264,14 @@ const Accountoperation = () => {
         limit={3} // Maximum 3 toasts at a time
       />
 
-      <div className="container-fluid">
-        <div className="card">
-          <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
-            <h5 className="card-title mb-0">
-              <i className="fas fa-history me-2"></i>
-              Account Operations
-            </h5>
-            <div className="d-flex align-items-center gap-2">
-              {/* <Form.Control
+      <div className="card">
+        <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+          <h5 className="card-title mb-0">
+            <i className="fas fa-history me-2"></i>
+            Account Operations
+          </h5>
+          <div className="d-flex align-items-center gap-2">
+            {/* <Form.Control
                 type="text"
                 placeholder="Search operations..."
                 value={searchTerm}
@@ -270,109 +279,101 @@ const Accountoperation = () => {
                 className="me-2"
                 style={{ width: '250px' }}
               /> */}
-              {/* <button
+            {/* <button
                 className="backbutton"
                 onClick={refreshData}
               >
                 refresh   
                   </button> */}
-              <button
-                className="backbutton"
-                onClick={() => navigate(-1)}
-              >
-                <i className="fas fa-arrow-left me-1"></i> Back
-              </button>
-            </div>
+            <button
+              className="btn btn-outline-light"
+              onClick={() => navigate(-1)}
+            >
+              {" "}
+              Back
+            </button>
           </div>
+        </div>
 
-          <div className="card-body">
-            {loading ? (
-              <div className="text-center py-5">
-                <Spinner animation="border" variant="primary" />
-                <p className="mt-2">Loading operation logs...</p>
-              </div>
-            ) : filteredData.length === 0 ? (
-              <div className="text-center py-5">
-                <i className="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
-                <h5>NO OPERATION RECORDS FOUND</h5>
-                <p className="text-muted">
-                  {searchTerm ? "No matching operations found for your search" : "No operation logs available"}
-                </p>
-                {searchTerm && (
-                  <button
-                    onClick={clearSearch}
-                    className="refreshbutton"
-                  >
-                    Clear Search
-                  </button>
-                )}
-              </div>
-            ) : (
-              <>
-                {/* Operations Table */}
-                <div className="table-responsive">
-                  <Table striped bordered hover className="mb-0">
-                    <thead className="table-dark">
-                      <tr>
-                        <th width="150">DATE & TIME</th>
-                        <th width="150">OPERATION</th>
-                        <th>DESCRIPTION</th>
+        <div className="card-body">
+          {loading ? (
+            <div className="text-center py-5">
+              <Spinner animation="border" variant="primary" />
+              <p className="mt-2">Loading operation logs...</p>
+            </div>
+          ) : filteredData.length === 0 ? (
+            <div className="text-center py-5">
+              <i className="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+              <h5>NO OPERATION RECORDS FOUND</h5>
+              <p className="text-muted">
+                {searchTerm
+                  ? "No matching operations found for your search"
+                  : "No operation logs available"}
+              </p>
+              {searchTerm && (
+                <button onClick={clearSearch} className="refreshbutton">
+                  Clear Search
+                </button>
+              )}
+            </div>
+          ) : (
+            <>
+              {/* Operations Table */}
+              <div className="table-responsive">
+                <Table striped bordered hover className="mb-0">
+                  <thead className="table-dark">
+                    <tr>
+                      <th width="150">DATE & TIME</th>
+                      <th width="150">OPERATION</th>
+                      <th>DESCRIPTION</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {getPaginatedData().map((item) => (
+                      <tr key={item.id}>
+                        <td className="text-nowrap">
+                          <div className="fw-semibold">{item.date}</div>
+                        </td>
+                        <td>
+                          <div bg={item.operationType} className="w-100">
+                            {item.operation}
+                          </div>
+                        </td>
+                        <td>
+                          <div className="mb-1">{item.description}</div>
+                          {item.rawDate && (
+                            <small className="text-muted">
+                              <i className="far fa-clock me-1"></i>
+                              {new Date(item.rawDate).toLocaleTimeString()}
+                            </small>
+                          )}
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {getPaginatedData().map((item) => (
-                        <tr key={item.id}>
-                          <td className="text-nowrap">
-                            <div className="fw-semibold">{item.date}</div>
-                          </td>
-                          <td>
-                            <div bg={item.operationType} className="w-100">
-                              {item.operation}
-                            </div>
-                          </td>
-                          <td>
-                            <div className="mb-1">{item.description}</div>
-                            {item.rawDate && (
-                              <small className="text-muted">
-                                <i className="far fa-clock me-1"></i>
-                                {new Date(item.rawDate).toLocaleTimeString()}
-                              </small>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                </div>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
 
+              {totalPages > 1 && (
+                <div className="d-flex justify-content-between align-items-center mt-4">
+                  <div className="sohwingallentries">
+                    Showing {(currentPage - 1) * limit + 1} to{" "}
+                    {Math.min(currentPage * limit, filteredData.length)} of{" "}
+                    {filteredData.length} entries
+                    {searchTerm && " (filtered)"}
+                  </div>
 
+                  <div className="paginationall d-flex align-items-center gap-1">
+                    <button
+                      disabled={currentPage === 1}
+                      onClick={handlePrev}
+                      className=""
+                    >
+                      <MdOutlineKeyboardArrowLeft />
+                    </button>
 
-
-
-                {totalPages > 1 && (
-                  <div className="d-flex justify-content-between align-items-center mt-4">
-
-                    <div className="sohwingallentries">
-                      Showing {((currentPage - 1) * limit) + 1} to{" "}
-                      {Math.min(currentPage * limit, filteredData.length)} of{" "}
-                      {filteredData.length} entries
-                      {searchTerm && " (filtered)"}
-                    </div>
-
-                    <div className="paginationall d-flex align-items-center gap-1">
-
-
-                      <button
-                        disabled={currentPage === 1}
-                        onClick={handlePrev}
-                        className=""
-                      >
-                        <MdOutlineKeyboardArrowLeft />
-                      </button>
-
-
-                      <div className="d-flex gap-1">
-                        {/* {getPageNumbers().map((page) => (
+                    <div className="d-flex gap-1">
+                      {/* {getPageNumbers().map((page) => (
                           <div
                             key={page}
                             className={currentPage === page ? "paginationnumber" : "paginationnumber"}
@@ -382,36 +383,32 @@ const Accountoperation = () => {
                             {page}
                           </div>
                         ))} */}
-                        {getPageNumbers().map((page) => (
-                          <div
-                            key={page}
-                            className={`paginationnumber ${currentPage === page ? "active" : ""
-                              }`}
-                            onClick={() => handlePageClick(page)}
-                          >
-                            {page}
-                          </div>
-                        ))}
-                      </div>
-
-                      <button
-                        disabled={currentPage === totalPages}
-                        onClick={handleNext}
-                        className=""
-                      >
-                        <MdOutlineKeyboardArrowRight />
-                      </button>
-
+                      {getPageNumbers().map((page) => (
+                        <div
+                          key={page}
+                          className={`paginationnumber ${
+                            currentPage === page ? "active" : ""
+                          }`}
+                          onClick={() => handlePageClick(page)}
+                        >
+                          {page}
+                        </div>
+                      ))}
                     </div>
+
+                    <button
+                      disabled={currentPage === totalPages}
+                      onClick={handleNext}
+                      className=""
+                    >
+                      <MdOutlineKeyboardArrowRight />
+                    </button>
                   </div>
-                )}
+                </div>
+              )}
 
-
-
-
-
-                {/* Pagination */}
-                {/* {totalPages > 1 && (
+              {/* Pagination */}
+              {/* {totalPages > 1 && (
                   <div className="d-flex justify-content-between align-items-center mt-4">
                     <div>
                       <span className="text-muted">
@@ -477,27 +474,26 @@ const Accountoperation = () => {
                   </div>
                 )} */}
 
-                {/* Search Info */}
-                {searchTerm && (
-                  <div className="alert alert-info mt-3 py-2">
-                    <div className="d-flex justify-content-between align-items-center">
-                      <small>
-                        <i className="fas fa-info-circle me-1"></i>
-                        Showing {filteredData.length} results for: "{searchTerm}"
-                      </small>
-                      <Button
-                        variant="outline-info"
-                        size="sm"
-                        onClick={clearSearch}
-                      >
-                        Clear Search
-                      </Button>
-                    </div>
+              {/* Search Info */}
+              {searchTerm && (
+                <div className="alert alert-info mt-3 py-2">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <small>
+                      <i className="fas fa-info-circle me-1"></i>
+                      Showing {filteredData.length} results for: "{searchTerm}"
+                    </small>
+                    <Button
+                      variant="outline-info"
+                      size="sm"
+                      onClick={clearSearch}
+                    >
+                      Clear Search
+                    </Button>
                   </div>
-                )}
-              </>
-            )}
-          </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
     </>

@@ -104,20 +104,22 @@ function Superagent() {
   return (
     <div className="card agentmaster">
     <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
-        <h5 className="card-title mb-0">Super Agent  Details</h5>
+        <h5 className="card-title mb-0">Super Agent Details</h5>
         <div className="d-flex gap-2">
+
           <button
-            className="btn btn-success btn-sm"
+            className="btn btn-light"
+            onClick={() => navigate("/")}
+          >
+            Create Agent
+          </button>       
+           <button className="btn btn-success">Update</button>
+                     <button
+            className="btn btn-outline-light"
             onClick={() => navigate(-1)}
           >
             Back
           </button>
-          <button
-            className="btn btn-success btn-sm"
-            onClick={() => navigate("/")}
-          >
-            Create Agent
-          </button>        <button className="btn btn-success btn-sm">Update</button>
         </div>
       </div>
 

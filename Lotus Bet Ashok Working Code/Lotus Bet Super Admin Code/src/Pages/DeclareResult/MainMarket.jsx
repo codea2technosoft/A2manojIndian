@@ -342,7 +342,7 @@ function MainMarket() {
       <div className="card">
         <div className="card-header bg-primary-yellow">
           <div className="d-flex justify-content-between align-items-center">
-            <h3 className="card-title  mb-0">Declared Main Result</h3>
+            <h3 className="card-title mb-0">Declared Main Result</h3>
           </div>
         </div>
         <div className="card-body">
@@ -447,7 +447,7 @@ function MainMarket() {
               {/* 🔹 Declare Button */}
               <div className="buttonsubmit">
                 <button
-                  className={`importbutton w-auto h-auto ${isButtonDisabled ? "disabled-button" : ""}`}
+                  className={`btn btn-success w-auto h-auto ${isButtonDisabled ? "disabled-button" : ""}`}
                   type="button"
                   // disabled={isButtonDisabled}
                   disabled={declareLoading}
@@ -463,7 +463,7 @@ function MainMarket() {
 
         </div>
         <div className="card-body">
-          <div className="card mt-3">
+          <div className="card">
             <div className="card-header bg-primary-yellow">
               <h5 className="card-title  mb-0">
                 Declared Match Result List
@@ -471,7 +471,7 @@ function MainMarket() {
             </div>
             <div className="card-body table-responsive">
               <table className="table table-bordered">
-                <thead>
+                <thead className="table-dark">
                   <tr>
                     <th>Sr.No.</th>
                     <th>Date&Time</th>

@@ -12,7 +12,6 @@ const AllPLStatementlist = () => {
   const location = useLocation();
   const { adminId } = useParams();
 
-  
   const [loading, setLoading] = useState(true);
   const [statementData, setStatementData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");

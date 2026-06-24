@@ -10,6 +10,7 @@ import {
 } from "../../Server/api";
 import Swal from "sweetalert2";
 import { Navigate } from "react-router";
+
 function FancyResultList() {
   const [fancyResultList, setfancyResultList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -143,7 +144,7 @@ const handelView = (item) => {
             </div>
             <div className="card-body table-responsive">
               <table className="table table-bordered">
-                <thead>
+                <thead className="table-dark">
                   <tr>
                     <th>Sr.No.</th>
                     {/* <th>Date&Time</th> */}

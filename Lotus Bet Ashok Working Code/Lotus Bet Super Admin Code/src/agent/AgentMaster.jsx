@@ -1,15 +1,29 @@
 import { useState, useRef, useEffect } from "react";
 import {
-  FiSearch, FiEdit2, FiMoreVertical, FiUser, FiUserCheck,
-  FiUserX, FiLock, FiTrash2, FiSlash, FiPlusCircle,
-  FiMinusCircle, FiChevronLeft, FiChevronRight,
-  FiChevronsLeft, FiChevronsRight, FiEye, FiEyeOff, FiCopy
+  FiSearch,
+  FiEdit2,
+  FiMoreVertical,
+  FiUser,
+  FiUserCheck,
+  FiUserX,
+  FiLock,
+  FiTrash2,
+  FiSlash,
+  FiPlusCircle,
+  FiMinusCircle,
+  FiChevronLeft,
+  FiChevronRight,
+  FiChevronsLeft,
+  FiChevronsRight,
+  FiEye,
+  FiEyeOff,
+  FiCopy,
 } from "react-icons/fi";
 import { FaEye } from "react-icons/fa";
-import { useNavigate ,useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Button } from "react-bootstrap";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
@@ -21,7 +35,7 @@ import {
   changeMasterPassword,
   coinsDeposit,
   coinsWithdraw,
-} from "../Server/api"
+} from "../Server/api";
 function AgentMaster() {
   const navigate = useNavigate();
   const COPY_API_URL = process.env.REACT_APP_COPY_API_URL;
@@ -49,12 +63,12 @@ function AgentMaster() {
   const [passwordData, setPasswordData] = useState({
     oldPassword: "",
     newPassword: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
   const [showPasswords, setShowPasswords] = useState({
     oldPassword: false,
     newPassword: false,
-    confirmPassword: false
+    confirmPassword: false,
   });
   const [depositAmount, setDepositAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
@@ -69,20 +83,20 @@ function AgentMaster() {
     total_records: 0,
     total_pages: 1,
     current_page: 1,
-    limit: 50
+    limit: 50,
   });
 
   const admin_id = localStorage.getItem("admin_id");
   const master_role = localStorage.getItem("role");
 
-  const superAdminRole = localStorage.getItem("role")
+  const superAdminRole = localStorage.getItem("role");
   const role = "3";
   const token = localStorage.getItem("token");
   const dropdownRef = useRef(null);
   const actionDropdownRef = useRef(null);
   const [open, setOpen] = useState(false);
 
-const { adminId } = useParams();
+  const { adminId } = useParams();
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -134,29 +148,28 @@ const { adminId } = useParams();
   };
 
   const togglePasswordVisibility = (field) => {
-    setShowPasswords(prev => ({
+    setShowPasswords((prev) => ({
       ...prev,
-      [field]: !prev[field]
+      [field]: !prev[field],
     }));
   };
   const toggleTablePasswordVisibility = (adminId) => {
-    setShowPassword(prev => ({
+    setShowPassword((prev) => ({
       ...prev,
-      [adminId]: !prev[adminId]
+      [adminId]: !prev[adminId],
     }));
   };
 
-
   const toggleOTPVisibility = (adminId) => {
-    setShowOTP(prev => ({
+    setShowOTP((prev) => ({
       ...prev,
-      [adminId]: !prev[adminId]
+      [adminId]: !prev[adminId],
     }));
   };
   const handlePasswordDataChange = (field, value) => {
-    setPasswordData(prev => ({
+    setPasswordData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
   const handleNext = () => {
@@ -218,7 +231,12 @@ const { adminId } = useParams();
   };
 
   // const adminId = localStorage.getItem("admin_id_new");
-  const fetchAgentData = async (page = currentPage, limit = itemsPerPage, search = searchTerm, filterParams = filters) => {
+  const fetchAgentData = async (
+    page = currentPage,
+    limit = itemsPerPage,
+    search = searchTerm,
+    filterParams = filters,
+  ) => {
     try {
       setIsSearching(true);
       const requestData = {
@@ -227,7 +245,7 @@ const { adminId } = useParams();
         limit: limit,
         role: role,
         // admin_id: admin_id,
-          admin_id: adminId || null, 
+        admin_id: adminId || null,
       };
       // Add search term if provided
       if (search && search.trim() !== "") {
@@ -246,10 +264,10 @@ const { adminId } = useParams();
         requestData,
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
       if (response.data.success) {
         const formattedData = response.data.data.map((agent, index) => ({
@@ -270,14 +288,23 @@ const { adminId } = useParams();
           chips: agent.coins,
           status: agent.active === 1 ? "Active" : "Inactive",
           is_blocked: agent.is_blocked,
-          originalData: agent
+          originalData: agent,
         }));
         setAgentData(formattedData);
         if (response.data.pagination) {
           setPaginationData(response.data.pagination);
-          setTotalItems(response.data.pagination.total_records || response.data.pagination.total);
-          setTotalPages(response.data.pagination.total_pages || response.data.pagination.totalPages);
-          setCurrentPage(response.data.pagination.current_page || response.data.pagination.currentPage);
+          setTotalItems(
+            response.data.pagination.total_records ||
+              response.data.pagination.total,
+          );
+          setTotalPages(
+            response.data.pagination.total_pages ||
+              response.data.pagination.totalPages,
+          );
+          setCurrentPage(
+            response.data.pagination.current_page ||
+              response.data.pagination.currentPage,
+          );
           setItemsPerPage(response.data.pagination.limit || limit);
         }
         if (formattedData.length > 0) {
@@ -290,7 +317,9 @@ const { adminId } = useParams();
       }
     } catch (error) {
       console.error("Error fetching agent data:", error);
-      showErrorToast("Failed to load agent data. Please check your connection.");
+      showErrorToast(
+        "Failed to load agent data. Please check your connection.",
+      );
     } finally {
       setLoading(false);
       setIsSearching(false);
@@ -324,11 +353,10 @@ const { adminId } = useParams();
   //   }
   // };
 
-
   useEffect(() => {
     // fetchAdminData();
     fetchAgentData();
-  }, [token,adminId]);
+  }, [token, adminId]);
 
   const handleSearch = () => {
     if (searchInput.trim() !== searchTerm) {
@@ -349,7 +377,7 @@ const { adminId } = useParams();
   };
 
   const handleSearchKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };
@@ -393,24 +421,26 @@ const { adminId } = useParams();
         {
           admin_id: selectedAgent.admin_id,
           role: role,
-          active: newStatus
+          active: newStatus,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
       if (response.data.success) {
-        showSuccessToast(`Agent ${newStatus === 1 ? "activated" : "deactivated"} successfully`);
+        showSuccessToast(
+          `Agent ${newStatus === 1 ? "activated" : "deactivated"} successfully`,
+        );
         fetchAgentData(currentPage, itemsPerPage, searchTerm, filters);
-        setAgentData(prevData =>
-          prevData.map(agent =>
+        setAgentData((prevData) =>
+          prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? { ...agent, status: newStatus === 1 ? "Active" : "Inactive" }
-              : agent
-          )
+              : agent,
+          ),
         );
 
         setShowStatusModal(false);
@@ -435,32 +465,36 @@ const { adminId } = useParams();
         {
           admin_id: selectedAgent.admin_id,
           role: role,
-          is_blocked: newBlockStatus
+          is_blocked: newBlockStatus,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success == true) {
-        showSuccessToast(`Agent ${newBlockStatus == 1 ? "blocked" : "unblocked"} successfully`);
+        showSuccessToast(
+          `Agent ${newBlockStatus == 1 ? "blocked" : "unblocked"} successfully`,
+        );
 
         // Update local state
-        setAgentData(prevData =>
-          prevData.map(agent =>
+        setAgentData((prevData) =>
+          prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? { ...agent, is_blocked: newBlockStatus }
-              : agent
-          )
+              : agent,
+          ),
         );
 
         setShowBlockModal(false);
         setSelectedAgent(null);
       } else {
-        showErrorToast(response.data.message || "Failed to update block status");
+        showErrorToast(
+          response.data.message || "Failed to update block status",
+        );
       }
     } catch (error) {
       console.error("Error updating block status:", error);
@@ -477,14 +511,14 @@ const { adminId } = useParams();
         `${process.env.REACT_APP_API_URL}/delete-user`,
         {
           admin_id: selectedAgent.admin_id,
-          role: role
+          role: role,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
@@ -500,12 +534,6 @@ const { adminId } = useParams();
       // showErrorToast("Failed to delete agent. Please try again.");
     }
   };
-
-
-
-
-
-
 
   const handlePasswordChange = async () => {
     if (!selectedAgent) return;
@@ -569,9 +597,6 @@ const { adminId } = useParams();
     }
   };
 
-
-
-
   const handleDepositToAgent = async () => {
     if (!selectedAgent) return;
 
@@ -589,7 +614,6 @@ const { adminId } = useParams();
     }
 
     try {
-
       setIsProcessing(true);
       setProcessingType("deposit");
       const response = await axios.post(
@@ -600,28 +624,29 @@ const { adminId } = useParams();
           master_admin_id: selectedAgent.originalData.master_admin_id,
           role: role,
           master_role: "2",
-          rem_role: superAdminRole
-
+          rem_role: superAdminRole,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
-        showSuccessToast(`₹${depositAmount} deposited successfully to ${selectedAgent.name}`);
-        setAgentData(prevData =>
-          prevData.map(agent =>
+        showSuccessToast(
+          `₹${depositAmount} deposited successfully to ${selectedAgent.name}`,
+        );
+        setAgentData((prevData) =>
+          prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? {
-                ...agent,
-                chips: (Number(agent.chips) + depositValue).toString()
-              }
-              : agent
-          )
+                  ...agent,
+                  chips: (Number(agent.chips) + depositValue).toString(),
+                }
+              : agent,
+          ),
         );
 
         setShowDepositModal(false);
@@ -630,7 +655,9 @@ const { adminId } = useParams();
       } else {
         // Handle insufficient balance error
         if (response.data.message === "Insufficient balance in Master Admin") {
-          showErrorToast("Master Admin has insufficient balance. Please add funds to your account first.");
+          showErrorToast(
+            "Master Admin has insufficient balance. Please add funds to your account first.",
+          );
         }
         //  else {
         //   showErrorToast(response.data.message);
@@ -641,16 +668,19 @@ const { adminId } = useParams();
 
       // Handle different error scenarios
       if (error.response) {
-        if (error.response.data && error.response.data.message === "Insufficient balance in Master Admin") {
-          showErrorToast("Master Admin has insufficient balance. Please add funds to your account first.");
+        if (
+          error.response.data &&
+          error.response.data.message === "Insufficient balance in Master Admin"
+        ) {
+          showErrorToast(
+            "Master Admin has insufficient balance. Please add funds to your account first.",
+          );
         }
         //  else {
         //   showErrorToast(error.response.data?.message);
         // }
-
       }
-    }
-    finally {
+    } finally {
       setIsProcessing(false);
       setProcessingType("");
     }
@@ -660,7 +690,11 @@ const { adminId } = useParams();
     if (!selectedAgent) return;
 
     // Validation
-    if (!withdrawAmount || isNaN(withdrawAmount) || Number(withdrawAmount) <= 0) {
+    if (
+      !withdrawAmount ||
+      isNaN(withdrawAmount) ||
+      Number(withdrawAmount) <= 0
+    ) {
       showErrorToast("Please enter a valid amount");
       return;
     }
@@ -668,7 +702,9 @@ const { adminId } = useParams();
     // Check if agent has sufficient balance
     const withdrawValue = parseFloat(withdrawAmount);
     if (withdrawValue > Number(selectedAgent.chips)) {
-      showErrorToast(`Insufficient balance. Maximum withdrawable amount is ₹${selectedAgent.chips}`);
+      showErrorToast(
+        `Insufficient balance. Maximum withdrawable amount is ₹${selectedAgent.chips}`,
+      );
       return;
     }
 
@@ -683,30 +719,31 @@ const { adminId } = useParams();
           master_admin_id: selectedAgent.originalData.master_admin_id,
           role: role,
           master_role: "2",
-          rem_role: superAdminRole
-
+          rem_role: superAdminRole,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
-        showSuccessToast(`₹${withdrawAmount} withdrawn successfully from ${selectedAgent.name}`);
+        showSuccessToast(
+          `₹${withdrawAmount} withdrawn successfully from ${selectedAgent.name}`,
+        );
 
         // Update local state - subtract withdraw amount from chips
-        setAgentData(prevData =>
-          prevData.map(agent =>
+        setAgentData((prevData) =>
+          prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? {
-                ...agent,
-                chips: (Number(agent.chips) - withdrawValue).toString()
-              }
-              : agent
-          )
+                  ...agent,
+                  chips: (Number(agent.chips) - withdrawValue).toString(),
+                }
+              : agent,
+          ),
         );
 
         setShowWithdrawModal(false);
@@ -718,8 +755,7 @@ const { adminId } = useParams();
     } catch (error) {
       console.error("Error withdrawing amount:", error);
       // showErrorToast("Failed to withdraw amount. Please try again.");
-    }
-    finally {
+    } finally {
       setIsProcessing(false);
       setProcessingType("");
     }
@@ -737,22 +773,16 @@ const { adminId } = useParams();
   };
 
   const handleUpdateSuperAgent = (agent) => {
-
-
-
     const masterID = agent?.originalData?.master_admin_id;
     localStorage.setItem("master_admin_id", masterID);
     console.log("Saved Master Admin ID:", masterID);
     navigate(`/Updatesuperagent/${agent.admin_id}`);
   };
 
-
   //  const handleUpdateSuperAgent = (agent) => {
   //   navigate(`/Updatesuperagentnew/${agent.admin_id}`);
   //   localStorage.setItem("super_agent_id", agent.super_agent_id);
   // }
-
-
 
   const handleStatementmasterlist = (agent) => {
     navigate(`/Statementmasterlist/${agent.admin_id}`);
@@ -784,7 +814,10 @@ const { adminId } = useParams();
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setOpenFilter(null);
       }
-      if (actionDropdownRef.current && !actionDropdownRef.current.contains(e.target)) {
+      if (
+        actionDropdownRef.current &&
+        !actionDropdownRef.current.contains(e.target)
+      ) {
         setDropdownOpen(null);
       }
     };
@@ -793,7 +826,6 @@ const { adminId } = useParams();
   }, []);
 
   const handleCopyData = (agent) => {
-
     // const textToCopy = `SUPER AGENT LOGIN DETAILS\nMaster Code: ${agent.admin_id || "N/A"}\nOTP: ${agent.admin_otp || "N/A"}\nPassword: ${agent.password || "N/A"}`;
 
     const textToCopy = `
@@ -804,7 +836,8 @@ Password: ${agent.password || "N/A"}
 OTP: ${agent.admin_otp || "N/A"}
 
 Login URL:${COPY_API_URL}`;
-    navigator.clipboard.writeText(textToCopy)
+    navigator.clipboard
+      .writeText(textToCopy)
       .then(() => {
         showSuccessToast("Super Agent login details copied!");
       })
@@ -817,7 +850,13 @@ Login URL:${COPY_API_URL}`;
   const blockInvalidKeys = (e) => {
     const key = e.key;
 
-    const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
+    const allowedKeys = [
+      "Backspace",
+      "Delete",
+      "ArrowLeft",
+      "ArrowRight",
+      "Tab",
+    ];
 
     if (!/^\d$/.test(key) && !allowedKeys.includes(key)) {
       e.preventDefault();
@@ -827,7 +866,6 @@ Login URL:${COPY_API_URL}`;
   // const handleMasterClick = (id) => {
   //   navigate(`/getSuperAgent-list/${id}?role=3`);
   // };
-
 
   const handleMasterClick = (row) => {
     // localStorage में नहीं, URL में ID भेजें
@@ -841,7 +879,10 @@ Login URL:${COPY_API_URL}`;
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }}
+      >
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
@@ -855,11 +896,7 @@ Login URL:${COPY_API_URL}`;
         <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
           <h5 className="card-title mb-0">Super Agent Lists</h5>
           <div className="d-flex gap-2">
-
-            <button
-              className="createbutton"
-              onClick={handleCreateAgent}
-            >
+            <button className="btn btn-light" onClick={handleCreateAgent}>
               Create
             </button>
           </div>
@@ -880,7 +917,7 @@ Login URL:${COPY_API_URL}`;
                     onKeyPress={handleSearchKeyPress}
                   />
                   <button
-                    className="btn btn-outline-primary"
+                    className="btn btn-outline-success"
                     type="button"
                     onClick={handleSearch}
                     disabled={isSearching}
@@ -900,9 +937,7 @@ Login URL:${COPY_API_URL}`;
 
                 {hasActiveFilters && (
                   <div className="d-flex align-items-center">
-                    <span className="badge bg-info me-2">
-                      Filters Active
-                    </span>
+                    <span className="badge bg-info me-2">Filters Active</span>
                   </div>
                 )}
               </div>
@@ -961,22 +996,24 @@ Login URL:${COPY_API_URL}`;
             <table className="table table-bordered table-hover">
               <thead className="table-dark">
                 <tr>
-                  <th rowSpan={2} className="text-center align-middle">Sr.No.</th>
-                  <th rowSpan={2} className="text-center align-middle">Copy</th>
-                  <th rowSpan={2} className="text-center">Actions</th>
+                  <th rowSpan={2} className="text-center align-middle">
+                    Sr.No.
+                  </th>
+                  <th rowSpan={2} className="text-center align-middle">
+                    Copy
+                  </th>
+                  <th rowSpan={2} className="text-center">
+                    Actions
+                  </th>
                   {/* Code */}
                   <th rowSpan={2} className="position-relative">
                     <div className="d-flex justify-content-between align-items-center">
-                      <span>
-                        Code
-                      </span>
+                      <span>Code</span>
                     </div>
                   </th>
-                        <th rowSpan={2} className="position-relative">
+                  <th rowSpan={2} className="position-relative">
                     <div className="d-flex justify-content-between align-items-center">
-                      <span>
-                        Name
-                      </span>
+                      <span>Name</span>
                     </div>
                   </th>
                   <th rowSpan={2}>Super</th>
@@ -985,7 +1022,9 @@ Login URL:${COPY_API_URL}`;
                   {/* <th rowSpan={2}>Password</th>
                   <th rowSpan={2}>OTP</th> */}
                   <th rowSpan={2}>Share</th>
-                  <th colSpan={3} className="text-center">Comm %</th>
+                  <th colSpan={3} className="text-center">
+                    Comm %
+                  </th>
                   <th rowSpan={2}>Chips</th>
                   <th rowSpan={2}>Status</th>
                   {/* <th rowSpan={2}>Blocked</th> */}
@@ -1000,7 +1039,9 @@ Login URL:${COPY_API_URL}`;
                 {agentData.length > 0 ? (
                   agentData.map((row, index) => (
                     <tr key={row.id}>
-                      <td className="text-center">{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                      <td className="text-center">
+                        {(currentPage - 1) * itemsPerPage + index + 1}
+                      </td>
                       <td className="text-center">
                         <button
                           className="viewdetailsbutton"
@@ -1032,7 +1073,7 @@ Login URL:${COPY_API_URL}`;
                                   minWidth: "220px",
                                 }}
                               >
-                               <li>
+                                <li>
                                   <div
                                     className="dropdown-item custum_new_ul"
                                     onClick={() => {
@@ -1042,15 +1083,22 @@ Login URL:${COPY_API_URL}`;
                                     }}
                                   >
                                     <FiPlusCircle className="me-2" />
-                                    DEPOSIT
+                                    Deposit
                                   </div>
                                 </li>
-                                <li className="dropdown-item custum_new_ul"
-                                  onClick={() => navigate(`/Superagenttransaction/${row.admin_id}`)}
-                                  style={{ cursor: "pointer" }}
-                                >
-                                  <FiPlusCircle className="me-2" />
-                                  Lena Dena
+                                <li>
+                                  <div
+                                    className="dropdown-item custum_new_ul"
+                                    onClick={() =>
+                                      navigate(
+                                        `/Superagenttransaction/${row.admin_id}`,
+                                      )
+                                    }
+                                    style={{ cursor: "pointer" }}
+                                  >
+                                    <FiPlusCircle className="me-2" />
+                                    Lena Dena
+                                  </div>
                                 </li>
                                 <li>
                                   <div
@@ -1062,7 +1110,7 @@ Login URL:${COPY_API_URL}`;
                                     }}
                                   >
                                     <FiMinusCircle className="me-2" />
-                                    WITHDRAW
+                                    Withdraw
                                   </div>
                                 </li>
                                 {/* Status Change */}
@@ -1076,7 +1124,7 @@ Login URL:${COPY_API_URL}`;
                                       }}
                                     >
                                       <FiUserX className="me-2" />
-                                      INACTIVE
+                                      Inactive
                                     </div>
                                   ) : (
                                     <div
@@ -1087,7 +1135,7 @@ Login URL:${COPY_API_URL}`;
                                       }}
                                     >
                                       <FiUserCheck className="me-2" />
-                                      ACTIVE
+                                      Active
                                     </div>
                                   )}
                                 </li>
@@ -1103,7 +1151,7 @@ Login URL:${COPY_API_URL}`;
                                       }}
                                     >
                                       <FiSlash className="me-2" />
-                                      UNBLOCK
+                                      Unblock
                                     </div>
                                   ) : (
                                     <div
@@ -1114,7 +1162,7 @@ Login URL:${COPY_API_URL}`;
                                       }}
                                     >
                                       <FiSlash className="me-2" />
-                                      BLOCK
+                                      Block
                                     </div>
                                   )}
                                 </li>
@@ -1128,12 +1176,12 @@ Login URL:${COPY_API_URL}`;
                                       setPasswordData({
                                         oldPassword: "",
                                         newPassword: "",
-                                        confirmPassword: ""
+                                        confirmPassword: "",
                                       });
                                       setShowPasswords({
                                         oldPassword: false,
                                         newPassword: false,
-                                        confirmPassword: false
+                                        confirmPassword: false,
                                       });
                                       setShowPasswordModal(true);
                                     }}
@@ -1155,7 +1203,6 @@ Login URL:${COPY_API_URL}`;
                                   DELETE AGENT
                                 </div> */}
 
-
                                 {/* View Details */}
                                 {/* <div
                                   className="dropdown-item"
@@ -1167,25 +1214,25 @@ Login URL:${COPY_API_URL}`;
 
                                 {/* Update Super Agent */}
 
-
                                 <li>
                                   <div
                                     className="dropdown-item custum_new_ul"
                                     onClick={() => handleUpdateSuperAgent(row)}
                                   >
                                     <FiUser className="me-2" />
-                                    EDIT
+                                    Edit
                                   </div>
                                 </li>
                                 <li>
                                   <div
                                     className="dropdown-item custum_new_ul"
-                                    onClick={() => handleStatementmasterlist(row)}
+                                    onClick={() =>
+                                      handleStatementmasterlist(row)
+                                    }
                                   >
                                     <FiUser className="me-2" />
-                                    STATEMENT
+                                    Statement
                                   </div>
-
                                 </li>
                                 {/* <li>
                                   <div
@@ -1306,16 +1353,18 @@ Login URL:${COPY_API_URL}`;
                             "N/A"}
                       </td> */}
                       <td className="text-center">
-                        {String(row.commission_type) === "1" ? "BBB" :
-                          String(row.commission_type) === "0" ? "NOS" :
-                            "N/A"}
+                        {String(row.commission_type) === "1"
+                          ? "BBB"
+                          : String(row.commission_type) === "0"
+                            ? "NOS"
+                            : "N/A"}
                       </td>
                       <td className="text-center">{row.commMatch}</td>
                       <td className="text-center">{row.commSession}</td>
 
                       <td className="text-center">
                         <div className="d-flex align-items-center justify-content-center">
-                          <span className="me-2">₹{row.chips}</span>
+                          <div className="me-2 w-50">₹{row.chips}</div>
                           <button
                             className="btn btn-sm btn-outline-success p-1 me-1"
                             // onClick={() => {
@@ -1347,7 +1396,9 @@ Login URL:${COPY_API_URL}`;
                       </td>
 
                       <td className="text-center">
-                        <span className={`${row.status === "Active" ? "activebadge" : "inactivebadge"}`}>
+                        <span
+                          className={`${row.status === "Active" ? "activebadge" : "inactivebadge"}`}
+                        >
                           {row.status}
                         </span>
                       </td>
@@ -1356,7 +1407,6 @@ Login URL:${COPY_API_URL}`;
                           {Number(row.is_blocked) === 1 ? "Blocked" : "Active"}
                         </span>
                       </td> */}
-
                     </tr>
                   ))
                 ) : (
@@ -1374,14 +1424,12 @@ Login URL:${COPY_API_URL}`;
           {totalPages > 1 && (
             <div className="d-flex justify-content-between align-items-center mt-4">
               <div className="sohwingallentries">
-                Showing {((currentPage - 1) * itemsPerPage) + 1} to{" "}
+                Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
                 {Math.min(currentPage * itemsPerPage, totalItems)}
                 {/* of{" "} {totalItems} entries */}
               </div>
 
               <div className="paginationall d-flex align-items-center gap-1">
-
-
                 <button
                   disabled={currentPage === 1}
                   onClick={handlePrev}
@@ -1390,13 +1438,13 @@ Login URL:${COPY_API_URL}`;
                   <MdOutlineKeyboardArrowLeft />
                 </button>
 
-
                 <div className="d-flex gap-1">
                   {getPageNumbers().map((page) => (
                     <div
                       key={page}
-                      className={`paginationnumber ${currentPage === page ? "active" : ""
-                        }`}
+                      className={`paginationnumber ${
+                        currentPage === page ? "active" : ""
+                      }`}
                       onClick={() => handlePageClick(page)}
                     >
                       {page}
@@ -1411,7 +1459,6 @@ Login URL:${COPY_API_URL}`;
                 >
                   <MdOutlineKeyboardArrowRight />
                 </button>
-
               </div>
             </div>
           )}
@@ -1419,7 +1466,11 @@ Login URL:${COPY_API_URL}`;
 
         {/* Status Change Modal */}
         {showStatusModal && selectedAgent && (
-          <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div
+            className="modal show d-block"
+            tabIndex="-1"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          >
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
                 <div className="modal-header">
@@ -1436,14 +1487,20 @@ Login URL:${COPY_API_URL}`;
                 <div className="modal-body">
                   <p>
                     Are you sure you want to change the status of agent{" "}
-                    <strong>{selectedAgent.name}</strong> ({selectedAgent.code}) to{" "}
-                    <strong>{selectedAgent.status === "Active" ? "Inactive" : "Active"}</strong>?
+                    <strong>{selectedAgent.name}</strong> ({selectedAgent.code})
+                    to{" "}
+                    <strong>
+                      {selectedAgent.status === "Active"
+                        ? "Inactive"
+                        : "Active"}
+                    </strong>
+                    ?
                   </p>
                 </div>
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowStatusModal(false);
                       setSelectedAgent(null);
@@ -1466,7 +1523,11 @@ Login URL:${COPY_API_URL}`;
 
         {/* Block/Unblock Modal */}
         {showBlockModal && selectedAgent && (
-          <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div
+            className="modal show d-block"
+            tabIndex="-1"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          >
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
                 <div className="modal-header">
@@ -1483,14 +1544,17 @@ Login URL:${COPY_API_URL}`;
                 <div className="modal-body">
                   <p>
                     Are you sure you want to{" "}
-                    <strong>{selectedAgent.is_blocked === 1 ? "unblock" : "block"}</strong> agent{" "}
-                    <strong>{selectedAgent.name}</strong> ({selectedAgent.code})?
+                    <strong>
+                      {selectedAgent.is_blocked === 1 ? "unblock" : "block"}
+                    </strong>{" "}
+                    agent <strong>{selectedAgent.name}</strong> (
+                    {selectedAgent.code})?
                   </p>
                 </div>
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowBlockModal(false);
                       setSelectedAgent(null);
@@ -1513,7 +1577,11 @@ Login URL:${COPY_API_URL}`;
 
         {/* Delete Modal */}
         {showDeleteModal && selectedAgent && (
-          <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div
+            className="modal show d-block"
+            tabIndex="-1"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          >
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
                 <div className="modal-header">
@@ -1530,15 +1598,18 @@ Login URL:${COPY_API_URL}`;
                 <div className="modal-body">
                   <p>
                     Are you sure you want to delete agent{" "}
-                    <strong>{selectedAgent.name}</strong> ({selectedAgent.code})?
+                    <strong>{selectedAgent.name}</strong> ({selectedAgent.code}
+                    )?
                     <br />
-                    <strong className="text-danger">This action cannot be undone.</strong>
+                    <strong className="text-danger">
+                      This action cannot be undone.
+                    </strong>
                   </p>
                 </div>
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowDeleteModal(false);
                       setSelectedAgent(null);
@@ -1698,90 +1769,123 @@ Login URL:${COPY_API_URL}`;
             </div>
           </div>
         )} */}
-{/* Password Change Modal */}
-{showPasswordModal && selectedAgent && (
-  <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-    <div className="modal-dialog modal-dialog-centered">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h5 className="modal-title">Reset Password - {selectedAgent.admin_id}</h5>
-          <button
-            type="button"
-            className="btn-close"
-            onClick={() => {
-              setShowPasswordModal(false);
-              setSelectedAgent(null);
-              setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
-            }}
-          />
-        </div>
-        <div className="modal-body">
-          {/* Dummy inputs to prevent auto-fill */}
-          <input type="text" style={{ display: 'none' }} />
-          <input type="password" style={{ display: 'none' }} />
-          
-          {/* Old Password - Backend value */}
-          <div className="mb-3">
-            <label className="form-label">Old Password</label>
-            <div className="input-group">
-              <input
-                type={showPasswords.oldPassword ? "text" : "password"}
-                className="form-control"
-                value={selectedAgent.password}
-                readOnly
-                style={{ backgroundColor: '#f5f5f5' }}
-              />
-              <button
-                className="btn btn-outline-secondary"
-                type="button"
-                onClick={() => togglePasswordVisibility("oldPassword")}
-              >
-                {showPasswords.oldPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
-              </button>
-            </div>
-            <small className="text-muted">Current password</small>
-          </div>
-
-          {/* New Password - User input */}
-          <div className="mb-3">
-            <label className="form-label">New Password</label>
-            <div className="input-group">
-              <input
-                type={showPasswords.newPassword ? "text" : "password"}
-                className="form-control"
-                value={passwordData.newPassword}
-                onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
-                placeholder="Enter new password (min. 6 characters)"
-                autoComplete="new-password"
-              />
-              <button
-                className="btn btn-outline-secondary"
-                type="button"
-                onClick={() => togglePasswordVisibility("newPassword")}
-              >
-                {showPasswords.newPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-secondary" onClick={() => setShowPasswordModal(false)}>
-            Cancel
-          </button>
-          <button 
-            className="btn btn-primary" 
-            onClick={handlePasswordChange}
-            disabled={!passwordData.newPassword || passwordData.newPassword.length < 6}
+        {/* Password Change Modal */}
+        {showPasswordModal && selectedAgent && (
+          <div
+            className="modal show d-block"
+            tabIndex="-1"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
           >
-            Reset Password
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-)} 
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">
+                    Reset Password - {selectedAgent.admin_id}
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => {
+                      setShowPasswordModal(false);
+                      setSelectedAgent(null);
+                      setPasswordData({
+                        oldPassword: "",
+                        newPassword: "",
+                        confirmPassword: "",
+                      });
+                    }}
+                  />
+                </div>
+                <div className="modal-body">
+                  {/* Dummy inputs to prevent auto-fill */}
+                  <input type="text" style={{ display: "none" }} />
+                  <input type="password" style={{ display: "none" }} />
+
+                  {/* Old Password - Backend value */}
+                  <div className="mb-3">
+                    <label className="form-label">Old Password</label>
+                    <div className="input-group">
+                      <input
+                        type={showPasswords.oldPassword ? "text" : "password"}
+                        className="form-control"
+                        value={selectedAgent.password}
+                        readOnly
+                        style={{ backgroundColor: "#f5f5f5" }}
+                      />
+                      <button
+                        className="btn btn-outline-secondary"
+                        type="button"
+                        onClick={() => togglePasswordVisibility("oldPassword")}
+                      >
+                        {showPasswords.oldPassword ? (
+                          <FiEyeOff size={18} />
+                        ) : (
+                          <FiEye size={18} />
+                        )}
+                      </button>
+                    </div>
+                    <small className="text-muted">Current password</small>
+                  </div>
+
+                  {/* New Password - User input */}
+                  <div className="mb-3">
+                    <label className="form-label">New Password</label>
+                    <div className="input-group">
+                      <input
+                        type={showPasswords.newPassword ? "text" : "password"}
+                        className="form-control"
+                        value={passwordData.newPassword}
+                        onChange={(e) =>
+                          setPasswordData({
+                            ...passwordData,
+                            newPassword: e.target.value,
+                          })
+                        }
+                        placeholder="Enter new password (min. 6 characters)"
+                        autoComplete="new-password"
+                      />
+                      <button
+                        className="btn btn-outline-secondary"
+                        type="button"
+                        onClick={() => togglePasswordVisibility("newPassword")}
+                      >
+                        {showPasswords.newPassword ? (
+                          <FiEyeOff size={18} />
+                        ) : (
+                          <FiEye size={18} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => setShowPasswordModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="btn btn-info"
+                    onClick={handlePasswordChange}
+                    disabled={
+                      !passwordData.newPassword ||
+                      passwordData.newPassword.length < 6
+                    }
+                  >
+                    Reset Password
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         {showDepositModal && selectedAgent && (
-          <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div
+            className="modal show d-block"
+            tabIndex="-1"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          >
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
                 <div className="modal-header">
@@ -1798,7 +1902,8 @@ Login URL:${COPY_API_URL}`;
                 </div>
                 <div className="modal-body">
                   <p>
-                    Deposit Balance to Super Agent: <strong>{selectedAgent.name}</strong>
+                    Deposit Balance to Super Agent:{" "}
+                    <strong>{selectedAgent.name}</strong>
                   </p>
                   <p className="mb-3">
                     Current Balance: <strong>₹{selectedAgent.chips}</strong>
@@ -1816,26 +1921,29 @@ Login URL:${COPY_API_URL}`;
                       step="0.01"
                     />
                     <div className="form-text">
-                      Enter the amount you want to deposit to this agent's account.
+                      Enter the amount you want to deposit to this agent's
+                      account.
                     </div>
                   </div>
                   {depositAmount && !isNaN(depositAmount) && (
                     <div className="alert alert-info">
-                      <strong>New Balance:</strong> ₹{(Number(selectedAgent.chips) + Number(depositAmount)).toLocaleString()}
+                      <strong>New Balance:</strong> ₹
+                      {(
+                        Number(selectedAgent.chips) + Number(depositAmount)
+                      ).toLocaleString()}
                     </div>
                   )}
                 </div>
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowDepositModal(false);
                       setSelectedAgent(null);
                       setDepositAmount("");
                       setIsProcessing(false);
                       setProcessingType("");
-
                     }}
                   >
                     Cancel
@@ -1864,7 +1972,11 @@ Login URL:${COPY_API_URL}`;
                   >
                     {isProcessing && processingType === "deposit" ? (
                       <>
-                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
                         Processing...
                       </>
                     ) : (
@@ -1882,7 +1994,11 @@ Login URL:${COPY_API_URL}`;
 
         {/* Withdraw Modal */}
         {showWithdrawModal && selectedAgent && (
-          <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div
+            className="modal show d-block"
+            tabIndex="-1"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          >
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
                 <div className="modal-header">
@@ -1901,7 +2017,8 @@ Login URL:${COPY_API_URL}`;
                 </div>
                 <div className="modal-body">
                   <p>
-                    Withdraw Balance from Super Agent: <strong>{selectedAgent.name}</strong>
+                    Withdraw Balance from Super Agent:{" "}
+                    <strong>{selectedAgent.name}</strong>
                   </p>
                   <p className="mb-3">
                     Current Balance: <strong>₹{selectedAgent.chips}</strong>
@@ -1925,19 +2042,24 @@ Login URL:${COPY_API_URL}`;
                   </div>
                   {withdrawAmount && !isNaN(withdrawAmount) && (
                     <div className="alert alert-info">
-                      <strong>New Balance:</strong> ₹{(Number(selectedAgent.chips) - Number(withdrawAmount)).toLocaleString()}
+                      <strong>New Balance:</strong> ₹
+                      {(
+                        Number(selectedAgent.chips) - Number(withdrawAmount)
+                      ).toLocaleString()}
                     </div>
                   )}
-                  {withdrawAmount && Number(withdrawAmount) > Number(selectedAgent.chips) && (
-                    <div className="alert alert-danger">
-                      <strong>Error:</strong> Withdraw amount cannot exceed current balance
-                    </div>
-                  )}
+                  {withdrawAmount &&
+                    Number(withdrawAmount) > Number(selectedAgent.chips) && (
+                      <div className="alert alert-danger">
+                        <strong>Error:</strong> Withdraw amount cannot exceed
+                        current balance
+                      </div>
+                    )}
                 </div>
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowWithdrawModal(false);
                       setSelectedAgent(null);
@@ -1958,7 +2080,7 @@ Login URL:${COPY_API_URL}`;
 
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className="btn btn-success"
                     onClick={handleWithdrawFromAgent}
                     disabled={
                       !withdrawAmount ||
@@ -1970,7 +2092,11 @@ Login URL:${COPY_API_URL}`;
                   >
                     {isProcessing && processingType === "withdraw" ? (
                       <>
-                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
                         Processing...
                       </>
                     ) : (
@@ -1988,7 +2114,11 @@ Login URL:${COPY_API_URL}`;
 
         {/* Edit Modal */}
         {showEditModal && selectedAgent && (
-          <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div
+            className="modal show d-block"
+            tabIndex="-1"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          >
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
                 <div className="modal-header">
@@ -2003,7 +2133,10 @@ Login URL:${COPY_API_URL}`;
                   ></button>
                 </div>
                 <div className="modal-body">
-                  <p>Edit functionality would go here for agent: {selectedAgent.name}</p>
+                  <p>
+                    Edit functionality would go here for agent:{" "}
+                    {selectedAgent.name}
+                  </p>
                   {/* Add your edit form fields here */}
                 </div>
                 <div className="modal-footer">

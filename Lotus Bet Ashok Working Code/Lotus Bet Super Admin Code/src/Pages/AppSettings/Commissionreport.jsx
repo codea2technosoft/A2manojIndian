@@ -242,11 +242,11 @@ function CasetransactionReport() {
     <div className="row">
       <div className="col-lg-12">
         <div className="card">
-          <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
-            <h3 className="card-title text-dark mb-0">Commission Report</h3>
+          <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
+            <h3 className="card-title mb-0">Commission Report</h3>
             <div>
               <button
-                className="btn btn-sm bg-primary-blue"
+                className="btn btn-outline-light"
                 onClick={() => (window.location.href = "/commission-histry")}
               >
                 History
@@ -364,7 +364,7 @@ function CasetransactionReport() {
                 </div>
               </div>
               <div className="col-md-4">
-                <div className="card  success-green">
+                <div className="card success-green">
                   <div className="card-body">
                     <h6 className="card-title text-light">
                       Session Commission

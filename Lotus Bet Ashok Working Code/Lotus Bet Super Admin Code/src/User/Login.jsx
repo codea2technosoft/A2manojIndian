@@ -175,11 +175,9 @@ const handleSendOtp = async (e) => {
               </a>
             </div>
         </div>
+        
         <div className="w-100 overflow-hidden h-100 form_design_all">
           <div className="py-60 px-24 max-w-464-px">
-            
-
-            {/* <form onSubmit={handleLogin} noValidate> */}
             <div className="form_login_input">
             <form onSubmit={isOtpSent ? handleLogin : handleSendOtp} noValidate>
               {/* Username */}

@@ -471,10 +471,10 @@ export const getStatementAll = (payload) => {
   return API.post("/get-statement-all", payload );
 };
 
-
 export const getChipStatementAll = (payload) => {
   return API.post("/get-coins-statements", payload );
 };
+
 
 export const getAccountOperationAll = (params) => {
   return API.get("/get-account-operation-all", {

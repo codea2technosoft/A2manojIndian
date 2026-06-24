@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { getAllSliders, createSlider, updateSlider, deleteSlider } from "../../Server/api";
+import {
+  getAllSliders,
+  createSlider,
+  updateSlider,
+  deleteSlider,
+} from "../../Server/api";
 import { FaRegEdit } from "react-icons/fa";
 import { RiDeleteBin3Fill } from "react-icons/ri";
 
@@ -16,7 +21,7 @@ const Slider = () => {
     title: "",
     description: "",
     status: "1",
-    order: 0
+    order: 0,
   });
 
   const sliderLists = async () => {
@@ -44,7 +49,7 @@ const Slider = () => {
       setForm((prev) => ({
         ...prev,
         file: files[0],
-        image: files[0] ? URL.createObjectURL(files[0]) : prev.image // Preview for new file
+        image: files[0] ? URL.createObjectURL(files[0]) : prev.image, // Preview for new file
       }));
     } else {
       setForm((prev) => ({ ...prev, [name]: value }));
@@ -59,7 +64,7 @@ const Slider = () => {
       title: "",
       description: "",
       status: "1",
-      order: 0
+      order: 0,
     });
     setIsEditMode(false);
     setModalOpen(true);
@@ -68,12 +73,12 @@ const Slider = () => {
   const handleEditClick = (item) => {
     setForm({
       id: item._id,
-      image: item.image || "",   // String
+      image: item.image || "", // String
       file: null,
       title: item.title || "",
       description: item.description || "",
       status: item.status || "1",
-      order: item.order || 0
+      order: item.order || 0,
     });
     setIsEditMode(true);
     setModalOpen(true);
@@ -115,7 +120,6 @@ const Slider = () => {
       formData.append("image", form.file);
     }
 
-
     formData.append("id", form.id);
     formData.append("title", form.title);
     formData.append("description", form.description);
@@ -153,17 +157,17 @@ const Slider = () => {
     <div className="card">
       <div className="card-header bg-primary-yellow">
         <div className="d-flex justify-content-between align-items-center">
-          <h3 className="card-title  mb-0">Slider Setting</h3>
-          <button className="backbutton" onClick={handleAddClick}>
+          <h3 className="card-title mb-0">Slider Setting</h3>
+          <button className="btn btn-light" onClick={handleAddClick}>
             Add Slider
           </button>
         </div>
       </div>
 
-      <div className="card-body p-0 pt-2">
+      <div className="card-body">
         <div className="table-responsive">
           <table className="table table-bordered">
-            <thead>
+            <thead className="table-dark">
               <tr>
                 <th>#</th>
                 <th>Title</th>
@@ -183,7 +187,9 @@ const Slider = () => {
                     <td>{item.title || "-"}</td>
                     <td>{item.description || "-"}</td>
                     <td>
-                      <span className={`badge ${item.status === "1" ? "activebadge" : "inactivebadge"}`}>
+                      <span
+                        className={`badge ${item.status === "1" ? "activebadge" : "inactivebadge"}`}
+                      >
                         {item.status === "1" ? "Active" : "Inactive"}
                       </span>
                     </td>
@@ -198,11 +204,9 @@ const Slider = () => {
                           objectFit: "contain",
                         }}
                       />
-
                     </td>
                     <td className="">
                       <div className="actions">
-
                         <button
                           className="actionbutton edit"
                           onClick={() => handleEditClick(item)}
@@ -239,7 +243,10 @@ const Slider = () => {
                   <h5 className="modal-title">
                     {isEditMode ? "Edit Slider" : "Add Slider"}
                   </h5>
-                  <button className="btn-close" onClick={() => setModalOpen(false)}></button>
+                  <button
+                    className="btn-close"
+                    onClick={() => setModalOpen(false)}
+                  ></button>
                 </div>
 
                 <div className="modal-body">
@@ -316,16 +323,16 @@ const Slider = () => {
                       alt="Current"
                     />
                   )}
-
-
                 </div>
 
                 <div className="modal-footer">
-
-                  <button className="importbutton" onClick={() => setModalOpen(false)}>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => setModalOpen(false)}
+                  >
                     Cancel
                   </button>
-                  <button className="submitbutton" onClick={handleSubmit}>
+                  <button className="btn btn-success" onClick={handleSubmit}>
                     {isEditMode ? "Update" : "Submit"}
                   </button>
                 </div>

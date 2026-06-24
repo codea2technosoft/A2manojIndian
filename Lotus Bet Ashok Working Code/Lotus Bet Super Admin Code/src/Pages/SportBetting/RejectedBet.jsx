@@ -2,10 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import {
-  AbendedbetList
-} from "../../Server/api";
-import "../viewmatchAndFancy/Eventcss.scss"; // keep your existing styles
+import { AbendedbetList } from "../../Server/api";
+import "../viewmatchAndFancy/Eventcss.scss";
 
 function RejectedBet() {
   const navigate = useNavigate();
@@ -41,7 +39,6 @@ function RejectedBet() {
         totalRecords: res.data.pagination.totalRecords,
         limit: res.data.pagination.limit,
       });
-
     } catch (err) {
       setError("Failed to fetch event bets.");
       setBetsData([]);
@@ -61,21 +58,21 @@ function RejectedBet() {
       getEventBets(page);
     }
   };
-const handlePrevPage = () => {
-  if (pagination.currentPage > 1) {
-    handlePageChange(pagination.currentPage - 1);
-  }
-};
+  const handlePrevPage = () => {
+    if (pagination.currentPage > 1) {
+      handlePageChange(pagination.currentPage - 1);
+    }
+  };
 
-const handleNextPage = () => {
-  if (pagination.currentPage < pagination.totalPages) {
-    handlePageChange(pagination.currentPage + 1);
-  }
-};
+  const handleNextPage = () => {
+    if (pagination.currentPage < pagination.totalPages) {
+      handlePageChange(pagination.currentPage + 1);
+    }
+  };
 
-const handlePageClick = (page) => {
-  handlePageChange(page);
-};
+  const handlePageClick = (page) => {
+    handlePageChange(page);
+  };
 
   const getPageNumbers = () => {
     const pageNumbers = [];
@@ -86,7 +83,10 @@ const handlePageClick = (page) => {
         pageNumbers.push(i);
       }
     } else {
-      let start = Math.max(1, pagination.currentPage - Math.floor(maxVisiblePages / 2));
+      let start = Math.max(
+        1,
+        pagination.currentPage - Math.floor(maxVisiblePages / 2),
+      );
       let end = Math.min(pagination.totalPages, start + maxVisiblePages - 1);
 
       if (end - start + 1 < maxVisiblePages) {
@@ -100,15 +100,13 @@ const handlePageClick = (page) => {
     return pageNumbers;
   };
   return (
-    <div className="card mt-4">
-      {/* Top blue header like in image */}
-      <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
-        <h4 className="mb-0">Cancel Bets</h4>
+    <div className="card">
+      <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
+        <h3 className="card-title mb-0">Cancel Bets</h3>
 
-        <button
-          className="btn btn-sm btn-light"
-          onClick={() => navigate(-1)}
-        >Back</button>
+        <button className="btn btn-outline-light" onClick={() => navigate(-1)}>
+          Back
+        </button>
       </div>
       {/* Filter section */}
       {/* <div className="p-3 border-bottom">
@@ -175,70 +173,67 @@ const handlePageClick = (page) => {
                     <td>{bet?.odd}</td>
                     <td>{bet?.stake}</td>
                     <td>{bet?.fancy_deposit}</td>
-                    <td className="text-danger fw-bold">
-                      Cancel
-                    </td>
+                    <td className="text-danger fw-bold">Cancel</td>
                     <td>{new Date(bet?.createdAt).toLocaleString()}</td>
                   </tr>
                 ))
               )}
             </tbody>
-
           </table>
-
-
         </div>
-         {pagination.totalPages > 1 && (
-  <div className="d-flex justify-content-between align-items-center mt-4">
+        {pagination.totalPages > 1 && (
+          <div className="d-flex justify-content-between align-items-center mt-4">
+            <div className="sohwingallentries d-flex align-items-center gap-3">
+              Showing{" "}
+              {pagination.totalRecords === 0
+                ? 0
+                : (pagination.currentPage - 1) * pagination.limit + 1}{" "}
+              to{" "}
+              {Math.min(
+                pagination.currentPage * pagination.limit,
+                pagination.totalRecords,
+              )}{" "}
+              of {pagination.totalRecords} entries
+            </div>
 
-    <div className="sohwingallentries d-flex align-items-center gap-3">
-      Showing{" "}
-      {pagination.totalRecords === 0
-        ? 0
-        : (pagination.currentPage - 1) * pagination.limit + 1}{" "}
-      to{" "}
-      {Math.min(pagination.currentPage * pagination.limit, pagination.totalRecords)}{" "}
-      of {pagination.totalRecords} entries
-    </div>
+            <div className="paginationall d-flex align-items-center gap-2">
+              {/* PREV */}
+              <button
+                className="btn btn-sm btn-outline-primary"
+                disabled={pagination.currentPage === 1}
+                onClick={handlePrevPage}
+              >
+                <MdOutlineKeyboardArrowLeft />
+              </button>
 
-    <div className="paginationall d-flex align-items-center gap-2">
-      {/* PREV */}
-      <button
-        className="btn btn-sm btn-outline-primary"
-        disabled={pagination.currentPage === 1}
-        onClick={handlePrevPage}
-      >
-        <MdOutlineKeyboardArrowLeft />
-      </button>
+              {/* Page Numbers */}
+              <div className="d-flex gap-1">
+                {getPageNumbers().map((page) => (
+                  <button
+                    key={page}
+                    className={`btn btn-sm ${
+                      pagination.currentPage === page
+                        ? "btn-primary"
+                        : "btn-outline-primary"
+                    }`}
+                    onClick={() => handlePageClick(page)}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
 
-      {/* Page Numbers */}
-      <div className="d-flex gap-1">
-        {getPageNumbers().map((page) => (
-          <button
-            key={page}
-            className={`btn btn-sm ${
-              pagination.currentPage === page ? "btn-primary" : "btn-outline-primary"
-            }`}
-            onClick={() => handlePageClick(page)}
-          >
-            {page}
-          </button>
-        ))}
-      </div>
-
-      {/* NEXT */}
-      <button
-        className="btn btn-sm btn-outline-primary"
-        disabled={pagination.currentPage === pagination.totalPages}
-        onClick={handleNextPage}
-      >
-        <MdOutlineKeyboardArrowRight />
-      </button>
-    </div>
-
-  </div>
-)}
-
+              {/* NEXT */}
+              <button
+                className="btn btn-sm btn-outline-primary"
+                disabled={pagination.currentPage === pagination.totalPages}
+                onClick={handleNextPage}
+              >
+                <MdOutlineKeyboardArrowRight />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

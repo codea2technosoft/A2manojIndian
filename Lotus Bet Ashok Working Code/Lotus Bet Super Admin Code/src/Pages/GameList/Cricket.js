@@ -444,7 +444,7 @@ function Cricketlist() {
                           : "N/A"}
                       </td>
                       <td>
-                        <span className="badge bg-info">
+                        <span className="badge bg-info d-inline">
                           {match.marketCount || 0}
                         </span>
                       </td>
@@ -470,7 +470,7 @@ function Cricketlist() {
               Total Matches: {seriesMatches.length}
             </div>
             <Button
-              variant="secondary"
+              variant="danger"
               onClick={() => setShowMatchesModal(false)}
             >
               Close
@@ -490,7 +490,7 @@ function Cricketlist() {
 
             <button
               title="Refresh Matches"
-              className="fillterbutton"
+              className="btn btn-light"
               onClick={handleRefresh}
               disabled={loading}
             >
@@ -498,7 +498,7 @@ function Cricketlist() {
             </button>
 
             <button
-              className="fillterbutton"
+              className="btn btn-light"
               onClick={() => setFilter((prev) => !prev)}
             >
               <MdFilterListAlt /> Filter
@@ -516,7 +516,7 @@ function Cricketlist() {
               <option value={40}>40</option>
               <option value={50}>50</option>
             </select>
-            <button className="refeshbutton" onClick={() => navigate(-1)}>
+            <button className="btn btn-outline-light" onClick={() => navigate(-1)}>
               Back
             </button>
           </div>
@@ -720,7 +720,6 @@ function Cricketlist() {
                       </div>
 
                       <div className="d-flex flex-wrap align-items-center gap-2 position-relative">
-                        {/* ===== NEW 3-DOT DROPDOWN (EXTRA) ===== */}
                         <div
                           className="dropdown position-relative"
                           ref={actionRef}

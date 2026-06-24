@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { getSettings, UpdateSettings } from '../../Server/api'
+import { getSettings, UpdateSettings } from "../../Server/api";
 
 function WebSetting() {
   const [settings, setSettings] = useState({
@@ -18,7 +18,7 @@ function WebSetting() {
     odds_min_bet: "",
     odds_max_bet: "",
     bookmaker_min_bet: "",
-    bookmaker_max_bet: ""
+    bookmaker_max_bet: "",
   });
 
   const [logoFile, setLogoFile] = useState(null);
@@ -28,7 +28,7 @@ function WebSetting() {
 
   const validateField = (name, value) => {
     let error = "";
-    
+
     switch (name) {
       case "fancy_min_bet":
       case "odds_min_bet":
@@ -39,7 +39,7 @@ function WebSetting() {
           error = "Minimum bet must be a positive number";
         }
         break;
-        
+
       case "fancy_max_bet":
       case "odds_max_bet":
       case "bookmaker_max_bet":
@@ -49,25 +49,25 @@ function WebSetting() {
           error = "Maximum bet must be a positive number";
         }
         break;
-        
+
       case "whatsapp_no":
       case "whatsapp_support":
-        if (value && !/^\d{10}$/.test(value.replace(/\D/g, ''))) {
+        if (value && !/^\d{10}$/.test(value.replace(/\D/g, ""))) {
           error = "Please enter a valid 10-digit number";
         }
         break;
-        
+
       case "telegram_link":
       case "telegram_support":
         if (value && !value.startsWith("http")) {
           error = "Please enter a valid URL starting with http:// or https://";
         }
         break;
-        
+
       default:
         break;
     }
-    
+
     return error;
   };
 
@@ -108,40 +108,37 @@ function WebSetting() {
   //   }
   // };
 
+  const fetchSettings = async () => {
+    try {
+      setLoading(true);
+      const response = await getSettings();
 
+      const result = response.data?.data?.[0];
+      if (!result) return;
 
+      setSettings({
+        id: result._id,
+        description: result.description,
+        status: result.status,
+        fancy_min_bet: result.fancy_min_bet,
+        fancy_max_bet: result.fancy_max_bet,
+        odds_min_bet: result.odds_min_bet,
+        odds_max_bet: result.odds_max_bet,
+        bookmaker_min_bet: result.bookmaker_min_bet,
+        bookmaker_max_bet: result.bookmaker_max_bet,
+      });
 
-
-const fetchSettings = async () => {
-  try {
-    setLoading(true);
-    const response = await getSettings();
-
-    const result = response.data?.data?.[0];
-    if (!result) return;
-
-    setSettings({
-      id: result._id,
-      description: result.description,
-      status: result.status,
-      fancy_min_bet: result.fancy_min_bet,
-      fancy_max_bet: result.fancy_max_bet,
-      odds_min_bet: result.odds_min_bet,
-      odds_max_bet: result.odds_max_bet,
-      bookmaker_min_bet: result.bookmaker_min_bet,
-      bookmaker_max_bet: result.bookmaker_max_bet,
-    });
-
-    if (result.logo) {
-      setLogoPreview(`${process.env.REACT_APP_API_URL}/uploads/${result.logo}`);
+      if (result.logo) {
+        setLogoPreview(
+          `${process.env.REACT_APP_API_URL}/uploads/${result.logo}`,
+        );
+      }
+    } catch (err) {
+      Swal.fire("Error", "Failed to fetch settings", "error");
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    Swal.fire("Error", "Failed to fetch settings", "error");
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   useEffect(() => {
     fetchSettings();
@@ -175,12 +172,15 @@ const fetchSettings = async () => {
 
     // Validate all required numeric fields
     const numericFields = [
-      'fancy_min_bet', 'fancy_max_bet',
-      'odds_min_bet', 'odds_max_bet',
-      'bookmaker_min_bet', 'bookmaker_max_bet'
+      "fancy_min_bet",
+      "fancy_max_bet",
+      "odds_min_bet",
+      "odds_max_bet",
+      "bookmaker_min_bet",
+      "bookmaker_max_bet",
     ];
 
-    numericFields.forEach(field => {
+    numericFields.forEach((field) => {
       const error = validateField(field, settings[field]);
       if (error) {
         newErrors[field] = error;
@@ -207,27 +207,24 @@ const fetchSettings = async () => {
     try {
       setLoading(true);
 
-
-
-
-  const payload = {
-      // id: settings.id,
-      id: "6969cea9fb6d9e9d23dab319",
-      description: settings.description,
-      status: Number(settings.status), // IMPORTANT
-      fancy_min_bet: settings.fancy_min_bet,
-      fancy_max_bet: settings.fancy_max_bet,
-      odds_min_bet: settings.odds_min_bet,
-      odds_max_bet: settings.odds_max_bet,
-      bookmaker_min_bet: settings.bookmaker_min_bet,
-      bookmaker_max_bet: settings.bookmaker_max_bet,
-    };
+      const payload = {
+        // id: settings.id,
+        id: "6969cea9fb6d9e9d23dab319",
+        description: settings.description,
+        status: Number(settings.status), // IMPORTANT
+        fancy_min_bet: settings.fancy_min_bet,
+        fancy_max_bet: settings.fancy_max_bet,
+        odds_min_bet: settings.odds_min_bet,
+        odds_max_bet: settings.odds_max_bet,
+        bookmaker_min_bet: settings.bookmaker_min_bet,
+        bookmaker_max_bet: settings.bookmaker_max_bet,
+      };
       const response = await UpdateSettings(payload);
 
       if (response.data?.message) {
-      Swal.fire("Success 🎉", response.data.message, "success");
-      fetchSettings();
-    }  
+        Swal.fire("Success 🎉", response.data.message, "success");
+        fetchSettings();
+      }
     } catch (error) {
       console.error("Error saving settings:", error);
       Swal.fire({
@@ -240,7 +237,13 @@ const fetchSettings = async () => {
     }
   };
 
-  const renderInput = (label, name, type = "text", placeholder = "", maxLength = null) => (
+  const renderInput = (
+    label,
+    name,
+    type = "text",
+    placeholder = "",
+    maxLength = null,
+  ) => (
     <div className="col-md-6 mb-3">
       <label className="form-label">{label}</label>
       <input
@@ -260,7 +263,10 @@ const fetchSettings = async () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "200px" }}
+      >
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
@@ -269,17 +275,17 @@ const fetchSettings = async () => {
   }
 
   return (
-    <div className="row mt-3">
+    <div className="row">
       <div className="col-lg-12">
         <div className="card">
           <div className="card-header bg-primary-yellow">
-            <div className="d-flex align-items-center justify-content-between">
-              <h3 className="card-title text-white">Admin Settings</h3>
+            <div className="d-flex align-items-center justify-content-between align-items-center">
+              <h3 className="card-title mb-0">Admin Settings</h3>
             </div>
           </div>
           <div className="card-body">
             <form noValidate onSubmit={handleSave}>
-              <div className="row">     
+              <div className="row">
                 <div className="col-md-12 mb-3">
                   <label className="form-label">Status</label>
                   <select
@@ -309,7 +315,7 @@ const fetchSettings = async () => {
                     placeholder="Enter description"
                   ></textarea>
                 </div>
-{/* 
+                {/* 
                 <div className="col-md-6 mb-3">
                   <label className="form-label">Logo</label>
                   <input
@@ -338,23 +344,63 @@ const fetchSettings = async () => {
                   <h5 className="border-bottom pb-2">Betting Limits</h5>
                 </div>
 
-                {renderInput("Fancy Minimum Bet", "fancy_min_bet", "text", "Enter minimum bet for fancy", 10)}
-                {renderInput("Fancy Maximum Bet", "fancy_max_bet", "text", "Enter maximum bet for fancy", 10)}
-                {renderInput("Odds Minimum Bet", "odds_min_bet", "text", "Enter minimum bet for odds", 10)}
-                {renderInput("Odds Maximum Bet", "odds_max_bet", "text", "Enter maximum bet for odds", 10)}
-                {renderInput("Bookmaker Minimum Bet", "bookmaker_min_bet", "text", "Enter minimum bet for bookmaker", 10)}
-                {renderInput("Bookmaker Maximum Bet", "bookmaker_max_bet", "text", "Enter maximum bet for bookmaker", 10)}
+                {renderInput(
+                  "Fancy Minimum Bet",
+                  "fancy_min_bet",
+                  "text",
+                  "Enter minimum bet for fancy",
+                  10,
+                )}
+                {renderInput(
+                  "Fancy Maximum Bet",
+                  "fancy_max_bet",
+                  "text",
+                  "Enter maximum bet for fancy",
+                  10,
+                )}
+                {renderInput(
+                  "Odds Minimum Bet",
+                  "odds_min_bet",
+                  "text",
+                  "Enter minimum bet for odds",
+                  10,
+                )}
+                {renderInput(
+                  "Odds Maximum Bet",
+                  "odds_max_bet",
+                  "text",
+                  "Enter maximum bet for odds",
+                  10,
+                )}
+                {renderInput(
+                  "Bookmaker Minimum Bet",
+                  "bookmaker_min_bet",
+                  "text",
+                  "Enter minimum bet for bookmaker",
+                  10,
+                )}
+                {renderInput(
+                  "Bookmaker Maximum Bet",
+                  "bookmaker_max_bet",
+                  "text",
+                  "Enter maximum bet for bookmaker",
+                  10,
+                )}
 
                 <div className="col-md-12">
                   <div className="d-flex justify-content-end">
-                    <button 
-                      type="submit" 
-                      className="btn btn-primary"
+                    <button
+                      type="submit"
+                      className="btn btn-success"
                       disabled={loading}
                     >
                       {loading ? (
                         <>
-                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          <span
+                            className="spinner-border spinner-border-sm me-2"
+                            role="status"
+                            aria-hidden="true"
+                          ></span>
                           Updating...
                         </>
                       ) : (

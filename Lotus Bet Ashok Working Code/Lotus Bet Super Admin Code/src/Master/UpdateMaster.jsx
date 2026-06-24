@@ -157,7 +157,6 @@ const UpdateSuperAgentAdmin = () => {
         return updated;
       }
 
-      
       // Match & Session Commission Validation + Auto Change Commission Type
       if (name === "match_comm" || name === "session_comm") {
         const result = validateCommission(value);
@@ -243,14 +242,10 @@ const UpdateSuperAgentAdmin = () => {
         // politics_comm: Number(formData.politics_comm),
         // casino_comm: Number(formData.casino_comm),
         football_comm:
-          formData.commission_type === "0"
-            ? 0
-            : Number(formData.football_comm),
+          formData.commission_type === "0" ? 0 : Number(formData.football_comm),
 
         tennis_comm:
-          formData.commission_type === "0"
-            ? 0
-            : Number(formData.tennis_comm),
+          formData.commission_type === "0" ? 0 : Number(formData.tennis_comm),
 
         horse_racing_comm:
           formData.commission_type === "0"
@@ -263,20 +258,13 @@ const UpdateSuperAgentAdmin = () => {
             : Number(formData.greyhound_racing_comm),
 
         politics_comm:
-          formData.commission_type === "0"
-            ? 0
-            : Number(formData.politics_comm),
+          formData.commission_type === "0" ? 0 : Number(formData.politics_comm),
 
         casino_comm:
-          formData.commission_type === "0"
-            ? 0
-            : Number(formData.casino_comm),
+          formData.commission_type === "0" ? 0 : Number(formData.casino_comm),
 
-            session_comm:
-          formData.commission_type === "0"
-            ? 0
-            : Number(formData.session_comm),
-
+        session_comm:
+          formData.commission_type === "0" ? 0 : Number(formData.session_comm),
       };
 
       const res = await updateClient(payload);
@@ -319,7 +307,7 @@ const UpdateSuperAgentAdmin = () => {
             Update Master — {formData.username}
           </h5>
           <div className="d-flex gap-2">
-            <button className="btn btn-light" onClick={handleBack}>
+            <button className="btn btn-outline-light" onClick={handleBack}>
               Back
             </button>
           </div>
@@ -448,10 +436,6 @@ const UpdateSuperAgentAdmin = () => {
                 />
               </div>
 
-
-
-
-
               <div className="mb-3 col-md-6">
                 <label>Football Commission</label>
                 <input
@@ -502,9 +486,6 @@ const UpdateSuperAgentAdmin = () => {
                 />
               </div>
 
-
-
-
               <div className="mb-3 col-md-6">
                 <label>Horse Racing Commission</label>
                 <input
@@ -529,8 +510,6 @@ const UpdateSuperAgentAdmin = () => {
                   }
                 />
               </div>
-
-
 
               <div className="mb-3 col-md-6">
                 <label>Greyhound Racing Commission</label>
@@ -557,8 +536,6 @@ const UpdateSuperAgentAdmin = () => {
                 />
               </div>
 
-
-
               <div className="mb-3 col-md-6">
                 <label>Politics Commission</label>
                 <input
@@ -583,8 +560,6 @@ const UpdateSuperAgentAdmin = () => {
                   }
                 />
               </div>
-
-
 
               <div className="mb-3 col-md-6">
                 <label>Casino Commission</label>
@@ -611,7 +586,6 @@ const UpdateSuperAgentAdmin = () => {
                 />
               </div>
 
-
               {/* <div className="mb-3 col-md-6">
                 <label>Session Commission</label>
                 <input
@@ -636,11 +610,6 @@ const UpdateSuperAgentAdmin = () => {
                   }
                 />
               </div> */}
-
-
-
-
-
 
               <div className="col-3">
                 <button

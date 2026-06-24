@@ -7,9 +7,7 @@ import {
   MdOutlineKeyboardArrowRight,
 } from "react-icons/md";
 import moment from "moment";
-import {
-  FiSearch
-} from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 import { getMatchLedger } from "../../Server/api";
 
 function ProfitAndLoss() {
@@ -18,7 +16,7 @@ function ProfitAndLoss() {
   const admin_id = localStorage.getItem("admin_id");
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
-const [tableLoading, setTableLoading] = useState(false);
+  const [tableLoading, setTableLoading] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [showFilters, setShowFilters] = useState(false);
@@ -40,12 +38,13 @@ const [tableLoading, setTableLoading] = useState(false);
   const currentPage = page;
   const itemsPerPage = Number(limit);
   const totalItems = totalRecords;
-  const startEntry = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+  const startEntry =
+    totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
   const endEntry = Math.min(currentPage * itemsPerPage, totalItems);
   // ---------------- API CALL ----------------
   const fetchMatchLedger = async () => {
     try {
-        const payload = {
+      const payload = {
         admin_id,
         page,
         limit,
@@ -87,16 +86,16 @@ const [tableLoading, setTableLoading] = useState(false);
     setSearchTerm(searchInput.trim());
     setPage(1);
   };
-useEffect(() => {
-  fetchMatchLedger(false); 
-}, [searchTerm]);
+  useEffect(() => {
+    fetchMatchLedger(false);
+  }, [searchTerm]);
   const handleClearSearch = () => {
     setSearchInput("");
     setSearchTerm("");
   };
 
   const handleSearchKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };
@@ -167,18 +166,18 @@ useEffect(() => {
         <div className="card">
           <div className="card-header bg-primary-yellow">
             <div className="d-flex align-items-center justify-content-between">
-              <h3 className="card-title  mb-0">MATCH LEDGER</h3>
+              <h3 className="card-title  mb-0">Match Ledger</h3>
 
               <div className="d-flex gap-2 align-items-center">
                 <button
-                  className="btn btn-success"
+                  className="btn btn-light"
                   onClick={() => setShowFilters(!showFilters)}
                 >
-                  {showFilters ? "Hide Filters" : "Show Filters"}
+                  {showFilters ? "Hide Filters" : "Filter"}
                 </button>
 
                 <div
-                  className="backbutton"
+                  className="btn btn-outline-light"
                   onClick={() => navigate(-1)}
                 >
                   <BsArrowLeft className="me-1" /> Back
@@ -209,37 +208,30 @@ useEffect(() => {
                   />
                 </div>
                 <div className="col-md-3 mt-4 d-flex gap-2">
-                  <button
-                    className="refreshbuttonall"
-                    onClick={applyDateFilter}
-                  >
-                    Apply Filters
+                  <button className="btn btn-success" onClick={applyDateFilter}>
+                    Apply
                   </button>
-                  <button
-                    className="btn btn-danger"
-                    onClick={clearDateFilter}
-                  >
-                    Clear Filters
+                  <button className="btn btn-danger" onClick={clearDateFilter}>
+                    Clear
                   </button>
                 </div>
               </div>
             </div>
           )}
 
-          <div className="mt-2">
-            <h5 className=" btn btn-transparent">
-              TOTAL:{" "}
-              <span
-                style={{
-                  color: summary.balance >= 0 ? "#28a745" : "#dc3545",
-                }}
-              >
-                {summary.balance?.toFixed(2)}
-              </span>
-            </h5>
-          </div>
-
           <div className="card-body">
+            <div className="mb-2">
+              <h5 className="bg-light d-inline-block p-2 mb-0 rounded">
+                Total:{" "}
+                <span
+                  style={{
+                    color: summary.balance >= 0 ? "#28a745" : "#dc3545",
+                  }}
+                >
+                  {summary.balance?.toFixed(2)}
+                </span>
+              </h5>
+            </div>
             {/* TABLE */}
             <div className="table-responsive">
               <table className="table table-bordered text-center">
@@ -262,16 +254,14 @@ useEffect(() => {
                     </tr>
                   ) : rows.length === 0 ? (
                     <tr>
-                      <td colSpan="5" className="py-4">
+                      <td colSpan="5" className="py-4 text-center">
                         <strong>No Data Found</strong>
                       </td>
                     </tr>
                   ) : (
                     rows.map((r) => (
                       <tr key={r._id}>
-                        <td>
-                          {moment(r.created_at).format("DD-MM-YYYY")}
-                        </td>
+                        <td>{moment(r.created_at).format("DD-MM-YYYY")}</td>
 
                         <td>{r.comment}</td>
 
@@ -296,16 +286,14 @@ useEffect(() => {
             </div>
 
             {/* PAGINATION */}
-         {totalRecords > Number(limit) && (
+            {totalRecords > Number(limit) && (
               <div className="card-footer">
                 <div className="d-flex justify-content-between align-items-center mt-4">
-
                   <div className="sohwingallentries">
                     Showing {startEntry} to {endEntry} of {totalItems} entries
                   </div>
 
                   <div className="paginationall d-flex align-items-center gap-1">
-
                     <button onClick={handlePrev} disabled={currentPage === 1}>
                       <MdOutlineKeyboardArrowLeft />
                     </button>
@@ -322,10 +310,12 @@ useEffect(() => {
                       ))}
                     </div>
 
-                    <button onClick={handleNext} disabled={currentPage === totalPages}>
+                    <button
+                      onClick={handleNext}
+                      disabled={currentPage === totalPages}
+                    >
                       <MdOutlineKeyboardArrowRight />
                     </button>
-
                   </div>
                 </div>
               </div>

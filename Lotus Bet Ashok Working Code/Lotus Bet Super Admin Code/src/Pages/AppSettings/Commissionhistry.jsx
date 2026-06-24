@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { MdOutlineKeyboardArrowRight, MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import {
+  MdOutlineKeyboardArrowRight,
+  MdOutlineKeyboardArrowLeft,
+} from "react-icons/md";
 import { FiSearch } from "react-icons/fi";
 import { RxCross2 } from "react-icons/rx";
 import axios from "axios";
@@ -32,7 +35,12 @@ function Commissionhistory() {
   // ==================================================
   // 📌 FETCH TRANSACTION LIST
   // ==================================================
-  const fetchTransactionList = async (page = 1, search = "", from = "", to = "") => {
+  const fetchTransactionList = async (
+    page = 1,
+    search = "",
+    from = "",
+    to = "",
+  ) => {
     try {
       setIsSearching(true);
       const role = localStorage.getItem("role");
@@ -52,7 +60,7 @@ function Commissionhistory() {
         to_date: to,
         search: search,
         page: page,
-        limit: itemsPerPage
+        limit: itemsPerPage,
       };
 
       const response = await axios.post(
@@ -61,21 +69,21 @@ function Commissionhistory() {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
-        }
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data?.success) {
         const result = response.data;
         setLedgerData(result.data || []);
-        
+
         setSummary({
           match_com: result.summary?.match_com || 0,
           sec_com: result.summary?.sec_com || 0,
           total_com: result.summary?.total_com || 0,
         });
-        
+
         setCurrentPage(result.page || page);
         setTotalItems(result.total || 0);
         setTotalPages(result.totalPages || 1);
@@ -97,7 +105,7 @@ function Commissionhistory() {
   const commissionreportupdate = async (event_id, adminId) => {
     try {
       setUpdatingId(event_id); // Set updating state for this row
-      
+
       const role = localStorage.getItem("role");
       const token = localStorage.getItem("token");
 
@@ -110,7 +118,7 @@ function Commissionhistory() {
       const payload = {
         role: role,
         admin_id: adminId,
-        event_id: event_id
+        event_id: event_id,
       };
 
       const response = await axios.post(
@@ -119,9 +127,9 @@ function Commissionhistory() {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
-        }
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data?.success) {
@@ -130,9 +138,9 @@ function Commissionhistory() {
           title: "Success",
           text: "Commission report updated successfully",
           timer: 2000,
-          showConfirmButton: false
+          showConfirmButton: false,
         });
-        
+
         // Refresh the data after successful update
         fetchTransactionList(currentPage, searchTerm, fromDate, toDate);
       } else {
@@ -146,7 +154,8 @@ function Commissionhistory() {
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: err.response?.data?.message || "Failed to update commission report",
+        text:
+          err.response?.data?.message || "Failed to update commission report",
       });
     } finally {
       setUpdatingId(null); // Clear updating state
@@ -202,11 +211,13 @@ function Commissionhistory() {
   };
 
   const handlePrev = () => {
-    if (currentPage > 1) fetchTransactionList(currentPage - 1, searchTerm, fromDate, toDate);
+    if (currentPage > 1)
+      fetchTransactionList(currentPage - 1, searchTerm, fromDate, toDate);
   };
 
   const handleNext = () => {
-    if (currentPage < totalPages) fetchTransactionList(currentPage + 1, searchTerm, fromDate, toDate);
+    if (currentPage < totalPages)
+      fetchTransactionList(currentPage + 1, searchTerm, fromDate, toDate);
   };
 
   const getPageNumbers = () => {
@@ -226,21 +237,20 @@ function Commissionhistory() {
     }
     return pages;
   };
-  
+
   return (
     <div className="row">
       <div className="col-lg-12">
         <div className="card">
-          <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
-            <h3 className="card-title mb-0">Commission Report Complete
-</h3>
+          <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
+            <h3 className="card-title mb-0">Commission Report Complete</h3>
             <div>
-    <button
-  className="btn btn-sm btn-light"
-  onClick={() => navigate(-1)}
->
-  Back
-</button>
+              <button
+                className="btn btn-outline-light"
+                onClick={() => navigate(-1)}
+              >
+                Back
+              </button>
             </div>
             {/* <div>
               <button className="btn btn-sm btn-light" onClick={() => setShowFilter(!showFilter)}> 
@@ -278,7 +288,7 @@ function Commissionhistory() {
                       placeholder="Enter username or admin ID..."
                       value={searchInput}
                       onChange={(e) => setSearchInput(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                      onKeyPress={(e) => e.key === "Enter" && handleSearch()}
                     />
                     <button
                       className="btn btn-primary"
@@ -346,8 +356,8 @@ function Commissionhistory() {
             {/* SUMMARY CARDS */}
             <div className="row mb-4">
               <div className="col-md-4">
-                <div className="card bg-primary ">
-                  <div className="card-body">
+                <div className="card bg-primary">
+                  <div className="card-body text-light">
                     <h6 className="card-title">Match Commission</h6>
                     <h4 className="mb-0">₹{summary.match_com.toFixed(2)}</h4>
                   </div>
@@ -355,7 +365,7 @@ function Commissionhistory() {
               </div>
               <div className="col-md-4">
                 <div className="card bg-success ">
-                  <div className="card-body">
+                  <div className="card-body text-light">
                     <h6 className="card-title">Session Commission</h6>
                     <h4 className="mb-0">₹{summary.sec_com.toFixed(2)}</h4>
                   </div>
@@ -363,7 +373,7 @@ function Commissionhistory() {
               </div>
               <div className="col-md-4">
                 <div className="card bg-info ">
-                  <div className="card-body">
+                  <div className="card-body text-light">
                     <h6 className="card-title">Total Commission</h6>
                     <h4 className="mb-0">₹{summary.total_com.toFixed(2)}</h4>
                   </div>
@@ -395,18 +405,21 @@ function Commissionhistory() {
                   ) : (
                     ledgerData.map((transaction) => {
                       const isUpdating = updatingId === transaction.event_id;
-                      
+
                       return (
                         <tr key={transaction._id}>
                           <td>
-                            {new Date(transaction.created_at).toLocaleString("en-IN", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: true,
-                            })}
+                            {new Date(transaction.created_at).toLocaleString(
+                              "en-IN",
+                              {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              },
+                            )}
                           </td>
                           <td>{transaction.admin_id || "-"}</td>
                           <td>{transaction.match_name || "-"}</td>
@@ -453,8 +466,10 @@ function Commissionhistory() {
             {totalPages > 1 && (
               <div className="d-flex justify-content-between align-items-center mt-4">
                 <div className="text-muted">
-                  Showing {totalItems > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} to{" "}
-                  {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+                  Showing{" "}
+                  {totalItems > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} to{" "}
+                  {Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
+                  {totalItems} entries
                 </div>
                 <div className="paginationall d-flex align-items-center gap-2">
                   <button
@@ -468,7 +483,7 @@ function Commissionhistory() {
                     {getPageNumbers().map((page) => (
                       <button
                         key={page}
-                        className={`btn btn-sm ${page === currentPage ? 'btn-primary' : 'btn-outline-secondary'}`}
+                        className={`btn btn-sm ${page === currentPage ? "btn-primary" : "btn-outline-secondary"}`}
                         onClick={() => handlePageClick(page)}
                       >
                         {page}

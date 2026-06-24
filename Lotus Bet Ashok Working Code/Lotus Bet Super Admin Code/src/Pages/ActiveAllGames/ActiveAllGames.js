@@ -45,7 +45,7 @@ function ActiveAllGames() {
   const isCricket = sportId === "4";
   setInterval(() => {
     fetchOddsData();
-  }, 10000);
+  }, 500);
   // Fetch odds data for all events
   const fetchOddsData = async (events) => {
     try {

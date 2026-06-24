@@ -160,13 +160,12 @@ const ChipStatement = () => {
     <>
       <ToastContainer autoClose={500} theme="colored" />
 
-      <div className="container-fluid">
         <div className="card">
-          <div className="card-header flex-wrap-mobile bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-md-center gap-2">
+          <div className="card-header flex-wrap-mobile bg-primary-yellow d-flex justify-content-between align-items-md-center gap-2">
             <h5 className="card-title mb-0">Chip Statement</h5>
 
             <div className="d-flex align-items-center">
-              <button onClick={() => navigate(-1)} className="backbutton">
+              <button onClick={() => navigate(-1)} className="btn btn-outline-light">
                 Back
               </button>
             </div>
@@ -341,7 +340,6 @@ const ChipStatement = () => {
             )}
           </div>
         </div>
-      </div>
     </>
   );
 };

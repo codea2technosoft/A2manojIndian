@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { MdOutlineKeyboardArrowRight, MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import {
+  MdOutlineKeyboardArrowRight,
+  MdOutlineKeyboardArrowLeft,
+} from "react-icons/md";
 import { getStatementPL } from "../../Server/api";
 import { FiSearch } from "react-icons/fi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {
-  Spinner,
-  Form,
-  Button
-} from "react-bootstrap";
+import { Spinner, Form, Button } from "react-bootstrap";
 
 const ProfitLoss = () => {
   const navigate = useNavigate();
@@ -33,7 +32,7 @@ const ProfitLoss = () => {
     debit: 0,
     commissionPlus: 0,
     commissionMinus: 0,
-    netBalance: 0
+    netBalance: 0,
   });
 
   useEffect(() => {
@@ -44,7 +43,7 @@ const ProfitLoss = () => {
     let credit = 0;
     let debit = 0;
 
-    data.forEach(item => {
+    data.forEach((item) => {
       if (item.type === "credit") credit += Number(item.amount || 0);
       if (item.type === "debit") debit += Number(item.amount || 0);
     });
@@ -55,7 +54,7 @@ const ProfitLoss = () => {
       commissionMinus: 0,
       netBalance: data.length
         ? Number(data[data.length - 1].after_balance_from || 0)
-        : 0
+        : 0,
     });
   };
 
@@ -63,7 +62,7 @@ const ProfitLoss = () => {
     try {
       setLoading(true);
       const loggedInAdminId = localStorage.getItem("admin_id");
-      
+
       // Call getStatementPL API with filters
       const res = await getStatementPL({
         admin_id: adminId || loggedInAdminId,
@@ -72,7 +71,7 @@ const ProfitLoss = () => {
         search: searchTerm,
         sport: sport,
         from_date: fromDate,
-        to_date: toDate
+        to_date: toDate,
       });
 
       const response = res.data;
@@ -94,7 +93,7 @@ const ProfitLoss = () => {
   const handleModeChange = (selectedMode) => {
     if (selectedMode === "ALL") {
       if (adminId) {
-        navigate(`/getAllstatment/${adminId}`);  
+        navigate(`/getAllstatment/${adminId}`);
       } else {
         navigate("/getAllstatment");
       }
@@ -102,13 +101,13 @@ const ProfitLoss = () => {
   };
 
   const formatNumber = (num) => Number(num || 0).toFixed(2);
-  
+
   const handlePrev = () => {
-    if (currentPage > 1) setCurrentPage(prev => prev - 1);
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
   };
 
   const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(prev => prev + 1);
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
   };
 
   const handlePageClick = (page) => {
@@ -158,14 +157,12 @@ const ProfitLoss = () => {
     <>
       <ToastContainer autoClose={500} theme="colored" />
 
-      <div className="container-fluid">
-        <div className="card">
-          <div className="card-header flex-wrap-mobile bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-md-center gap-2">
-            <h5 className="card-title mb-0">P & L Statement</h5>
+      <div className="card">
+        <div className="card-header flex-wrap-mobile bg-primary-yellow d-flex justify-content-between align-items-md-center gap-2">
+          <h5 className="card-title mb-0">P & L Statement</h5>
 
-             <div className="d-flex align-items-center gap-2">
-            
-             {/* <select
+          <div className="d-flex align-items-center gap-2">
+            {/* <select
                 className="form-select w-auto"
                 onChange={(e) => handleModeChange(e.target.value)}
                 defaultValue="PL"
@@ -173,16 +170,19 @@ const ProfitLoss = () => {
                 <option value="ALL">All Statement</option>
                 <option value="PL">P & L Statement</option>
               </select>*/}
-              
-              <button onClick={() => navigate(-1)} className="backbutton">
-                Back
-              </button>
-            </div> 
-          </div>
 
-          <div className="card-body">
-            <div className="row mb-3 align-items-center">
-              {/* <div className="col-md-2">
+            <button
+              onClick={() => navigate(-1)}
+              className="btn btn-outline-light"
+            >
+              Back
+            </button>
+          </div>
+        </div>
+
+        <div className="card-body">
+          <div className="row mb-3 align-items-center">
+            {/* <div className="col-md-2">
                 <Form.Select
                   value={sport}
                   onChange={(e) => setSport(e.target.value)}
@@ -199,124 +199,129 @@ const ProfitLoss = () => {
                 </Form.Select>
               </div> */}
 
-              {/* From Date */}
-              <div className="col-md-2">
-                <Form.Control
-                  type="date"
-                  value={fromDate}
-                  onChange={(e) => setFromDate(e.target.value)}
-                />
-              </div>
-
-              {/* To Date */}
-              <div className="col-md-2">
-                <Form.Control
-                  type="date"
-                  value={toDate}
-                  onChange={(e) => setToDate(e.target.value)}
-                />
-              </div>
-
-              {/* Search Button */}
-              <div className="col-md-1">
-                <Button onClick={handleSearch}>
-                  <FiSearch />
-                </Button>
-              </div>
-
-            
+            {/* From Date */}
+            <div className="col-md-2">
+              <Form.Control
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+              />
             </div>
 
-            {/* Search Term Display */}
-            {searchTerm && (
-              <div className="mb-3">
-                <small className="text-muted">
-                  Search results for: <strong>"{searchTerm}"</strong>
-                </small>
-              </div>
-            )}
+            {/* To Date */}
+            <div className="col-md-2">
+              <Form.Control
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+              />
+            </div>
 
-            {loading ? (
-              <div className="text-center py-5">
-                <Spinner animation="border" />
-                <p>Loading P&L statement data...</p>
-              </div>
-            ) : statementData.length === 0 ? (
-              <div className="text-center py-5">
-                <h5>NO DATA</h5>
-              </div>
-            ) : (
-              <>
-                <div className="table-responsive">
-                  <table className="table table-bordered table-hover">
-                    <thead className="table-primary">
-                      <tr>
-                        <th>DATE</th>
-                        <th>TYPE</th>
-                        <th>REMARK</th>
-                        <th className="text-end">OLD BAL</th>
-                        <th className="text-end text-success">WIN</th>
-                        <th className="text-end text-danger">LOSS</th>
-                        <th className="text-end">BALANCE</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {statementData.map((item, index) => (
-                        <tr key={index}>
-                          <td>{new Date(item.created_at).toLocaleString()}</td>
-                          <td>{item.tr_type}</td>
-                          <td>{item.remark}</td>
-                          <td className="text-end">
-                            {formatNumber(item.before_balance_from)}
-                          </td>
-                          <td className="text-end text-success">
-                            {item.win_loss === "WIN" ? formatNumber(item.amount) : "0.00"}
-                          </td>
-                          <td className="text-end text-danger">
-                            {item.win_loss === "LOSS" ? formatNumber(item.amount) : "0.00"}
-                          </td>
-                          <td className="text-end fw-bold">
-                            {formatNumber(item.wallet_amount)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {totalPages > 1 && (
-                  <div className="d-flex justify-content-between align-items-center mt-4">
-                    <div className="sohwingallentries">
-                      Showing {((currentPage - 1) * limit) + 1} to{" "}
-                      {Math.min(currentPage * limit, totalRecords)} of {totalRecords} entries
-                    </div>
-
-                    <div className="paginationall d-flex align-items-center gap-1">
-                      <button disabled={currentPage === 1} onClick={handlePrev}>
-                        <MdOutlineKeyboardArrowLeft />
-                      </button>
-
-                      <div className="d-flex gap-1">
-                        {getPageNumbers().map((page) => (
-                          <div
-                            key={page}
-                            className={`paginationnumber ${currentPage === page ? "active" : ""}`}
-                            onClick={() => handlePageClick(page)}
-                          >
-                            {page}
-                          </div>
-                        ))}
-                      </div>
-
-                      <button disabled={currentPage === totalPages} onClick={handleNext}>
-                        <MdOutlineKeyboardArrowRight />
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
+            {/* Search Button */}
+            <div className="col-md-1">
+              <Button onClick={handleSearch}>
+                <FiSearch />
+              </Button>
+            </div>
           </div>
+
+          {/* Search Term Display */}
+          {searchTerm && (
+            <div className="mb-3">
+              <small className="text-muted">
+                Search results for: <strong>"{searchTerm}"</strong>
+              </small>
+            </div>
+          )}
+
+          {loading ? (
+            <div className="text-center py-5">
+              <Spinner animation="border" />
+              <p>Loading P&L statement data...</p>
+            </div>
+          ) : statementData.length === 0 ? (
+            <div className="text-center py-5">
+              <h5>NO DATA</h5>
+            </div>
+          ) : (
+            <>
+              <div className="table-responsive">
+                <table className="table table-bordered table-hover">
+                  <thead className="table-dark">
+                    <tr>
+                      <th>DATE</th>
+                      <th>TYPE</th>
+                      <th>REMARK</th>
+                      <th className="text-end">OLD BAL</th>
+                      <th className="text-end text-success">WIN</th>
+                      <th className="text-end text-danger">LOSS</th>
+                      <th className="text-end">BALANCE</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {statementData.map((item, index) => (
+                      <tr key={index}>
+                        <td>{new Date(item.created_at).toLocaleString()}</td>
+                        <td>{item.tr_type}</td>
+                        <td>{item.remark}</td>
+                        <td className="text-end">
+                          {formatNumber(item.before_balance_from)}
+                        </td>
+                        <td className="text-end text-success">
+                          {item.win_loss === "WIN"
+                            ? formatNumber(item.amount)
+                            : "0.00"}
+                        </td>
+                        <td className="text-end text-danger">
+                          {item.win_loss === "LOSS"
+                            ? formatNumber(item.amount)
+                            : "0.00"}
+                        </td>
+                        <td className="text-end fw-bold">
+                          {formatNumber(item.wallet_amount)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {totalPages > 1 && (
+                <div className="d-flex justify-content-between align-items-center mt-4">
+                  <div className="sohwingallentries">
+                    Showing {(currentPage - 1) * limit + 1} to{" "}
+                    {Math.min(currentPage * limit, totalRecords)} of{" "}
+                    {totalRecords} entries
+                  </div>
+
+                  <div className="paginationall d-flex align-items-center gap-1">
+                    <button disabled={currentPage === 1} onClick={handlePrev}>
+                      <MdOutlineKeyboardArrowLeft />
+                    </button>
+
+                    <div className="d-flex gap-1">
+                      {getPageNumbers().map((page) => (
+                        <div
+                          key={page}
+                          className={`paginationnumber ${currentPage === page ? "active" : ""}`}
+                          onClick={() => handlePageClick(page)}
+                        >
+                          {page}
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      disabled={currentPage === totalPages}
+                      onClick={handleNext}
+                    >
+                      <MdOutlineKeyboardArrowRight />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
     </>

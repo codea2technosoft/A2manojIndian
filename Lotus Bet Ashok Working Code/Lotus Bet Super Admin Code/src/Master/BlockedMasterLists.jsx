@@ -190,11 +190,11 @@ function BlockeddMasterLists() {
   return (
     <>
       <div className="card agentmaster">
-        <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
           <h5 className="mb-0">Blocked Masters Lists</h5>
-          <Button size="sm" className="btn-success" onClick={handleBack}>
+          <button className="btn btn-outline-light" onClick={handleBack}>
             Back
-          </Button>
+          </button>
         </div>
         <div className="card-body">
           {agentData.length > 0 && (

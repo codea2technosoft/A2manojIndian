@@ -305,7 +305,7 @@ export default function Dashboard() {
       <div className="activematch">
         {/* Header Section - Matching the image */}
         <Card>
-          <CardHeader className=" bg-primary-yellow">
+          <CardHeader className="bg-primary-yellow">
             <div className="title_all mb-0">
               <h3 className="mb-0 card-title">Active Games</h3>
             </div>
@@ -365,7 +365,7 @@ export default function Dashboard() {
                       onKeyPress={handleSearchKeyPress}
                     />
                     <button
-                      className="btn btn-outline-primary"
+                      className="btn btn-outline-success"
                       type="button"
                       onClick={handleSearch}
                       disabled={isSearching}

@@ -6,7 +6,7 @@ import {
   addNewTransactionmaster,
   getMyLedgerTxn,
   deleteLedgerTxn,
-  MasterdeleteLedgerTxn
+  MasterdeleteLedgerTxn,
 } from "../../Server/api";
 import { Button } from "react-bootstrap";
 import { BsArrowLeft } from "react-icons/bs";
@@ -51,7 +51,6 @@ function MasterTransction() {
     fetchClients();
     resetForm();
   }, [master_id]);
-
 
   // const fetchClients = async () => {
   //   try {
@@ -103,7 +102,6 @@ function MasterTransction() {
   //   }
   // };
 
-
   //delete transactio
 
   const fetchClients = async () => {
@@ -127,11 +125,11 @@ function MasterTransction() {
             ...(clientData.clear || []),
           ];
         }
-        const filteredClients = clientsList.filter(user => user.role == 2);
+        const filteredClients = clientsList.filter((user) => user.role == 2);
         setClients(filteredClients);
         if (master_id && filteredClients.length > 0) {
           const selectedClient = filteredClients.find(
-            (c) => c.admin_id === master_id
+            (c) => c.admin_id === master_id,
           );
           if (selectedClient) {
             setFormData((prev) => ({
@@ -176,7 +174,6 @@ function MasterTransction() {
     }
   };
 
-
   const handleDeleteTxn = async (ledger_id) => {
     // if (!formData.client || !ledger_id) return;
 
@@ -198,11 +195,7 @@ function MasterTransction() {
         fetchLedgerData(formData.client, currentPage, paymentFilter);
       }
     } catch (err) {
-      Swal.fire(
-        "Error",
-        err.response?.data?.message,
-        "error"
-      );
+      Swal.fire("Error", err.response?.data?.message, "error");
     }
   };
 
@@ -216,7 +209,6 @@ function MasterTransction() {
         payment_type: filter,
         page: String(pageNo),
         limit: String(itemsPerPage),
-
       });
 
       if (response.data?.success) {
@@ -235,13 +227,11 @@ function MasterTransction() {
         // });
 
         setSummary({
-          credit: Number(res.lena) || 0,   // LIYA
-          debit: Number(res.dena) || 0,    // DIYA
+          credit: Number(res.lena) || 0, // LIYA
+          debit: Number(res.dena) || 0, // DIYA
           balance: Number(res.balance) || 0,
           balanceType: res.balance >= 0 ? "CREDIT" : "DEBIT",
         });
-
-
       }
     } catch (err) {
       console.log("ledger error", err);
@@ -278,7 +268,6 @@ function MasterTransction() {
   };
   const handlePageClick = (page) => {
     fetchLedgerData(formData.client, currentPage, paymentFilter);
-
   };
   const handleChange = async (e) => {
     const { name, value } = e.target;
@@ -293,7 +282,7 @@ function MasterTransction() {
       setFormData((prev) => ({ ...prev, [name]: value }));
       if (value) {
         const selectedClient = clients.find(
-          (client) => client.admin_id === value
+          (client) => client.admin_id === value,
         );
         if (selectedClient) {
           setSelectedUserData(selectedClient);
@@ -367,12 +356,11 @@ function MasterTransction() {
       return;
     }
 
-
     // setLoading(true);
     try {
       const transactionData = {
-        send_to_admin_id:admin_id,
-        role:"1",
+        send_to_admin_id: admin_id,
+        role: "1",
         admin_id: formData.client,
         amount: parseFloat(formData.amount),
         collection: formData.collection,
@@ -390,7 +378,7 @@ function MasterTransction() {
           timer: 1000,
           timerProgressBar: true,
           showConfirmButton: false,
-          allowOutsideClick: false
+          allowOutsideClick: false,
         });
         if (formData.client) {
           fetchLedgerData(formData.client);
@@ -435,7 +423,9 @@ function MasterTransction() {
               <div className="text-center border-danger">
                 <div className="master-txn gap-2 d-flex align-items-end">
                   <div className="w-100 text-start">
-                    <label className="text-uppercase fw-bold">payment Type</label>
+                    <label className="text-uppercase fw-bold">
+                      payment Type
+                    </label>
                     <select
                       className="form-select"
                       value={paymentFilter}
@@ -539,23 +529,25 @@ function MasterTransction() {
                         {/* <td>{transaction.post_date}</td> */}
 
                         <td>
-                          {new Date(transaction.created_at).toLocaleString("en-IN", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: true,
-                          })}
+                          {new Date(transaction.created_at).toLocaleString(
+                            "en-IN",
+                            {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            },
+                          )}
                         </td>
 
                         <td>
-                          {transaction.event_id === "MANUAL"&& transaction.send_to_admin_id === admin_id ? (
+                          {transaction.event_id === "MANUAL" &&
+                          transaction.send_to_admin_id === admin_id ? (
                             <button
                               className="trashbutton"
-                              onClick={() =>
-                                handleDeleteTxn(transaction._id)
-                              }
+                              onClick={() => handleDeleteTxn(transaction._id)}
                             >
                               <FaTrash size={18} />
                             </button>
@@ -563,9 +555,7 @@ function MasterTransction() {
                             "-"
                           )}
                         </td>
-                        <td>
-                          {transaction.comment || "N/A"}
-                        </td>
+                        <td>{transaction.comment || "N/A"}</td>
                         <td className="text-danger">
                           {diya > 0 ? diya.toFixed(2) : "-"}
                         </td>
@@ -582,9 +572,7 @@ function MasterTransction() {
                           <strong>{Math.abs(balance).toFixed(2)}</strong>
                         </td>
                         <td>
-                          <td>
-                       {transaction.pay_type}
-                          </td>
+                          <td>{transaction.pay_type}</td>
                         </td>
                         <td>{transaction.remarks || "-"}</td>
                         {/* <td>
@@ -620,8 +608,9 @@ function MasterTransction() {
                   {getPageNumbers().map((page) => (
                     <div
                       key={page}
-                      className={`paginationnumber ${currentPage === page ? "active" : ""
-                        }`}
+                      className={`paginationnumber ${
+                        currentPage === page ? "active" : ""
+                      }`}
                       onClick={() => handlePageClick(page)}
                     >
                       {page}
@@ -639,7 +628,6 @@ function MasterTransction() {
               </div>
             </div>
           )}
-
         </div>
       </div>
     );
@@ -653,7 +641,7 @@ function MasterTransction() {
 
   const paymentTypeOptions = [
     { label: "PAYMENT LIYA", value: "dr" },
-    { label: "PAYMENT DIYA", value: "cr" }
+    { label: "PAYMENT DIYA", value: "cr" },
   ];
 
   return (
@@ -662,10 +650,11 @@ function MasterTransction() {
         <div className="card">
           <div className="card-header bg-primary-yellow p-2">
             <div className="d-flex align-items-center justify-content-between">
-              <h3 className="card-title  mb-0">
-                 Master Transaction
-              </h3>
-              <button className="btn btn-outline-light" onClick={() => navigate(-1)}>
+              <h3 className="card-title  mb-0">Master Transaction</h3>
+              <button
+                className="btn btn-outline-light"
+                onClick={() => navigate(-1)}
+              >
                 Back
               </button>
             </div>
@@ -679,7 +668,7 @@ function MasterTransction() {
               <div className="row">
                 <div className="col-md-6 mb-3">
                   <label className="form-label">
-                    SELECT MASTER <span style={{ color: "red" }}>*</span>
+                    Select Master <span style={{ color: "red" }}>*</span>
                   </label>
                   <select
                     className="form-control"
@@ -707,9 +696,7 @@ function MasterTransction() {
                     )}
                   </select>
                   <div className="valid-feedback">Looks good!</div>
-                  <div className="invalid-feedback">
-                    Please select Master.
-                  </div>
+                  <div className="invalid-feedback">Please select Master.</div>
                 </div>
                 <div className="col-md-6 mb-3">
                   <label className="form-label">
@@ -717,15 +704,16 @@ function MasterTransction() {
                   </label>
                   <input
                     type="text"
-                    className={`form-control ${validated &&
+                    className={`form-control ${
+                      validated &&
                       (!formData.amount || parseFloat(formData.amount) <= 0)
-                      ? "is-invalid"
-                      : validated &&
-                        formData.amount &&
-                        parseFloat(formData.amount) > 0
-                        ? "is-valid"
-                        : ""
-                      }`}
+                        ? "is-invalid"
+                        : validated &&
+                            formData.amount &&
+                            parseFloat(formData.amount) > 0
+                          ? "is-valid"
+                          : ""
+                    }`}
                     name="amount"
                     value={formData.amount}
                     onChange={handleChange}
@@ -818,14 +806,14 @@ function MasterTransction() {
                   <div className="d-flex justify-content-end gap-2 formfooter">
                     <button
                       type="button"
-                      className="btn btn-secondary"
+                      className="btn btn-danger"
                       onClick={resetForm}
                       disabled={loading}
                     >
                       Reset
                     </button>
                     <button
-                      className="button_submit"
+                      className="btn btn-success"
                       type="submit"
                       disabled={loading || clientLoading}
                     >

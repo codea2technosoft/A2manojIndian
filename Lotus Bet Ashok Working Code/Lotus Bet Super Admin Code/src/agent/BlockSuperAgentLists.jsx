@@ -6,7 +6,7 @@ import {
   FiChevronsLeft,
   FiChevronsRight,
   FiEye,
-  FiEyeOff
+  FiEyeOff,
 } from "react-icons/fi";
 import { Button } from "react-bootstrap";
 import { toast, ToastContainer } from "react-toastify";
@@ -24,42 +24,46 @@ function BlockeddMasterLists() {
   const [searchInput, setSearchInput] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-   const [showStatusModal, setShowStatusModal] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [selectedMasterId, setSelectedMasterId] = useState(null);
 
-
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage,setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
   const admin_id = localStorage.getItem("admin_id");
   const role = "3";
 
-
   const showSuccessToast = (msg) =>
-    toast.success(msg, { position: "top-right", autoClose: 500, theme: "light" });
+    toast.success(msg, {
+      position: "top-right",
+      autoClose: 500,
+      theme: "light",
+    });
   const showErrorToast = (msg) =>
     toast.error(msg, { position: "top-right", autoClose: 500, theme: "light" });
 
   useEffect(() => {
-
-
     fetchAgentData(1, itemsPerPage, "");
   }, [location]);
 
-  const fetchAgentData = async (page = 1, limit = itemsPerPage, search = "") => {
+  const fetchAgentData = async (
+    page = 1,
+    limit = itemsPerPage,
+    search = "",
+  ) => {
     try {
       setLoading(true);
       setIsSearching(true);
       const payload = {
         admin_id: admin_id,
         page,
-        limit:limit,
+        limit: limit,
         role,
-        ...(search && { search })
+        ...(search && { search }),
       };
 
       const res = await blockMasterList(payload);
@@ -93,17 +97,22 @@ function BlockeddMasterLists() {
     fetchAgentData(1, value, searchTerm);
   };
 
-
- const handleBlockUnblockConfirm = async () => {
+  const handleBlockUnblockConfirm = async () => {
     if (!selectedAgent) return;
 
     try {
       const currentBlock = Number(selectedAgent.is_blocked);
       const newBlockStatus = currentBlock === 1 ? 0 : 1;
-      const res = await blockUnblockMaster(selectedAgent.admin_id, role, newBlockStatus);
+      const res = await blockUnblockMaster(
+        selectedAgent.admin_id,
+        role,
+        newBlockStatus,
+      );
 
       if (res.data.success) {
-        showSuccessToast(`Agent ${newBlockStatus === 1 ? "blocked" : "unblocked"} successfully`);
+        showSuccessToast(
+          `Agent ${newBlockStatus === 1 ? "blocked" : "unblocked"} successfully`,
+        );
         fetchAgentData(currentPage, itemsPerPage, searchTerm);
       } else {
         showErrorToast(res.data.message);
@@ -122,19 +131,28 @@ function BlockeddMasterLists() {
       fetchAgentData(1, itemsPerPage, searchInput.trim());
     }
   };
- 
+
   const handleClearSearch = () => {
     setSearchInput("");
     fetchAgentData(1, itemsPerPage, "");
   };
 
   const handleSearchInputChange = (e) => setSearchInput(e.target.value);
-  const handleSearchKeyPress = (e) => { if (e.key === 'Enter') handleSearch(); };
+  const handleSearchKeyPress = (e) => {
+    if (e.key === "Enter") handleSearch();
+  };
 
   // Pagination handlers
-  const handleNext = () => currentPage < totalPages && fetchAgentData(currentPage + 1, itemsPerPage, searchTerm);
-  const handlePrev = () => currentPage > 1 && fetchAgentData(currentPage - 1, itemsPerPage, searchTerm);
-  const handlePageClick = (page) => page >= 1 && page <= totalPages && fetchAgentData(page, itemsPerPage, searchTerm);
+  const handleNext = () =>
+    currentPage < totalPages &&
+    fetchAgentData(currentPage + 1, itemsPerPage, searchTerm);
+  const handlePrev = () =>
+    currentPage > 1 &&
+    fetchAgentData(currentPage - 1, itemsPerPage, searchTerm);
+  const handlePageClick = (page) =>
+    page >= 1 &&
+    page <= totalPages &&
+    fetchAgentData(page, itemsPerPage, searchTerm);
 
   const getPageNumbers = () => {
     const pageNumbers = [];
@@ -153,89 +171,95 @@ function BlockeddMasterLists() {
   const handleBack = () => navigate(-1);
 
   const togglePassword = (adminId) => {
-    setShowPassword(prev => ({ ...prev, [adminId]: !prev[adminId] }));
+    setShowPassword((prev) => ({ ...prev, [adminId]: !prev[adminId] }));
   };
-const handleBlockUnblock = async (agent) => {
-  try {
-    const currentStatus = Number(agent.is_blocked);
+  const handleBlockUnblock = async (agent) => {
+    try {
+      const currentStatus = Number(agent.is_blocked);
 
-    // toggle
-    const newStatus = currentStatus === 1 ? 0 : 1;
+      // toggle
+      const newStatus = currentStatus === 1 ? 0 : 1;
 
-    const res = await blockUnblockMaster(
-      agent.admin_id,
-      agent.role,
-      newStatus
-    );
+      const res = await blockUnblockMaster(
+        agent.admin_id,
+        agent.role,
+        newStatus,
+      );
 
-    if (res.data.success) {
- 
-
-      fetchAgentData(currentPage, itemsPerPage, searchTerm, selectedMasterId);
-    } else {
-      toast.error(res.data.message);
+      if (res.data.success) {
+        fetchAgentData(currentPage, itemsPerPage, searchTerm, selectedMasterId);
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong");
     }
-  } catch (err) {
-    console.error(err);
-    toast.error("Something went wrong");
-  }
-};
-
+  };
 
   return (
     <>
       <div className="card agentmaster">
-        <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
           <h5 className="mb-0">Blocked Super Agent Lists</h5>
-          <Button size="sm" className="btn-success" onClick={handleBack}>Back</Button>
+          <button className="btn btn-outline-light" onClick={handleBack}>
+            Back
+          </button>
         </div>
 
         <div className="card-body">
-                {/* Search */}
-
-
-                {agentData.length > 0 &&(
-
-          <div className="row mb-3">
-            <div className="col-md-6">
-              <div className="d-flex" style={{ width: "350px" }}>
-                <div className="input-group">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search agents..."
-                    value={searchInput}
-                    onChange={handleSearchInputChange}
-                    onKeyPress={handleSearchKeyPress}
-                  />
-                  <button className="btn btn-outline-primary" onClick={handleSearch} disabled={isSearching}>
-                    <FiSearch />
-                  </button>
-                  {searchTerm && (
-                    <button className="btn btn-outline-secondary" onClick={handleClearSearch}>Clear</button>
-                  )}
+          {agentData.length > 0 && (
+            <div className="row mb-3">
+              <div className="col-md-6">
+                <div className="d-flex" style={{ width: "350px" }}>
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Search agents..."
+                      value={searchInput}
+                      onChange={handleSearchInputChange}
+                      onKeyPress={handleSearchKeyPress}
+                    />
+                    <button
+                      className="btn btn-outline-primary"
+                      onClick={handleSearch}
+                      disabled={isSearching}
+                    >
+                      <FiSearch />
+                    </button>
+                    {searchTerm && (
+                      <button
+                        className="btn btn-outline-secondary"
+                        onClick={handleClearSearch}
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                </div>
+                {searchTerm && (
+                  <small className="text-muted mt-2 d-block">
+                    Search results for: <strong>"{searchTerm}"</strong>
+                  </small>
+                )}
+              </div>
+              <div className="col-md-6">
+                <div className="d-flex justify-content-end mb-2">
+                  <select
+                    className="form-select form-select-sm"
+                    style={{ width: "90px" }}
+                    value={itemsPerPage}
+                    onChange={handleLimitChange}
+                  >
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                  </select>
                 </div>
               </div>
-              {searchTerm && <small className="text-muted mt-2 d-block">Search results for: <strong>"{searchTerm}"</strong></small>}
             </div>
-  <div className="col-md-6">
-      <div className="d-flex justify-content-end mb-2">
-        <select
-          className="form-select form-select-sm"
-          style={{ width: "90px" }}
-          value={itemsPerPage}
-          onChange={handleLimitChange}
-        >
-          <option value={10}>10</option>
-          <option value={25}>25</option>
-          <option value={50}>50</option>
-        </select>
-      </div>
-    </div>
-
-
-          </div>
-                )}
+          )}
           {/* Table */}
           <div className="table-responsive">
             <table className="table table-bordered table-hover">
@@ -258,7 +282,10 @@ const handleBlockUnblock = async (agent) => {
                 {loading ? (
                   <tr>
                     <td colSpan="11" className="text-center">
-                      <div className="spinner-border text-primary" role="status">
+                      <div
+                        className="spinner-border text-primary"
+                        role="status"
+                      >
                         <span className="visually-hidden">Loading...</span>
                       </div>
                     </td>
@@ -269,15 +296,21 @@ const handleBlockUnblock = async (agent) => {
                       <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                       <td>{row.admin_id || "N/A"}</td>
                       <td>{row.username || "N/A"}</td>
-                       <td>
+                      <td>
                         <div>{row.super_admin_id || "N/A"}</div>
                         <small>{row.parent_username || "N/A"}</small>
                       </td>
-                      <td>{row.created_at ? new Date(row.created_at).toLocaleDateString() : "N/A"}</td>
+                      <td>
+                        {row.created_at
+                          ? new Date(row.created_at).toLocaleDateString()
+                          : "N/A"}
+                      </td>
                       <td>
                         <div className="d-flex align-items-center">
                           <input
-                            type={showPassword[row.admin_id] ? "text" : "password"}
+                            type={
+                              showPassword[row.admin_id] ? "text" : "password"
+                            }
                             value={row.password || ""}
                             readOnly
                             className="form-control form-control-sm"
@@ -286,12 +319,15 @@ const handleBlockUnblock = async (agent) => {
                             onClick={() => togglePassword(row.admin_id)}
                             style={{ cursor: "pointer", marginLeft: "5px" }}
                           >
-                            {showPassword[row.admin_id] ? <FiEyeOff /> : <FiEye />}
+                            {showPassword[row.admin_id] ? (
+                              <FiEyeOff />
+                            ) : (
+                              <FiEye />
+                            )}
                           </span>
                         </div>
                       </td>
 
-                      
                       <td>{row.match_share || "0"}</td>
                       <td>{row.match_comm || "0"}</td>
                       <td>{row.session_comm || "0"}</td>
@@ -302,17 +338,18 @@ const handleBlockUnblock = async (agent) => {
                           <span className="badge bg-success">Active</span>
                         )}
                       </td> */}
-           <td>
-  <button
-    className={`btn ${
-      Number(row.is_blocked) === 1 ? "btn-success" : "btn-danger"
-    }`}
-    onClick={() => handleBlockUnblock(row)}
-  >
-    {Number(row.is_blocked) === 1 ? "Unblock" : "Block"}
-  </button>
-</td>
-
+                      <td>
+                        <button
+                          className={`btn ${
+                            Number(row.is_blocked) === 1
+                              ? "btn-success"
+                              : "btn-danger"
+                          }`}
+                          onClick={() => handleBlockUnblock(row)}
+                        >
+                          {Number(row.is_blocked) === 1 ? "Unblock" : "Block"}
+                        </button>
+                      </td>
                     </tr>
                   ))
                 ) : (
@@ -325,7 +362,7 @@ const handleBlockUnblock = async (agent) => {
               </tbody>
             </table>
           </div>
-             {showStatusModal && selectedAgent && (
+          {showStatusModal && selectedAgent && (
             <div
               className="modal show d-block"
               tabIndex="-1"
@@ -335,7 +372,7 @@ const handleBlockUnblock = async (agent) => {
                 <div className="modal-content">
                   <div className="modal-header">
                     <h5 className="modal-title">Confirm Status Change</h5>
-                      </div>
+                  </div>
                   <div className="modal-body">
                     <p className="mb-2">
                       <strong>Master Username:</strong> {selectedAgent.username}
@@ -354,18 +391,21 @@ const handleBlockUnblock = async (agent) => {
                     <p>
                       Change status to:{" "}
                       <strong>
-                        {Number(selectedAgent.is_blocked) === 1 ? "Unblock (Active)" : "Block (Blocked)"}
+                        {Number(selectedAgent.is_blocked) === 1
+                          ? "Unblock (Active)"
+                          : "Block (Blocked)"}
                       </strong>
                     </p>
                   </div>
                   <div className="modal-footer">
-                 
                     <button
                       type="button"
                       className={`btn ${Number(selectedAgent.is_blocked) === 1 ? "btn-success" : "btn-danger"}`}
                       onClick={handleBlockUnblockConfirm}
                     >
-                      {Number(selectedAgent.is_blocked) === 1 ? "Confirm Unblock" : "Confirm Block"}
+                      {Number(selectedAgent.is_blocked) === 1
+                        ? "Confirm Unblock"
+                        : "Confirm Block"}
                     </button>
                   </div>
                 </div>
@@ -377,28 +417,51 @@ const handleBlockUnblock = async (agent) => {
           {totalPages > 1 && (
             <div className="d-flex justify-content-between align-items-center mt-4">
               <span className="text-muted">
-                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+                Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+                {Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
+                {totalItems} entries
               </span>
               <div className="d-flex gap-1">
-                <Button size="sm" onClick={handlePrev} disabled={currentPage === 1}><FiChevronLeft /></Button>
+                <Button
+                  size="sm"
+                  onClick={handlePrev}
+                  disabled={currentPage === 1}
+                >
+                  <FiChevronLeft />
+                </Button>
                 {getPageNumbers().map((page) => (
                   <Button
                     key={page}
                     size="sm"
-                    variant={currentPage === page ? "primary" : "outline-primary"}
+                    variant={
+                      currentPage === page ? "primary" : "outline-primary"
+                    }
                     onClick={() => handlePageClick(page)}
                   >
                     {page}
                   </Button>
                 ))}
-                <Button size="sm" onClick={handleNext} disabled={currentPage === totalPages}><FiChevronRight /></Button>
+                <Button
+                  size="sm"
+                  onClick={handleNext}
+                  disabled={currentPage === totalPages}
+                >
+                  <FiChevronRight />
+                </Button>
               </div>
             </div>
           )}
         </div>
       </div>
 
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} closeOnClick pauseOnHover theme="colored" />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        closeOnClick
+        pauseOnHover
+        theme="colored"
+      />
     </>
   );
 }

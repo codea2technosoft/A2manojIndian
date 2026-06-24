@@ -860,10 +860,10 @@ Login URL:${COPY_API_URL}`;
   return (
     <>
       <div className="card agentmaster">
-        <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+        <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
           <h3 className="card-title mb-0">Agent Details</h3>
           <div className="d-flex gap-2">
-            <button className="btn btn-success" onClick={handleCreateAgent}>
+            <button className="btn btn-light" onClick={handleCreateAgent}>
               Create
             </button>
           </div>
@@ -883,7 +883,7 @@ Login URL:${COPY_API_URL}`;
                     onKeyPress={handleSearchKeyPress}
                   />
                   <button
-                    className="btn btn-outline-primary"
+                    className="btn btn-outline-success"
                     type="button"
                     onClick={handleSearch}
                     disabled={isSearching}
@@ -1059,19 +1059,23 @@ Login URL:${COPY_API_URL}`;
                                   }}
                                 >
                                   <FiPlusCircle className="me-2" />
-                                  DEPOSIT
+                                  Deposit
                                 </div>
                               </li>
                               {/* Withdraw Chips */}
 
-                              <li
-                                className="dropdown-item custum_new_ul"
-                                onClick={() =>
-                                  navigate(`/Agenttransaction/${row.admin_id}`)
-                                }
-                              >
-                                <FiPlusCircle className="me-2" />
-                                Lena Dena
+                              <li>
+                                <div
+                                  className="dropdown-item custum_new_ul"
+                                  onClick={() =>
+                                    navigate(
+                                      `/Agenttransaction/${row.admin_id}`,
+                                    )
+                                  }
+                                >
+                                  <FiPlusCircle className="me-2" />
+                                  Lena Dena
+                                </div>
                               </li>
 
                               <li>
@@ -1084,7 +1088,7 @@ Login URL:${COPY_API_URL}`;
                                   }}
                                 >
                                   <FiMinusCircle className="me-2" />
-                                  WITHDRAW
+                                  Withdraw
                                 </div>
                               </li>
                               <li>
@@ -1097,7 +1101,7 @@ Login URL:${COPY_API_URL}`;
                                     }}
                                   >
                                     <FiUserX className="me-2" />
-                                    INACTIVE
+                                    Inactive
                                   </div>
                                 ) : (
                                   <div
@@ -1108,7 +1112,7 @@ Login URL:${COPY_API_URL}`;
                                     }}
                                   >
                                     <FiUserCheck className="me-2" />
-                                    ACTIVE
+                                    Active
                                   </div>
                                 )}
                               </li>
@@ -1127,7 +1131,7 @@ Login URL:${COPY_API_URL}`;
                                     }}
                                   >
                                     <FiSlash className="me-2" />
-                                    UNBLOCK
+                                    Unblock
                                   </div>
                                 ) : (
                                   <div
@@ -1138,7 +1142,7 @@ Login URL:${COPY_API_URL}`;
                                     }}
                                   >
                                     <FiSlash className="me-2" />
-                                    BLOCK
+                                    Block
                                   </div>
                                 )}
                               </li>
@@ -1194,7 +1198,7 @@ Login URL:${COPY_API_URL}`;
                                   onClick={() => handleUpdateSuperAgent(row)}
                                 >
                                   <FiUser className="me-2" />
-                                  EDIT
+                                  Edit
                                 </div>
                               </li>
                               <li>
@@ -1203,7 +1207,7 @@ Login URL:${COPY_API_URL}`;
                                   onClick={() => handleStatementmasterlist(row)}
                                 >
                                   <FiUser className="me-2" />
-                                  STATEMENT
+                                  Statement
                                 </div>
                               </li>
                               {/* <li>
@@ -1335,7 +1339,7 @@ Login URL:${COPY_API_URL}`;
                       <td className="text-center">{row.commSession}</td>
                       <td className="text-center">
                         <div className="d-flex gap-1 align-items-center justify-content-center">
-                          <span className="me-2">₹{row.chips}</span>
+                          <span className="me-2 w-50">₹{row.chips}</span>
                           <button
                             className="chipsbuttonbtn btn btn-outline-success btn-sm"
                             onClick={() => {
@@ -1463,7 +1467,7 @@ Login URL:${COPY_API_URL}`;
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowStatusModal(false);
                       setSelectedAgent(null);
@@ -1473,7 +1477,7 @@ Login URL:${COPY_API_URL}`;
                   </button>
                   <button
                     type="button"
-                    className="btn btn-primary"
+                    className="btn btn-success"
                     onClick={handleStatusChange}
                   >
                     Confirm
@@ -1517,7 +1521,7 @@ Login URL:${COPY_API_URL}`;
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowBlockModal(false);
                       setSelectedAgent(null);
@@ -1901,13 +1905,13 @@ Login URL:${COPY_API_URL}`;
                 </div>
                 <div className="modal-footer">
                   <button
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => setShowPasswordModal(false)}
                   >
                     Cancel
                   </button>
                   <button
-                    className="btn btn-primary"
+                    className="btn btn-info"
                     onClick={handlePasswordChange}
                     disabled={
                       !passwordData.newPassword ||
@@ -1982,7 +1986,7 @@ Login URL:${COPY_API_URL}`;
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowDepositModal(false);
                       setSelectedAgent(null);
@@ -2009,7 +2013,7 @@ Login URL:${COPY_API_URL}`;
                       !depositAmount ||
                       isNaN(depositAmount) ||
                       Number(depositAmount) <= 0 ||
-                      (isProcessing && processingType === "deposit") // Add this condition
+                      (isProcessing && processingType === "deposit")
                     }
                   >
                     {isProcessing && processingType === "deposit" ? (
@@ -2101,7 +2105,7 @@ Login URL:${COPY_API_URL}`;
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowWithdrawModal(false);
                       setSelectedAgent(null);
@@ -2121,7 +2125,7 @@ Login URL:${COPY_API_URL}`;
                   </button> */}
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className="btn btn-success"
                     onClick={handleWithdrawFromAgent}
                     disabled={
                       !withdrawAmount ||
@@ -2183,7 +2187,7 @@ Login URL:${COPY_API_URL}`;
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => {
                       setShowEditModal(false);
                       setSelectedAgent(null);
@@ -2193,7 +2197,7 @@ Login URL:${COPY_API_URL}`;
                   </button>
                   <button
                     type="button"
-                    className="btn btn-primary"
+                    className="btn btn-success"
                     onClick={() => {
                       showSuccessToast("Agent updated successfully");
                       setShowEditModal(false);

@@ -4,13 +4,16 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { CaseTransactionReport } from "../../Server/api";
-import { MdOutlineKeyboardArrowRight, MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import {
+  MdOutlineKeyboardArrowRight,
+  MdOutlineKeyboardArrowLeft,
+} from "react-icons/md";
 import { FiSearch } from "react-icons/fi";
 import { RxCross2 } from "react-icons/rx";
 
 function CasetransactionReport() {
   const navigate = useNavigate();
-   const admin_id = localStorage.getItem("admin_id");
+  const admin_id = localStorage.getItem("admin_id");
   const [ledgerData, setLedgerData] = useState([]);
   const [summary, setSummary] = useState({
     debit: 0,
@@ -33,9 +36,13 @@ function CasetransactionReport() {
     fetchTransactionList(1, "", "", "");
   }, []);
 
-  const fetchTransactionList = async (page = 1, search = "", from = "", to = "") => {
+  const fetchTransactionList = async (
+    page = 1,
+    search = "",
+    from = "",
+    to = "",
+  ) => {
     try {
-
       setIsSearching(true);
       const payload = {
         admin_id,
@@ -113,8 +120,6 @@ function CasetransactionReport() {
     fetchTransactionList(1, "", "", "");
   };
 
-
-
   // ==================================================
   // 📌 PAGINATION HANDLERS
   // ==================================================
@@ -123,11 +128,13 @@ function CasetransactionReport() {
   };
 
   const handlePrev = () => {
-    if (currentPage > 1) fetchTransactionList(currentPage - 1, searchTerm, fromDate, toDate);
+    if (currentPage > 1)
+      fetchTransactionList(currentPage - 1, searchTerm, fromDate, toDate);
   };
 
   const handleNext = () => {
-    if (currentPage < totalPages) fetchTransactionList(currentPage + 1, searchTerm, fromDate, toDate);
+    if (currentPage < totalPages)
+      fetchTransactionList(currentPage + 1, searchTerm, fromDate, toDate);
   };
 
   const getPageNumbers = () => {
@@ -147,15 +154,21 @@ function CasetransactionReport() {
     }
     return pages;
   };
-  
+
   return (
     <div className="row">
       <div className="col-lg-12">
         <div className="card">
-          <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+          <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
             <h3 className="card-title mb-0">All case transaction List</h3>
             <div>
-              <button className="refeshbutton" onClick={() => setShowFilter(!showFilter)}> {showFilter ? "Hide Filter" : "Show Filter"}</button>
+              <button
+                className="btn btn-light"
+                onClick={() => setShowFilter(!showFilter)}
+              >
+                {" "}
+                {showFilter ? "Hide Filter" : "Filter"}
+              </button>
             </div>
           </div>
           <div className="card-body">
@@ -188,10 +201,10 @@ function CasetransactionReport() {
                       placeholder="Enter username..."
                       value={searchInput}
                       onChange={(e) => setSearchInput(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                      onKeyPress={(e) => e.key === "Enter" && handleSearch()}
                     />
                     <button
-                      className="btn btn-primary"
+                      className="btn btn-success"
                       onClick={handleSearch}
                       disabled={isSearching || !searchInput.trim()}
                     >
@@ -208,10 +221,10 @@ function CasetransactionReport() {
                     )}
                   </div>
                 </div>
-                <div className="col-md-3">
+                <div className="col-md-2">
                   <div className="d-flex gap-2">
                     <button
-                      className="btn btn-primary flex-grow-1"
+                      className="btn btn-success"
                       onClick={handleFilter}
                       disabled={isSearching}
                     >
@@ -230,7 +243,6 @@ function CasetransactionReport() {
                 </div>
               </div>
             )}
-
 
             {/* ACTIVE FILTERS DISPLAY */}
             {/* {(fromDate || toDate || searchTerm) && (
@@ -256,8 +268,12 @@ function CasetransactionReport() {
 
             {/* SUMMARY */}
             <div className="alert alert-info d-flex justify-content-between">
-              <span><strong>Total Credit:</strong> ₹{summary.credit}</span>
-              <span><strong>Total Debit:</strong> ₹{summary.debit}</span>
+              <span>
+                <strong>Total Credit:</strong> ₹{summary.credit}
+              </span>
+              <span>
+                <strong>Total Debit:</strong> ₹{summary.debit}
+              </span>
             </div>
 
             {/* TABLE */}
@@ -285,18 +301,21 @@ function CasetransactionReport() {
                       return (
                         <tr key={index}>
                           <td>
-                            {new Date(transaction.created_at).toLocaleString("en-IN", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: true,
-                            })}
+                            {new Date(transaction.created_at).toLocaleString(
+                              "en-IN",
+                              {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              },
+                            )}
                           </td>
                           <td>
                             {/* <span>{transaction.user_name || "-"}</span> */}
-                               <span>{transaction.admin_id}</span> 
+                            <span>{transaction.admin_id}</span>
                           </td>
                           <td className="text-success fw-bold">
                             {credit > 0 ? `₹${credit.toFixed(2)}` : "-"}
@@ -317,7 +336,8 @@ function CasetransactionReport() {
               <div className="d-flex justify-content-between align-items-center mt-4">
                 <div className="text-muted">
                   Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-                  {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+                  {Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
+                  {totalItems} entries
                 </div>
                 <div className="paginationall d-flex align-items-center gap-2">
                   <button
@@ -331,7 +351,7 @@ function CasetransactionReport() {
                     {getPageNumbers().map((page) => (
                       <button
                         key={page}
-                        className={`btn btn-sm ${page === currentPage ? 'btn-primary' : 'btn-outline-secondary'}`}
+                        className={`btn btn-sm ${page === currentPage ? "btn-primary" : "btn-outline-secondary"}`}
                         onClick={() => handlePageClick(page)}
                       >
                         {page}

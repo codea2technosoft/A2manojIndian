@@ -86,11 +86,10 @@ function SessionBet() {
     return pageNumbers;
   };
   return (
-    <div className="card mt-4">
-      {/* Top blue header like in image */}
-      <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
-        <h4 className="mb-0">SESSION BETS</h4>
-        <button className="btn btn-sm btn-light"
+    <div className="card">
+      <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
+        <h4 className="mb-0">Session Bets</h4>
+        <button className="btn btn-outline-light"
           onClick={() => navigate(-1)}
         >Back</button>
       </div>
