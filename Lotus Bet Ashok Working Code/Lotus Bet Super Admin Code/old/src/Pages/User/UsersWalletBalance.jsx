@@ -402,7 +402,7 @@ function UsersWalletBalance() {
 
       {/* ================= TRANSACTIONS TABLE ================= */}
       <div className="card">
-       <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+       <div className="card-header d-flex bg-primary-yellow justify-content-between align-items-center">
       <h3 className="card-title mb-0">
             Transactions
             {isFilterActive() && <small className="ms-2">(Filtered)</small>}

@@ -71,11 +71,18 @@ const Dashboard = ({ userType }) => {
   const [loadingLifetimeRewards, setLoadingLifetimeRewards] = useState(false);
   const [loadingLifetimeEligibility, setLoadingLifetimeEligibility] = useState(false);
   const [designation, setDesignation] = useState('');
+  const [currentSlab , setcurrentSlab] = useState('');
 
   useEffect(() => {
     // Get designation directly as string
     const designationData = localStorage.getItem('designation');
     setDesignation(designationData || '');
+
+
+    const currentSlabData = localStorage.getItem('currentSlab');
+    setcurrentSlab(currentSlabData || '');
+
+    
   }, []);
 
 
@@ -2118,7 +2125,11 @@ const Dashboard = ({ userType }) => {
                 className="designation_local mb-0"
                 style={{ textDecoration: "underline" }}
               >
-                {designation ? `DESIGNATION - ${designation.toUpperCase()}` : "NA"}
+                {
+                  designation
+                    ? `DESIGNATION - ${designation.toUpperCase()} | CURRENT SLAB - ${currentSlab ?? 0}`
+                    : `NA | CURRENT SLAB  - ${currentSlab ?? 0}`
+                }
               </h6>
             </div>
           </Col>

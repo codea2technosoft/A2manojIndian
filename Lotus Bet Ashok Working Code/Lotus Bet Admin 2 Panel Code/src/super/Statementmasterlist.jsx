@@ -12,13 +12,12 @@ import {
   Spinner,
   Form,
   Button,
-  Pagination
+  Pagination,
 } from "react-bootstrap";
 
 const Statementmasterlist = () => {
   const navigate = useNavigate();
   const { adminId } = useParams();
-
 
   const [ProfitlossId, setProfitlossId] = useState("");
 
@@ -28,7 +27,6 @@ const Statementmasterlist = () => {
       localStorage.setItem("ProfitlossId", adminId);
     }
   }, [adminId]);
-
 
   const [loading, setLoading] = useState(true);
   const [statementData, setStatementData] = useState([]);
@@ -44,7 +42,7 @@ const Statementmasterlist = () => {
     total_records: 0,
     total_pages: 1,
     current_page: 1,
-    limit: 10
+    limit: 10,
   });
 
   const [total, setTotal] = useState({
@@ -52,7 +50,7 @@ const Statementmasterlist = () => {
     debit: 0,
     commissionPlus: 0,
     commissionMinus: 0,
-    netBalance: 0
+    netBalance: 0,
   });
 
   const token = localStorage.getItem("token");
@@ -71,20 +69,20 @@ const Statementmasterlist = () => {
     const istDate = new Date(istTime);
 
     // Extract date components
-    const day = istDate.getUTCDate().toString().padStart(2, '0');
-    const month = (istDate.getUTCMonth() + 1).toString().padStart(2, '0');
+    const day = istDate.getUTCDate().toString().padStart(2, "0");
+    const month = (istDate.getUTCMonth() + 1).toString().padStart(2, "0");
     const year = istDate.getUTCFullYear();
 
     // Extract time components
     let hours = istDate.getUTCHours();
-    const minutes = istDate.getUTCMinutes().toString().padStart(2, '0');
-    const seconds = istDate.getUTCSeconds().toString().padStart(2, '0');
+    const minutes = istDate.getUTCMinutes().toString().padStart(2, "0");
+    const seconds = istDate.getUTCSeconds().toString().padStart(2, "0");
 
     // Convert to 12-hour format
-    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const ampm = hours >= 12 ? "PM" : "AM";
     hours = hours % 12;
     hours = hours ? hours : 12; // Convert 0 to 12
-    hours = hours.toString().padStart(2, '0');
+    hours = hours.toString().padStart(2, "0");
 
     return `${day}-${month}-${year} ${hours}:${minutes}:${seconds} ${ampm}`;
   };
@@ -109,14 +107,14 @@ const Statementmasterlist = () => {
           admin_id: adminId || loggedInAdminId,
           page: currentPage,
           limit: limit,
-          search: searchTerm
+          search: searchTerm,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       console.log("API Response:", response.data);
@@ -127,7 +125,7 @@ const Statementmasterlist = () => {
           total_records: 0,
           total_pages: 1,
           current_page: 1,
-          limit: 10
+          limit: 10,
         };
 
         // Set pagination data
@@ -177,7 +175,7 @@ const Statementmasterlist = () => {
             type: item.type || "transaction",
             from: item.from_admin_id || "N/A",
             to: item.to_admin_id || "N/A",
-            amount: item.amount || 0
+            amount: item.amount || 0,
           };
         });
 
@@ -193,7 +191,9 @@ const Statementmasterlist = () => {
         toast.error("Session expired. Please login again.");
         navigate("/login");
       } else {
-        toast.error(error.response?.data?.message || "Failed to load statement data");
+        toast.error(
+          error.response?.data?.message || "Failed to load statement data",
+        );
       }
     } finally {
       setLoading(false);
@@ -209,10 +209,10 @@ const Statementmasterlist = () => {
       debit: 0,
       commissionPlus: 0,
       commissionMinus: 0,
-      netBalance: 0
+      netBalance: 0,
     };
 
-    data.forEach(item => {
+    data.forEach((item) => {
       totals.credit += parseFloat(item.credit) || 0;
       totals.debit += parseFloat(item.debit) || 0;
       totals.commissionPlus += parseFloat(item.commissionPlus) || 0;
@@ -241,13 +241,13 @@ const Statementmasterlist = () => {
   // ============================
   const handleNext = () => {
     if (currentPage < totalPages) {
-      setCurrentPage(prev => prev + 1);
+      setCurrentPage((prev) => prev + 1);
     }
   };
 
   const handlePrev = () => {
     if (currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
+      setCurrentPage((prev) => prev - 1);
     }
   };
 
@@ -311,9 +311,9 @@ const Statementmasterlist = () => {
 
       <div className="container-fluid">
         <div className="card">
-          <div className="card-header flex-wrap-mobile bg-color-black text-white d-flex justify-content-between align-items-center">
-            <h5 className="mb-0 card-title text-white">Transaction Statement</h5>
-            <div className="d-flex align-items-center">
+          <div className="card-header flex-wrap-mobile d-flex justify-content-between align-items-center">
+            <h3 className="mb-0 card-title">Transaction Statement</h3>
+            <div className="d-flex align-items-center gap-2">
               <Form.Control
                 type="text"
                 placeholder="Search transactions..."
@@ -322,20 +322,18 @@ const Statementmasterlist = () => {
                 className="me-2"
               />
 
-
               <button
                 onClick={() => navigate("/Profitloss")}
-                className="backbutton"
+                className="btn btn-light"
               >
-              P/L
+                P/L
               </button>
-              <Button
-                variant="light"
+              <button
+                className="btn btn-outline-light"
                 onClick={() => navigate(-1)}
-                size="sm"
               >
                 Back
-              </Button>
+              </button>
             </div>
           </div>
 
@@ -370,7 +368,7 @@ const Statementmasterlist = () => {
                         <th className="text-end">OLD BAL</th>
                         <th className="text-end">CR</th>
                         <th className="text-end">DR</th>
-            
+
                         <th className="text-end">BALANCE</th>
                       </tr>
                     </thead>
@@ -381,17 +379,24 @@ const Statementmasterlist = () => {
                           <td>
                             <div>{item.description}</div>
                             <small className="text-muted">
-                              From: {item.from} | To: {item.to} | Type: {item.type}
+                              From: {item.from} | To: {item.to} | Type:{" "}
+                              {item.type}
                             </small>
                           </td>
-                          <td className="text-end">{formatNumber(item.oldBalance)}</td>
+                          <td className="text-end">
+                            {formatNumber(item.oldBalance)}
+                          </td>
                           <td className="text-end text-success fw-semibold">
-                            {item.credit > 0 ? `+${formatNumber(item.credit)}` : "0.00"}
+                            {item.credit > 0
+                              ? `+${formatNumber(item.credit)}`
+                              : "0.00"}
                           </td>
                           <td className="text-end text-danger fw-semibold">
-                            {item.debit > 0 ? `-${formatNumber(item.debit)}` : "0.00"}
+                            {item.debit > 0
+                              ? `-${formatNumber(item.debit)}`
+                              : "0.00"}
                           </td>
-                       
+
                           <td className="text-end fw-bold">
                             {formatNumber(item.balance)}
                           </td>
@@ -400,14 +405,16 @@ const Statementmasterlist = () => {
                     </tbody>
                     <tfoot className="table-secondary">
                       <tr>
-                        <td colSpan="3" className="text-end fw-bold">TOTAL</td>
+                        <td colSpan="3" className="text-end fw-bold">
+                          TOTAL
+                        </td>
                         <td className="text-end fw-bold text-success">
                           +{formatNumber(total.credit)}
                         </td>
                         <td className="text-end fw-bold text-danger">
                           -{formatNumber(total.debit)}
                         </td>
-                    
+
                         <td className="text-end fw-bold text-primary">
                           {formatNumber(total.netBalance)}
                         </td>
@@ -420,7 +427,7 @@ const Statementmasterlist = () => {
                 {totalPages > 1 && (
                   <div className="d-flex justify-content-between align-items-center mt-4">
                     <div className="sohwingallentries">
-                      Showing {((currentPage - 1) * limit) + 1} to{" "}
+                      Showing {(currentPage - 1) * limit + 1} to{" "}
                       {Math.min(currentPage * limit, totalRecords)} of{" "}
                       {totalRecords} entries
                     </div>
@@ -436,11 +443,7 @@ const Statementmasterlist = () => {
                         First
                       </Button> */}
 
-                      <button
-
-                        disabled={currentPage === 1}
-                        onClick={handlePrev}
-                      >
+                      <button disabled={currentPage === 1} onClick={handlePrev}>
                         &laquo;
                       </button>
 
@@ -459,7 +462,6 @@ const Statementmasterlist = () => {
                       </div>
 
                       <button
-
                         disabled={currentPage === totalPages}
                         onClick={handleNext}
                       >

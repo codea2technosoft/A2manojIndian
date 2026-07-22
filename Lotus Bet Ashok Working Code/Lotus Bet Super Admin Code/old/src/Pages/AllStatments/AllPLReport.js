@@ -139,7 +139,7 @@ const handleModeChange = (selectedMode) => {
 
       <div className="container-fluid">
         <div className="card">
-          <div className="card-header flex-wrap-mobile bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-md-center gap-2">
+          <div className="card-header flex-wrap-mobile d-flex bg-primary-yellow justify-content-between align-items-md-center gap-2">
             <h5 className="card-title mb-0"> P & L Statement</h5>
 
             <div className="d-flex align-items-center">

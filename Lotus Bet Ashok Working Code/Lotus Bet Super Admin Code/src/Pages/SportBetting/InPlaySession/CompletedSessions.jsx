@@ -136,7 +136,7 @@ function CompletedSession() {
   return (
     <div className="card mt-4">
       {/* Header */}
-      <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+      <div className="card-header d-flex bg-primary-yellow justify-content-between align-items-center">
         <h4 className="mb-0">Completed Bets</h4>
         <button className="btn btn-sm btn-light"
           onClick={() => navigate(-1)}

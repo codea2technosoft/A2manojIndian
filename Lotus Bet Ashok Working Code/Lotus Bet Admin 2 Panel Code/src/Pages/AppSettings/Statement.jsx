@@ -12,7 +12,7 @@ import {
   Spinner,
   Form,
   Button,
-  Pagination
+  Pagination,
 } from "react-bootstrap";
 
 const Statementmasterlist = () => {
@@ -32,7 +32,7 @@ const Statementmasterlist = () => {
     total_records: 0,
     total_pages: 1,
     current_page: 1,
-    limit: 10
+    limit: 10,
   });
 
   const [total, setTotal] = useState({
@@ -40,7 +40,7 @@ const Statementmasterlist = () => {
     debit: 0,
     commissionPlus: 0,
     commissionMinus: 0,
-    netBalance: 0
+    netBalance: 0,
   });
 
   const token = localStorage.getItem("token");
@@ -63,20 +63,20 @@ const Statementmasterlist = () => {
     const istDate = new Date(utcDate.getTime() + istOffset);
 
     // Extract IST date components
-    const day = istDate.getUTCDate().toString().padStart(2, '0');
-    const month = (istDate.getUTCMonth() + 1).toString().padStart(2, '0');
+    const day = istDate.getUTCDate().toString().padStart(2, "0");
+    const month = (istDate.getUTCMonth() + 1).toString().padStart(2, "0");
     const year = istDate.getUTCFullYear();
 
     // Extract IST time components
     let hours = istDate.getUTCHours();
-    const minutes = istDate.getUTCMinutes().toString().padStart(2, '0');
-    const seconds = istDate.getUTCSeconds().toString().padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const minutes = istDate.getUTCMinutes().toString().padStart(2, "0");
+    const seconds = istDate.getUTCSeconds().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
 
     // Convert to 12-hour format
     hours = hours % 12;
     hours = hours ? hours : 12;
-    hours = hours.toString().padStart(2, '0');
+    hours = hours.toString().padStart(2, "0");
 
     return `${day}-${month}-${year} ${hours}:${minutes}:${seconds} ${ampm}`;
   };
@@ -94,14 +94,14 @@ const Statementmasterlist = () => {
           page: currentPage,
           limit: limit,
           role: role,
-          search: searchTerm
+          search: searchTerm,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
@@ -110,7 +110,7 @@ const Statementmasterlist = () => {
           total_records: 0,
           total_pages: 1,
           current_page: 1,
-          limit: 10
+          limit: 10,
         };
 
         // Set pagination data
@@ -136,13 +136,13 @@ const Statementmasterlist = () => {
 
           if (item.type === "deposit") {
             if (isReceiver) {
-              credit = amount; 
+              credit = amount;
             } else if (isSender) {
-              debit = amount; 
+              debit = amount;
             }
           } else if (item.type === "withdraw") {
             if (isSender) {
-              debit = amount; 
+              debit = amount;
             } else if (isReceiver) {
               credit = amount;
             }
@@ -175,7 +175,7 @@ const Statementmasterlist = () => {
             description: description,
             oldBalance: oldBalance,
             credit: credit, // Now correctly set based on type and direction
-            debit: debit,   // Now correctly set based on type and direction
+            debit: debit, // Now correctly set based on type and direction
             commissionPlus: commissionPlus,
             commissionMinus: commissionMinus,
             balance: newBalance,
@@ -189,7 +189,7 @@ const Statementmasterlist = () => {
             paymentGateway: item.payment_gateway_type || "N/A",
             isSender: isSender,
             isReceiver: isReceiver,
-            originalType: item.type // Store original type for reference
+            originalType: item.type, // Store original type for reference
           };
         });
 
@@ -205,7 +205,9 @@ const Statementmasterlist = () => {
         toast.error("Session expired. Please login again.");
         navigate("/login");
       } else {
-        toast.error(error.response?.data?.message || "Failed to load statement data");
+        toast.error(
+          error.response?.data?.message || "Failed to load statement data",
+        );
       }
     } finally {
       setLoading(false);
@@ -221,10 +223,10 @@ const Statementmasterlist = () => {
       debit: 0,
       commissionPlus: 0,
       commissionMinus: 0,
-      netBalance: 0
+      netBalance: 0,
     };
 
-    data.forEach(item => {
+    data.forEach((item) => {
       totals.credit += parseFloat(item.credit) || 0;
       totals.debit += parseFloat(item.debit) || 0;
       totals.commissionPlus += parseFloat(item.commissionPlus) || 0;
@@ -253,13 +255,13 @@ const Statementmasterlist = () => {
   // ============================
   const handleNext = () => {
     if (currentPage < totalPages) {
-      setCurrentPage(prev => prev + 1);
+      setCurrentPage((prev) => prev + 1);
     }
   };
 
   const handlePrev = () => {
     if (currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
+      setCurrentPage((prev) => prev - 1);
     }
   };
 
@@ -309,15 +311,15 @@ const Statementmasterlist = () => {
   // Get status badge color
   const getStatusBadgeClass = (status) => {
     switch (status?.toLowerCase()) {
-      case 'success':
-      case 'completed':
-        return 'badge bg-success';
-      case 'pending':
-        return 'badge bg-warning';
-      case 'failed':
-        return 'badge bg-danger';
+      case "success":
+      case "completed":
+        return "badge bg-success";
+      case "pending":
+        return "badge bg-warning";
+      case "failed":
+        return "badge bg-danger";
       default:
-        return 'badge bg-secondary';
+        return "badge bg-secondary";
     }
   };
 
@@ -338,27 +340,27 @@ const Statementmasterlist = () => {
 
       <div className="container-fluid">
         <div className="card">
-          <div className="card-header flex-wrap-mobile bg-color-black text-white d-flex justify-content-between align-items-center">
-            <h5 className="mb-0 card-title text-white">Transaction Statement</h5>
-            <div className="d-flex align-items-center">
+          <div className="card-header flex-wrap-mobile d-flex justify-content-between align-items-center">
+            <h3 className="mb-0 card-title">Transaction Statement</h3>
+            <div className="d-flex align-items-center gap-2">
               <Form.Control
                 type="text"
                 placeholder="Search transactions..."
                 value={searchTerm}
                 onChange={handleSearch}
                 className="me-2"
-                style={{ width: '250px' }}
               />
-          <button
-  onClick={() => navigate("/Profitlosspage")}
-  className="backbutton btn btn-secondary"
->
-  P/L
-</button>
 
               <button
+                onClick={() => navigate("/Profitloss")}
+                className="btn btn-light"
+              >
+                P/L
+              </button>
+              <button
+                className="btn btn-outline-light"
                 onClick={() => navigate(-1)}
-                className="backbutton btn btn-secondary">
+              >
                 Back
               </button>
             </div>
@@ -406,51 +408,58 @@ const Statementmasterlist = () => {
                           <td>
                             <div>{item.description}</div>
                             <small className="text-muted d-block">
-                              <strong>From:</strong> {item.fromUsername} ({item.from})
+                              <strong>From:</strong> {item.fromUsername} (
+                              {item.from})
                             </small>
                             <small className="text-muted d-block">
                               <strong>To:</strong> {item.toUsername} ({item.to})
                             </small>
                             <small className="text-muted d-block">
-                              <strong>Type:</strong> {item.originalType} | <strong>Amount:</strong> ₹{formatNumber(item.amount)}
+                              <strong>Type:</strong> {item.originalType} |{" "}
+                              <strong>Amount:</strong> ₹
+                              {formatNumber(item.amount)}
                             </small>
                           </td>
 
-                                  <td className="text-end fw-bold">
+                          <td className="text-end fw-bold">
                             {formatNumber(item.balance)}
                           </td>
-                           <td className="text-end text-success">
+                          <td className="text-end text-success">
                             {item.debit > 0 ? formatNumber(item.debit) : "0.00"}
                           </td>
                           <td className="text-end text-danger">
-                            {item.credit > 0 ? formatNumber(item.credit) : "0.00"}
+                            {item.credit > 0
+                              ? formatNumber(item.credit)
+                              : "0.00"}
                           </td>
-                         
+
                           {/* <td className="text-end text-success">
                             {item.commissionPlus > 0 ? formatNumber(item.commissionPlus) : "0.00"}
                           </td>
                           <td className="text-end text-danger">
                             {item.commissionMinus > 0 ? formatNumber(item.commissionMinus) : "0.00"}
                           </td> */}
-                  
 
-                                                    <td className="text-end">{formatNumber(item.oldBalance)}</td>
-
+                          <td className="text-end">
+                            {formatNumber(item.oldBalance)}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
                     <tfoot className="table-secondary">
                       <tr>
-                        <td colSpan="3" className="text-end fw-bold">TOTAL</td>
-                           {/* <td className="text-end fw-bold text-danger"> */}
-                           <td className="text-end fw-bold ">
+                        <td colSpan="3" className="text-end fw-bold">
+                          TOTAL
+                        </td>
+                        {/* <td className="text-end fw-bold text-danger"> */}
+                        <td className="text-end fw-bold ">
                           {formatNumber(total.debit)}
                         </td>
                         {/* <td className="text-end fw-bold text-success"> */}
                         <td className="text-end fw-bold ">
                           {formatNumber(total.credit)}
                         </td>
-                     
+
                         {/* <td className="text-end fw-bold text-success">
                           {formatNumber(total.commissionPlus)}
                         </td>
@@ -469,8 +478,9 @@ const Statementmasterlist = () => {
                 {totalPages > 1 && (
                   <div className="d-flex justify-content-between align-items-center mt-4">
                     <div className="showingentries text-muted">
-                      Showing {((currentPage - 1) * limit) + 1} to{" "}
-                      {Math.min(currentPage * limit, totalRecords)} of {totalRecords} entries
+                      Showing {(currentPage - 1) * limit + 1} to{" "}
+                      {Math.min(currentPage * limit, totalRecords)} of{" "}
+                      {totalRecords} entries
                     </div>
 
                     <div className="paginationall d-flex align-items-center gap-1">

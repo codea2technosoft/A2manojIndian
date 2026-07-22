@@ -1,6 +1,11 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { useState } from "react";
 import Layout from "./Layout/Layout";
 import GaneRuleModal from "./Layout/GaneRuleModal";
@@ -8,7 +13,7 @@ import Login from "./User/Login";
 import Userchat from "./User/Userchat";
 import Chatclose from "./User/Chatclose";
 import Dashboard from "./Pages/Dashboard";
-import ViewmatchAndfancy from "./Pages/viewmatchAndFancy/viewMactch&fancy.jsx";//for dashboard page 
+import ViewmatchAndfancy from "./Pages/viewmatchAndFancy/viewMactch&fancy.jsx"; //for dashboard page
 import Adminchat from "./Pages/AdminChat/AdminPanel.js";
 // import AdminchattingPage from "./Pages/AdminChat/AdminchattingPage";
 import HomeDashboard from "./Pages/HomeDashboard";
@@ -84,9 +89,9 @@ import ViewMatch from "./Pages/FancyManagment/ViewMatch";
 import UserWalletBalance from "./Pages/User/UsersWalletBalance";
 // import DepositReport from "./Pages/Deposits/DepositDateWiseLists";
 import WithdrowReport from "./Pages/Withdrawal/WithdrawalDateWiseLists";
-import AllBets from "./Pages/BetManagment/AllBets.jsx"
-import PendingBet from "./Pages/BetManagment/PendingBet.jsx"
-import SuccessBet from "./Pages/BetManagment/SuccessBet.jsx"
+import AllBets from "./Pages/BetManagment/AllBets.jsx";
+import PendingBet from "./Pages/BetManagment/PendingBet.jsx";
+import SuccessBet from "./Pages/BetManagment/SuccessBet.jsx";
 import SubAdminPage from "./Pages/SubAdmin/SubAdminPage.jsx";
 import SubAdminPermissionList from "./Pages/SubAdmin/SubAdminPermissionList.jsx";
 import { ProtectedRoute } from "./Utils/Permissions.js";
@@ -149,8 +154,21 @@ import MyProfitAndLoss from "./Pages/Ledger/MyProfitLoss.js";
 import MyLedger from "./Pages/Ledger/MyLedger.js";
 import MasterLedger from "./Pages/Ledger/MasterLedger.js";
 import SuperAgentLedger from "./Pages/Ledger/SuperAgentLedger.js";
+import SuperAgentSettlementReport from "./Pages/Ledger/SuperAgentSettlementReport";
+import AgentSettlementReport from "./Pages/Ledger/AgentSettlementReport";
+import UserSettlementReport from "./Pages/Ledger/UserSettlementReport";
 import AgentLedger from "./Pages/Ledger/AgentLedger.js";
 import UserLedger from "./Pages/Ledger/UserLedger.js";
+
+//Balance Sheet
+
+import BalanceSuperAgentLedger from "./Pages/BalanceSheet/SuperAgentLedger.js";
+import BalanceSuperAgentSettlementReport from "./Pages/BalanceSheet/SuperAgentSettlementReport";
+import BalanceAgentSettlementReport from "./Pages/BalanceSheet/AgentSettlementReport";
+import BalanceUserSettlementReport from "./Pages/BalanceSheet/UserSettlementReport";
+import BalanceAgentLedger from "./Pages/BalanceSheet/AgentLedger.js";
+import BalanceUserLedger from "./Pages/BalanceSheet/UserLedger.js";
+
 //transaction
 import MasterTransction from "./Pages/transaction/MasterTransaction.js";
 import AgentMasterTransction from "./Pages/transaction/MasterTransaction.js";
@@ -164,14 +182,37 @@ import AllPLStatment from "./Pages/AllStatments/AllPLReport.js";
 import fancyResultList from "./Pages/DeclareResult/fancyResultList.jsx";
 import ViewfancyResultList from "./Pages/DeclareResult/ViewfancyResultList.jsx";
 import AccountStatement from "./Pages/Reports/AccountStatement";
+import BetHistoryDetails from "./Pages/Reports/BetHistoryDetails";
+import PendingBetHistory from "./Pages/Reports/PendingBetHistory";
 import BalanceSheet from "./Pages/Reports/BalanceSheet";
 import ChipStatement from "./Pages/Reports/ChipStatement";
+import ProfitLossBetHistory from "./Pages/Reports/ProfitLossBetHistory";
 import ChipSummary from "./Pages/Reports/ChipSummary";
 import ProfitLoss from "./Pages/Reports/ProfitLoss";
 import Settlements from "./Pages/Reports/Settlements";
 import SettlementReport from "./Pages/Reports/SettlementReport";
 import SportSummaryReport from "./Pages/Reports/SportSummaryReport";
 import TopClients from "./Pages/Reports/TopClients";
+import CasinoManagement from "./Pages/Casino/CasinoProvidersLists";
+import MarketAnalysisLists from "./Pages/MarketAnalysis/MarketAnalysisLists";
+import MarketAnalysisEventDetail from "./Pages/MarketAnalysis/MarketAnalysisEventDetail";
+import MarketAnalysisBetHistory from "./Pages/MarketAnalysis/MarketAnalysisBetHistory";
+import BlockedChildLists from "./Pages/BlockedChildLists/BlockedChildLists";
+import AgentMasterClone from "./agent/AgentMasterClone";
+import Multimarket from "./Pages/Multimarket/Multimarket.jsx";
+import CasinoSetting from "./UserWiseSettings/casino-setting";
+import ICasinoSetting from "./UserWiseSettings/icasino-setting";
+import SportSetting from "./UserWiseSettings/sport-setting";
+import UserSetting from "./UserWiseSettings/UserSetting.jsx";
+
+import ProfitLossDetail from "./Pages/Reports/ProfitLossDetail";
+import ProfitLossMarketSummary from "./Pages/Reports/ProfitLossMarketSummary";
+import ProfitLossMarketUsersDetails from "./Pages/Reports/ProfitLossMarketUsersDetails";
+import ProfitLossSummary from "./Pages/Reports/ProfitLossSummary";
+import SportHorseRacing from "./Pages/ActiveAllGames/SportHorseRacing";
+import HorseRacingDetails from "./Pages/ActiveAllGames/HorseRacingDetails";
+import SportGreyhundRacing from "./Pages/ActiveAllGames/SportGreyhundRacing";
+import HorseGreyhundDetails from "./Pages/ActiveAllGames/HorseGreyhundDetails";
 
 const App = () => {
   const token = localStorage.getItem("token");
@@ -196,44 +237,61 @@ const App = () => {
         <Route path="/" element={<Navigate to="/homedashboard" replace />} />
         <Route
           path="/homedashboard"
-          element={<ProtectedRoute element={HomeDashboard} path="/homedashboard" />}
+          element={
+            <ProtectedRoute element={HomeDashboard} path="/homedashboard" />
+          }
         />
 
         <Route
           path="/dashboard"
           element={<ProtectedRoute element={Dashboard} path="/dashboard" />}
         />
-        <Route
+        {/* <Route
           path="/viewmatch-fancy/series_idd/:series_idd/event_id/:event_id"
-          element={<ProtectedRoute element={ViewmatchAndfancy} path="/dashboard" />}
+          element={
+            <ProtectedRoute element={ViewmatchAndfancy} path="/dashboard" />
+          }
+        /> */}
+
+        <Route
+          path="/viewmatch-fancy/series_idd/:series_idd/event_id/:event_id/sport_id/:sport_id"
+          element={
+            <ProtectedRoute
+              element={ViewmatchAndfancy}
+              path="/viewmatch-fancy/series_idd/:series_idd/event_id/:event_id/sport_id/:sport_id"
+            />
+          }
         />
-
-
 
         {/* master routes */}
         <Route
           path="/masters_list"
-          element={<ProtectedRoute element={MastersLists} path="/masters_list" />}
+          element={
+            <ProtectedRoute element={MastersLists} path="/masters_list" />
+          }
         />
 
         <Route
           path="/create-master"
-          element={<ProtectedRoute element={Mastercreate} path="/create-master" />}
+          element={
+            <ProtectedRoute element={Mastercreate} path="/create-master" />
+          }
         />
 
         <Route
           path="/master_operation/:id"
-          element={<ProtectedRoute element={OperationAccount} path="/master_operation/:id" />}
+          element={
+            <ProtectedRoute
+              element={OperationAccount}
+              path="/master_operation/:id"
+            />
+          }
         />
-
 
         <Route
           path="/Updatemaster/:id"
           element={
-            <ProtectedRoute
-              element={UpdatMaster}
-              path="/Updatemaster/:id"
-            />
+            <ProtectedRoute element={UpdatMaster} path="/Updatemaster/:id" />
           }
         />
         <Route
@@ -246,15 +304,10 @@ const App = () => {
           }
         />
 
-
-
         <Route
           path="/SelectSuperagent"
           element={
-            <ProtectedRoute
-              element={SelectMaster}
-              path="/SelectSuperagent"
-            />
+            <ProtectedRoute element={SelectMaster} path="/SelectSuperagent" />
           }
         />
         <Route
@@ -263,39 +316,69 @@ const App = () => {
         />
         <Route
           path="/block-super-agent-lists"
-          element={<ProtectedRoute element={BlockSuperAgentList} path="/Block-super-agent-lists" />}
+          element={
+            <ProtectedRoute
+              element={BlockSuperAgentList}
+              path="/Block-super-agent-lists"
+            />
+          }
         />
         <Route
           path="/inActive-super-agent-lists"
-          element={<ProtectedRoute element={InAvtiveSuperAgentList} path="/inActive-super-agent-lists" />}
+          element={
+            <ProtectedRoute
+              element={InAvtiveSuperAgentList}
+              path="/inActive-super-agent-lists"
+            />
+          }
         />
         <Route
           path="/AgentMasternew/:adminId?"
-          element={<ProtectedRoute element={AgentMasternew} path="/AgentMasternew" />}
+          element={
+            <ProtectedRoute element={AgentMasternew} path="/AgentMasternew" />
+          }
         />
         <Route
           path="/inActive-agent-lists"
-          element={<ProtectedRoute element={InActiveAgentList} path="/inActive-agent-lists" />}
+          element={
+            <ProtectedRoute
+              element={InActiveAgentList}
+              path="/inActive-agent-lists"
+            />
+          }
         />
         <Route
           path="/block-agent-list"
-          element={<ProtectedRoute element={BlockAgentList} path="/block-agent-list" />}
+          element={
+            <ProtectedRoute element={BlockAgentList} path="/block-agent-list" />
+          }
         />
         <Route
           path="/Mastermyuser/:adminId?"
-          element={<ProtectedRoute element={Mastermyuser} path="/Mastermyuser" />}
+          element={
+            <ProtectedRoute element={Mastermyuser} path="/Mastermyuser" />
+          }
         />
         <Route
           path="/user-exposer"
-          element={<ProtectedRoute element={UserExposer} path="/user-exposer" />}
+          element={
+            <ProtectedRoute element={UserExposer} path="/user-exposer" />
+          }
         />
         <Route
           path="/block-users-lists"
-          element={<ProtectedRoute element={BlockUserList} path="/block-users-lists" />}
+          element={
+            <ProtectedRoute element={BlockUserList} path="/block-users-lists" />
+          }
         />
         <Route
           path="/inactive-users-lists"
-          element={<ProtectedRoute element={InActiveUserList} path="/inactive-users-lists" />}
+          element={
+            <ProtectedRoute
+              element={InActiveUserList}
+              path="/inactive-users-lists"
+            />
+          }
         />
 
         <Route
@@ -304,11 +387,18 @@ const App = () => {
         />
         <Route
           path="/Clientmasternew"
-          element={<ProtectedRoute element={Clientmasternew} path="/Clientmasternew" />}
+          element={
+            <ProtectedRoute element={Clientmasternew} path="/Clientmasternew" />
+          }
         />
         <Route
           path="/Clientmastermyuser"
-          element={<ProtectedRoute element={Clientmastermyuser} path="/Clientmastermyuser" />}
+          element={
+            <ProtectedRoute
+              element={Clientmastermyuser}
+              path="/Clientmastermyuser"
+            />
+          }
         />
 
         <Route
@@ -331,19 +421,39 @@ const App = () => {
         />
         <Route
           path="/master-transaction/:master_id?"
-          element={<ProtectedRoute element={MasterTransction} path="/master-transaction" />}
+          element={
+            <ProtectedRoute
+              element={MasterTransction}
+              path="/master-transaction"
+            />
+          }
         />
         <Route
           path="/case-transaction-report"
-          element={<ProtectedRoute element={CaseTransctionReport} path="/master-transaction" />}
+          element={
+            <ProtectedRoute
+              element={CaseTransctionReport}
+              path="/master-transaction"
+            />
+          }
         />
         <Route
           path="/agent_master-deleted-transactions"
-          element={<ProtectedRoute element={MasterDeletedTransactionList} path="/agent_master-deleted-transactions" />}
+          element={
+            <ProtectedRoute
+              element={MasterDeletedTransactionList}
+              path="/agent_master-deleted-transactions"
+            />
+          }
         />
         <Route
           path="/CommissionReport"
-          element={<ProtectedRoute element={CommissionReport} path="/CommissionReport" />}
+          element={
+            <ProtectedRoute
+              element={CommissionReport}
+              path="/CommissionReport"
+            />
+          }
         />
         {/* <Route
           path="/master-commisssion-report"
@@ -351,7 +461,12 @@ const App = () => {
         /> */}
         <Route
           path="/master-blocked-list"
-          element={<ProtectedRoute element={BlockedMasterLists} path="/master-blocked-list" />}
+          element={
+            <ProtectedRoute
+              element={BlockedMasterLists}
+              path="/master-blocked-list"
+            />
+          }
         />
         {/* <Route
           path="/CommReportnew"
@@ -359,15 +474,24 @@ const App = () => {
         /> */}
         <Route
           path="/InActive-master-list"
-          element={<ProtectedRoute element={InActiveMasterLists} path="/InActive-master-list" />}
+          element={
+            <ProtectedRoute
+              element={InActiveMasterLists}
+              path="/InActive-master-list"
+            />
+          }
         />
         <Route
           path="/profitloss"
-          element={<ProtectedRoute element={ProfitAndLoss} path="/profitloss" />}
+          element={
+            <ProtectedRoute element={ProfitAndLoss} path="/profitloss" />
+          }
         />
         <Route
           path="/my-profit-loss"
-          element={<ProtectedRoute element={MyProfitAndLoss} path="/my-profit-loss" />}
+          element={
+            <ProtectedRoute element={MyProfitAndLoss} path="/my-profit-loss" />
+          }
         />
         <Route
           path="/my-ledger"
@@ -375,15 +499,55 @@ const App = () => {
         />
         <Route
           path="/Master-ledger"
-          element={<ProtectedRoute element={MasterLedger} path="/Master-ledger" />}
+          element={
+            <ProtectedRoute element={MasterLedger} path="/Master-ledger" />
+          }
         />
         <Route
           path="/super-agent-ledger"
-          element={<ProtectedRoute element={SuperAgentLedger} path="/super-agent-ledger" />}
+          element={
+            <ProtectedRoute
+              element={SuperAgentLedger}
+              path="/super-agent-ledger"
+            />
+          }
         />
+
+        <Route
+          path="/super-agent-ledger-settlement-report/:admin_id"
+          element={
+            <ProtectedRoute
+              element={SuperAgentSettlementReport}
+              path="/super-agent-ledger-settlement-report/:admin_id"
+            />
+          }
+        />
+
+        <Route
+          path="/agent-settlement-report/:admin_id"
+          element={
+            <ProtectedRoute
+              element={AgentSettlementReport}
+              path="/agent-settlement-report/:admin_id"
+            />
+          }
+        />
+
+        <Route
+          path="/user-settlement-report/:admin_id"
+          element={
+            <ProtectedRoute
+              element={UserSettlementReport}
+              path="/user-settlement-report/:admin_id"
+            />
+          }
+        />
+
         <Route
           path="/agent-ledger"
-          element={<ProtectedRoute element={AgentLedger} path="/agent-ledger" />}
+          element={
+            <ProtectedRoute element={AgentLedger} path="/agent-ledger" />
+          }
         />
         <Route
           path="/user-ledger"
@@ -393,6 +557,67 @@ const App = () => {
         <Route
           path="/Ledger/:userid"
           element={<ProtectedRoute element={Ledger} path="/Ledger/:userid" />}
+        />
+
+        {/* New  Balance Sheets*/}
+
+        <Route
+          path="/reports/balance-sheet"
+          element={
+            <ProtectedRoute
+              element={BalanceSuperAgentLedger}
+              path="/reports/balance-sheet"
+            />
+          }
+        />
+
+        <Route
+          path="/reports/agent-ledger"
+          element={
+            <ProtectedRoute
+              element={BalanceAgentLedger}
+              path="/reports/agent-ledger"
+            />
+          }
+        />
+        <Route
+          path="/reports/user-ledger"
+          element={
+            <ProtectedRoute
+              element={BalanceUserLedger}
+              path="/reports/user-ledger"
+            />
+          }
+        />
+
+        <Route
+          path="/reports/super-agent-ledger-settlement-report/:admin_id"
+          element={
+            <ProtectedRoute
+              element={BalanceSuperAgentSettlementReport}
+              path="/reports/super-agent-ledger-settlement-report/:admin_id"
+            />
+          }
+        />
+
+        <Route
+          path="/reports/agent-settlement-report/:admin_id"
+          element={
+            <ProtectedRoute
+              element={BalanceAgentSettlementReport}
+              path="/reports/agent-settlement-report/:admin_id"
+            />
+          }
+        />
+
+        <Route
+          path="/reports/user-settlement-report/:admin_id"
+          element={
+            <ProtectedRoute
+              element={BalanceUserSettlementReport}
+              path="/reports/user-settlement-report/:admin_id"
+            />
+          }
         />
 
         <Route
@@ -430,10 +655,7 @@ const App = () => {
         <Route
           path="/getAllstatment"
           element={
-            <ProtectedRoute
-              element={MyAllStatment}
-              path="/getAllstatment"
-            />
+            <ProtectedRoute element={MyAllStatment} path="/getAllstatment" />
           }
         />
         <Route
@@ -505,20 +727,13 @@ const App = () => {
 
         <Route
           path="/inplay_game"
-          element={
-            <ProtectedRoute
-              element={InPlayGame}
-              path="/inplay_game"
-            />
-          }
+          element={<ProtectedRoute element={InPlayGame} path="/inplay_game" />}
         />
+
         <Route
           path="/completed_game"
           element={
-            <ProtectedRoute
-              element={CompleteGame}
-              path="/completed_game"
-            />
+            <ProtectedRoute element={CompleteGame} path="/completed_game" />
           }
         />
 
@@ -542,29 +757,16 @@ const App = () => {
         />
         <Route
           path="/match_bet/:event_id"
-          element={
-            <ProtectedRoute
-              element={MatchBet}
-              path="/match_bet"
-            />
-          }
+          element={<ProtectedRoute element={MatchBet} path="/match_bet" />}
         />
         <Route
           path="/session_bet/:event_id"
-          element={
-            <ProtectedRoute
-              element={SessionBet}
-              path="/session_bet"
-            />
-          }
+          element={<ProtectedRoute element={SessionBet} path="/session_bet" />}
         />
         <Route
           path="/rejected_bet/:event_id"
           element={
-            <ProtectedRoute
-              element={RejectedBet}
-              path="/rejected_bet"
-            />
+            <ProtectedRoute element={RejectedBet} path="/rejected_bet" />
           }
         />
         <Route
@@ -665,19 +867,36 @@ const App = () => {
         /> */}
         <Route
           path="/Superagenttransaction/:master_id?"
-          element={<ProtectedRoute element={Superagenttransaction} path="/Superagenttransaction" />}
+          element={
+            <ProtectedRoute
+              element={Superagenttransaction}
+              path="/Superagenttransaction"
+            />
+          }
         />
         <Route
           path="/master-transaction/:master_id?"
-          element={<ProtectedRoute element={AgentMasterTransction} path="/master-transaction" />}
+          element={
+            <ProtectedRoute
+              element={AgentMasterTransction}
+              path="/master-transaction"
+            />
+          }
         />
         <Route
           path="/Usertransaction/:admin_id?"
-          element={<ProtectedRoute element={Usertransaction} path="/Usertransaction" />}
+          element={
+            <ProtectedRoute element={Usertransaction} path="/Usertransaction" />
+          }
         />
         <Route
           path="/Agenttransaction/:master_id?"
-          element={<ProtectedRoute element={Agenttransaction} path="/Agenttransaction" />}
+          element={
+            <ProtectedRoute
+              element={Agenttransaction}
+              path="/Agenttransaction"
+            />
+          }
         />
 
         <Route
@@ -686,7 +905,12 @@ const App = () => {
         />
         <Route
           path="/Superagenttransactiondelet"
-          element={<ProtectedRoute element={Superagenttransactiondelet} path="/Superagenttransactiondelet" />}
+          element={
+            <ProtectedRoute
+              element={Superagenttransactiondelet}
+              path="/Superagenttransactiondelet"
+            />
+          }
         />
 
         <Route
@@ -696,23 +920,33 @@ const App = () => {
 
         <Route
           path="/active_users"
-          element={<ProtectedRoute element={ActiveUsersList} path="/active_users" />}
+          element={
+            <ProtectedRoute element={ActiveUsersList} path="/active_users" />
+          }
         />
 
         <Route
           path="/inactive_users"
-          element={<ProtectedRoute element={InactiveUsersList} path="/inactive_users" />}
+          element={
+            <ProtectedRoute
+              element={InactiveUsersList}
+              path="/inactive_users"
+            />
+          }
         />
 
         <Route
           path="/user-Note/:user_id"
-          element={<ProtectedRoute element={UserNote} path="/user-Note/:user_id" />}
+          element={
+            <ProtectedRoute element={UserNote} path="/user-Note/:user_id" />
+          }
         />
         <Route
           path="/deleted-userlist"
-          element={<ProtectedRoute element={DeletedUsers} path="/deleted-userlist" />}
+          element={
+            <ProtectedRoute element={DeletedUsers} path="/deleted-userlist" />
+          }
         />
-
 
         <Route
           path="/user-NoteList"
@@ -721,97 +955,184 @@ const App = () => {
 
         <Route
           path="/user/login-user-list"
-          element={<ProtectedRoute element={LoginUsersList} path="/user/login-user-list" />}
+          element={
+            <ProtectedRoute
+              element={LoginUsersList}
+              path="/user/login-user-list"
+            />
+          }
         />
 
         <Route
           path="/withdrawal_pending"
-          element={<ProtectedRoute element={Pending} path="/withdrawal_pending" />}
+          element={
+            <ProtectedRoute element={Pending} path="/withdrawal_pending" />
+          }
         />
 
         <Route
           path="/withdrawal_complete"
-          element={<ProtectedRoute element={Complete} path="/withdrawal_complete" />}
+          element={
+            <ProtectedRoute element={Complete} path="/withdrawal_complete" />
+          }
         />
 
         <Route
           path="/withdrawal_reject"
-          element={<ProtectedRoute element={Reject} path="/withdrawal_reject" />}
+          element={
+            <ProtectedRoute element={Reject} path="/withdrawal_reject" />
+          }
         />
 
         <Route
           path="/withdrawal_report_datewise"
-          element={<ProtectedRoute element={WithdrawalDateWiseLists} path="/withdrawal_report_datewise" />}
+          element={
+            <ProtectedRoute
+              element={WithdrawalDateWiseLists}
+              path="/withdrawal_report_datewise"
+            />
+          }
         />
 
         <Route
           path="/admin_withdrawal_report_datewise"
-          element={<ProtectedRoute element={AdminWithdrawalDateWiseLists} path="/admin_withdrawal_report_datewise" />}
+          element={
+            <ProtectedRoute
+              element={AdminWithdrawalDateWiseLists}
+              path="/admin_withdrawal_report_datewise"
+            />
+          }
         />
 
         <Route
           path="/withdrawal_datewise_details/:date"
-          element={<ProtectedRoute element={WithdrawalDateWiseDetailPage} path="/withdrawal_datewise_details/:date" />}
+          element={
+            <ProtectedRoute
+              element={WithdrawalDateWiseDetailPage}
+              path="/withdrawal_datewise_details/:date"
+            />
+          }
         />
 
         <Route
           path="/admin_withdrawal_datewise_details/:date"
-          element={<ProtectedRoute element={AdminWithdrawalDateWiseDetailPage} path="/admin_withdrawal_datewise_details/:date" />}
+          element={
+            <ProtectedRoute
+              element={AdminWithdrawalDateWiseDetailPage}
+              path="/admin_withdrawal_datewise_details/:date"
+            />
+          }
         />
 
         <Route
           path="/bank_account_pending"
-          element={<ProtectedRoute element={BankAccountPending} path="/bank_account_pending" />}
+          element={
+            <ProtectedRoute
+              element={BankAccountPending}
+              path="/bank_account_pending"
+            />
+          }
         />
 
         <Route
           path="/bank_account_complete"
-          element={<ProtectedRoute element={BankAccountComplete} path="/bank_account_complete" />}
+          element={
+            <ProtectedRoute
+              element={BankAccountComplete}
+              path="/bank_account_complete"
+            />
+          }
         />
 
         <Route
           path="/bank_account_reject"
-          element={<ProtectedRoute element={BankAccountReject} path="/bank_account_reject" />}
+          element={
+            <ProtectedRoute
+              element={BankAccountReject}
+              path="/bank_account_reject"
+            />
+          }
         />
         <Route
           path="/deposite_pending"
-          element={<ProtectedRoute element={DepositPending} path="/deposite_pending" />}
+          element={
+            <ProtectedRoute element={DepositPending} path="/deposite_pending" />
+          }
         />
         <Route
           path="/deposite_complete"
-          element={<ProtectedRoute element={DepositComplete} path="/deposite_complete" />}
+          element={
+            <ProtectedRoute
+              element={DepositComplete}
+              path="/deposite_complete"
+            />
+          }
         />
         <Route
           path="/deposite_reject"
-          element={<ProtectedRoute element={DepositReject} path="/deposite_reject" />}
+          element={
+            <ProtectedRoute element={DepositReject} path="/deposite_reject" />
+          }
         />
         <Route
           path="/deposite_report_datewise"
-          element={<ProtectedRoute element={DepositDateWiseLists} path="/deposite_report_datewise" />}
+          element={
+            <ProtectedRoute
+              element={DepositDateWiseLists}
+              path="/deposite_report_datewise"
+            />
+          }
         />
         <Route
           path="/admin_deposite_report_datewise"
-          element={<ProtectedRoute element={AdminDepositDateWiseLists} path="/admin_deposite_report_datewise" />}
+          element={
+            <ProtectedRoute
+              element={AdminDepositDateWiseLists}
+              path="/admin_deposite_report_datewise"
+            />
+          }
         />
         <Route
           path="/deposit_detail/:date"
-          element={<ProtectedRoute element={DepositDateWiseDetailPage} path="/deposit_detail/:date" />}
+          element={
+            <ProtectedRoute
+              element={DepositDateWiseDetailPage}
+              path="/deposit_detail/:date"
+            />
+          }
         />
         <Route
           path="/admin_deposit_detail/:date"
-          element={<ProtectedRoute element={AdminDepositDateWiseDetailPage} path="/admin_deposit_detail/:date" />}
+          element={
+            <ProtectedRoute
+              element={AdminDepositDateWiseDetailPage}
+              path="/admin_deposit_detail/:date"
+            />
+          }
         />
         <Route
           path="/deposit_list_report_getway_wise_all"
-          element={<ProtectedRoute element={DepositGatewayWiseAll} path="/deposit_list_report_getway_wise_all" />}
+          element={
+            <ProtectedRoute
+              element={DepositGatewayWiseAll}
+              path="/deposit_list_report_getway_wise_all"
+            />
+          }
         />
         <Route
           path="/bet_history_pending"
-          element={<ProtectedRoute element={BetHistory} path="/bet_history_pending" />}
+          element={
+            <ProtectedRoute element={BetHistory} path="/bet_history_pending" />
+          }
         />
         <Route
           path="/bet_history_success"
-          element={<ProtectedRoute element={BetHistorySuccess} path="/bet_history_success" />}
+          element={
+            <ProtectedRoute
+              element={BetHistorySuccess}
+              path="/bet_history_success"
+            />
+          }
         />
         <Route
           path="/all_bets_lists"
@@ -819,47 +1140,93 @@ const App = () => {
         />
         <Route
           path="/pending_bets_lists"
-          element={<ProtectedRoute element={PendingBet} path="/pending_bets_lists" />}
+          element={
+            <ProtectedRoute element={PendingBet} path="/pending_bets_lists" />
+          }
         />
         <Route
           path="/success_bets_lists"
-          element={<ProtectedRoute element={SuccessBet} path="/success_bets_lists" />}
+          element={
+            <ProtectedRoute element={SuccessBet} path="/success_bets_lists" />
+          }
         />
         <Route
           path="/game_load_bet_loss_lists"
-          element={<ProtectedRoute element={GameLoadBetLossLists} path="/game_load_bet_loss_lists" />}
+          element={
+            <ProtectedRoute
+              element={GameLoadBetLossLists}
+              path="/game_load_bet_loss_lists"
+            />
+          }
         />
         <Route
           path="/game_report_datewise"
-          element={<ProtectedRoute element={GameReportDateWiseLists} path="/game_report_datewise" />}
+          element={
+            <ProtectedRoute
+              element={GameReportDateWiseLists}
+              path="/game_report_datewise"
+            />
+          }
         />
         <Route
           path="/game_report_marketTypewaise/:date"
-          element={<ProtectedRoute element={GameReportDateWiseDetailsPage} path="/game_report_marketTypewaise/:date" />}
+          element={
+            <ProtectedRoute
+              element={GameReportDateWiseDetailsPage}
+              path="/game_report_marketTypewaise/:date"
+            />
+          }
         />
         <Route
           path="/game_report_marketIdwaise/:markettypeURL"
-          element={<ProtectedRoute element={GameReportMarketIdWaise} path="/game_report_marketIdwaise/:markettypeURL" />}
+          element={
+            <ProtectedRoute
+              element={GameReportMarketIdWaise}
+              path="/game_report_marketIdwaise/:markettypeURL"
+            />
+          }
         />
         <Route
           path="/game_report_marketIdAndMarketTypeAll/"
-          element={<ProtectedRoute element={GameReportMarketIdAndMarketTypeAll} path="/game_report_marketIdAndMarketTypeAll/" />}
+          element={
+            <ProtectedRoute
+              element={GameReportMarketIdAndMarketTypeAll}
+              path="/game_report_marketIdAndMarketTypeAll/"
+            />
+          }
         />
         <Route
           path="/declare_result"
-          element={<ProtectedRoute element={DeclareResult} path="/declare_main" />}
+          element={
+            <ProtectedRoute element={DeclareResult} path="/declare_main" />
+          }
         />
         <Route
           path="/fancy-result-list"
-          element={<ProtectedRoute element={fancyResultList} path="/fancy-result-list" />}
+          element={
+            <ProtectedRoute
+              element={fancyResultList}
+              path="/fancy-result-list"
+            />
+          }
         />
         <Route
           path="/view-fancy-result-list/:event_id"
-          element={<ProtectedRoute element={ViewfancyResultList} path="/view-fancy-result-list" />}
+          element={
+            <ProtectedRoute
+              element={ViewfancyResultList}
+              path="/view-fancy-result-list"
+            />
+          }
         />
         <Route
           path="/declare_king_jack"
-          element={<ProtectedRoute element={KingJackPortMarketDeclare} path="/declare_king_jack" />}
+          element={
+            <ProtectedRoute
+              element={KingJackPortMarketDeclare}
+              path="/declare_king_jack"
+            />
+          }
         />
         <Route
           path="/setting"
@@ -871,15 +1238,30 @@ const App = () => {
         />
         <Route
           path="/commission-histry"
-          element={<ProtectedRoute element={Commissionhistry} path="/commission-histry" />}
+          element={
+            <ProtectedRoute
+              element={Commissionhistry}
+              path="/commission-histry"
+            />
+          }
         />
         <Route
           path="/commission-report"
-          element={<ProtectedRoute element={Commissionreport} path="/commission-report" />}
+          element={
+            <ProtectedRoute
+              element={Commissionreport}
+              path="/commission-report"
+            />
+          }
         />
         <Route
           path="/withdrawal_pending_Approve"
-          element={<ProtectedRoute element={WithdrawPendingApporve} path="/withdrawal_pending_Approve" />}
+          element={
+            <ProtectedRoute
+              element={WithdrawPendingApporve}
+              path="/withdrawal_pending_Approve"
+            />
+          }
         />
         <Route
           path="/Ledger/:userid"
@@ -887,15 +1269,30 @@ const App = () => {
         />
         <Route
           path="/bet_history_userwaise/:userid"
-          element={<ProtectedRoute element={BetHistoryUserwaise} path="/bet_history_userwaise/:userid" />}
+          element={
+            <ProtectedRoute
+              element={BetHistoryUserwaise}
+              path="/bet_history_userwaise/:userid"
+            />
+          }
         />
         <Route
           path="/login_history/:userid"
-          element={<ProtectedRoute element={LoginHistory} path="/login_history/:userid" />}
+          element={
+            <ProtectedRoute
+              element={LoginHistory}
+              path="/login_history/:userid"
+            />
+          }
         />
         <Route
           path="/idea_submit_lists"
-          element={<ProtectedRoute element={IdeaSubmitList} path="/idea_submit_lists" />}
+          element={
+            <ProtectedRoute
+              element={IdeaSubmitList}
+              path="/idea_submit_lists"
+            />
+          }
         />
         <Route
           path="/slider_lists"
@@ -903,21 +1300,22 @@ const App = () => {
         />
         <Route
           path="/notification/notification-list"
-          element={<ProtectedRoute element={SendNotification} path="/notification/notification-list" />}
+          element={
+            <ProtectedRoute
+              element={SendNotification}
+              path="/notification/notification-list"
+            />
+          }
         />
         <Route
           path="/sports"
           element={<ProtectedRoute element={AllGameList} path="/sports" />}
         />
 
-
         <Route
           path="/active-all-games/:sportId"
           element={
-            <ProtectedRoute
-              element={ActiveAllGames}
-              path="/active-all-games"
-            />
+            <ProtectedRoute element={ActiveAllGames} path="/active-all-games" />
           }
         />
 
@@ -927,24 +1325,34 @@ const App = () => {
         />
         <Route
           path="/view_event/:matchId"
-          element={<ProtectedRoute element={ViewEvent} path="/view_event/:matchId" />}
+          element={
+            <ProtectedRoute element={ViewEvent} path="/view_event/:matchId" />
+          }
         />
         <Route
           path="/inActive_events/:id"
-          element={<ProtectedRoute element={InActiveEvents} path="/inActive_events" />}
+          element={
+            <ProtectedRoute element={InActiveEvents} path="/inActive_events" />
+          }
         />
 
         <Route
           path="/active_events/:id"
-          element={<ProtectedRoute element={ActiveEvents} path="/active_events" />}
+          element={
+            <ProtectedRoute element={ActiveEvents} path="/active_events" />
+          }
         />
         <Route
           path="/complete_events/:id"
-          element={<ProtectedRoute element={CompletedEvents} path="/complete_events" />}
+          element={
+            <ProtectedRoute element={CompletedEvents} path="/complete_events" />
+          }
         />
         <Route
           path="/fancy_Managment"
-          element={<ProtectedRoute element={FancyManagment} path="/fancy_Managment" />}
+          element={
+            <ProtectedRoute element={FancyManagment} path="/fancy_Managment" />
+          }
         />
 
         {/* <Route
@@ -957,23 +1365,45 @@ const App = () => {
         />
         <Route
           path="/view_fancy/:eventId"
-          element={<ProtectedRoute element={FancyList} path="/view_fancy/:eventId" />}
+          element={
+            <ProtectedRoute element={FancyList} path="/view_fancy/:eventId" />
+          }
         />
         <Route
           path="/view_result/:eventId"
-          element={<ProtectedRoute element={FancyResult} path="/view_result/:eventId" />}
+          element={
+            <ProtectedRoute
+              element={FancyResult}
+              path="/view_result/:eventId"
+            />
+          }
         />
         <Route
           path="/userwallet/:id"
-          element={<ProtectedRoute element={UserWalletBalance} path="/userwallet/:id" />}
+          element={
+            <ProtectedRoute
+              element={UserWalletBalance}
+              path="/userwallet/:id"
+            />
+          }
         />
         <Route
           path="/admin_deposit_lists"
-          element={<ProtectedRoute element={AdminDepositLists} path="/admin_deposit_lists" />}
+          element={
+            <ProtectedRoute
+              element={AdminDepositLists}
+              path="/admin_deposit_lists"
+            />
+          }
         />
         <Route
           path="/admin_withdrow_lists"
-          element={<ProtectedRoute element={AdminWithdrawalLists} path="/admin_withdrow_lists" />}
+          element={
+            <ProtectedRoute
+              element={AdminWithdrawalLists}
+              path="/admin_withdrow_lists"
+            />
+          }
         />
         <Route
           path="/sub_admin"
@@ -985,55 +1415,350 @@ const App = () => {
         />
         <Route
           path="/sub_admin-permission-list/:id"
-          element={<ProtectedRoute element={SubAdminPermissionList} path="/sub_admin-permission-list/:id" />}
+          element={
+            <ProtectedRoute
+              element={SubAdminPermissionList}
+              path="/sub_admin-permission-list/:id"
+            />
+          }
         />
-         <Route
-          path="/reports/account-statement"
-          element={<ProtectedRoute element={AccountStatement} path="reports/account-statement" />}
+        <Route
+          path="/reports/account-statement/:adminId?"
+          element={
+            <ProtectedRoute
+              element={AccountStatement}
+              path="reports/account-statement/:adminId?"
+            />
+          }
         />
- 
-         <Route
-          path="/reports/profit-loss"
-          element={<ProtectedRoute element={ProfitLoss} path="reports/profit-loss" />}
+
+        <Route
+          path="/reports/bet-history-details/:roundId/:eventTypeId"
+          element={
+            <ProtectedRoute
+              element={BetHistoryDetails}
+              path="reports/bet-history-details/:roundId/:eventTypeId"
+            />
+          }
         />
- 
-         <Route
-          path="/reports/chip-statement"
-          element={<ProtectedRoute element={ChipStatement} path="reports/chip-statement" />}
+
+        <Route
+          path="/reports/profit-loss/:adminId?"
+          element={
+            <ProtectedRoute
+              element={ProfitLoss}
+              path="reports/profit-loss/:adminId?"
+            />
+          }
         />
- 
-         <Route
-          path="/reports/chip-summary"
-          element={<ProtectedRoute element={ChipSummary} path="reports/chip-summary" />}
+
+        <Route
+          path="/reports/chip-statement/:adminId?"
+          element={
+            <ProtectedRoute
+              element={ChipStatement}
+              path="reports/chip-statement/:adminId?"
+            />
+          }
         />
- 
-         <Route
-          path="/reports/settlement-report"
-          element={<ProtectedRoute element={SettlementReport} path="reports/settlement-report" />}
+
+        <Route
+          path="/reports/chip-summary/:adminId?"
+          element={
+            <ProtectedRoute
+              element={ChipSummary}
+              path="reports/chip-summary/:adminId?"
+            />
+          }
         />
- 
-         <Route
-          path="/reports/sport-summary-report"
-          element={<ProtectedRoute element={SportSummaryReport} path="reports/sport-summary-report" />}
+
+        <Route
+          path="/reports/settlement-report/:adminId?"
+          element={
+            <ProtectedRoute
+              element={SettlementReport}
+              path="reports/settlement-report/:adminId?"
+            />
+          }
         />
- 
-         <Route
+
+        <Route
+          path="/reports/sport-summary-report/:adminId?"
+          element={
+            <ProtectedRoute
+              element={SportSummaryReport}
+              path="reports/sport-summary-report/:adminId?"
+            />
+          }
+        />
+
+        <Route
           path="/reports/top-clients"
-          element={<ProtectedRoute element={TopClients} path="reports/top-clients" />}
+          element={
+            <ProtectedRoute element={TopClients} path="reports/top-clients" />
+          }
         />
- 
-         <Route
+
+        <Route
           path="/reports/settlement"
-          element={<ProtectedRoute element={Settlements} path="reports/settlement" />}
+          element={
+            <ProtectedRoute element={Settlements} path="reports/settlement" />
+          }
         />
- 
-         <Route
+
+        <Route
           path="/reports/balance-sheet"
-          element={<ProtectedRoute element={BalanceSheet} path="reports/balance-sheet" />}
+          element={
+            <ProtectedRoute
+              element={BalanceSheet}
+              path="reports/balance-sheet"
+            />
+          }
         />
-        
+
+        <Route
+          path="/reports/bet-history-details/:adminId?"
+          element={
+            <ProtectedRoute
+              element={BetHistoryDetails}
+              path="/reports/bet-history-details/:adminId?"
+            />
+          }
+        />
+
+        <Route
+          path="/reports/pending-bet-history/:adminId?"
+          element={
+            <ProtectedRoute
+              element={PendingBetHistory}
+              path="/reports/pending-bet-history/:adminId?"
+            />
+          }
+        />
+
+        <Route
+          path="/casino/casino-providers-lists"
+          element={
+            <ProtectedRoute
+              element={CasinoManagement}
+              path="casino/casino-providers-lists"
+            />
+          }
+        />
+
+        <Route
+          path="/market-analysis"
+          element={
+            <ProtectedRoute
+              element={MarketAnalysisLists}
+              path="market-analysis"
+            />
+          }
+        />
+
+        <Route
+          path="/event/detail/:eventId"
+          element={
+            <ProtectedRoute
+              element={MarketAnalysisEventDetail}
+              path="event/detail/:eventId"
+            />
+          }
+        />
+
+        <Route
+          path="/bet-history/:eventId/:marketId?"
+          element={
+            <ProtectedRoute
+              element={MarketAnalysisBetHistory}
+              path="bet-history/:eventId/:marketId?"
+            />
+          }
+        />
+
+        <Route
+          path="/blocked-child-list"
+          element={
+            <ProtectedRoute
+              element={BlockedChildLists}
+              path="blocked-child-list"
+            />
+          }
+        />
+
+        <Route
+          path="/agent_lists_clone/:adminId?"
+          element={
+            <ProtectedRoute
+              element={AgentMasterClone}
+              path="/agent_lists_clone"
+            />
+          }
+        />
+
+        <Route
+          path="/multi-market"
+          element={
+            <ProtectedRoute element={Multimarket} path="/multi-market" />
+          }
+        />
+
+        <Route
+          path="/casino-setting/:adminId"
+          element={
+            <ProtectedRoute
+              element={CasinoSetting}
+              path="/casino-setting/:adminId"
+            />
+          }
+        />
+
+        <Route
+          path="/icasino-setting/:id"
+          element={
+            <ProtectedRoute
+              element={ICasinoSetting}
+              path="/icasino-setting/:id"
+            />
+          }
+        />
+
+        <Route
+          path="/sport-setting/:adminId"
+          element={
+            <ProtectedRoute
+              element={SportSetting}
+              path="/sport-setting/:adminId"
+            />
+          }
+        />
+
+        <Route
+          path="/user-setting/:adminId"
+          element={
+            <ProtectedRoute
+              element={UserSetting}
+              path="/user-setting/:adminId"
+            />
+          }
+        />
+
+        <Route
+          path="/reports/profit-loss-summary-event/:eventId"
+          element={
+            <ProtectedRoute
+              element={ProfitLossSummary}
+              path="reports/profit-loss-summary-event/:eventId"
+            />
+          }
+        />
+
+        <Route
+          path="/reports/profit-loss-detail/:eventId"
+          element={
+            <ProtectedRoute
+              element={ProfitLossDetail}
+              path="reports/profit-loss-detail/:eventId/:eventId"
+            />
+          }
+        />
+
+        <Route
+          path="/reports/profit-loss-summary-market/:eventId"
+          element={
+            <ProtectedRoute
+              element={ProfitLossMarketSummary}
+              path="reports/profit-loss-summary-market/:eventId"
+            />
+          }
+        />
+
+        <Route
+          path="/reports/profit-loss-summary-market-users-details/:eventId"
+          element={
+            <ProtectedRoute
+              element={ProfitLossMarketUsersDetails}
+              path="reports/profit-loss-summary-market-users-details/:eventId"
+            />
+          }
+        />
+
+        <Route
+          path="/reports/profit-loss-bet-history/:marketId"
+          element={
+            <ProtectedRoute
+              element={ProfitLossBetHistory}
+              path="/reports/profit-loss-bet-history/:marketId"
+            />
+          }
+        />
+
+        {/* <Route
+          path="/sport-horse-racing/:sportId"
+          element={
+            <ProtectedRoute element={SportHorseRacing} path="/sport-horse-racing" />
+          }
+        /> */}
+
+        <Route
+          path="/sport-horse-racing/:sportId"
+          element={
+            <ProtectedRoute
+              element={SportHorseRacing}
+              path="/sport-horse-racing/:sportId"
+            />
+          }
+        />
+
+        <Route
+          path="/race-detail/series_idd/:series_idd/event_id/:event_id/sportId/:sportId"
+          element={
+            <ProtectedRoute
+              element={HorseRacingDetails}
+              path="/race-detail/series_idd/:series_idd/event_id/:event_id/sportId/:sportId"
+            />
+          }
+        />
+
+        <Route
+          path="/race-detail/:eventId/:marketId"
+          element={
+            <ProtectedRoute
+              element={HorseRacingDetails}
+              path="/race-detail/:eventId/:marketId"
+            />
+          }
+        />
+
+        <Route
+          path="/sport-greyhund-racing/:sportId"
+          element={
+            <ProtectedRoute
+              element={SportGreyhundRacing}
+              path="/sport-greyhund-racing/:sportId"
+            />
+          }
+        />
+
+        <Route
+          path="/greyhund-race-detail/series_idd/:series_idd/event_id/:event_id/sportId/:sportId"
+          element={
+            <ProtectedRoute
+              element={HorseGreyhundDetails}
+              path="/greyhund-race-detail/series_idd/:series_idd/event_id/:event_id/sportId/:sportId"
+            />
+          }
+        />
+
         {/* Add unauthorized route */}
-        <Route path="/unauthorized" element={<div>Access Denied - You don't have permission to access this page</div>} />
+        <Route
+          path="/unauthorized"
+          element={
+            <div>
+              Access Denied - You don't have permission to access this page
+            </div>
+          }
+        />
       </Routes>
     </Router>
   );

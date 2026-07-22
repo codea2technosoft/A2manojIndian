@@ -1,12 +1,24 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Container, Card, Table, Spinner, Form, Button, Pagination, Modal, Badge } from "react-bootstrap";
+import {
+  Container,
+  Card,
+  Table,
+  Spinner,
+  Form,
+  Button,
+  Pagination,
+  Modal,
+  Badge,
+} from "react-bootstrap";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from "react-icons/md";
+import {
+  MdOutlineKeyboardArrowLeft,
+  MdOutlineKeyboardArrowRight,
+} from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-
 
 function Blocklist() {
   const [inactiveUsers, setInactiveUsers] = useState([]);
@@ -23,73 +35,79 @@ function Blocklist() {
   const [limit, setLimit] = useState(10);
 
   const token = localStorage.getItem("token");
-  const API_URL = process.env.REACT_APP_API_URL || "http://192.168.1.12:9002/api/admin";
+  const API_URL =
+    process.env.REACT_APP_API_URL || "http://192.168.1.12:9002/api/admin";
   const navigate = useNavigate();
 
   // Memoized fetch function
-  const fetchInactiveUserData = useCallback(async (page = 1, search = searchTerm, pageLimit = limit) => {
-    try {
-      setLoading(true);
-      console.log("Fetching data with:", { page, limit: pageLimit, search });
+  const fetchInactiveUserData = useCallback(
+    async (page = 1, search = searchTerm, pageLimit = limit) => {
+      try {
+        setLoading(true);
+        console.log("Fetching data with:", { page, limit: pageLimit, search });
 
-      const response = await axios.post(
-        `${API_URL}/get-user-block-list`,
-        {
-          role: 3,
-          page: page,
-          limit: pageLimit,
-          search: search || ""
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+        const response = await axios.post(
+          `${API_URL}/get-user-block-list`,
+          {
+            role: 3,
+            page: page,
+            limit: pageLimit,
+            search: search || "",
           },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        console.log("API Response:", response.data);
+
+        if (response.data.success) {
+          const data = response.data.data || [];
+          const pagination = response.data.pagination || {
+            total_records: 0,
+            total_pages: 1,
+            current_page: 1,
+            limit: pageLimit,
+          };
+
+          setInactiveUsers(data);
+          setTotalRecords(pagination.total_records || 0);
+          setTotalPages(pagination.total_pages || 1);
+          setCurrentPage(pagination.current_page || 1);
+          setLimit(pagination.limit || pageLimit);
+
+          if (data.length === 0 && page > 1) {
+            // If no data on current page, go to previous page
+            fetchInactiveUserData(page - 1, search, pageLimit);
+          }
+        } else {
+          toast.error(response.data.message || "Failed to load data");
+          setInactiveUsers([]);
+          setTotalRecords(0);
+          setTotalPages(1);
+          setCurrentPage(1);
         }
-      );
-
-      console.log("API Response:", response.data);
-
-      if (response.data.success) {
-        const data = response.data.data || [];
-        const pagination = response.data.pagination || {
-          total_records: 0,
-          total_pages: 1,
-          current_page: 1,
-          limit: pageLimit
-        };
-
-        setInactiveUsers(data);
-        setTotalRecords(pagination.total_records || 0);
-        setTotalPages(pagination.total_pages || 1);
-        setCurrentPage(pagination.current_page || 1);
-        setLimit(pagination.limit || pageLimit);
-
-        if (data.length === 0 && page > 1) {
-          // If no data on current page, go to previous page
-          fetchInactiveUserData(page - 1, search, pageLimit);
-        }
-      } else {
-        toast.error(response.data.message || "Failed to load data");
+      } catch (error) {
+        console.error(
+          "Error fetching inactive users:",
+          error.response?.data || error.message,
+        );
+        toast.error(
+          error.response?.data?.message || "Failed to load inactive users",
+        );
         setInactiveUsers([]);
         setTotalRecords(0);
         setTotalPages(1);
         setCurrentPage(1);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error(
-        "Error fetching inactive users:",
-        error.response?.data || error.message
-      );
-      toast.error(error.response?.data?.message || "Failed to load inactive users");
-      setInactiveUsers([]);
-      setTotalRecords(0);
-      setTotalPages(1);
-      setCurrentPage(1);
-    } finally {
-      setLoading(false);
-    }
-  }, [token, API_URL, searchTerm, limit]);
+    },
+    [token, API_URL, searchTerm, limit],
+  );
 
   // Initial fetch and refresh on search term change
   useEffect(() => {
@@ -106,22 +124,22 @@ function Blocklist() {
       console.log("Activating user with data:", {
         admin_id: activatingUser.admin_id,
         role: "3",
-        is_blocked: 0  // Changed from active: 1 to is_blocked: 0
+        is_blocked: 0, // Changed from active: 1 to is_blocked: 0
       });
 
       const response = await axios.post(
-        `${API_URL}/block-unblock-user`,  // Using the correct endpoint
+        `${API_URL}/block-unblock-user`, // Using the correct endpoint
         {
           admin_id: activatingUser.admin_id,
           role: "3",
-          is_blocked: 0  // 0 means unblock/activate
+          is_blocked: 0, // 0 means unblock/activate
         },
         {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       console.log("Activation Response:", response.data);
@@ -130,12 +148,12 @@ function Blocklist() {
         toast.success(response.data.message || "User activated successfully!");
 
         // Remove the activated user from the list
-        setInactiveUsers(prevUsers =>
-          prevUsers.filter(user => user.admin_id !== activatingUser.admin_id)
+        setInactiveUsers((prevUsers) =>
+          prevUsers.filter((user) => user.admin_id !== activatingUser.admin_id),
         );
 
         // Update total records count
-        setTotalRecords(prev => Math.max(0, prev - 1));
+        setTotalRecords((prev) => Math.max(0, prev - 1));
 
         // Refresh pagination data
         if (inactiveUsers.length === 1) {
@@ -161,7 +179,7 @@ function Blocklist() {
     } catch (error) {
       console.error(
         "Error activating user:",
-        error.response?.data || error.message
+        error.response?.data || error.message,
       );
       toast.error(error.response?.data?.message || "Failed to activate user");
     } finally {
@@ -176,7 +194,11 @@ function Blocklist() {
       return;
     }
 
-    if (!window.confirm(`Are you sure you want to activate all ${inactiveUsers.length} users?`)) {
+    if (
+      !window.confirm(
+        `Are you sure you want to activate all ${inactiveUsers.length} users?`,
+      )
+    ) {
       return;
     }
 
@@ -184,31 +206,33 @@ function Blocklist() {
       setActivationLoading(true);
 
       // Create an array of promises for all activation requests
-      const activationPromises = inactiveUsers.map(user =>
+      const activationPromises = inactiveUsers.map((user) =>
         axios.post(
-          `${API_URL}/block-unblock-user`,  // Using the correct endpoint
+          `${API_URL}/block-unblock-user`, // Using the correct endpoint
           {
             admin_id: user.admin_id,
             role: "3",
-            is_blocked: 0  // 0 means unblock/activate
+            is_blocked: 0, // 0 means unblock/activate
           },
           {
             headers: {
               Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
-          }
-        )
+          },
+        ),
       );
 
       // Execute all requests
       const results = await Promise.all(activationPromises);
 
       // Check all responses
-      const allSuccess = results.every(result => result.data?.success);
+      const allSuccess = results.every((result) => result.data?.success);
 
       if (allSuccess) {
-        toast.success(`All ${inactiveUsers.length} users activated successfully!`);
+        toast.success(
+          `All ${inactiveUsers.length} users activated successfully!`,
+        );
 
         // Clear the inactive users list
         setInactiveUsers([]);
@@ -315,18 +339,18 @@ function Blocklist() {
       const istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
       const istDate = new Date(date.getTime() + istOffset);
 
-      const day = istDate.getUTCDate().toString().padStart(2, '0');
-      const month = (istDate.getUTCMonth() + 1).toString().padStart(2, '0');
+      const day = istDate.getUTCDate().toString().padStart(2, "0");
+      const month = (istDate.getUTCMonth() + 1).toString().padStart(2, "0");
       const year = istDate.getUTCFullYear();
 
       let hours = istDate.getUTCHours();
-      const minutes = istDate.getUTCMinutes().toString().padStart(2, '0');
-      const seconds = istDate.getUTCSeconds().toString().padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const minutes = istDate.getUTCMinutes().toString().padStart(2, "0");
+      const seconds = istDate.getUTCSeconds().toString().padStart(2, "0");
+      const ampm = hours >= 12 ? "PM" : "AM";
 
       hours = hours % 12;
       hours = hours ? hours : 12;
-      hours = hours.toString().padStart(2, '0');
+      hours = hours.toString().padStart(2, "0");
 
       return `${day}-${month}-${year} ${hours}:${minutes}:${seconds} ${ampm}`;
     } catch (error) {
@@ -337,7 +361,7 @@ function Blocklist() {
 
   // Calculate serial number
   const getSerialNumber = (index) => {
-    return ((currentPage - 1) * limit) + index + 1;
+    return (currentPage - 1) * limit + index + 1;
   };
 
   return (
@@ -392,8 +416,8 @@ function Blocklist() {
                   </li>
 
                   <li className="mb-2">
-                    <strong>Balance:</strong>{" "}
-                    ₹{parseFloat(activatingUser.amount || 0).toFixed(2)}
+                    <strong>Balance:</strong> ₹
+                    {parseFloat(activatingUser.amount || 0).toFixed(2)}
                   </li>
 
                   <li className="mb-2">
@@ -404,19 +428,26 @@ function Blocklist() {
                   <li className="d-flex align-items-center gap-2">
                     <strong>Status:</strong>
                     <div
-                      className={activatingUser.is_blocked === 1 ? "activebadge" : "inactivebadge"}
+                      className={
+                        activatingUser.is_blocked === 1
+                          ? "activebadge"
+                          : "inactivebadge"
+                      }
                     >
                       {activatingUser.is_blocked === 1 ? "Blocked" : "Active"}
                     </div>
                   </li>
                 </ul>
               </div>
-
             </div>
           )}
         </Modal.Body>
         <Modal.Footer>
-          <button className="refreshbutton" onClick={closeActivateModal} disabled={activationLoading}>
+          <button
+            className="refreshbutton"
+            onClick={closeActivateModal}
+            disabled={activationLoading}
+          >
             <i className="bi bi-x-circle me-1"></i>
             Cancel
           </button>
@@ -427,7 +458,12 @@ function Blocklist() {
           >
             {activationLoading ? (
               <>
-                <Spinner as="span" animation="border" size="sm" className="me-2" />
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  className="me-2"
+                />
                 Activating...
               </>
             ) : (
@@ -441,10 +477,8 @@ function Blocklist() {
       </Modal>
 
       <div className="card">
-        <div className="card-header flex-wrap-mobile bg-color-black text-white d-flex justify-content-between flex-wrap-mobile align-items-center">
-          <h3 className="card-title text-white mb-0">
-            Blocked  List
-          </h3>
+        <div className="card-header flex-wrap-mobile d-flex justify-content-between flex-wrap-mobile align-items-center">
+          <h3 className="card-title mb-0">Blocked List</h3>
           <div className="d-flex align-items-center gap-2">
             <Form.Control
               type="text"
@@ -464,25 +498,13 @@ function Blocklist() {
                   Activate All ({inactiveUsers.length})
                 </Button>
               )} */}
-      <button
-  onClick={() => navigate(-1)}
-  className="backbutton"
-  disabled={loading || activationLoading}
->
-  ← Back
-</button>
-
-
-
-
-
-
-            {/* <button
-      onClick={() => navigate(-1)}
-      className="backbutton"
-    >
-    </button>  */}
-
+            <button
+              onClick={() => navigate(-1)}
+              className="btn btn-outline-light"
+              disabled={loading || activationLoading}
+            >
+              ← Back
+            </button>
           </div>
         </div>
 
@@ -495,15 +517,15 @@ function Blocklist() {
           ) : inactiveUsers.length === 0 ? (
             <div className="text-center py-5">
               <div className="mb-3">
-                <i className="bi bi-emoji-smile text-success" style={{ fontSize: '3rem' }}></i>
+                <i
+                  className="bi bi-emoji-smile text-success"
+                  style={{ fontSize: "3rem" }}
+                ></i>
               </div>
               <h5>NO BLOCKED USERS FOUND</h5>
               <p className="text-muted">All users are currently active</p>
               {searchTerm && (
-                <button
-                  className="refreshbutton"
-                  onClick={handleClearSearch}
-                >
+                <button className="refreshbutton" onClick={handleClearSearch}>
                   <i className="bi bi-x-circle me-1"></i>
                   Clear Search
                 </button>
@@ -530,7 +552,9 @@ function Blocklist() {
                     {inactiveUsers.map((user, index) => (
                       <tr key={user._id || user.admin_id || index}>
                         <td className="fw-bold">{getSerialNumber(index)}</td>
-                        <td className="fw-semibold">{user.username || "N/A"}</td>
+                        <td className="fw-semibold">
+                          {user.username || "N/A"}
+                        </td>
                         <td>
                           <div className="bonusbadge text-center">
                             {user.admin_id || "N/A"}
@@ -549,9 +573,17 @@ function Blocklist() {
                           <small>{formatDateToIST(user.created_at)}</small>
                         </td>
                         <td>
-                          <div className={user.is_blocked === 1 ? "activebadge  " : " inactivebadge"}>
-                            <i className={`bi ${user.is_blocked === 1 ? 'bi-person-x' : 'bi-person-check'} me-1`}></i>
-                            {user.is_blocked == 1 ? 'Blocked' : 'Active'}
+                          <div
+                            className={
+                              user.is_blocked === 1
+                                ? "activebadge  "
+                                : " inactivebadge"
+                            }
+                          >
+                            <i
+                              className={`bi ${user.is_blocked === 1 ? "bi-person-x" : "bi-person-check"} me-1`}
+                            ></i>
+                            {user.is_blocked == 1 ? "Blocked" : "Active"}
                           </div>
                         </td>
                         <td>
@@ -574,7 +606,7 @@ function Blocklist() {
               {totalPages > 1 && (
                 <div className="d-flex justify-content-between align-items-center mt-4">
                   <div className="sohwingallentries">
-                    Showing {((currentPage - 1) * limit) + 1} to{" "}
+                    Showing {(currentPage - 1) * limit + 1} to{" "}
                     {Math.min(currentPage * limit, totalRecords)} of{" "}
                     {totalRecords} entries
                   </div>
@@ -592,7 +624,9 @@ function Blocklist() {
                       </Button> */}
 
                     <button
-                      disabled={currentPage === 1 || loading || activationLoading}
+                      disabled={
+                        currentPage === 1 || loading || activationLoading
+                      }
                       onClick={handlePrev}
                     >
                       <MdOutlineKeyboardArrowLeft />
@@ -605,7 +639,9 @@ function Blocklist() {
                           // variant={currentPage === page ? "primary" : "outline-primary"}
                           className={`paginationnumber     ${currentPage === page ? "active" : "outline-primary"}`}
                           onClick={() => handlePageClick(page)}
-                          disabled={loading || activationLoading || currentPage === page}
+                          disabled={
+                            loading || activationLoading || currentPage === page
+                          }
                         >
                           {page}
                         </div>
@@ -613,7 +649,11 @@ function Blocklist() {
                     </div>
 
                     <button
-                      disabled={currentPage === totalPages || loading || activationLoading}
+                      disabled={
+                        currentPage === totalPages ||
+                        loading ||
+                        activationLoading
+                      }
                       onClick={handleNext}
                     >
                       <MdOutlineKeyboardArrowRight />
@@ -640,7 +680,7 @@ function Blocklist() {
                         setLimit(newLimit);
                         fetchInactiveUserData(1, searchTerm, newLimit);
                       }}
-                      style={{ width: '120px' }}
+                      style={{ width: "120px" }}
                       disabled={loading || activationLoading}
                     >
                       <option value="5">5 / page</option>

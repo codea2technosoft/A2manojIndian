@@ -1,0 +1,172 @@
+@import url("../asset/css/Veriable.scss");
+
+$secondary: #000;
+$darkcolor: #000;
+$darklinear: linear-gradient(210deg, #89b854 1.15%, #042f2b 100%);
+$primarynew: #303030;
+@import url("https://fonts.googleapis.com/css2?family=Nata+Sans:wght@100..900&display=swap");
+body {
+    background-color: #fff;
+    font-family: "Nata Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+}
+input {
+  &:hover,
+  &:focus,
+  &:focus-within,
+  &:active {
+    border: auto;
+    box-shadow: none;
+    outline: none;
+  }
+}
+
+.login-container {
+  background: $primarynew;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  .canvas-img {
+    margin-top: -3px;
+    max-width: 54px;
+    right: 0;
+}
+  .loginiamge {
+    width: 100%;
+    height: 100%;
+    img {
+      width: 80%;
+      height: 100%;
+    }
+  }
+  .box_login {
+    background: #fff;
+    border-radius: 5px;
+    padding: 25px;
+  }
+  .form-label {
+    color: #000;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 3px;    font-size: 12px;
+
+  }
+  .buttonlogin {
+    border: none;
+    background: #18b0c8;
+    color: #fff;
+    font-weight: 600;
+    width: 100%;
+    &:hover {
+      background: #18b0c8;
+      color: #fff;
+    }
+  }
+  .form-control {
+    font-size: 14px;
+    height: 36px;
+    line-height: 21px;
+    margin: 0;
+    padding: 5px;
+    width: 100%;
+    border: 0;
+    border-radius: 3px;
+    box-shadow: 0 0 5px 0 #006bb340;
+  }
+  .bg-login {
+    // background: url('../../assets/images/login-bg.jpg') center center;
+    background-size: cover;
+  }
+
+  .auth-logo img {
+    display: block;
+    margin: 0 auto;
+  }
+
+  .social-list-item {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    border-radius: 50%;
+    font-size: 18px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+  .loginimage {
+    width: 100%;
+    img {
+      width: 100%;
+    }
+  }
+  .py-60 {
+    padding-block: 30px;
+  }
+  .px-24 {
+    padding-inline: 24px;
+  }
+  .max-w-464-px {
+    max-width: 600px;
+    background: #fff;
+    margin: 10px;
+    border-radius: 15px;
+    box-shadow: 1px 1px 10px 1px #598745;
+  }
+  .height_100vh {
+    height: 100vh;
+  }
+  .width_50 {
+    width: 50%;
+  }
+  .h-56-px {
+    height: 2.5rem !important;
+  }
+  input {
+    &:hover,
+    &:focus,
+    &:active {
+      box-shadow: none;
+      outline: none;
+    }
+  }
+
+  .loginbutton {
+    padding: 10px 14px;
+    box-shadow: none;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    background: $darklinear;
+  }
+  .form-check-input:checked {
+    background-color: $secondary;
+    border-color: #ffffff;
+  }
+  .logo-dark {
+    display: block;
+    width: 200px;
+    img {
+      width: 100%;
+    }
+  }
+  .forgetpassword {
+    font-size: 15px;
+    text-decoration: none;
+    margin: 10px 0px;
+  }
+}
+
+@media (max-width: 991px) {
+  .login-container {
+    .width_50 {
+      width: 100%;
+    }
+  }
+}

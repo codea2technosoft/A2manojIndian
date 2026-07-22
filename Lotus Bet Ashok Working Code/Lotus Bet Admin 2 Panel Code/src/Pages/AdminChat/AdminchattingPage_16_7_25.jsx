@@ -479,7 +479,7 @@ const UserChat = () => {
   return (
     <div className="mt-2">
       <div className="d-flex mb-3 justify-content-end bg-yellow">
-        <Link onClick={backbutton} class="btn btn-success btn-sm px-3 py-1">
+        <Link onClick={backbutton} class="btn btn-success px-3 py-1">
           Back
         </Link>
       </div>

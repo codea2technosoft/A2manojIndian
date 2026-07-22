@@ -8,6 +8,7 @@ import football from "../../asset/image/football.png";
 import tennis from "../../asset/image/tennis.png";
 import axios from "axios";
 import Swal from "sweetalert2";
+import Loader from "../../Common/Loader";
 
 function ActiveAllGames() {
   const { sportId } = useParams();
@@ -43,9 +44,37 @@ function ActiveAllGames() {
 
   // Check if sport is Cricket (sport_id = "4")
   const isCricket = sportId === "4";
-  setInterval(() => {
-    fetchOddsData();
-  }, 500);
+  // setInterval(() => {
+  //   fetchOddsData();
+  // }, 500);
+  useEffect(() => {
+    if (sportId) {
+      fetchGames();
+    }
+  }, [sportId]);
+
+  // Naya useEffect - Odds polling with longer interval
+  useEffect(() => {
+    if (games.length === 0) return;
+
+    const allEvents = games.flatMap((series) => series.events || []);
+    if (allEvents.length === 0) return;
+
+    // Pehli baar fetch karo
+    fetchOddsData(allEvents);
+
+    // Ab 10 seconds ke interval par fetch karo (500ms nahi!)
+    const intervalId = setInterval(() => {
+      const currentEvents = games.flatMap((series) => series.events || []);
+      if (currentEvents.length > 0) {
+        fetchOddsData(currentEvents);
+      }
+    }, 10000); // 10 seconds - smooth performance!
+
+    // Cleanup
+    return () => clearInterval(intervalId);
+  }, [games]); // games pe depend karega
+
   // Fetch odds data for all events
   const fetchOddsData = async (events) => {
     try {
@@ -75,12 +104,12 @@ function ActiveAllGames() {
               if (runner.ex) {
                 const backPrice =
                   runner.ex.availableToBack &&
-                  runner.ex.availableToBack.length > 0
+                    runner.ex.availableToBack.length > 0
                     ? runner.ex.availableToBack[0].price
                     : null;
                 const layPrice =
                   runner.ex.availableToLay &&
-                  runner.ex.availableToLay.length > 0
+                    runner.ex.availableToLay.length > 0
                     ? runner.ex.availableToLay[0].price
                     : null;
 
@@ -146,11 +175,14 @@ function ActiveAllGames() {
     setToast({ show: false, message: "", type: "" });
   };
 
-  const handleEventClick = (eventId, seriesId) => {
+  const handleEventClick = (eventId, seriesId, marketId) => {
+    // /  alert(marketId);
     const eventParam = eventId || "null";
     const seriesParam = seriesId || "null";
+
     navigate(
-      `/viewmatch-fancy/series_idd/${seriesParam}/event_id/${eventParam}`,
+      // `/viewmatch-fancy/series_idd/${seriesParam}/event_id/${eventParam}`,
+      `/viewmatch-fancy/series_idd/${marketId}/event_id/${eventParam}/sport_id/${sportId}`,
     );
   };
 
@@ -236,10 +268,8 @@ function ActiveAllGames() {
   if (loading)
     return (
       <div className="text-center mt-3">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-        <p className="mt-2">Loading games...</p>
+        <span className="mt-2">Loading games...</span>
+        <Loader />
       </div>
     );
 
@@ -273,16 +303,16 @@ function ActiveAllGames() {
       )}
 
       <div className="card">
-        <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
-          <h3 className="sport card-title mb-0 d-flex align-items-center gap-2">
-            {sportImage && (
-              <img className="sportIcon" src={sportImage} alt={sportName} />
-            )}
-            {sportName}
-          </h3>
-        </div>
+        <div className="card-body">
+          <div className="card-header bgHeader d-flex bg-primary-yellow justify-content-between align-items-center">
+            <h3 className="sport card-title py-0 mb-0 d-flex align-items-center gap-2 text-uppercase">
+              {sportImage && (
+                <img className="sportIcon" src={sportImage} alt={sportName} />
+              )}
+              {sportName}
+            </h3>
+          </div>
 
-        <div className="card-body p-0">
           <div className="table-responsive">
             <table className="table table-bordered mb-0">
               <tbody>
@@ -359,7 +389,7 @@ function ActiveAllGames() {
                               key={eventId || eventIndex}
                               style={{ cursor: "pointer" }}
                               onClick={() =>
-                                handleEventClick(eventId, seriesId)
+                                handleEventClick(eventId, seriesId, event.market_id)
                               }
                             >
                               <td
@@ -413,6 +443,23 @@ function ActiveAllGames() {
                                       <span className="d-block time">
                                         ({event.date_time || "N/A"})
                                       </span>
+
+                                      {Number(event.total_exposure) !== 0 && (
+                                        <span
+                                          className="d-block time"
+                                          style={{
+                                            color: Number(event.total_exposure) > 0 ? "green" : "red",
+                                            fontWeight: "600",
+                                          }}
+                                        >
+                                         
+                                          {Number(event.total_exposure) > 0
+                                            ? `${event.total_exposure}`
+                                            : event.total_exposure}
+                                          
+                                        </span>
+                                      )}
+
                                     </div>
                                   </div>
                                   <div className="other_option">

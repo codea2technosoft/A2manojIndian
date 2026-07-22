@@ -111,9 +111,11 @@ const App = () => {
           const userId = data.data._id;
           const mobile = data.data.mobile;
           const designation = data.data.designation; // designation
+          const currentSlab = data.data.currentSlab; // designation
           setUserType(roles);
           setMobile(mobile);
           localStorage.setItem("designation", designation);
+          localStorage.setItem("currentSlab", currentSlab);
         }
       }
     } catch (err) {

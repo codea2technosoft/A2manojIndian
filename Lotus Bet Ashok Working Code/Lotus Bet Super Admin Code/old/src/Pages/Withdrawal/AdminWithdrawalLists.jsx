@@ -323,7 +323,7 @@ const AdminWithdrawReport = () => {
       {/* Main Report Card */}
       <div className="card shadow-lg border-0 rounded-4">
         {/* Card Header */}
-        <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+        <div className="card-header d-flex bg-primary-yellow justify-content-between align-items-center">
       <h3 className="card-title mb-0">Withdrow List</h3>
           <div className="d-flex gap-2">
             <button

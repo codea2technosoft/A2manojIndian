@@ -1,13 +1,21 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
-$darkcolor: #000;
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
-// table button start
+$darkcolor: #000;
 $tooltip-bg: #333;
 $tooltip-color: #fff;
 $edit-bg: #1976d2;
 $success-bg: #2e7d32;
 $whitecolor: #fff;
+$primary-color: #e16506;
 $secondary: #000;
+$bg-color: #f8f9fb;
+$whitecolor: #fff;
+$linear_bg: linear-gradient(#dd5606, #fbc10b);
+
+body {
+  font-family: "Roboto", sans-serif !important;
+  background: $bg-color;
+}
 
 a {
   text-decoration: none;
@@ -21,7 +29,7 @@ input.form-control,
 select.form-control,
 textarea.form-control,
 select.form-select {
-  height: 35px;
+  // height: 37px;
 
   &:hover,
   &:focus,
@@ -31,17 +39,37 @@ select.form-select {
   }
 }
 
-.dropdown-toggle.newtoggle {
-  white-space: nowrap;
-  width: 25px;
-  height: 25px;
-  background: #e0e0e0;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
 .new_link_al {
   text-decoration: none;
+}
+
+
+.dropdown_custom{
+      position: absolute;
+    top: 317.984px;
+    left: 415.391px;
+    z-index: 9999;
+    min-width: 220px;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.25rem;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 0.5rem 1rem;
+    height: 200px;
+    overflow-y: scroll;
+}
+
+div.custum_new_ul {
+    font-size: 13px;
+    font-weight: 600;
+    border-bottom: 1px solid #ccc;
+}
+
+.view_btn {
+  cursor: pointer;
+  color: #e1810b !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .table-call {
@@ -81,7 +109,6 @@ select.form-select {
 
 .marquee-text {
   display: inline-block;
-  // padding-left: 100%;
   animation: marquee 15s linear infinite;
   font-weight: 600;
   margin-bottom: 0;
@@ -91,8 +118,6 @@ select.form-select {
   overflow: visible !important;
 }
 
-/* Add these styles to your CSS file */
-
 .title_all h4 {
   font-weight: bold;
   color: #333;
@@ -100,6 +125,12 @@ select.form-select {
 
 .card {
   border-radius: 8px;
+  .card-header {
+    background: $linear_bg;
+    .card-title {
+      color: $whitecolor;
+    }
+  }
 }
 
 .card-title {
@@ -170,7 +201,7 @@ select.form-select {
 }
 
 .shadow-sm {
-  box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075) !important;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
 }
 
 .fw-bold {
@@ -220,7 +251,7 @@ select.form-select {
   background: rgba(10, 185, 100, 0.2);
 }
 
-.card>* {
+.card > * {
   color: #000;
   background: #fff;
 }
@@ -299,11 +330,6 @@ select.form-select {
   padding: 32px;
   font-weight: 600;
   color: #6b7280;
-}
-
-.col-lg-3 .primarycolor .card-body,
-.col-md-3.col-6 .card.shadow-sm .card-body {
-  background: #000;
 }
 
 // new design
@@ -600,17 +626,10 @@ tfoot .totalnew {
   }
 }
 
-// all buton design
 .custuminput {
   border: 1px solid #ccc;
   width: 100%;
   display: inline-block;
-}
-
-.card-title {
-  font-size: 14px;
-  text-transform: uppercase;
-  font-weight: 600;
 }
 
 .profitloss {
@@ -793,7 +812,7 @@ table {
 }
 
 .viewdetailsbutton {
-  background: #000;
+  background: linear-gradient(135deg, #3c8ce7 10%, #00eaff 100%);
   color: #fff;
   border-radius: 5px;
   padding: 3px 5px;
@@ -802,6 +821,10 @@ table {
   justify-content: center;
   align-items: center;
   width: max-content;
+  border: none;
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
 }
 
 // all buton design
@@ -819,7 +842,7 @@ li div.custum_new_ul {
   border: 1px solid #ccc;
 }
 
-.table tr td>* {
+.table tr td > * {
   font-size: 12px;
   font-weight: 600;
 }
@@ -966,7 +989,9 @@ li div.custum_new_ul {
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   display: block;
   margin: 20px auto 0;
 }
@@ -1195,17 +1220,7 @@ li div.custum_new_ul {
   --bs-menu-item-active-color: #ffffff;
 }
 
-$bg-color: #f8f9fb;
-$whitecolor: #fff;
-
-body {
-  font-family: "DM Sans", sans-serif;
-
-  background: $bg-color;
-}
-
 .agentmaster {
-
   // fillter table
   .cursor-pointer {
     cursor: pointer;
@@ -1999,7 +2014,9 @@ select.form-select:active {
     text-decoration: none;
     border-radius: 4px;
     background: #2e3543;
-    transition: background-color, color 0.3s ease;
+    transition:
+      background-color,
+      color 0.3s ease;
     height: 50px;
     display: flex;
     justify-content: center;
@@ -2063,6 +2080,11 @@ input.form-control {
   cursor: pointer;
   background-color: #fff;
   border-radius: 0.5rem;
+  tr{
+    th{
+      font-size: 12px;
+    }
+  }
 }
 
 .selectcolor select {
@@ -2079,11 +2101,17 @@ input.form-control {
 }
 
 .card.primarycolor {
-  background: $darkcolor;
+  background: $whitecolor;
+  border-radius: 8px;
+  overflow: hidden;
+  svg {
+    color: #ed8209 !important;
+    font-size: 36px;
+  }
 }
 
 .card-header.bg-color-black {
-  background: $darkcolor;
+  background: $linear_bg;
 }
 
 .margin-top-50 {
@@ -2134,10 +2162,9 @@ input.form-control {
 
 .table tr th {
   background: $darkcolor;
-  color: #ffffff;
+  color: $whitecolor;
   border: 1px solid #d9d9d9;
   padding: 6.8px 13px;
-  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -2166,7 +2193,6 @@ input.form-control {
 .pagination {
   li {
     &.active {
-
       button,
       .page-link {
         background-color: $secondary;
@@ -2285,21 +2311,6 @@ input.form-control {
   border-radius: 5px;
   color: #73879c;
   font-weight: 600;
-}
-
-.btn.btn-success {
-  text-align: center;
-  border: 0px;
-  outline: none;
-  font-weight: 600;
-  font-size: 14px;
-  white-space: nowrap;
-  box-shadow: none;
-  border-radius: 3px;
-  padding: 7px 25px;
-  background: #fff;
-  color: #000;
-  border-color: transparent;
 }
 
 .main-menu.active::-webkit-scrollbar {
@@ -2421,7 +2432,8 @@ input.form-control {
     background-position: 50%;
     border-radius: 8px;
     background-image: linear-gradient(195deg, #42424a, #191919);
-    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.14),
+    box-shadow:
+      0 4px 20px 0 rgba(0, 0, 0, 0.14),
       0 7px 10px -5px rgba(64, 64, 64, 0.4) !important;
     text-align: center;
     display: flex;
@@ -2596,17 +2608,31 @@ label {
   font-weight: 600;
   box-shadow: none;
   outline: none;
-  background: $secondary;
+  background: linear-gradient($primary-color, #f8b40b);
   color: #fff;
   border-radius: 4px;
   letter-spacing: 0.5px;
   padding: 6px 8px;
   text-transform: capitalize;
-  border: 1px solid $secondary;
+  border: 1px solid $primary-color;
 
   &:hover {
-    border: 1px solid $secondary;
-    background: $success-bg;
+    border: 1px solid $primary-color;
+    background: $primary-color;
+  }
+}
+
+.pagination-controls {
+  .next_btn,
+  .prev_btn,
+  .page_btn {
+    color: $primary-color;
+    border: 1px solid $primary-color;
+    &:hover {
+      background: $primary-color;
+      color: $whitecolor;
+      border: 1px solid $primary-color;
+    }
   }
 }
 
@@ -2750,6 +2776,18 @@ label {
       }
     }
   }
+}
+
+.card.shadow-sm.primarycolor:after {
+  content: "";
+  position: absolute;
+  background: url(./assets/images/bg.png);
+  top: 0px;
+  left: 0;
+  background-position: 33% 79%;
+  width: 100%;
+  height: 100%;
+  opacity: 0.1;
 }
 
 /* Dark Theme */
@@ -3385,7 +3423,6 @@ $withdraw-bg: #dc3545;
 }
 
 @media (max-width: 567px) {
-
   .button_add,
   .button_add:hover {
     padding: 5px 11px;
@@ -3511,7 +3548,9 @@ $withdraw-bg: #dc3545;
       text-decoration: none;
       border-radius: 4px;
       background: #2e3543;
-      transition: background-color, color 0.3s ease;
+      transition:
+        background-color,
+        color 0.3s ease;
       height: 50px;
       display: flex;
       justify-content: center;
@@ -3538,13 +3577,12 @@ $withdraw-bg: #dc3545;
   .main-content {
     .page-content {
       padding-left: 65px;
-
     }
 
     .sidebar-content {
       ul {
         li a {
-          @media (min-width:992px) {
+          @media (min-width: 992px) {
             .menu-text {
               display: none;
             }
@@ -3556,7 +3594,7 @@ $withdraw-bg: #dc3545;
 }
 
 .modal_client {
-  @media screen and (max-width:767.5px) {
+  @media screen and (max-width: 767.5px) {
     width: 100%;
   }
 
@@ -3578,12 +3616,13 @@ $withdraw-bg: #dc3545;
 }
 
 .tvall {
-  background: #000;
+  background: $linear_bg;
   color: #fff;
   text-align: left;
+  border-radius: 8px 8px 0 0;
 }
 
-@media screen and (max-width:767px) {
+@media screen and (max-width: 767px) {
   .mobile_all {
     display: block;
   }
@@ -3592,7 +3631,6 @@ $withdraw-bg: #dc3545;
     display: none;
   }
 }
-
 
 .status-badge.d-inline.bg-transparent {
   border: 1px solid #d9d9d9;

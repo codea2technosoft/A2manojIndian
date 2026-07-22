@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "../../viewmatchAndFancy/Eventcss.scss";// keep your existing styles
-import {
-  InPlayGetSessionbetPending
-} from "../../../Server/api";
+import "../../viewmatchAndFancy/Eventcss.scss"; // keep your existing styles
+import { InPlayGetSessionbetPending } from "../../../Server/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
@@ -10,7 +8,6 @@ function InPlaySessionBet() {
   const navigate = useNavigate();
   const { event_id } = useParams();
   // Static data exactly matching your screenshot
- 
 
   const [pagination, setPagination] = useState({
     currentPage: 1,
@@ -44,7 +41,6 @@ function InPlaySessionBet() {
         totalRecords: res.data.pagination.totalRecords,
         limit: res.data.pagination.limit,
       });
-
     } catch (err) {
       setError("Failed to fetch event bets.");
       setFilteredData([]);
@@ -74,7 +70,10 @@ function InPlaySessionBet() {
         pageNumbers.push(i);
       }
     } else {
-      let start = Math.max(1, pagination.currentPage - Math.floor(maxVisiblePages / 2));
+      let start = Math.max(
+        1,
+        pagination.currentPage - Math.floor(maxVisiblePages / 2),
+      );
       let end = Math.min(pagination.totalPages, start + maxVisiblePages - 1);
 
       if (end - start + 1 < maxVisiblePages) {
@@ -89,13 +88,12 @@ function InPlaySessionBet() {
     return pageNumbers;
   };
   return (
-    <div className="card mt-4">
-      {/* Top blue header like in image */}
-      <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
-        <h4 className="mb-0">SESSION BETS</h4>
-        <button className="btn btn-sm btn-light"
-          onClick={() => navigate(-1)}
-        >Back</button>
+    <div className="card">
+      <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
+        <h3 className="card-title mb-0">Session Bets</h3>
+        <button className="btn btn-outline-light" onClick={() => navigate(-1)}>
+          Back
+        </button>
       </div>
       {/* Filter section */}
       {/* <div className="p-3 border-bottom">
@@ -143,7 +141,7 @@ function InPlaySessionBet() {
       <div className="card-body p-0">
         <div className="table-responsive">
           <table className="table table-bordered table-striped mb-0 bets-table">
-            <thead className="bg-primary text-white">
+            <thead className="table-dark">
               <tr>
                 <th>USERNAME</th>
                 <th>RUNNER NAME</th>
@@ -211,7 +209,7 @@ function InPlaySessionBet() {
             </tbody>
           </table>
         </div>
-      {/* {pagination.totalRecords > pagination.limit && (
+        {/* {pagination.totalRecords > pagination.limit && (
   <div className="d-flex justify-content-end align-items-center gap-2 p-3">
     <button
       className="btn btn-dark d-flex align-items-center"
@@ -243,52 +241,81 @@ function InPlaySessionBet() {
   </div>
 )} */}
 
-<div className="card-footer">
-  <div className="d-flex justify-content-between align-items-center mt-4">
+        {pagination.totalRecords > pagination.limit && (
+          <div className="d-flex justify-content-center align-items-center gap-2 p-3">
+            <button
+              className="btn btn-dark d-flex align-items-center"
+              disabled={pagination.currentPage === 1}
+              onClick={() => handlePageChange(pagination.currentPage - 1)}
+            >
+              <MdOutlineKeyboardArrowLeft size={22} />
+            </button>
 
-    {/* Left Side — Showing Page Info */}
-    <div className="sohwingallentries">
-      Page {pagination.currentPage} of {pagination.totalPages}
-    </div>
+            {getPageNumbers().map((page) => (
+              <button
+                key={page}
+                className={`btn ${
+                  page === pagination.currentPage
+                    ? "btn-primary"
+                    : "btn-outline-primary"
+                }`}
+                onClick={() => handlePageChange(page)}
+              >
+                {page}
+              </button>
+            ))}
 
-    {/* Right Side — Pagination */}
-    <div className="paginationall d-flex align-items-center gap-2">
+            {/* Next Button */}
+            <button
+              className="btn btn-dark d-flex align-items-center"
+              disabled={pagination.currentPage === pagination.totalPages}
+              onClick={() => handlePageChange(pagination.currentPage + 1)}
+            >
+              <MdOutlineKeyboardArrowRight size={22} />
+            </button>
+          </div>
+        )}
 
-      {/* Prev Button */}
-      <button
-        className="btn btn-outline-primary btn-sm"
-        disabled={pagination.currentPage <= 1}
-        onClick={() => handlePageChange(pagination.currentPage - 1)}
-      >
-        <MdOutlineKeyboardArrowLeft size={18} />
-      </button>
+        {/* <div className="card-footer">
+          <div className="d-flex justify-content-between align-items-center mt-4">
+         
+            <div className="sohwingallentries">
+              Page {pagination.currentPage} of {pagination.totalPages}
+            </div>
 
-      {/* Page Numbers */}
-      {getPageNumbers().map((page) => (
-        <button
-          key={page}
-          className={`btn btn-sm ${page === pagination.currentPage ? "btn-primary" : "btn-outline-primary"}`}
-          onClick={() => handlePageChange(page)}
-        >
-          {page}
-        </button>
-      ))}
+          
+            <div className="paginationall d-flex align-items-center gap-2">
+            
+              <button
+                className="btn btn-outline-primary btn-sm"
+                disabled={pagination.currentPage <= 1}
+                onClick={() => handlePageChange(pagination.currentPage - 1)}
+              >
+                <MdOutlineKeyboardArrowLeft size={18} />
+              </button>
 
-      {/* Next Button */}
-      <button
-        className="btn btn-outline-primary btn-sm"
-        disabled={pagination.currentPage >= pagination.totalPages}
-        onClick={() => handlePageChange(pagination.currentPage + 1)}
-      >
-        <MdOutlineKeyboardArrowRight size={18} />
-      </button>
+         
+              {getPageNumbers().map((page) => (
+                <button
+                  key={page}
+                  className={`btn btn-sm ${page === pagination.currentPage ? "btn-primary" : "btn-outline-primary"}`}
+                  onClick={() => handlePageChange(page)}
+                >
+                  {page}
+                </button>
+              ))}
 
-    </div>
-
-  </div>
-</div>
-
-
+            
+              <button
+                className="btn btn-outline-primary btn-sm"
+                disabled={pagination.currentPage >= pagination.totalPages}
+                onClick={() => handlePageChange(pagination.currentPage + 1)}
+              >
+                <MdOutlineKeyboardArrowRight size={18} />
+              </button>
+            </div>
+          </div>
+        </div> */}
       </div>
     </div>
   );

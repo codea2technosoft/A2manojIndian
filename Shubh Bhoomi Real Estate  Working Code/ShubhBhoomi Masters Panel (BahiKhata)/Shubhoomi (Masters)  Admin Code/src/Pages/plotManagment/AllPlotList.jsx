@@ -656,7 +656,7 @@ function AllPlotList() {
         alert("Please login!");
         return;
       }
-      let url = `${API_URL}/plot-excel-download`;
+      let url = `${API_URL}/Plot-excel-download-bahik`;
       const params = new URLSearchParams();
 
       if (searchQuery.trim() !== "") {

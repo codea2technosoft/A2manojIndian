@@ -215,7 +215,7 @@ const FancyResult = () => {
                   <td style={{ width: "260px" }}>
                     {/* UPDATE RESULT */}
                     <button
-                      className="btn btn-success btn-sm me-1"
+                      className="btn btn-success me-1"
                       disabled={btnLoading[f.fancy_id]}
                       onClick={() => handleUpdateResult(f)}
                     >

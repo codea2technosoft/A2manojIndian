@@ -135,9 +135,9 @@ const Pending = ({ userId }) => {
   const PendingWithdrawApprove = async () => {
     if (!selectedIds || selectedIds.length === 0) {
       Swal.fire({
-        icon: "error",
-        title: "Server Error",
-        text: "Please Select.",
+        icon: "warning",
+        title: "Warning",
+        text: "Please select at least one ",
       });
       return;
     }
@@ -164,7 +164,7 @@ const Pending = ({ userId }) => {
       if (data?.success === "1" || data?.code === 200) {
         Swal.fire({
           icon: "success",
-          title: "Checked",
+          title: "Approved",
           text: data.message || "✅ Checked successfully!",
         });
 
@@ -352,7 +352,7 @@ const Pending = ({ userId }) => {
         requestBody.status = statusParam;
       }
 
-      console.log("Withdraw Pending API Payload:", requestBody);
+      // console.log("Withdraw Pending API Payload:", requestBody);
 
       const res = await fetch(
         `${process.env.REACT_APP_API_URL}/withdraw-pending-list`,

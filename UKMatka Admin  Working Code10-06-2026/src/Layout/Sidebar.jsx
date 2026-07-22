@@ -299,22 +299,22 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
             </svg>
           ),
           children: [
-            // {
-            //   id: "withdrawal-pending",
-            //   title: "Pending",
-            //   href: "/withdrawal_pending",
-            // },
-            // {
-            //   id: "withdrawal-pending-approved",
-            //   title: "Pre Approved",
-            //   href: "/withdrawal_pending_Approve",
-            // },
-
+            {
+              id: "withdrawal-pending",
+              title: "Pending",
+              href: "/withdrawal_pending",
+            },
             {
               id: "withdrawal-pending-approved",
-              title: "Pending",
+              title: "Pre Approved",
               href: "/withdrawal_pending_Approve",
             },
+
+            // {
+            //   id: "withdrawal-pending-approved",
+            //   title: "Pending",
+            //   href: "/withdrawal_pending_Approve",
+            // },
 
             {
               id: "withdrawal-complete",

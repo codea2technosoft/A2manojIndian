@@ -18,15 +18,23 @@ import {
   FiEye,
   FiEyeOff,
   FiCopy,
+  FiPlus,
 } from "react-icons/fi";
-import { FaEye } from "react-icons/fa";
-import { useNavigate, useParams } from "react-router-dom";
+import { FaCogs, FaUnlockAlt, FaEye, FaRegEdit, FaPlus } from "react-icons/fa";
+import { FaLock, FaRectangleList } from "react-icons/fa6";
+import { CgUnblock, CgFileDocument } from "react-icons/cg";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Button } from "react-bootstrap";
-import { MdOutlineKeyboardArrowRight } from "react-icons/md";
-import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import Swal from "sweetalert2";
+import {
+  MdOutlineKeyboardArrowRight,
+  MdOutlineKeyboardArrowLeft,
+  MdKeyboardDoubleArrowLeft,
+  MdKeyboardDoubleArrowRight,
+} from "react-icons/md";
 import {
   getAgentList,
   updateClientStatus,
@@ -35,8 +43,11 @@ import {
   changeMasterPassword,
   coinsDeposit,
   coinsWithdraw,
+  toggleUserBetBlockUnblock,
 } from "../Server/api";
-function AgentMaster() {
+import Loader from "../Common/Loader";
+
+function AgentMasterClone() {
   const navigate = useNavigate();
   const COPY_API_URL = process.env.REACT_APP_COPY_API_URL;
   const [openFilter, setOpenFilter] = useState(null);
@@ -56,6 +67,8 @@ function AgentMaster() {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [showSettingModal, setShowSettingModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingType, setProcessingType] = useState("");
   const [showOTP, setShowOTP] = useState({});
@@ -98,15 +111,78 @@ function AgentMaster() {
 
   const { adminId } = useParams();
 
+  // const settingButtons = [
+  //   {
+  //     title: "User Settings",
+  //     path: "/user-setting",
+  //     className: "gradient-9",
+  //   },
+  //   {
+  //     title: "Casino Settings",
+  //     path: "/casino-setting",
+  //     className: "gradient-1",
+  //   },
+  //   {
+  //     title: "iCasino Settings",
+  //     path: "/icasino-setting",
+  //     className: "gradient-2",
+  //   },
+  //   {
+  //     title: "Sport Settings",
+  //     path: "/sport-setting",
+  //     className: "gradient-3",
+  //   },
+  // ];
+  const getSettingButtons = (adminId) => [
+    {
+      title: "User Settings",
+      path: `/user-setting/${adminId}`,
+      className: "gradient-9",
+    },
+    {
+      title: "Casino Settings",
+      path: `/casino-setting/${adminId}`,
+      className: "gradient-1",
+    },
+    {
+      title: "iCasino Settings",
+      path: `/icasino-setting/${adminId}`,
+      className: "gradient-2",
+    },
+    {
+      title: "Sport Settings",
+      path: `/sport-setting/${adminId}`,
+      className: "gradient-3",
+    },
+  ];
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setOpen(false);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const [optionMenu, setOptionMenu] = useState(null);
+
+  const toggleOptionMenu = (id) => {
+    setOptionMenu(optionMenu === id ? null : id);
+  };
+
+  const handleOperationAccount = (agent) => {
+    navigate(`/master_operation/${agent.admin_id}`);
+  };
+
+  // const handleUpdateSuperAgent = (agent) => {
+  //   navigate(`/Updatemaster/${agent.admin_id}`);
+  // };
+
+  // const handleStatementmasterlist = (agent) => {
+  //   navigate(`/Statementmasterlist/${agent.admin_id}`);
+  // };
   // Custom toast functions
   const showSuccessToast = (message) => {
     toast.success(message, {
@@ -236,6 +312,7 @@ function AgentMaster() {
     limit = itemsPerPage,
     search = searchTerm,
     filterParams = filters,
+    showLoading = true, // ✅ New parameter
   ) => {
     try {
       setIsSearching(true);
@@ -270,23 +347,54 @@ function AgentMaster() {
         },
       );
       if (response.data.success) {
+        // const formattedData = response.data.data.map((agent, index) => ({
+        //   id: agent._id,
+        //   admin_id: agent.admin_id,
+        //   code: agent.admin_id,
+        //   name: agent.username,
+        //   reference: agent.reference,
+        //   super: agent.parent_username,
+        //   doj: new Date(agent.created_at).toLocaleDateString(),
+        //   password: agent.password,
+        //   admin_otp: agent.admin_otp,
+        //   share: `${agent.match_share}%`,
+        //   commission_type: agent.commission_type,
+        //   commType: agent.commission_type,
+        //   commMatch: `${agent.match_comm}%`,
+        //   commSession: `${agent.session_comm}%`,
+        //   chips: agent.coins,
+        //   status: agent.active === 1 ? "Active" : "Inactive",
+        //   is_blocked: agent.is_blocked,
+        //   originalData: agent,
+        // }));
         const formattedData = response.data.data.map((agent, index) => ({
           id: agent._id,
+          bet_block: agent.bet_block || 0,
           admin_id: agent.admin_id,
           code: agent.admin_id,
           name: agent.username,
+          username: agent.username,
           reference: agent.reference,
-          super: agent.parent_username,
+          super:
+            agent.parent_username ||
+            agent.super_username ||
+            agent.master_username,
           doj: new Date(agent.created_at).toLocaleDateString(),
           password: agent.password,
           admin_otp: agent.admin_otp,
-          share: `${agent.match_share}%`,
+          share: `${agent.match_share}`,
           commission_type: agent.commission_type,
           commType: agent.commission_type,
-          commMatch: `${agent.match_comm}%`,
-          commSession: `${agent.session_comm}%`,
+          commMatch: `${agent.match_comm}`,
+          commSession: `${agent.session_comm}`,
           chips: agent.coins,
+          coins: agent.coins || 0, // ✅ ADD - Balance ke liye
+          total_amount: agent.total_amount || 0, // ✅ ADD - P/L ke liye
+          credit_ref: agent.reference || "-", // ✅ ADD - Credit Ref ke liye
+          exposer: agent.exposer || "-", // ✅ ADD - Exposer ke liye
+          master_admin_id: agent.master_admin_id || agent.super_admin_id || "-", // ✅ ADD - UP-Line ke liye
           status: agent.active === 1 ? "Active" : "Inactive",
+          active: agent.active === 1 ? true : false,
           is_blocked: agent.is_blocked,
           originalData: agent,
         }));
@@ -431,9 +539,11 @@ function AgentMaster() {
         },
       );
       if (response.data.success) {
-        showSuccessToast(
-          `Agent ${newStatus === 1 ? "activated" : "deactivated"} successfully`,
-        );
+        // showSuccessToast(
+        //   `Agent ${newStatus === 1 ? "activated" : "deactivated"} successfully`,
+        // );
+
+        showSuccessToast(response.data.message);
         fetchAgentData(currentPage, itemsPerPage, searchTerm, filters);
         setAgentData((prevData) =>
           prevData.map((agent) =>
@@ -476,10 +586,10 @@ function AgentMaster() {
       );
 
       if (response.data.success == true) {
-        showSuccessToast(
-          `Agent ${newBlockStatus == 1 ? "blocked" : "unblocked"} successfully`,
-        );
-
+        // showSuccessToast(
+        //   `Agent ${newBlockStatus == 1 ? "blocked" : "unblocked"} successfully`,
+        // );
+        showSuccessToast(response.data.message);
         // Update local state
         setAgentData((prevData) =>
           prevData.map((agent) =>
@@ -523,6 +633,7 @@ function AgentMaster() {
 
       if (response.data.success) {
         // showSuccessToast("Agent deleted successfully");
+        showSuccessToast(response.data.message);
         fetchAgentData(currentPage, itemsPerPage, searchTerm, filters);
         setShowDeleteModal(false);
         setSelectedAgent(null);
@@ -567,6 +678,7 @@ function AgentMaster() {
         // showSuccessToast("Password updated successfully");
 
         // Update local state
+        showSuccessToast(response.data.message);
         fetchAgentData(currentPage, itemsPerPage, searchTerm, filters);
         setShowPasswordModal(false);
         setSelectedAgent(null);
@@ -617,14 +729,16 @@ function AgentMaster() {
       setIsProcessing(true);
       setProcessingType("deposit");
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/coins-deposit`,
+        // `${process.env.REACT_APP_API_URL}/coins-deposit`,
+        `${process.env.REACT_APP_API_URL}/coins-deposit-master`,
         {
           amount: depositValue,
           admin_id: selectedAgent.admin_id,
           master_admin_id: selectedAgent.originalData.master_admin_id,
           role: role,
-          master_role: "2",
+          master_role: "3",
           rem_role: superAdminRole,
+          super_admin_id: selectedAgent.originalData?.super_admin_id,
         },
         {
           headers: {
@@ -636,7 +750,7 @@ function AgentMaster() {
 
       if (response.data.success) {
         showSuccessToast(
-          `₹${depositAmount} deposited successfully to ${selectedAgent.name}`,
+          `${depositAmount} deposited successfully to ${selectedAgent.name}`,
         );
         setAgentData((prevData) =>
           prevData.map((agent) =>
@@ -648,7 +762,7 @@ function AgentMaster() {
               : agent,
           ),
         );
-
+        fetchAgentData(currentPage, itemsPerPage, searchTerm, filters);
         setShowDepositModal(false);
         setSelectedAgent(null);
         setDepositAmount("");
@@ -703,7 +817,7 @@ function AgentMaster() {
     const withdrawValue = parseFloat(withdrawAmount);
     if (withdrawValue > Number(selectedAgent.chips)) {
       showErrorToast(
-        `Insufficient balance. Maximum withdrawable amount is ₹${selectedAgent.chips}`,
+        `Insufficient balance. Maximum withdrawable amount is ${selectedAgent.chips}`,
       );
       return;
     }
@@ -712,7 +826,8 @@ function AgentMaster() {
       setIsProcessing(true);
       setProcessingType("withdraw");
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/coins-withdraw`,
+        // `${process.env.REACT_APP_API_URL}/coins-withdraw`,
+        `${process.env.REACT_APP_API_URL}/coins-withdraw-master`,
         {
           amount: withdrawValue,
           admin_id: selectedAgent.admin_id,
@@ -720,6 +835,7 @@ function AgentMaster() {
           role: role,
           master_role: "2",
           rem_role: superAdminRole,
+          super_admin_id: selectedAgent.originalData?.super_admin_id,
         },
         {
           headers: {
@@ -731,10 +847,11 @@ function AgentMaster() {
 
       if (response.data.success) {
         showSuccessToast(
-          `₹${withdrawAmount} withdrawn successfully from ${selectedAgent.name}`,
+          `${withdrawAmount} withdrawn successfully from ${selectedAgent.name}`,
         );
 
         // Update local state - subtract withdraw amount from chips
+
         setAgentData((prevData) =>
           prevData.map((agent) =>
             agent.id === selectedAgent.id
@@ -745,7 +862,7 @@ function AgentMaster() {
               : agent,
           ),
         );
-
+        fetchAgentData(currentPage, itemsPerPage, searchTerm, filters);
         setShowWithdrawModal(false);
         setSelectedAgent(null);
         setWithdrawAmount("");
@@ -867,6 +984,68 @@ Login URL:${COPY_API_URL}`;
   //   navigate(`/getSuperAgent-list/${id}?role=3`);
   // };
 
+  // Bet Block/Unblock Handler
+  const handleBetToggle = async (row) => {
+    try {
+      const newBetBlock = row.bet_block === 1 ? 0 : 1;
+      const actionText = newBetBlock === 1 ? "OPEN" : "LOCK";
+      const actionText2 = newBetBlock === 1 ? "open" : "lock";
+
+      // ✅ SweetAlert Confirmation
+      const result = await Swal.fire({
+        title: `Are you sure?`,
+        text: `You want to ${actionText2} bet for ${row.username}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#28a745",
+        cancelButtonColor: "#dc3545",
+        confirmButtonText: `Yes, ${actionText} it!`,
+        cancelButtonText: "Cancel",
+      });
+
+      if (!result.isConfirmed) {
+        return;
+      }
+
+      const payload = {
+        admin_id: row.admin_id,
+        bet_block: newBetBlock,
+      };
+
+      const response = await toggleUserBetBlockUnblock(row.admin_id, payload);
+
+      if (response.data.success) {
+        await Swal.fire({
+          icon: "success",
+          title: "Success!",
+          text: `Bet ${actionText2}ed successfully for ${row.username}`,
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        // Update local state
+        setAgentData((prevData) =>
+          prevData.map((agent) =>
+            agent.id === row.id ? { ...agent, bet_block: newBetBlock } : agent,
+          ),
+        );
+      } else {
+        await Swal.fire({
+          icon: "error",
+          title: "Failed!",
+          text: response.data.message || "Failed to update bet status",
+        });
+      }
+    } catch (error) {
+      console.error("Error toggling bet lock:", error);
+      await Swal.fire({
+        icon: "error",
+        title: "Error!",
+        text: "Failed to update bet status. Please try again.",
+      });
+    }
+  };
+
   const handleMasterClick = (row) => {
     // localStorage में नहीं, URL में ID भेजें
     navigate(`/AgentMasternew/${row.admin_id}`);
@@ -883,9 +1062,7 @@ Login URL:${COPY_API_URL}`;
         className="d-flex justify-content-center align-items-center"
         style={{ height: "100vh" }}
       >
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
+        <Loader />
       </div>
     );
   }
@@ -893,21 +1070,21 @@ Login URL:${COPY_API_URL}`;
   return (
     <>
       <div className="card agentmaster">
-        <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+        {/* <div className="card-header d-flex bg-primary-yellow justify-content-between align-items-center">
           <h5 className="card-title mb-0">Super Agent Lists</h5>
           <div className="d-flex gap-2">
             <button className="btn btn-light" onClick={handleCreateAgent}>
               Create
             </button>
           </div>
-        </div>
+        </div> */}
 
         <div className="card-body">
           {/* Search and Filter Controls */}
-          <div className="row mb-3">
+          <div className="row mb-1">
             <div className="col-md-6">
               <div className="d-flex">
-                <div className="input-group me-2" style={{ width: "300px" }}>
+                <div className="input-group me-2" style={{ width: "500px" }}>
                   <input
                     type="text"
                     className="form-control"
@@ -917,14 +1094,14 @@ Login URL:${COPY_API_URL}`;
                     onKeyPress={handleSearchKeyPress}
                   />
                   <button
-                    className="btn btn-outline-success"
+                    className="btn btn-warning"
                     type="button"
                     onClick={handleSearch}
                     disabled={isSearching}
                   >
                     <FiSearch />
                   </button>
-                  {(searchTerm || hasActiveFilters) && (
+                  {/* {(searchTerm || hasActiveFilters) && (
                     <button
                       className="btn btn-outline-secondary"
                       type="button"
@@ -932,7 +1109,7 @@ Login URL:${COPY_API_URL}`;
                     >
                       Clear
                     </button>
-                  )}
+                  )} */}
                 </div>
 
                 {hasActiveFilters && (
@@ -951,7 +1128,7 @@ Login URL:${COPY_API_URL}`;
               )}
             </div>
 
-            <div className="col-md-6">
+            {/* <div className="col-md-6">
               <div className="d-flex justify-content-end align-items-center">
                 <button
                   className="btn btn-danger btn-sm me-2"
@@ -959,7 +1136,6 @@ Login URL:${COPY_API_URL}`;
                   title="View Deleted Masters"
                 >
                   <FiSlash className="me-1" />
-                  {/* Deleted Super Agent Lists */}
                 </button>
                 <button
                   className="btn btn-warning btn-sm me-2"
@@ -980,7 +1156,6 @@ Login URL:${COPY_API_URL}`;
                   <option value="40">40</option>
                   <option value="50">50</option>
                 </select>
-                {/* Clear all filters button */}
                 {hasActiveFilters && (
                   <button
                     className="btn btn-outline-danger btn-sm"
@@ -990,7 +1165,7 @@ Login URL:${COPY_API_URL}`;
                   </button>
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
           <div className="table-responsive">
             <table className="table table-bordered table-hover">
@@ -999,41 +1174,70 @@ Login URL:${COPY_API_URL}`;
                   <th rowSpan={2} className="text-center align-middle">
                     Sr.No.
                   </th>
+                  <th rowSpan={2} className="position-relative">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <span>Username</span>
+                    </div>
+                  </th>
                   <th rowSpan={2} className="text-center align-middle">
                     Copy
                   </th>
-                  <th rowSpan={2} className="text-center">
-                    Actions
-                  </th>
+
                   {/* Code */}
                   <th rowSpan={2} className="position-relative">
                     <div className="d-flex justify-content-between align-items-center">
                       <span>Code</span>
                     </div>
                   </th>
+
                   <th rowSpan={2} className="position-relative">
                     <div className="d-flex justify-content-between align-items-center">
-                      <span>Name</span>
+                      <span>Credit Ref</span>
                     </div>
                   </th>
-                  <th rowSpan={2}>Super</th>
-                  <th rowSpan={2}>D.O.J</th>
-                  <th rowSpan={2}>REFERENCE</th>
+
+                  <th rowSpan={2} className="position-relative">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <span>Balance</span>
+                    </div>
+                  </th>
+
+                  <th rowSpan={2} className="position-relative">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <span>P/L</span>
+                    </div>
+                  </th>
+
+                  {/* <th rowSpan={2} className="position-relative">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <span>Exposer</span>
+                    </div>
+                  </th> */}
+
+                  {/* <th rowSpan={2}>Super</th> */}
+                  {/* <th rowSpan={2}>D.O.J</th>
+                  <th rowSpan={2}>REFERENCE</th> */}
                   {/* <th rowSpan={2}>Password</th>
                   <th rowSpan={2}>OTP</th> */}
-                  <th rowSpan={2}>Share</th>
+                  <th rowSpan={2}>Client Share</th>
+                  <th rowSpan={2}>UP-Line</th>
+                  {/* <th rowSpan={2}>Share</th>
                   <th colSpan={3} className="text-center">
                     Comm %
                   </th>
-                  <th rowSpan={2}>Chips</th>
+                  <th rowSpan={2}>Chips</th> */}
                   <th rowSpan={2}>Status</th>
                   {/* <th rowSpan={2}>Blocked</th> */}
+                  <th rowSpan={2} className="text-center">
+                    Bet
+                  </th>
+                  <th rowSpan={2}>Options</th>
                 </tr>
-                <tr>
+                {/* <tr>
                   <th>Type</th>
                   <th>Match</th>
                   <th>Session</th>
-                </tr>
+                </tr> */}
               </thead>
               <tbody>
                 {agentData.length > 0 ? (
@@ -1041,6 +1245,22 @@ Login URL:${COPY_API_URL}`;
                     <tr key={row.id}>
                       <td className="text-center">
                         {(currentPage - 1) * itemsPerPage + index + 1}
+                      </td>
+                      <td>
+                        <div
+                          onClick={() => handleMasterClick(row)}
+                          className="text-green"
+                        >
+                          <span className="badge badge-warning me-1">S</span>
+                          {row.username || row.name}
+                        </div>
+                        <span>
+                          [
+                          {row.username || row.name?.length > 10
+                            ? `${row.username || row.name.substring(0, 10)}`
+                            : row.username || row.name}
+                          ]
+                        </span>
                       </td>
                       <td className="text-center">
                         <button
@@ -1051,233 +1271,13 @@ Login URL:${COPY_API_URL}`;
                           <FiCopy size={14} />
                         </button>
                       </td>
-                      <td className="text-center">
-                        <div className="dropdown ms-2 position-static">
-                          <div className="dropdown-toggle newtoggle">
-                            <div
-                              className="dropdown-toggle newtoggle"
-                              type="button"
-                              onClick={() => toggleActionDropdown(row.id)}
-                              aria-expanded={dropdownOpen === row.id}
-                            >
-                              <FiMoreVertical />
-                            </div>
-                            {dropdownOpen === row.id && (
-                              <ul
-                                ref={actionDropdownRef}
-                                className="dropdown-menu dropdown-menu-end show"
-                                style={{
-                                  position: "absolute",
-                                  transform: "translate3d(-10px, 24px, 0px)",
-                                  zIndex: 1055,
-                                  minWidth: "220px",
-                                }}
-                              >
-                                <li>
-                                  <div
-                                    className="dropdown-item custum_new_ul"
-                                    onClick={() => {
-                                      setSelectedAgent(row);
-                                      setDepositAmount("");
-                                      setShowDepositModal(true);
-                                    }}
-                                  >
-                                    <FiPlusCircle className="me-2" />
-                                    Deposit
-                                  </div>
-                                </li>
-                                <li>
-                                  <div
-                                    className="dropdown-item custum_new_ul"
-                                    onClick={() =>
-                                      navigate(
-                                        `/Superagenttransaction/${row.admin_id}`,
-                                      )
-                                    }
-                                    style={{ cursor: "pointer" }}
-                                  >
-                                    <FiPlusCircle className="me-2" />
-                                    Lena Dena
-                                  </div>
-                                </li>
-                                <li>
-                                  <div
-                                    className="dropdown-item custum_new_ul"
-                                    onClick={() => {
-                                      setSelectedAgent(row);
-                                      setWithdrawAmount("");
-                                      setShowWithdrawModal(true);
-                                    }}
-                                  >
-                                    <FiMinusCircle className="me-2" />
-                                    Withdraw
-                                  </div>
-                                </li>
-                                {/* Status Change */}
-                                <li>
-                                  {row.status === "Active" ? (
-                                    <div
-                                      className="dropdown-item custum_new_ul"
-                                      onClick={() => {
-                                        setSelectedAgent(row);
-                                        setShowStatusModal(true);
-                                      }}
-                                    >
-                                      <FiUserX className="me-2" />
-                                      Inactive
-                                    </div>
-                                  ) : (
-                                    <div
-                                      className="dropdown-item custum_new_ul"
-                                      onClick={() => {
-                                        setSelectedAgent(row);
-                                        setShowStatusModal(true);
-                                      }}
-                                    >
-                                      <FiUserCheck className="me-2" />
-                                      Active
-                                    </div>
-                                  )}
-                                </li>
-
-                                {/* Block/Unblock */}
-                                <li>
-                                  {row.is_blocked == 1 ? (
-                                    <div
-                                      className="dropdown-item custum_new_ul"
-                                      onClick={() => {
-                                        setSelectedAgent(row);
-                                        setShowBlockModal(true);
-                                      }}
-                                    >
-                                      <FiSlash className="me-2" />
-                                      Unblock
-                                    </div>
-                                  ) : (
-                                    <div
-                                      className="dropdown-item custum_new_ul"
-                                      onClick={() => {
-                                        setSelectedAgent(row);
-                                        setShowBlockModal(true);
-                                      }}
-                                    >
-                                      <FiSlash className="me-2" />
-                                      Block
-                                    </div>
-                                  )}
-                                </li>
-
-                                {/* Password Change */}
-                                <li>
-                                  <div
-                                    className="dropdown-item custum_new_ul"
-                                    onClick={() => {
-                                      setSelectedAgent(row);
-                                      setPasswordData({
-                                        oldPassword: "",
-                                        newPassword: "",
-                                        confirmPassword: "",
-                                      });
-                                      setShowPasswords({
-                                        oldPassword: false,
-                                        newPassword: false,
-                                        confirmPassword: false,
-                                      });
-                                      setShowPasswordModal(true);
-                                    }}
-                                  >
-                                    <FiLock className="me-2" />
-                                    Reset Password
-                                  </div>
-                                </li>
-
-                                {/* Delete Agent */}
-                                {/* <div
-                                  className="dropdown-item text-danger"
-                                  onClick={() => {
-                                    setSelectedAgent(row);
-                                    setShowDeleteModal(true);
-                                  }}
-                                >
-                                  <FiTrash2 className="me-2" />
-                                  DELETE AGENT
-                                </div> */}
-
-                                {/* View Details */}
-                                {/* <div
-                                  className="dropdown-item"
-                                  onClick={() => handleViewDetails(row)}
-                                >
-                                  <FiUser className="me-2" />
-                                  VIEW DETAILS
-                                </div> */}
-
-                                {/* Update Super Agent */}
-
-                                <li>
-                                  <div
-                                    className="dropdown-item custum_new_ul"
-                                    onClick={() => handleUpdateSuperAgent(row)}
-                                  >
-                                    <FiUser className="me-2" />
-                                    Edit
-                                  </div>
-                                </li>
-                                <li>
-                                  <div
-                                    className="dropdown-item custum_new_ul"
-                                    onClick={() =>
-                                      handleStatementmasterlist(row)
-                                    }
-                                  >
-                                    <FiUser className="me-2" />
-                                    Statement
-                                  </div>
-                                </li>
-                                {/* <li>
-                                  <div
-                                    className="dropdown-item custum_new_ul"
-                                  // onClick={() => handleStatementmasterlist(row)}
-                                  >
-                                    <FiUser className="me-2" />
-                                    Login Report
-                                  </div>
-                                </li> */}
-                                <li>
-                                  <div
-                                    className="dropdown-item custum_new_ul"
-                                    onClick={() => handleAccountoperation(row)}
-                                  >
-                                    <FiUser className="me-2" />
-                                    Account Operations
-                                  </div>
-                                </li>
-
-                                {/* <li> <div
-                                  className="dropdown-item custum_new_ul"
-                                // onClick={() => handleStatementmasterlist(row)}
-                                >
-                                  <FiUser className="me-2" />
-                                  Block Actions
-                                </div>
-                                </li> */}
-                                {/* <li>
-                                  <div
-                                    className="dropdown-item custum_new_ul"
-                                  // onClick={() => handleStatementmasterlist(row)}
-                                  >
-                                    <FiUser className="me-2" />
-                                    Agent Commission Report
-                                  </div>
-                                </li> */}
-                              </ul>
-                            )}
-                          </div>
-                        </div>
-                      </td>
 
                       {/* <td>{row.code}</td> */}
                       <td>{row.admin_id || "N/A"}</td>
+                      <td>{row.credit_ref || "-"}</td>
+                      <td>{row.coins || "-"}</td>
+                      <td>{row.total_amount || "-"}</td>
+                      {/* <td>{row.exposer || "-"}</td> */}
 
                       {/* <td className="text-center">
                         <span
@@ -1289,24 +1289,17 @@ Login URL:${COPY_API_URL}`;
                           {row.username || row.name}
                         </span>
                       </td> */}
-                      <td className="text-center">
-                        <span
-                          // style={{ cursor: "pointer", color: "blue" }}
-                          onClick={() => handleMasterClick(row)}
-                          className=""
-                        >
-                          {/* <FaEye /> */}
-                          {row.username || row.name}
-                        </span>
-                      </td>
-                      <td className="text-center">
+
+                      {/* <td className="text-center">
                         <span>{row.originalData?.parent_username}</span>
                         <br />
                         <span>{row.originalData?.master_admin_id}</span>
-                      </td>
+                      </td> */}
 
-                      <td className="text-center">{row.doj}</td>
-                      <td>{row?.reference ? row.reference : "-"}</td>
+                      {/* <td className="text-center">{row.doj}</td>
+                      <td>{row?.reference ? row.reference : "-"}</td> */}
+                      <td className="text-center">{row.share}</td>
+                      <td className="text-center">{row.master_admin_id}</td>
                       {/* <td className="text-center">
                         <div className="d-flex" style={{ width: "120px" }}>
                           <input
@@ -1346,13 +1339,13 @@ Login URL:${COPY_API_URL}`;
                         </div>
                       </td> */}
 
-                      <td className="text-center">{row.share}</td>
+                      {/* <td className="text-center">{row.share}</td> */}
                       {/* <td className="text-center">
                         {String(row.commission_type) === "1" ? "BBB" :
                           String(row.commission_type) === "0" ? "NOS" :
                             "N/A"}
                       </td> */}
-                      <td className="text-center">
+                      {/* <td className="text-center">
                         {String(row.commission_type) === "1"
                           ? "BBB"
                           : String(row.commission_type) === "0"
@@ -1360,18 +1353,18 @@ Login URL:${COPY_API_URL}`;
                             : "N/A"}
                       </td>
                       <td className="text-center">{row.commMatch}</td>
-                      <td className="text-center">{row.commSession}</td>
+                      <td className="text-center">{row.commSession}</td> */}
 
-                      <td className="text-center">
+                      {/* <td className="text-center">
                         <div className="d-flex align-items-center justify-content-center">
-                          <div className="me-2 w-50">₹{row.chips}</div>
-                          <button
+                          <div className="me-2 w-50">₹{row.chips}</div> */}
+                      {/* <button
                             className="btn btn-sm btn-outline-success p-1 me-1"
-                            // onClick={() => {
-                            //   setSelectedAgent(row);
-                            //   setDepositAmount("");
-                            //   setShowDepositModal(true);
-                            // }}
+                            onClick={() => {
+                              setSelectedAgent(row);
+                              setDepositAmount("");
+                              setShowDepositModal(true);
+                            }}
                             onClick={() => {
                               setSelectedAgent(row);
                               setDepositAmount("");
@@ -1391,22 +1384,316 @@ Login URL:${COPY_API_URL}`;
                             title="Withdraw Balance"
                           >
                             <FiMinusCircle size={14} />
-                          </button>
-                        </div>
-                      </td>
+                          </button> */}
+                      {/* </div>
+                      </td> */}
 
                       <td className="text-center">
                         <span
-                          className={`${row.status === "Active" ? "activebadge" : "inactivebadge"}`}
+                          // className={`${row.status === "Active" ? "activebadge" : "inactivebadge"}`}
+
+                          onClick={() => {
+                            setSelectedAgent(row);
+                            setShowStatusModal(true);
+                          }}
+                          title={row.status ? "Inactive" : "Active"}
                         >
-                          {row.status}
+                          {/* {row.status} */}
+
+                          {row.status ? (
+                            <>
+                              <FaUnlockAlt className="lock_button text-success" />
+                            </>
+                          ) : (
+                            <>
+                              <FaLock className="lock_button text-danger" />
+                            </>
+                          )}
                         </span>
                       </td>
+                      {/* <td className="text-center">
+                        <span
+
+                          onClick={() => {
+                            setSelectedAgent(row);
+                            setShowStatusModal(true);
+                          }}
+                          title={row.active ? "Inactive" : "Active"}
+                        >
+
+                          {row.active ? (
+                            <>
+                              <FaLock className="lock_button text-danger" />
+                            </>
+                          ) : (
+                            <>
+                              <FaUnlockAlt className="lock_button text-success" />
+                            </>
+                          )}
+                        </span>
+                      </td> */}
+
+                      <td className="text-center">
+                        <span
+                          onClick={() => handleBetToggle(row)}
+                          style={{ cursor: "pointer" }}
+                          title={
+                            row.bet_block === 1
+                              ? "Click to Block Bet"
+                              : "Click to Unblock Bet"
+                          }
+                        >
+                          {row.bet_block === 1 ? (
+                            <FaUnlockAlt
+                              className="lock_button text-success"
+                              title="Bet Open"
+                            />
+                          ) : (
+                            <FaLock
+                              className="lock_button text-danger"
+                              title="Bet Locked"
+                            />
+                          )}
+                        </span>
+                      </td>
+
                       {/* <td className="text-center">
                         <span className={`badge ${Number(row.is_blocked) === 1 ? "bg-danger" : "bg-success"}`}>
                           {Number(row.is_blocked) === 1 ? "Blocked" : "Active"}
                         </span>
                       </td> */}
+
+                      <td className="text-center">
+                        <div className="d-flex gap-1 justify-content-center">
+                          <div className="position-relative d-inline-block">
+                            <button
+                              className="buttoncommon gradient-7"
+                              onClick={() => toggleOptionMenu(row.admin_id)}
+                            >
+                              <FaPlus />
+                            </button>
+
+                            {optionMenu === row.admin_id && (
+                              <div
+                                className="dropdown-menu show"
+                                style={{
+                                  position: "absolute",
+                                  top: "100%",
+                                  right: 0,
+                                  zIndex: 9999,
+                                }}
+                              >
+                                {/* <button
+                                  className="dropdown-item"
+                                  onClick={() => {
+                                    navigate(`/create-master`);
+                                    setOptionMenu(null);
+                                  }}
+                                >
+                                  Super Master
+                                </button> */}
+
+                                {/* <button
+                                  className="dropdown-item"
+                                  onClick={() => {
+                                    navigate(`/SelectSuperagent`);
+                                    setOptionMenu(null);
+                                  }}
+                                >
+                                  Master
+                                </button> */}
+
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() => {
+                                    // Current row ka admin_id lein
+                                    const selectedAdminId = row.admin_id;
+                                    navigate(
+                                      `/CreateSuperAgent/${selectedAdminId}`,
+                                    );
+                                    setOptionMenu(null);
+                                  }}
+                                >
+                                  Master
+                                </button>
+
+                                {/* <button
+                                  className="dropdown-item"
+                                  onClick={() => {
+                                    navigate(`/Clientmasternew`);
+                                    setOptionMenu(null);
+                                  }}
+                                >
+                                  Client
+                                </button> */}
+                              </div>
+                            )}
+                          </div>
+
+                          <button
+                            className="buttoncommon gradient-9"
+                            onClick={() => handleUpdateSuperAgent(row)}
+                            title="Edit Profile"
+                          >
+                            <FaRegEdit />
+                          </button>
+
+                          <button
+                            className="buttoncommon gradient-10"
+                            onClick={() => {
+                              setSelectedAgent(row);
+                              setDepositAmount("");
+                              setShowDepositModal(true);
+                            }}
+                            title=" Deposit"
+                          >
+                            <span>D</span>
+                          </button>
+
+                          <button
+                            className="buttoncommon gradient-2"
+                            // onClick={() => {
+                            //   setSelectedAgent(row);
+                            //   setWithdrawAmount("");
+                            //   setShowWithdrawModal(true);
+                            // }}
+                            onClick={() => {
+                              setSelectedAgent(row);
+                              setWithdrawAmount("");
+                              setShowWithdrawModal(true);
+                            }}
+                            title="Withdraw"
+                          >
+                            <span>W</span>
+                          </button>
+
+                          <button
+                            className="buttoncommon gradient-6"
+                            onClick={() => {
+                              setSelectedAgent(row);
+                              setPasswordData({
+                                oldPassword: "",
+                                newPassword: "",
+                              });
+                              setShowPasswordModal(true);
+                            }}
+                            title="Reset Password"
+                          >
+                            <span>P</span>
+                          </button>
+
+                          {/* <button
+                            className="btn gradient-8 btn-rounded"
+                            onClick={() => {
+                              setShowReportModal(true);
+                            }}
+                            title="REPORTS"
+                          >
+                            <span>R</span>
+                          </button>
+
+                          <button
+                            className="btn gradient-4 btn-rounded"
+                            onClick={() => {
+                              setShowSettingModal(true);
+                            }}
+                            title="SETTINGS"
+                          >
+                            <FaCogs />
+                          </button> */}
+
+                          <button
+                            className="btn gradient-8 btn-rounded"
+                            onClick={() => {
+                              setSelectedAgent(row); // ✅ YEH ADD KARO
+                              setShowReportModal(true);
+                            }}
+                            title="REPORTS"
+                          >
+                            <span>R</span>
+                          </button>
+
+                          <button
+                            className="btn gradient-4 btn-rounded"
+                            onClick={() => {
+                              setSelectedAgent(row); // ✅ YEH ADD KARO
+                              setShowSettingModal(true);
+                            }}
+                            title="SETTINGS"
+                          >
+                            <FaCogs />
+                          </button>
+
+                          {/* <button
+                            className="buttoncommon gradient-6"
+                            onClick={() =>
+                              navigate(`/Superagenttransaction/${row.admin_id}`)
+                            }
+                            title="Lena Dena"
+                          >
+                            L
+                          </button>
+
+                          <button
+                            className="buttoncommon gradient-2"
+                            onClick={() => handleOperationAccount(row)}
+                            title=" Account Operation"
+                          >
+                            <FiUserCheck />
+                          </button> */}
+
+                          {/* <button
+                            className={`buttoncommon ${row.active ? "gradient-3" : "gradient-4"}`}
+                            onClick={() => {
+                              setSelectedAgent(row);
+                              setShowStatusModal(true);
+                            }}
+                            title={row.active ? "Inactive" : "Active"}
+                            title="Inactive"
+                          >
+
+                            {row.active ? (
+                              <>
+                                <FiUserX />
+                              </>
+                            ) : (
+                              <>
+                                <FiUserCheck />
+                              </>
+                            )}
+                          </button> */}
+
+                          {/* <button
+                            className={`btn btn-sm btn-rounded ${Number(row.is_blocked)
+                              ? "btn-success"
+                              : "btn-danger"
+                              }`}
+                            onClick={() => {
+                              setSelectedAgent(row);
+                              setShowBlockModal(true);
+                            }}
+                            title={Number(row.is_blocked) ? "Unblock" : "Block"}
+                          >
+                            <FiSlash />
+                          </button>
+
+                          <button
+                            className="buttoncommon gradient-10"
+                            onClick={() => handleStatementmasterlist(row)}
+                            title="Statement"
+                          >
+                            <CgFileDocument />
+                          </button>
+
+                          <button
+                            className="buttoncommon gradient-8"
+                            onClick={handleInactiveSuperAgent}
+                            title="Inactive Users"
+                          >
+                            <FaRectangleList />
+                          </button> */}
+                        </div>
+                      </td>
                     </tr>
                   ))
                 ) : (
@@ -1420,24 +1707,18 @@ Login URL:${COPY_API_URL}`;
             </table>
           </div>
 
-          {/* ✅ ENHANCED PAGINATION UI (From Statementmasterlist) */}
+          {/* ✅ ENHANCED PAGINATION UI  */}
           {totalPages > 1 && (
-            <div className="d-flex justify-content-between align-items-center mt-4">
-              <div className="sohwingallentries">
-                Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-                {Math.min(currentPage * itemsPerPage, totalItems)}
-                {/* of{" "} {totalItems} entries */}
-              </div>
-
-              <div className="paginationall d-flex align-items-center gap-1">
+            <div className="d-flex justify-content-center align-items-center mt-4">
+              <div className="paginationall d-flex align-items-center gap-2">
                 <button
                   disabled={currentPage === 1}
                   onClick={handlePrev}
-                  className=""
+                  className="d-flex justify-content-center align-items-center gap-1"
                 >
-                  <MdOutlineKeyboardArrowLeft />
+                  <MdKeyboardDoubleArrowLeft />
+                  Previous
                 </button>
-
                 <div className="d-flex gap-1">
                   {getPageNumbers().map((page) => (
                     <div
@@ -1451,13 +1732,12 @@ Login URL:${COPY_API_URL}`;
                     </div>
                   ))}
                 </div>
-
                 <button
                   disabled={currentPage === totalPages}
                   onClick={handleNext}
-                  className=""
+                  className="d-flex justify-content-center align-items-center gap-1"
                 >
-                  <MdOutlineKeyboardArrowRight />
+                  Next <MdKeyboardDoubleArrowRight />
                 </button>
               </div>
             </div>
@@ -1500,7 +1780,7 @@ Login URL:${COPY_API_URL}`;
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className="btn btn-dark"
                     onClick={() => {
                       setShowStatusModal(false);
                       setSelectedAgent(null);
@@ -1510,7 +1790,7 @@ Login URL:${COPY_API_URL}`;
                   </button>
                   <button
                     type="button"
-                    className="btn btn-primary"
+                    className="btn btn-theme"
                     onClick={handleStatusChange}
                   >
                     Confirm
@@ -1554,7 +1834,7 @@ Login URL:${COPY_API_URL}`;
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className="btn btn-dark"
                     onClick={() => {
                       setShowBlockModal(false);
                       setSelectedAgent(null);
@@ -1564,7 +1844,7 @@ Login URL:${COPY_API_URL}`;
                   </button>
                   <button
                     type="button"
-                    className={`btn ${selectedAgent.is_blocked == 1 ? "btn-success" : "btn-warning"}`}
+                    className={`btn ${selectedAgent.is_blocked == 1 ? "btn-theme" : "btn-warning"}`}
                     onClick={handleBlockUnblock}
                   >
                     {selectedAgent.is_blocked == 1 ? "Unblock" : "Block"}
@@ -1609,7 +1889,7 @@ Login URL:${COPY_API_URL}`;
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className="btn btn-dark"
                     onClick={() => {
                       setShowDeleteModal(false);
                       setSelectedAgent(null);
@@ -1619,11 +1899,236 @@ Login URL:${COPY_API_URL}`;
                   </button>
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className="btn btn-theme"
                     onClick={handleDeleteAgent}
                   >
                     Delete
                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showReportModal && (
+          <div
+            className="modal fade show"
+            style={{ display: "block", background: "rgba(0,0,0,0.5)" }}
+          >
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Reports</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setShowReportModal(false)}
+                  ></button>
+                </div>
+
+                <div className="modal-body modal_buttons">
+                  <div className="row g-1">
+                    <div className="col-6">
+                      <Link
+                        to={
+                          selectedAgent?.admin_id
+                            ? `/reports/settlement-report/${selectedAgent.admin_id}`
+                            : `/reports/settlement-report`
+                        }
+                        className="btn gradient-1 w-100"
+                      >
+                        Settlement Report
+                      </Link>
+                    </div>
+                    <div className="col-6">
+                      <Link
+                        to={
+                          selectedAgent?.admin_id
+                            ? `/reports/account-statement/${selectedAgent.admin_id}`
+                            : `/reports/account-statement`
+                        }
+                        className="btn gradient-2 w-100"
+                      >
+                        Account Statement
+                      </Link>
+                    </div>
+
+                    <div className="col-6">
+                      <Link
+                        to={
+                          selectedAgent?.admin_id
+                            ? `/reports/chip-statement/${selectedAgent.admin_id}`
+                            : `/reports/chip-statement`
+                        }
+                        className="btn gradient-3 w-100"
+                      >
+                        Chip Statement
+                      </Link>
+                    </div>
+
+                    <div className="col-6">
+                      <Link
+                        to={
+                          selectedAgent?.admin_id
+                            ? `/reports/chip-summary/${selectedAgent.admin_id}`
+                            : `/reports/chip-summary`
+                        }
+                        className="btn gradient-4 w-100"
+                      >
+                        Chip Summary
+                      </Link>
+                    </div>
+
+                    <div className="col-6">
+                      <Link
+                        to={
+                          selectedAgent?.admin_id
+                            ? `/reports/profit-loss/${selectedAgent.admin_id}`
+                            : `/reports/profit-loss`
+                        }
+                        className="btn gradient-5 w-100"
+                      >
+                        Profit Loss
+                      </Link>
+                    </div>
+
+                    <div className="col-6">
+                      <Link
+                        to={
+                          selectedAgent?.admin_id
+                            ? `/reports/sport-summary-report/${selectedAgent.admin_id}`
+                            : `/reports/sport-summary-report`
+                        }
+                        className="btn gradient-6 w-100"
+                      >
+                        Sports Profit Loss
+                      </Link>
+                    </div>
+                    <div className="col-6">
+                      <Link
+                        to={
+                          selectedAgent?.admin_id
+                            ? `/reports/bet-history-details/${selectedAgent.admin_id}`
+                            : `/reports/bet-history-details`
+                        }
+                        className="btn gradient-7 w-100"
+                      >
+                        Bets History
+                      </Link>
+                    </div>
+                    <div className="col-6">
+                      <Link
+                        to={
+                          selectedAgent?.admin_id
+                            ? `/reports/pending-bet-history/${selectedAgent.admin_id}`
+                            : `/reports/pending-bet-history`
+                        }
+                        className="btn gradient-8 w-100"
+                      >
+                        Pending Bets
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* {showSettingModal && (
+          <div
+            className="modal fade show"
+            style={{ display: "block", background: "rgba(0,0,0,.5)" }}
+          >
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Settings</h5>
+                  <button
+                    className="btn-close"
+                    onClick={() => setShowSettingModal(false)}
+                  />
+                </div>
+
+                <div className="modal-body modal_buttons">
+                  <div className="row g-1">
+                    {settingButtons.map((item, index) => (
+                      <div className="col-6" key={index}>
+                        <Link
+                          to={`${item.path}/${adminId}`}
+                          className={`btn ${item.className} w-100`}
+                          onClick={() => setShowSettingModal(false)}
+                        >
+                          {item.title}
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )} */}
+
+        {showSettingModal && (
+          <div
+            className="modal fade show"
+            style={{ display: "block", background: "rgba(0,0,0,.5)" }}
+          >
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">
+                    Settings - {selectedAgent?.username || selectedAgent?.name}
+                  </h5>
+                  <button
+                    className="btn-close"
+                    onClick={() => setShowSettingModal(false)}
+                  />
+                </div>
+
+                <div className="modal-body modal_buttons">
+                  <div className="row g-1">
+                    <div className="col-6">
+                      <Link
+                        to={`/user-setting/${selectedAgent?.admin_id}`}
+                        className="btn gradient-9 w-100"
+                        onClick={() => setShowSettingModal(false)}
+                      >
+                        User Settings
+                      </Link>
+                    </div>
+
+                    <div className="col-6">
+                      <Link
+                        to={`/casino-setting/${selectedAgent?.admin_id}`}
+                        className="btn gradient-1 w-100"
+                        onClick={() => setShowSettingModal(false)}
+                      >
+                        Casino Settings
+                      </Link>
+                    </div>
+
+                    <div className="col-6">
+                      <Link
+                        to={`/icasino-setting/${selectedAgent?.admin_id}`}
+                        className="btn gradient-2 w-100"
+                        onClick={() => setShowSettingModal(false)}
+                      >
+                        iCasino Settings
+                      </Link>
+                    </div>
+
+                    <div className="col-6">
+                      <Link
+                        to={`/sport-setting/${selectedAgent?.admin_id}`}
+                        className="btn gradient-3 w-100"
+                        onClick={() => setShowSettingModal(false)}
+                      >
+                        Sport Settings
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1828,7 +2333,7 @@ Login URL:${COPY_API_URL}`;
                   </div>
 
                   {/* New Password - User input */}
-                  <div className="mb-3">
+                  <div>
                     <label className="form-label">New Password</label>
                     <div className="input-group">
                       <input
@@ -1860,13 +2365,7 @@ Login URL:${COPY_API_URL}`;
                 </div>
                 <div className="modal-footer">
                   <button
-                    className="btn btn-danger"
-                    onClick={() => setShowPasswordModal(false)}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="btn btn-info"
+                    className="btn btn-theme"
                     onClick={handlePasswordChange}
                     disabled={
                       !passwordData.newPassword ||
@@ -1875,11 +2374,18 @@ Login URL:${COPY_API_URL}`;
                   >
                     Reset Password
                   </button>
+                  <button
+                    className="btn btn-dark"
+                    onClick={() => setShowPasswordModal(false)}
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         )}
+
         {showDepositModal && selectedAgent && (
           <div
             className="modal show d-block"
@@ -1889,7 +2395,9 @@ Login URL:${COPY_API_URL}`;
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
                 <div className="modal-header">
-                  <h5 className="modal-title">Deposit </h5>
+                  <h5 className="modal-title">
+                    Deposit to {selectedAgent.name}
+                  </h5>
                   <button
                     type="button"
                     className="btn-close"
@@ -1901,15 +2409,27 @@ Login URL:${COPY_API_URL}`;
                   ></button>
                 </div>
                 <div className="modal-body">
-                  <p>
-                    Deposit Balance to Super Agent:{" "}
+                  {/* <p>
+                    Deposit Balance to Super Master:{" "}
                     <strong>{selectedAgent.name}</strong>
                   </p>
                   <p className="mb-3">
-                    Current Balance: <strong>₹{selectedAgent.chips}</strong>
-                  </p>
+                    Current Balance: <strong>{selectedAgent.chips}</strong>
+                  </p> */}
+
                   <div className="mb-3">
-                    <label className="form-label">Deposit Amount (₹)</label>
+                    <label className="form-label text-uppercase">
+                      Available Amount
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={selectedAgent.chips}
+                      disabled
+                    />
+                  </div>
+                  <div>
+                    <label className="form-label">Deposit Amount </label>
                     <input
                       type="text"
                       className="form-control"
@@ -1920,14 +2440,14 @@ Login URL:${COPY_API_URL}`;
                       min="1"
                       step="0.01"
                     />
-                    <div className="form-text">
+                    {/* <div className="form-text">
                       Enter the amount you want to deposit to this agent's
                       account.
-                    </div>
+                    </div> */}
                   </div>
                   {depositAmount && !isNaN(depositAmount) && (
-                    <div className="alert alert-info">
-                      <strong>New Balance:</strong> ₹
+                    <div className="alert alert-info mt-2">
+                      <strong>New Balance:</strong>
                       {(
                         Number(selectedAgent.chips) + Number(depositAmount)
                       ).toLocaleString()}
@@ -1937,7 +2457,35 @@ Login URL:${COPY_API_URL}`;
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className="btn btn-theme"
+                    onClick={handleDepositToAgent}
+                    disabled={
+                      !depositAmount ||
+                      isNaN(depositAmount) ||
+                      Number(depositAmount) <= 0 ||
+                      (isProcessing && processingType === "deposit")
+                    }
+                  >
+                    {isProcessing && processingType === "deposit" ? (
+                      <>
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <FiPlusCircle className="me-2" />
+                        Deposit {depositAmount || 0}
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn btn-dark"
                     onClick={() => {
                       setShowDepositModal(false);
                       setSelectedAgent(null);
@@ -1959,33 +2507,6 @@ Login URL:${COPY_API_URL}`;
                     <FiPlusCircle className="me-2" />
                     Deposit ₹{depositAmount || 0}
                   </button> */}
-                  <button
-                    type="button"
-                    className="btn btn-success"
-                    onClick={handleDepositToAgent}
-                    disabled={
-                      !depositAmount ||
-                      isNaN(depositAmount) ||
-                      Number(depositAmount) <= 0 ||
-                      (isProcessing && processingType === "deposit")
-                    }
-                  >
-                    {isProcessing && processingType === "deposit" ? (
-                      <>
-                        <span
-                          className="spinner-border spinner-border-sm me-2"
-                          role="status"
-                          aria-hidden="true"
-                        ></span>
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        <FiPlusCircle className="me-2" />
-                        Deposit ₹{depositAmount || 0}
-                      </>
-                    )}
-                  </button>
                 </div>
               </div>
             </div>
@@ -2002,7 +2523,9 @@ Login URL:${COPY_API_URL}`;
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
                 <div className="modal-header">
-                  <h5 className="modal-title">Withdraw Balance</h5>
+                  <h5 className="modal-title">
+                    Withdraw from {selectedAgent.name}
+                  </h5>
                   <button
                     type="button"
                     className="btn-close"
@@ -2016,15 +2539,26 @@ Login URL:${COPY_API_URL}`;
                   ></button>
                 </div>
                 <div className="modal-body">
-                  <p>
-                    Withdraw Balance from Super Agent:{" "}
+                  {/* <p>
+                    Withdraw Balance from Super Master:{" "}
                     <strong>{selectedAgent.name}</strong>
                   </p>
                   <p className="mb-3">
-                    Current Balance: <strong>₹{selectedAgent.chips}</strong>
-                  </p>
+                    Current Balance: <strong>{selectedAgent.chips}</strong>
+                  </p> */}
                   <div className="mb-3">
-                    <label className="form-label">Withdraw Amount (₹)</label>
+                    <label className="form-label text-uppercase">
+                      Available Amount
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={selectedAgent.chips}
+                      disabled
+                    />
+                  </div>
+                  <div>
+                    <label className="form-label">Withdraw Amount </label>
                     <input
                       type="text"
                       className="form-control"
@@ -2036,13 +2570,13 @@ Login URL:${COPY_API_URL}`;
                       step="0.01"
                       max={selectedAgent.chips}
                     />
-                    <div className="form-text">
-                      Maximum withdrawable amount: ₹{selectedAgent.chips}
-                    </div>
+                    {/* <div className="form-text">
+                      Maximum withdrawable amount: {selectedAgent.chips}
+                    </div> */}
                   </div>
                   {withdrawAmount && !isNaN(withdrawAmount) && (
-                    <div className="alert alert-info">
-                      <strong>New Balance:</strong> ₹
+                    <div className="alert alert-info mt-2">
+                      <strong>New Balance:</strong>
                       {(
                         Number(selectedAgent.chips) - Number(withdrawAmount)
                       ).toLocaleString()}
@@ -2050,7 +2584,7 @@ Login URL:${COPY_API_URL}`;
                   )}
                   {withdrawAmount &&
                     Number(withdrawAmount) > Number(selectedAgent.chips) && (
-                      <div className="alert alert-danger">
+                      <div className="alert alert-danger mt-2">
                         <strong>Error:</strong> Withdraw amount cannot exceed
                         current balance
                       </div>
@@ -2059,28 +2593,7 @@ Login URL:${COPY_API_URL}`;
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-danger"
-                    onClick={() => {
-                      setShowWithdrawModal(false);
-                      setSelectedAgent(null);
-                      setWithdrawAmount("");
-                    }}
-                  >
-                    Cancel
-                  </button>
-                  {/* <button
-                    type="button"
-                    className="btn btn-danger"
-                    onClick={handleWithdrawFromAgent}
-                    disabled={!withdrawAmount || isNaN(withdrawAmount) || Number(withdrawAmount) <= 0 || Number(withdrawAmount) > Number(selectedAgent.chips)}
-                  >
-                    <FiMinusCircle className="me-2" />
-                    Withdraw ₹{withdrawAmount || 0}
-                  </button> */}
-
-                  <button
-                    type="button"
-                    className="btn btn-success"
+                    className="btn btn-theme"
                     onClick={handleWithdrawFromAgent}
                     disabled={
                       !withdrawAmount ||
@@ -2102,10 +2615,30 @@ Login URL:${COPY_API_URL}`;
                     ) : (
                       <>
                         <FiMinusCircle className="me-2" />
-                        Withdraw ₹{withdrawAmount || 0}
+                        Withdraw {withdrawAmount || 0}
                       </>
                     )}
                   </button>
+                  <button
+                    type="button"
+                    className="btn btn-dark"
+                    onClick={() => {
+                      setShowWithdrawModal(false);
+                      setSelectedAgent(null);
+                      setWithdrawAmount("");
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  {/* <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={handleWithdrawFromAgent}
+                    disabled={!withdrawAmount || isNaN(withdrawAmount) || Number(withdrawAmount) <= 0 || Number(withdrawAmount) > Number(selectedAgent.chips)}
+                  >
+                    <FiMinusCircle className="me-2" />
+                    Withdraw ₹{withdrawAmount || 0}
+                  </button> */}
                 </div>
               </div>
             </div>
@@ -2142,7 +2675,7 @@ Login URL:${COPY_API_URL}`;
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-dark"
                     onClick={() => {
                       setShowEditModal(false);
                       setSelectedAgent(null);
@@ -2152,7 +2685,7 @@ Login URL:${COPY_API_URL}`;
                   </button>
                   <button
                     type="button"
-                    className="btn btn-primary"
+                    className="btn btn-theme"
                     onClick={() => {
                       // showSuccessToast("Agent updated successfully");
                       setShowEditModal(false);
@@ -2184,4 +2717,4 @@ Login URL:${COPY_API_URL}`;
   );
 }
 
-export default AgentMaster;
+export default AgentMasterClone;

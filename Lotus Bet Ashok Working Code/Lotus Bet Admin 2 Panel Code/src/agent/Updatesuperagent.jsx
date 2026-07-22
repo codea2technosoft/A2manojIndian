@@ -420,11 +420,11 @@ const CreateSuperAgentAdmin = () => {
             />
 
             <div className="card">
-                <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                    <h5 className="mb-0">Create Agent Admin</h5>
+                <div className="card-header d-flex justify-content-between align-items-center">
+                    <h3 className="card-title mb-0">Create Agent Admin</h3>
                     <div className="d-flex gap-2">
                         <button
-                            className="btn btn-success btn-sm"
+                            className="btn btn-outline-light"
                             onClick={() => navigate(-1)}
                         >
                             Back
@@ -437,12 +437,12 @@ const CreateSuperAgentAdmin = () => {
 
                             {/* USER INFO Section */}
                             <div className="col-12 mb-4">
-                                <h5 className="border-bottom pb-2">USER INFO</h5>
+                                <h6 className="border-bottom pb-2">USER INFO</h6>
                             </div>
 
                             {/* NAME */}
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">NAME</label>
+                                <label className="form-label">Name</label>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -455,7 +455,7 @@ const CreateSuperAgentAdmin = () => {
 
                             {/* USERNAME */}
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">USERNAME</label>
+                                <label className="form-label">User Name</label>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -469,12 +469,12 @@ const CreateSuperAgentAdmin = () => {
                       
                             {/* MATCH AND SHARE INFO Section */}
                             <div className="col-12 my-4">
-                                <h5 className="border-bottom pb-2">MATCH AND SHARE INFO</h5>
+                                <h6 className="border-bottom pb-2">MATCH AND SHARE INFO</h6>
                             </div>
 
                             {/* MY MATCH SHARE */}
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">MY  SHARE</label>
+                                <label className="form-label">My Share</label>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -617,7 +617,7 @@ const CreateSuperAgentAdmin = () => {
                                 <div className="d-flex justify-content-end">
                                     <button
                                         type="submit"
-                                        className="refreshbutton"
+                                        className="btn btn-success"
                                         disabled={isSubmitting || hasValidationErrors}
                                     >
                                         {isSubmitting ? (

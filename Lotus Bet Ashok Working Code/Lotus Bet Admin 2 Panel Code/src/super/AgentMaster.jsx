@@ -876,11 +876,11 @@ OTP: ${agent.admin_otp || "N/A"}`;
   return (
     <>
       <div className="card agentmaster">
-        <div className="card-header bg-color-black text-white d-flex justify-content-between align-items-center">
-          <h5 className="mb-0">Agent LIST</h5>
+        <div className="card-header d-flex justify-content-between align-items-center">
+          <h3 className="card-title mb-0">Agent LIST</h3>
           <div className="d-flex gap-2">
             <button
-              className="btn btn-success btn-sm"
+              className="btn btn-light"
               onClick={handleCreateAgent}
             >
               Create
@@ -903,7 +903,7 @@ OTP: ${agent.admin_otp || "N/A"}`;
                     onKeyPress={handleSearchKeyPress}
                   />
                   <button
-                    className="btn btn-outline-primary py-1 border border-dark"
+                    className="btn btn-outline-success py-1"
                     type="button"
                     onClick={handleSearch}
                     disabled={isSearching}

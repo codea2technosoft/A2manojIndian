@@ -23,6 +23,8 @@ import DownloadMultipleDocuments from "./Page/OfficialDocuments/OfficialDocument
 import DownloadRRPlans from "./Page/DownloadRRPlans/DownloadRRPlans";
 import AssociateRegisterForm from "./Commonpage/AssociateRegisterForm";
 import UserDashboard from "./Page/Mydashboard/UserDashboard";
+import Terms from './Page/Termsandcondition'
+import Privacy from './Page/Privacypolicy'
 import "aos/dist/aos.css";
 
 function App() {
@@ -61,6 +63,8 @@ function App() {
             <Route path="blog-details/:slug" element={<Blogdetails />} />
             <Route path="marketingpartmner_rule" element={<Partnermarkettingrule />} />
             <Route path="booking_form" element={<Bookingform />} />
+            <Route path="terms-and-condition" element={<Terms />} />
+            <Route path="privacy-policy" element={<Privacy />} />
 
             <Route path="aboutus" element={<Aboutus />} />
             {/* Nested Dashboard Routes */}

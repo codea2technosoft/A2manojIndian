@@ -8,21 +8,24 @@ import {
   getFancySecondList,
   changeFancyStatusNew,
   manageFancyResult,
-  getFancyStatusList
-
+  getFancyStatusList,
 } from "../../Server/api";
 
 function FancyList() {
   const navigate = useNavigate();
   const { eventId } = useParams();
   const [fancies, setFancies] = useState([]);
-    const [fancyStatusMap, setFancyStatusMap] = useState({});
+  const [fancyStatusMap, setFancyStatusMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
   const showToast = (message, type = "success") =>
     setToast({ show: true, message, type });
   const hideToast = () => setToast({ show: false, message: "", type: "" });
-  const [resultModal, setResultModal] = useState({ show: false, fancy: null, result_val: "" });
+  const [resultModal, setResultModal] = useState({
+    show: false,
+    fancy: null,
+    result_val: "",
+  });
 
   const fetchFancyList = async () => {
     try {
@@ -30,8 +33,6 @@ function FancyList() {
       const response = await getFancySecondList(eventId);
 
       if (response.data.success && Array.isArray(response.data.data)) {
-
-
         setFancies(response.data.fancy_data);
       } else {
         showToast("No fancy list found", "error");
@@ -44,47 +45,45 @@ function FancyList() {
     }
   };
 
-const fetchFancyStatus = async () => {
-  try {
-    const response = await getFancyStatusList(eventId);
+  const fetchFancyStatus = async () => {
+    try {
+      const response = await getFancyStatusList(eventId);
 
-    if (response.data.success) {
- const statusData = response.data.data || [];
+      if (response.data.success) {
+        const statusData = response.data.data || [];
 
- const statusMap = {};
-        statusData.forEach(item => {
+        const statusMap = {};
+        statusData.forEach((item) => {
           statusMap[item.fancy_id] = {
             status: item.status,
-            fc_status: item.fc_status || "INACTIVE"
+            fc_status: item.fc_status || "INACTIVE",
           };
         });
 
-     setFancyStatusMap(statusMap);
-       setFancies(prevFancies => 
-          prevFancies.map(fancy => {
+        setFancyStatusMap(statusMap);
+        setFancies((prevFancies) =>
+          prevFancies.map((fancy) => {
             const statusInfo = statusMap[fancy.SelectionId];
             if (statusInfo) {
               return {
                 ...fancy,
                 status: parseInt(statusInfo.status),
-                GameStatus: statusInfo.fc_status
+                GameStatus: statusInfo.fc_status,
               };
             }
             return fancy;
-          })
+          }),
         );
-        
-      showToast(response.data.message, "success");
 
-    } else {
-      showToast(response.data.message, "error");
+        showToast(response.data.message, "success");
+      } else {
+        showToast(response.data.message, "error");
+      }
+    } catch (error) {
+      console.error("Fancy status fetch error:", error);
+      showToast("Server error while fetching fancy status", "error");
     }
-  } catch (error) {
-    console.error("Fancy status fetch error:", error);
-    showToast("Server error while fetching fancy status", "error");
-  }
-};
-
+  };
 
   // useEffect(() => {
   //   fetchFancyList();
@@ -119,14 +118,16 @@ const fetchFancyStatus = async () => {
 
         setFancies((prev) =>
           prev.map((f) =>
-            f.SelectionId === item.SelectionId ? {
-              ...f,
-               status: newStatus,
-              GameStatus: newStatus === 1 ? "ACTIVE" : "INACTIVE"
-            } : f
-          )
+            f.SelectionId === item.SelectionId
+              ? {
+                  ...f,
+                  status: newStatus,
+                  GameStatus: newStatus === 1 ? "ACTIVE" : "INACTIVE",
+                }
+              : f,
+          ),
         );
-         fetchFancyStatus();
+        fetchFancyStatus();
       } else {
         showToast(response.data.message);
       }
@@ -140,7 +141,7 @@ const fetchFancyStatus = async () => {
     setResultModal({
       show: true,
       fancy: fancy,
-      result_val: ""
+      result_val: "",
     });
   };
 
@@ -156,7 +157,7 @@ const fetchFancyStatus = async () => {
         fancy_id: fancy.SelectionId,
         event_id: eventId,
         result_val: result_val,
-        runner_name: fancy.RunnerName
+        runner_name: fancy.RunnerName,
       };
       const response = await manageFancyResult(payload);
       if (response.data.success) {
@@ -187,7 +188,6 @@ const fetchFancyStatus = async () => {
     await fetchFancyStatus();
   };
 
-
   if (loading)
     return (
       <div className="text-center mt-3">
@@ -197,12 +197,15 @@ const fetchFancyStatus = async () => {
     );
 
   return (
-    <div className="mt-3">
+    <div className="status">
       {toast.show && (
         <Toast message={toast.message} type={toast.type} onClose={hideToast} />
       )}
       {resultModal.show && (
-        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div
+          className="modal show d-block"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
@@ -210,18 +213,27 @@ const fetchFancyStatus = async () => {
                 <button
                   type="button"
                   className="btn-close"
-                  onClick={() => setResultModal({ show: false, fancy: null, result_val: "" })}
+                  onClick={() =>
+                    setResultModal({ show: false, fancy: null, result_val: "" })
+                  }
                 ></button>
               </div>
               <div className="modal-body">
-                <p><strong>Fancy Name:</strong> {resultModal.fancy?.RunnerName}</p>
+                <p>
+                  <strong>Fancy Name:</strong> {resultModal.fancy?.RunnerName}
+                </p>
                 <div className="mb-3">
                   <label className="form-label">Result Value</label>
                   <input
                     type="text"
                     className="form-control"
                     value={resultModal.result_val}
-                    onChange={(e) => setResultModal({ ...resultModal, result_val: e.target.value })}
+                    onChange={(e) =>
+                      setResultModal({
+                        ...resultModal,
+                        result_val: e.target.value,
+                      })
+                    }
                     placeholder="Enter result"
                   />
                 </div>
@@ -230,7 +242,9 @@ const fetchFancyStatus = async () => {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={() => setResultModal({ show: false, fancy: null, result_val: "" })}
+                  onClick={() =>
+                    setResultModal({ show: false, fancy: null, result_val: "" })
+                  }
                 >
                   Cancel
                 </button>
@@ -248,17 +262,15 @@ const fetchFancyStatus = async () => {
       )}
 
       <div className="card">
-        <div className="card-header bg-dark text-white d-flex  justify-content-between align-items-center">
+        <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
           <h3 className="card-title mb-0">Fancy Status Management</h3>
           <div className="d-flex  gap-2">
-
-
-             <button
-    className="btn btn-outline-light"
-    onClick={handleRefresh}  // fetchFancyList की जगह handleRefresh
-  >
-    <MdFilterListAlt /> Refresh All
-  </button>
+            <button
+              className="btn btn-light"
+              onClick={handleRefresh}
+            >
+              <MdFilterListAlt /> Refresh All
+            </button>
             <Button variant="secondary" onClick={() => navigate(-1)}>
               Back
             </Button>
@@ -288,13 +300,17 @@ const fetchFancyStatus = async () => {
                       {item.LayPrice1} ({item.LaySize1})
                     </td> */}
                     {/* <td>{item.GameStatus}</td> */}
-                    <td>{getStatusBadge(item.GameStatus === "ACTIVE" ? 1 : 0)}</td>
+                    <td>
+                      {getStatusBadge(item.GameStatus === "ACTIVE" ? 1 : 0)}
+                    </td>
                     <td>
                       <button
                         className={`btn ${item.GameStatus === "ACTIVE" ? "btn-danger" : "btn-success"}`}
                         onClick={() => handleFancyStatusChange(item)}
                       >
-                        {item.GameStatus === "ACTIVE" ? "Deactivate" : "Activate"}
+                        {item.GameStatus === "ACTIVE"
+                          ? "Deactivate"
+                          : "Activate"}
                       </button>
                     </td>
                   </tr>

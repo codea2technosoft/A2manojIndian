@@ -133,53 +133,55 @@ function Header({ onToggleSidebar }) {
     window.location.href = "/login";
   };
 
-  useEffect(() => {
-    if (!socketRef.current) {
-      try {
-        const socket = io("https://chatapi.ankmatka.com", {
-          transports: ["websocket"],
-          withCredentials: true,
-          reconnection: true,
-        });
+  // useEffect(() => {
+  //   if (!socketRef.current) {
+  //     try {
+  //       const socket = io("https://chatapi.ankmatka.com", {
+  //         transports: ["websocket"],
+  //         withCredentials: true,
+  //         reconnection: true,
+  //       });
 
-        socketRef.current = socket;
+  //       socketRef.current = socket;
 
-        socket.on("connect", () => {
-          console.log("✅ Connected with socket ID:", socket.id);
-          socket.emit("join", {
-            userId: "user123",
-            role: "user",
-          });
-        });
+  //       socket.on("connect", () => {
+  //         console.log("✅ Connected with socket ID:", socket.id);
+  //         socket.emit("join", {
+  //           userId: "user123",
+  //           role: "user",
+  //         });
+  //       });
 
-        socket.on("receive_messageAdminnotifiactionCount", (data) => {
-          setAdminNotifiaction(data.totalUnseenAdmin);
-        });
+  //       socket.on("receive_messageAdminnotifiactionCount", (data) => {
+  //         setAdminNotifiaction(data.totalUnseenAdmin);
+  //       });
 
-        socket.on("disconnect", () => {
-          console.log("⚠️ Socket disconnected");
-        });
+  //       socket.on("disconnect", () => {
+  //         console.log("⚠️ Socket disconnected");
+  //       });
 
-        socket.on("connect_error", (err) => {
-          console.error("❌ Connection Error:", err);
-        });
+  //       socket.on("connect_error", (err) => {
+  //         console.error("❌ Connection Error:", err);
+  //       });
 
-        socket.on("error", (err) => {
-          console.error("❌ General Socket Error:", err);
-        });
-      } catch (e) {
-        console.error("❌ Exception in socket setup:", e);
-      }
-    }
+  //       socket.on("error", (err) => {
+  //         console.error("❌ General Socket Error:", err);
+  //       });
+  //     } catch (e) {
+  //       console.error("❌ Exception in socket setup:", e);
+  //     }
+  //   }
 
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-        console.log("🔌 Socket disconnected on unmount");
-        socketRef.current = null;
-      }
-    };
-  }, []);
+  //   return () => {
+  //     if (socketRef.current) {
+  //       socketRef.current.disconnect();
+  //       console.log("🔌 Socket disconnected on unmount");
+  //       socketRef.current = null;
+  //     }
+  //   };
+  // }, []);
+
+
   const [isOpen, setIsOpen] = useState(false);
 
   const [oldPassword, setOldPassword] = useState("");

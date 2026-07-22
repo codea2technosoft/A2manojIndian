@@ -88,7 +88,7 @@ const UserExposer = () => {
       <div className="card">
 
         {/* Header */}
-        <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between">
+        <div className="card-header d-flex bg-primary-yellow justify-content-between">
           <h5 className="mb-0">Exposer Detail</h5>
           <button onClick={() => navigate(-1)} className="backbutton">
             Back

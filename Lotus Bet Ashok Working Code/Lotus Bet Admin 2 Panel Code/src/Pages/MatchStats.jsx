@@ -291,9 +291,9 @@ function GetEventBets() {
   };
 
   return (
-    <div className="card mt-4">
-      <div className="card-header bg-color-black text-white d-flex justify-content-between align-items-md-center align-items-start">
-        <h3 className="card-title text-white mb-0">MATCH STATS</h3>
+    <div className="card">
+      <div className="card-header d-flex justify-content-between align-items-md-center align-items-start">
+        <h3 className="card-title mb-0">Match Stats</h3>
 
         <div className="filter-controls gap-2 d-flex align-items-center mobilewidthh">
           <div className="bet-type-filter w-100">
@@ -312,7 +312,7 @@ function GetEventBets() {
           </div>
 
           <button
-            className="btn btn-sm btn-outline-light"
+            className="btn btn-outline-light btn-sm"
             onClick={() => {
               setSelectedBetType("all");
               setFilteredData(betsData);
@@ -342,13 +342,13 @@ function GetEventBets() {
                     <table className="bets-table table table-striped">
                       <thead className="table-dark">
                         <tr>
-                          <th style={{ color: "white" }}>PLACE TIME</th>
-                          <th style={{ color: "white" }}>USERNAME</th>
-                          <th style={{ color: "white" }}>RUNNER NAME</th>
-                          <th style={{ color: "white" }}>BET TYPE</th>
-                          <th style={{ color: "white" }}>BET PRICE</th>
-                          <th style={{ color: "white" }}>BET VALUE</th>
-                          <th style={{ color: "white" }}>BET AMOUNT</th>
+                          <th>PLACE TIME</th>
+                          <th>USERNAME</th>
+                          <th>RUNNER NAME</th>
+                          <th>BET TYPE</th>
+                          <th>BET PRICE</th>
+                          <th>BET VALUE</th>
+                          <th>BET AMOUNT</th>
                         </tr>
                       </thead>
                     </table>
@@ -376,14 +376,14 @@ function GetEventBets() {
                     <table className="bets-table table table-hover table-striped">
                       <thead className="table-dark">
                         <tr>
-                          <th className="text-white">PLACE TIME</th>
-                          <th className="text-white">USERNAME</th>
-                          <th className="text-white">RUNNER NAME</th>
-                          <th className="text-white">BET TYPE</th>
-                          <th className="text-white"> TYPE</th>
-                          <th className="text-white">BET PRICE</th>
-                          <th className="text-white">BET VALUE</th>
-                          <th className="text-white">BET AMOUNT</th>
+                          <th>PLACE TIME</th>
+                          <th>USERNAME</th>
+                          <th>RUNNER NAME</th>
+                          <th>BET TYPE</th>
+                          <th>TYPE</th>
+                          <th>BET PRICE</th>
+                          <th>BET VALUE</th>
+                          <th>BET AMOUNT</th>
                         </tr>
                       </thead>
                       <tbody>

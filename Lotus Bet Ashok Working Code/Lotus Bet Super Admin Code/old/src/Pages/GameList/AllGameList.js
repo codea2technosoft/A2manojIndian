@@ -4,6 +4,7 @@ import { getAllGames, toggleGameStatus } from "../../Server/game.service";
 import ToggleSwitch from "../../Common/ToggleSwitch";
 import { useNavigate } from "react-router";
 import { FaEye } from "react-icons/fa";
+
 function AllGameList() {
   const [filter, setFilter] = useState(false);
   const [games, setGames] = useState([]);
@@ -11,7 +12,7 @@ function AllGameList() {
   const [error, setError] = useState("");
   const [updating, setUpdating] = useState(null);
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const fetchGames = async () => {
     try {
       setLoading(true);
@@ -63,9 +64,7 @@ function AllGameList() {
         const updatedGame = response.data.data;
 
         setGames((prev) =>
-          prev.map((g) =>
-            g._id === game._id ? updatedGame : g
-          )
+          prev.map((g) => (g._id === game._id ? updatedGame : g)),
         );
 
         showToast("Status updated successfully");
@@ -109,14 +108,13 @@ function AllGameList() {
     );
 
   return (
-    <div className="mt-3">
+    <div className="all_sport">
       {toast.show && (
         <Toast message={toast.message} type={toast.type} onClose={hideToast} />
       )}
       <div className="card">
-        <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+        <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
           <h3 className="card-title mb-0">All Sports List</h3>
-          
         </div>
 
         <div className="card-body table-responsive">
@@ -127,7 +125,7 @@ function AllGameList() {
                 <th>Sports Name</th>
                 <th>Category</th>
                 <th>Status</th>
-                <th>Action</th>
+                <th className="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -142,7 +140,7 @@ function AllGameList() {
                     <td>{game.category}</td>
                     <td>{getStatusBadge(game.isActive)}</td>
                     <td>
-                      <div className="d-flex align-items-center gap-2">
+                      <div className="d-flex align-items-center gap-2 justify-content-center gap-3">
                         <ToggleSwitch
                           checked={game.isActive}
                           loading={updating === game._id}
@@ -156,25 +154,25 @@ function AllGameList() {
                           <FaEye />
                         </button>
                         <button
-                          className="btn btn-sm btn-info"
+                          className="btn btn-sm btn-warning"
                           onClick={() => handleActive(game.id)}
                           title="Active"
                         >
-                         Active
+                          Active
                         </button>
                         <button
-                          className="btn btn-sm btn-info"
+                          className="btn btn-sm btn-danger"
                           onClick={() => handleInActive(game.id)}
                           title="InActive"
                         >
-                         InActive
+                          InActive
                         </button>
                         <button
-                          className="btn btn-sm btn-info"
+                          className="btn btn-sm btn-success"
                           onClick={() => handleComplete(game.id)}
                           title="Complete"
                         >
-                         Complete
+                          Complete
                         </button>
                       </div>
                     </td>

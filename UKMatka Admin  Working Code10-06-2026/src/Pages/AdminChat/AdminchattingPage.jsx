@@ -31,61 +31,61 @@ const UserChat = () => {
   const [input, setInput] = useState("");
 
   // Initialize socket connection
-  useEffect(() => {
-    const initializeSocket = () => {
-      if (!socketRef.current) {
-        const socket = io("https://chatapi.ankmatka.com", {
-          transports: ["websocket"],
-          withCredentials: true,
-          reconnection: true,
-          reconnectionAttempts: 5,
-          reconnectionDelay: 1000,
-        });
+  // useEffect(() => {
+  //   const initializeSocket = () => {
+  //     if (!socketRef.current) {
+  //       const socket = io("https://chatapi.ankmatka.com", {
+  //         transports: ["websocket"],
+  //         withCredentials: true,
+  //         reconnection: true,
+  //         reconnectionAttempts: 5,
+  //         reconnectionDelay: 1000,
+  //       });
 
-        socketRef.current = socket;
+  //       socketRef.current = socket;
 
-        socket.on("connect", () => {
-          console.log("✅ Connected with socket ID:", socket.id);
-          setIsConnected(true);
+  //       socket.on("connect", () => {
+  //         console.log("✅ Connected with socket ID:", socket.id);
+  //         setIsConnected(true);
 
-          socket.emit("headernotifiactionSocket", {
-            userId: user_id,
-            role: "user",
-          });
-        });
+  //         socket.emit("headernotifiactionSocket", {
+  //           userId: user_id,
+  //           role: "user",
+  //         });
+  //       });
 
-        socket.on("receive_message", (data) => {
-          console.log("📥 Message Received:", data);
-          const filteredChats =
-            data.formattedChatData
-              ?.flatMap((item) => item.chatDataItems || [])
-              ?.filter((chat) => chat.user_id === user_id) || [];
-          setchatdataList(filteredChats);
-          setChat((prev) => [...prev, data]);
-        });
+  //       socket.on("receive_message", (data) => {
+  //         console.log("📥 Message Received:", data);
+  //         const filteredChats =
+  //           data.formattedChatData
+  //             ?.flatMap((item) => item.chatDataItems || [])
+  //             ?.filter((chat) => chat.user_id === user_id) || [];
+  //         setchatdataList(filteredChats);
+  //         setChat((prev) => [...prev, data]);
+  //       });
 
-        socket.on("disconnect", () => {
-          console.log("⚠️ Socket disconnected");
-          setIsConnected(false);
-          socketRef.current = null;
-        });
+  //       socket.on("disconnect", () => {
+  //         console.log("⚠️ Socket disconnected");
+  //         setIsConnected(false);
+  //         socketRef.current = null;
+  //       });
 
-        socket.on("connect_error", (err) => {
-          console.error("Connection error:", err);
-          setIsConnected(false);
-        });
-      }
-    };
+  //       socket.on("connect_error", (err) => {
+  //         console.error("Connection error:", err);
+  //         setIsConnected(false);
+  //       });
+  //     }
+  //   };
 
-    initializeSocket();
+  //   initializeSocket();
 
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-        socketRef.current = null;
-      }
-    };
-  }, [user_id]);
+  //   return () => {
+  //     if (socketRef.current) {
+  //       socketRef.current.disconnect();
+  //       socketRef.current = null;
+  //     }
+  //   };
+  // }, [user_id]);
 
   // Timer for popup
   useEffect(() => {

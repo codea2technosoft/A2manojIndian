@@ -3,8 +3,11 @@ import { IoChatboxEllipses } from "react-icons/io5";
 import "./Sidebar.scss";
 import { IoIosArrowDown } from "react-icons/io";
 import { BsBank } from "react-icons/bs";
+import { MdCasino } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 import { useNavigate, useLocation, Link, NavLink } from "react-router-dom";
+import { LiaAngleDoubleRightSolid } from "react-icons/lia";
+import { GrTasks } from "react-icons/gr";
 import {
   FaTachometerAlt,
   FaUsers,
@@ -18,8 +21,16 @@ import {
   FaGlobe,
   FaSignOutAlt,
   FaUserShield,
+  FaChartLine,
+  FaLayerGroup,
+  FaUserPlus,
+  FaBalanceScale,
+  FaFileAlt,
+  FaAngleDoubleRight,
+  FaListOl,
+  FaRegCircle,
 } from "react-icons/fa";
-import logo from '../asset/image/logo.png'
+import logo from "../asset/image/logo.png";
 
 const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
   const [activeParent, setActiveParent] = useState(null);
@@ -30,10 +41,10 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
   const navigate = useNavigate();
   const isMobileview = window.innerWidth <= 991;
   const userTypes = localStorage.getItem("isLoggedIn");
-  const storedPermissions = JSON.parse(localStorage.getItem("permissions")) || [];
+  const storedPermissions =
+    JSON.parse(localStorage.getItem("permissions")) || [];
 
   const [isDark, setIsDark] = useState(false);
-
 
   const handleReloadLogic = (itemId) => {
     const adminId = localStorage.getItem("admin_id_new");
@@ -61,7 +72,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
     }
   };
 
-  // 🔍 Recursive function to find active item and its parents
   const findActiveItemAndParents = (items, pathname, parentChain = []) => {
     for (let item of items) {
       // ✅ Check if current item matches
@@ -74,11 +84,10 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
       // 🔁 Check children recursively
       if (item.children && item.children.length > 0) {
-        const found = findActiveItemAndParents(
-          item.children,
-          pathname,
-          [...parentChain, item.id]
-        );
+        const found = findActiveItemAndParents(item.children, pathname, [
+          ...parentChain,
+          item.id,
+        ]);
 
         if (found) return found;
       }
@@ -99,7 +108,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
         // Open all parent dropdowns
         const newDropdowns = {};
-        result.parents.forEach(parentId => {
+        result.parents.forEach((parentId) => {
           newDropdowns[parentId] = true;
         });
 
@@ -148,9 +157,9 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
     // If this is a child item, ensure parent dropdown is open
     if (parentId) {
-      setActiveDropdowns(prev => ({
+      setActiveDropdowns((prev) => ({
         ...prev,
-        [parentId]: true
+        [parentId]: true,
       }));
     }
   };
@@ -161,7 +170,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
     sessionStorage.clear();
     // window.location.path = "/login";
     navigate("/login", { replace: true });
-
   };
 
   // 🔒 Check permissions
@@ -207,7 +215,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
     // Check if item or any of its children are permitted
     const canShowItem =
       isPermitted(item.id) ||
-      (item.dropdown && item.children?.some(child => isPermitted(child.id)));
+      (item.dropdown && item.children?.some((child) => isPermitted(child.id)));
 
     if (!canShowItem) return null;
 
@@ -280,7 +288,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
           </NavLink>
         )}
 
-
         {/* Submenu */}
         {item.dropdown && isDropdownOpen && item.children && (
           <div className={`collapse show`}>
@@ -306,6 +313,11 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
                       className={`menu-link ${activeItem === child.id ? "active-link" : ""}`}
                       onClick={() => handleItemClick(child, item.id)}
                     >
+                      {item.id === "ActiveAllGames" ? (
+                        <FaRegCircle className="me-2" />
+                      ) : (
+                        <LiaAngleDoubleRightSolid className="me-2" />
+                      )}
                       <span className="menu-text">{child.title}</span>
                     </Link>
                   </li>
@@ -318,10 +330,9 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
     );
   };
 
-  // 📋 Menu items definition - आपका original menu items array
   const menuItems = [
     {
-      section: "Menu",
+      // section: "Menu",
       items: [
         // {
         //   id: "homedashboard",
@@ -382,57 +393,343 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         // },
 
         {
-          id: "adminsdetails",
-          title: "Admin Details",
+          id: "marketanalsis",
+          title: "Market Analysis",
+          icon: <GrTasks />,
+          path: "/market-analysis",
+        },
+        {
+          id: "multimarket",
+          title: "Multi Market",
+          icon: <FaListOl />,
+          path: "/multi-market",
+        },
+
+        {
+          id: "userlist",
+          title: "User List",
           dropdown: true,
           icon: <FaUsers />,
           children: [
+            // {
+            //   id: "Master",
+            //   title: " My Child",
+            //   path: "/masters_list",
+            // },
 
             {
               id: "Master",
-              title: " Master",
-              path: "/masters_list",
+              title: " My Child",
+              path: "/agent_lists_clone",
             },
 
             {
               id: "Superagent",
-              title: " Super agent",
+              title: " Super Master",
               path: "/agent_lists",
             },
             {
               id: "agent",
-              title: " agent",
+              title: " Master",
               path: "/AgentMasternew",
             },
             {
               id: "myuserMaster",
-              title: " User",
+              title: " Client",
               path: "/Mastermyuser",
             },
+            {
+              id: "blockedUser",
+              title: " Blocked Users",
+              path: "/blocked-child-list",
+            },
           ],
         },
+
         {
-          id: "sportbetting",
-          title: " Sport Betting",
+          id: "usercreate",
+          title: "User Create",
           dropdown: true,
-          icon: <FaFutbol />,
+          icon: <FaUserPlus />,
           children: [
-
             {
-              id: "inplaygame",
-              title: "In Play Game ",
-              path: "/inplay_game",
-            },
-            {
-              id: "Usertransaction",
-              title: "Completed Game ",
-              path: "/completed_game",
+              id: "newsupermaster",
+              title: "Create New Super Master",
+              path: "/create-master",
             },
 
-
-
+            // {
+            //   id: "newmaster",
+            //   title: "Create New Master",
+            //   path: "/SelectSuperagent",
+            // },
+            // {
+            //   id: "newclient",
+            //   title: "Create New Client",
+            //   path: "/Clientmasternew",
+            // },
           ],
         },
+        // {
+        //   id: "settlement",
+        //   title: "Settlement",
+        //   icon: <FaBalanceScale />,
+        //   path: "/Master-ledger",
+        // },
+
+        {
+          id: "settlement",
+          title: "Settlement",
+          icon: <FaBalanceScale />,
+          path: "/super-agent-ledger",
+        },
+
+        {
+          id: "ActiveAllGames",
+          title: "Active All Games",
+          dropdown: true,
+          icon: <FaGamepad />,
+
+          children: [
+            {
+              id: "cricket_management",
+              title: "Cricket",
+              path: "/active-all-games/4",
+            },
+            {
+              id: "football_management",
+              title: "Football",
+              path: "/active-all-games/1",
+            },
+            {
+              id: "tennis_management",
+              title: "Tennis",
+              path: "/active-all-games/2",
+            },
+            // {
+            //   id: "horseracing_management",
+            //   title: "Horse Racing",
+            //   path: "/active-all-games/7",
+            // },
+            {
+              id: "horseracing_management",
+              title: "Horse Racing",
+              path: "/sport-horse-racing/7",
+            },
+
+            {
+              id: "grey_hound_racing_management",
+
+              title: "Grey Hound Racing",
+
+              path: "/sport-greyhund-racing/8",
+            },
+          ],
+        },
+
+          {
+          id: "GameReports",
+          title: "Reports",
+          dropdown: true,
+          icon: <FaFileAlt />,
+
+          children: [
+            {
+              id: "account-statement",
+              title: "Account Statement",
+              path: "/reports/account-statement",
+            },
+            {
+              id: "profit-loss",
+              title: "Profit Loss",
+              path: "/reports/profit-loss",
+            },
+            {
+              id: "chip-statement",
+              title: "Chip Statement",
+              path: "/reports/chip-statement",
+            },
+            {
+              id: "chip-summary",
+              title: "Chip Summary",
+              path: "/reports/chip-summary",
+            },
+
+            {
+              id: "settlement-report",
+              title: "Settlement Report",
+              path: "/reports/settlement-report",
+            },
+
+            {
+              id: "sport-summary-report",
+              title: "Sport Summary Report",
+              path: "/reports/sport-summary-report",
+            },
+
+            {
+              id: "top-clients",
+              title: "Top Clients",
+              path: "/reports/top-clients",
+            },
+
+            {
+              id: "settlement",
+              title: "Settlement",
+              path: "/super-agent-ledger",
+            },
+
+            {
+              id: "balance-sheet",
+              title: "Balance Sheet",
+              path: "/reports/balance-sheet",
+            },
+          ],
+        },
+
+        {
+          id: "casinomanagement",
+          title: "Casino Settings" ,
+          dropdown: true,
+          icon: <MdCasino />,
+
+          children: [
+            {
+              id: "casinomanagement",
+              title: "Casino Providers Lists",
+              path: "/casino/casino-providers-lists",
+            },
+          ],
+        },
+
+      
+
+        {
+          id: "Game_Management",
+          title: "Sport Management",
+          dropdown: true,
+          icon: <FaGamepad />,
+
+          children: [
+            {
+              id: "sports_management",
+              title: "Sports",
+              path: "/sports",
+            },
+            // {
+            //   id: "cricket_management",
+            //   title: "Cricket",
+            //   path: "/cricket",
+            // },
+            // {
+            //   id: "active_events",
+            //   title: "Active Events",
+            //   path: "/active_events",
+            // },
+            // {
+            //   id: "inactive_events",
+            //   title: "Inactive Events",
+            //   path: "/inActive_events",
+            // },
+            // {
+            //   id: "complete_events",
+            //   title: "Complete Events",
+            //   path: "/complete_events",
+            // },
+            {
+              id: "fancy_management_view",
+              title: "Fancy Result",
+              path: "/view_match",
+            },
+            {
+              id: "declare_result",
+              title: "Result Declare",
+              path: "/declare_result",
+            },
+            {
+              id: "/fancy-result-list",
+              title: "Fancy Result List",
+              path: "/fancy-result-list",
+            },
+          ],
+        },
+
+        //  {
+        //   id: "app_settings",
+        //   title: "Admin Setting",
+        //   path: "/setting",
+        //   icon: <FaCog />,
+        // },
+        {
+          id: "web-setting",
+          title: "Web Setting",
+          path: "/web-setting",
+          icon: <FaGlobe />,
+        },
+
+         {
+          id: "slider",
+          title: "Slider",
+          path: "/slider_lists",
+          icon: <FaImages />,
+        },
+
+
+        // {
+        //   id: "sportbetting",
+        //   title: " Sport Betting",
+        //   dropdown: true,
+        //   icon: <FaFutbol />,
+        //   children: [
+        //     {
+        //       id: "inplaygame",
+        //       title: "In Play Game ",
+        //       path: "/inplay_game",
+        //     },
+        //     {
+        //       id: "Usertransaction",
+        //       title: "Completed Game ",
+        //       path: "/completed_game",
+        //     },
+        //   ],
+        // },
+
+        // {
+        //   id: "Superagenttransaction",
+        //   title: "Cash Transactions",
+        //   dropdown: true,
+        //   icon: <FaMoneyBillWave />,
+        //   children: [
+        //     {
+        //       id: "agent_master",
+        //       title: "Master Transaction",
+        //       path: "/master-transaction",
+        //     },
+        //     {
+        //       id: "Superagenttransaction",
+        //       title: " Super agent ",
+        //       path: "/Superagenttransaction",
+        //       onClick: () => {
+        //         localStorage.removeItem("selectedSuperAgentId");
+        //       },
+        //     },
+        //     {
+        //       id: "Agenttransaction",
+        //       title: "  agent ",
+        //       path: "/Agenttransaction",
+        //     },
+        //     {
+        //       id: "Usertransaction",
+        //       title: "  User ",
+        //       path: "/Usertransaction",
+        //     },
+        //     {
+        //       id: "casetransactionreport",
+        //       title: "Reports",
+        //       path: "/case-transaction-report",
+        //     },
+        //   ],
+        // },
 
         // {
         //   id: "Comm_Report",
@@ -454,59 +751,58 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         //   ],
         // },
 
+        // {
+        //   id: "commission-report",
+        //   title: "Commission report",
+        //   path: "/commission-report",
+        //   icon: <FaFileInvoiceDollar />,
+        // },
 
-        {
-          id: "commission-report",
-          title: "Commission report",
-          path: "/commission-report",
-          icon: <FaFileInvoiceDollar />,
-        },
-
-        {
-          id: "Ledger",
-          title: "Ledger",
-          dropdown: true,
-          icon: <FaBook />,
-          children: [
-            {
-              id: "peofit_loss",
-              title: "Profit And Loss",
-              path: "/profitloss",
-            },
-            {
-              id: "My_Ledger",
-              title: "My Ledger",
-              path: "/my-ledger",
-            },
-            {
-              id: "Master_Ledger",
-              title: "Master",
-              path: "/Master-ledger",
-            },
-            {
-              id: "Super_Ledger",
-              title: "Super Agent",
-              path: "/super-agent-ledger",
-              onClick: () => {
-                // Clear localStorage when Super Agent ledger is clicked
-                // localStorage.removeItem("selectedSuperAgent");
-                localStorage.removeItem("selectedMasterId");
-                // localStorage.removeItem("selectedAdminId");
-                window.location.path = "/super-agent-ledger";
-              }
-            },
-            {
-              id: "agent_Ledger",
-              title: "Agent",
-              path: "/agent-ledger",
-            },
-            {
-              id: "user_Ledger",
-              title: "User",
-              path: "/user-ledger",
-            },
-          ],
-        },
+        // {
+        //   id: "Ledger",
+        //   title: "Ledger",
+        //   dropdown: true,
+        //   icon: <FaBook />,
+        //   children: [
+        //     {
+        //       id: "peofit_loss",
+        //       title: "Profit And Loss",
+        //       path: "/profitloss",
+        //     },
+        //     {
+        //       id: "My_Ledger",
+        //       title: "My Ledger",
+        //       path: "/my-ledger",
+        //     },
+        //     {
+        //       id: "Master_Ledger",
+        //       title: "Master",
+        //       path: "/Master-ledger",
+        //     },
+        //     {
+        //       id: "Super_Ledger",
+        //       title: "Super Agent",
+        //       path: "/super-agent-ledger",
+        //       onClick: () => {
+        //         // Clear localStorage when Super Agent ledger is clicked
+        //         // localStorage.removeItem("selectedSuperAgent");
+        //         localStorage.removeItem("selectedMasterId");
+        //         // localStorage.removeItem("selectedAdminId");
+        //         window.location.path = "/super-agent-ledger";
+        //       },
+        //     },
+        //     {
+        //       id: "agent_Ledger",
+        //       title: "Agent",
+        //       path: "/agent-ledger",
+        //     },
+        //     {
+        //       id: "user_Ledger",
+        //       title: "User",
+        //       path: "/user-ledger",
+        //     },
+        //   ],
+        // },
 
         // {
         //   id: "Bet_Managment",
@@ -633,131 +929,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         //   ],
         // },
 
-        {
-          id: "Game_Management",
-          title: "Sport Management",
-          dropdown: true,
-          icon: <FaGamepad />,
-
-          children: [
-            {
-              id: "sports_management",
-              title: "Sports",
-              path: "/sports",
-            },
-            // {
-            //   id: "cricket_management",
-            //   title: "Cricket",
-            //   path: "/cricket",
-            // },
-            // {
-            //   id: "active_events",
-            //   title: "Active Events",
-            //   path: "/active_events",
-            // },
-            // {
-            //   id: "inactive_events",
-            //   title: "Inactive Events",
-            //   path: "/inActive_events",
-            // },
-            // {
-            //   id: "complete_events",
-            //   title: "Complete Events",
-            //   path: "/complete_events",
-            // },
-            {
-              id: "fancy_management_view",
-              title: "Fancy Result",
-              path: "/view_match",
-            },
-            {
-              id: "declare_result",
-              title: "Result Declare",
-              path: "/declare_result",
-            },
-            {
-              id: "/fancy-result-list",
-              title: "Fancy Result List",
-              path: "/fancy-result-list",
-            },
-          ],
-        },
-
-
-
-        {
-          id: "ActiveAllGames",
-          title: "Active All Games",
-          dropdown: true,
-          icon: <FaGamepad />,
-
-          children: [
-            {
-              id: "cricket_management",
-              title: "Cricket",
-              path: "/active-all-games/4",
-            },
-            {
-              id: "football_management",
-              title: "Football",
-              path: "/active-all-games/1",
-            },
-            {
-              id: "tennis_management",
-              title: "Tennis",
-              path: "/active-all-games/2",
-            },
-            {
-              id: "horseracing_management",
-              title: "Horse Racing",
-              path: "/active-all-games/7",
-            },
-          ],
-        },
-
-
-
-
-
-        {
-          id: "Superagenttransaction",
-          title: "Cash Transactions",
-          dropdown: true,
-          icon: <FaMoneyBillWave />,
-          children: [
-
-
-            {
-              id: "agent_master",
-              title: "Master Transaction",
-              path: "/master-transaction",
-            },
-            {
-              id: "Superagenttransaction",
-              title: " Super agent ",
-              path: "/Superagenttransaction",
-              onClick: () => {
-                localStorage.removeItem("selectedSuperAgentId");
-              },
-            },
-            {
-              id: "Agenttransaction",
-              title: "  agent ",
-              path: "/Agenttransaction",
-            },
-            {
-              id: "Usertransaction",
-              title: "  User ",
-              path: "/Usertransaction",
-            },
-            {
-              id: "casetransactionreport",
-              title: "Reports",
-              path: "/case-transaction-report",
-            },
-          ],
-        },
-
         // {
         //   id: "Game_Management",
         //   title: "Sport Management",
@@ -820,75 +991,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         //   ],
         // },
 
-         {
-          id: "GameReports",
-          title: "Reports",
-          dropdown: true,
-          icon: <FaGamepad />,
- 
-          children: [
-            {
-              id: "account-statement",
-              title: "Account Statement",
-              path: "/reports/account-statement",
-            },
-            {
-              id: "profit-loss",
-              title: "Profit Loss",
-              path: "/reports/profit-loss",
-            },
-            {
-              id: "chip-statement",
-              title: "Chip Statement",
-              path: "/reports/chip-statement",
-            },
-            {
-              id: "chip-summary",
-              title: "Chip Summary",
-              path: "/reports/chip-summary",
-            },
- 
-             {
-              id: "settlement-report",
-              title: "Settlement Report",
-              path: "/reports/settlement-report",
-            },
- 
-             {
-              id: "sport-summary-report",
-              title: "Sport Summary Report",
-              path: "/reports/sport-summary-report",
-            },
- 
-             {
-              id: "top-clients",
-              title: "Top Clients",
-              path: "/reports/top-clients",
-            },
- 
-             {
-              id: "settlement",
-              title: "Settlement",
-              path: "/reports/settlement",
-            },
- 
-             {
-              id: "balance-sheet",
-              title: "Balance Sheet",
-              path: "/reports/balance-sheet",
-            },
-          ],
-        },
-
-        {
-          id: "slider",
-          title: "Slider",
-          path: "/slider_lists",
-          icon: <FaImages />,
-        },
-
-        
-
+       
         // {
         //   id: "Sub_Admin",
         //   title: "Sub Admin",
@@ -1027,7 +1130,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         //     ],
         //   },
 
-
         // {
         //   id: "app_settings",
         //   title: "Setting",
@@ -1040,7 +1142,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         //     </svg>
         //   ),
         // },
-
 
         // {
         //   id: "app_settings",
@@ -1068,22 +1169,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         //   ],
         // },
 
-
-        {
-          id: "app_settings",
-          title: "Admin Setting",
-          path: "/setting",
-          icon: <FaCog />,
-        },
-        {
-          id: "web-setting",
-          title: "Web Setting",
-          path: "/web-setting",
-          icon: <FaGlobe />,
-        },
-
-
-
+       
 
         {
           id: "logout",
@@ -1110,18 +1196,14 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         <div className="main-menu">
           <div className="logo-box">
             <Link to="/dashboard">
-              <img
-                src={logo}
-                alt="logo"
-                className="logo-lg"
-              />
+              <img src={logo} alt="logo" className="logo-lg" />
             </Link>
           </div>
           <div className="sidebar-content">
             <ul className="app-menu">
               {menuItems.map((section) => (
                 <React.Fragment key={section.section}>
-                  <li className="menu-title">{section.section}</li>
+                  {/* <li className="menu-title">{section.section}</li> */}
                   {section.items.map((item) => renderMenuItem(item))}
                 </React.Fragment>
               ))}

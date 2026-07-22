@@ -103,9 +103,9 @@ function Agentupdate() {
       <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
         <h5 className="mb-0">Agent Details</h5>
        <div className="d-flex gap-2">
-         <button className="btn btn-success btn-sm">Back</button>
-        <button className="btn btn-success btn-sm">Create</button>
-        <button className="btn btn-success btn-sm">Update</button>
+         <button className="btn btn-success">Back</button>
+        <button className="btn btn-success">Create</button>
+        <button className="btn btn-success">Update</button>
        </div>
       </div>
 

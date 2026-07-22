@@ -23,6 +23,7 @@ const PayInSetting = () => {
     account_number: "",
     ifsc_code: "",
     bank_name: "",
+    online: "",
   });
   // ✅ Fetch List
   const fetchSettings = async () => {
@@ -93,6 +94,7 @@ const PayInSetting = () => {
       account_number: "",
       ifsc_code: "",
       bank_name: "",
+      online: "",
     });
     setIsEditMode(false);
     setModalOpen(true);
@@ -127,6 +129,7 @@ const PayInSetting = () => {
           account_number: d.account_number || "",
           ifsc_code: d.ifsc_code || "",
           bank_name: d.bank_name || "",
+          online: d.online || "",
           image: d.image || "",
         });
         setIsEditMode(true);
@@ -226,6 +229,12 @@ const PayInSetting = () => {
       formData.append("ifsc_code", form.ifsc_code.trim());
       formData.append("bank_name", form.bank_name.trim());
     }
+
+    if (form.type === "online") {
+      formData.append("online", form.online.trim());
+    }
+
+    
 
     // try {
     //   const res = await fetch(url, {
@@ -391,9 +400,10 @@ const PayInSetting = () => {
               <tr>
                 <th>#</th>
                 <th>Name</th>
+                <th>Type</th>
                 <th>Min</th>
                 <th>Max</th>
-                <th>QR Image / Bank Details / UPI</th>
+                <th>QR Image / Bank Details / UPI / Online</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
@@ -404,6 +414,7 @@ const PayInSetting = () => {
                   <tr key={item._id}>
                     <td>{indexOfFirstItem + index + 1}.</td>
                     <td>{ucwords(item.name)}</td>
+                    <td>{ucwords(item.type.replace(/_/g, " "))}</td>
                     <td>{item.min}</td>
                     <td>{item.max}</td>
                     <td>
@@ -421,14 +432,14 @@ const PayInSetting = () => {
                           /> */}
 
                           <img
-  src={`https://adminapis.rcbmatka.com/${item.image}`}
-  alt="QR"
-  style={{
-    width: 150,
-    height: 100,
-    objectFit: "contain",
-  }}
-/>
+                            src={`https://adminapis.rcbmatka.com/${item.image}`}
+                            alt="QR"
+                            style={{
+                              width: 150,
+                              height: 100,
+                              objectFit: "contain",
+                            }}
+                          />
 
                           <span className="d-block">
                             <b>UPI ID</b>&nbsp;:&nbsp;{item.upi_id}
@@ -441,7 +452,14 @@ const PayInSetting = () => {
                             <b>UPI ID</b>&nbsp;:&nbsp;{item.upi_id}
                           </span>
                         </div>
-                      ) : (
+                      ) : item.type === "online" ? (
+                        // CASE 2: UPI type but no image
+                        <div>
+                          <span className="d-block">
+                            <b>Payshack</b>&nbsp;:&nbsp;{item.online}
+                          </span>
+                        </div>
+                      ): (
                         // CASE 3: Bank details
                         <div>
                           <span className="d-block">
@@ -613,7 +631,8 @@ const PayInSetting = () => {
                     </option>
                     <option value="qr_code">QR Code</option>
                     <option value="bank_acc_no">Bank Account Number</option>
-                    <option value="upi">UPI</option>
+                    {/* <option value="upi">UPI</option> */}
+                    <option value="online">Online</option>
                   </select>
 
                   {/* UPI Fields */}
@@ -704,8 +723,29 @@ const PayInSetting = () => {
                           }
                         }}
                       />
+                       
+                    </>
+
+
+
+                  )}
+
+
+                      {form.type === "upi" && (
+                    <>
+                      <label className="form-label">Online</label>
+                      <input
+                        type="text"
+                        className="form-control mb-2"
+                        placeholder="Payshack"
+                        name="online"
+                        value={form.online}
+                        onChange={handleChange}
+                      />
+
                     </>
                   )}
+
                 </div>
                 <div className="modal-footer">
                   <button className="btn btn-success" onClick={handleSubmit}>

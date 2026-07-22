@@ -233,7 +233,7 @@ const SubAdminPage = () => {
         <h5 className="m-0">Sub Admin Management</h5>
         <div>
           <Button
-            className="btn btn-success btn-sm me-2"
+            className="btn btn-success me-2"
             onClick={() => {
               resetForm();
               setShowForm(true);

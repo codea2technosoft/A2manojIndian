@@ -178,14 +178,8 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
             { id: "associates-designation-lists", title: "Designation Lists", href: "/associates-designation-lists", checked: false },
             { id: "associates-bima-achiever-lists", title: "Bima Achiever Lists", href: "/associates-bima-achiever-lists", checked: false },
             { id: "associates-bonus-reward-list", title: "Bonus Achiever Lists", href: "/associates-bonus-reward-list", checked: false },
-
-
             { id: "associates-bima-achiever-form-entries-lists", title: "Bima Form Entries Lists", href: "/associates-bima-achiever-form-entries-lists", checked: false },
             { id: "associates-bonus-achiever-form-entries-lists", title: "Bomus Form Entries Lists", href: "/associates-bonus-achiever-form-entries-lists", checked: false },
-
-
-
-
           ]
         },
         {
@@ -196,6 +190,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
           checked: false,
           children: [
             { id: "all_lead_list", title: "Property Lead", href: "/lead-list", checked: false },
+            { id: "approve_lead_list", title: "Property Lead Approve", href: "/approve-lead-list", checked: false },
             { id: "loan_list", title: "Loan Lead", href: "/loan-list", checked: false },
             { id: "assign_property_lead_to_subadmin", title: "Assign Calling Leads", href: "/assign-property-lead-to-subadmin", checked: false },
             { id: "upload_property_lead_csv", title: "Calling Leads", href: "/upload-property-lead-csv", checked: false },
@@ -218,8 +213,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
             { id: "cr_dr_ledger_report", title: "CR DR Ledger Report", href: "/expenses-list", checked: false },
             { id: "expenses_date_wise", title: "Datewise CR DR Ledger Report", href: "/expenses-date-wise", checked: false },
             { id: "tds_report", title: "TDS Report", href: "/tds-report", checked: false },
-            //  { id: "advance_payment",  title: "Advance Payment", href: "/advance-payment", checked: false },
-            //  { id: "add_advance_payment",  title: "Add Advance Payment", href: "/add-advance-payment", checked: false },
           ]
         },
         {
@@ -254,7 +247,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType, permissions }) => {
             { id: "withdrawal_list", title: "Commission Pending", href: "/withdrawal-list", checked: false },
             { id: "withdrawal_success_list_status", title: "Commission Paid", href: "/withdrawal-success-list-status", checked: false },
             { id: "withdrawal-rejected-list-status", title: "Commission Rejected", href: "/withdrawal-rejected-list-status", checked: false },
-            // { id: "withdrawal_list_status", title: "Success/Reject", href: "/withdrawal-list-status", checked: false },
           ]
         },
         {

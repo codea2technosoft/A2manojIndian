@@ -59,7 +59,7 @@ function Cricketlist() {
 
   const fetchGames = async (
     page = pagination.page,
-    limit = pagination.limit
+    limit = pagination.limit,
   ) => {
     try {
       setLoading(true);
@@ -107,7 +107,7 @@ function Cricketlist() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       return response;
     } catch (error) {
@@ -176,8 +176,6 @@ function Cricketlist() {
     setFilter(false);
 
     fetchGames(1, pagination.limit);
-
-
   };
 
   const handleRefresh = async () => {
@@ -219,7 +217,7 @@ function Cricketlist() {
       if (response.data.success) {
         showToast(
           response.data.message || "Events imported successfully!",
-          "success"
+          "success",
         );
         fetchGames(pagination.page, pagination.limit);
       } else {
@@ -229,7 +227,7 @@ function Cricketlist() {
       console.error("Error importing events:", err);
       showToast(
         err.response?.data?.message || "Network error: Failed to import events",
-        "error"
+        "error",
       );
     } finally {
       setImporting(null);
@@ -256,8 +254,8 @@ function Cricketlist() {
           prev.map((game) =>
             game._id === matchId
               ? { ...game, status: currentStatus === 1 ? 0 : 1 }
-              : game
-          )
+              : game,
+          ),
         );
         const newStatus = currentStatus === 1 ? "deactivated" : "activated";
         showToast(`Game ${newStatus} successfully`, "success");
@@ -319,7 +317,7 @@ function Cricketlist() {
   };
   const handleView = (game) => {
     navigate(
-      `/view_event/${game._id}?sportId=${game.sport_id}&seriesId=${game.series_id}`
+      `/view_event/${game._id}?sportId=${game.sport_id}&seriesId=${game.series_id}`,
     );
   };
 
@@ -331,7 +329,10 @@ function Cricketlist() {
         pageNumbers.push(i);
       }
     } else {
-      let start = Math.max(1, pagination.currentPage - Math.floor(maxVisiblePages / 2));
+      let start = Math.max(
+        1,
+        pagination.currentPage - Math.floor(maxVisiblePages / 2),
+      );
       let end = Math.min(pagination.totalPages, start + maxVisiblePages - 1);
 
       if (end - start + 1 < maxVisiblePages) {
@@ -387,7 +388,7 @@ function Cricketlist() {
     );
 
   return (
-    <div className="mt-3">
+    <div className="cricket">
       {toast.show && (
         <Toast message={toast.message} type={toast.type} onClose={hideToast} />
       )}
@@ -398,11 +399,11 @@ function Cricketlist() {
         size="lg"
         centered
       >
-        <Modal.Header closeButton>
+        <Modal.Header closeButton className="bg-primary-yellow">
           <Modal.Title>
             {selectedSeries?.name || "Series"} Matches
             {selectedSeries?.id && (
-              <div className="small text-muted mt-1">
+              <div className="small text-light text-start mt-1">
                 Series ID: {selectedSeries.id}
               </div>
             )}
@@ -443,7 +444,7 @@ function Cricketlist() {
                           : "N/A"}
                       </td>
                       <td>
-                        <span className="badge bg-info">
+                        <span className="badge bg-info d-inline">
                           {match.marketCount || 0}
                         </span>
                       </td>
@@ -469,7 +470,7 @@ function Cricketlist() {
               Total Matches: {seriesMatches.length}
             </div>
             <Button
-              variant="secondary"
+              variant="danger"
               onClick={() => setShowMatchesModal(false)}
             >
               Close
@@ -479,18 +480,17 @@ function Cricketlist() {
       </Modal>
 
       <div className="card">
-        <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+        <div className="card-header d-flex bg-primary-yellow justify-content-between align-items-center">
           <h3 className="card-title mb-0">
             {gameName ? `${gameName} Matches` : "All Match List"}
           </h3>
 
           <div className="d-flex align-items-center gap-2">
-
             <h3 className="card-title mb-0"></h3>
 
             <button
               title="Refresh Matches"
-              className="fillterbutton"
+              className="btn btn-light"
               onClick={handleRefresh}
               disabled={loading}
             >
@@ -498,14 +498,14 @@ function Cricketlist() {
             </button>
 
             <button
-              className="fillterbutton"
+              className="btn btn-light"
               onClick={() => setFilter((prev) => !prev)}
             >
               <MdFilterListAlt /> Filter
             </button>
 
             <select
-              className="form-select form-select-sm"
+              className="form-select"
               style={{ width: "90px" }}
               value={pagination.limit}
               onChange={handleLimitChange}
@@ -516,21 +516,14 @@ function Cricketlist() {
               <option value={40}>40</option>
               <option value={50}>50</option>
             </select>
-  <button
-      className="refeshbutton"
-      onClick={() => navigate(-1)}
-    >
-      Back
-    </button>
+            <button className="btn btn-dark" onClick={() => navigate(-1)}>
+              Back
+            </button>
           </div>
         </div>
 
         {filter && (
-
-
           <div className="card-body border-bottom">
-
-
             {/* <div className="d-flex justify-content-between align-items-center mb-3">
               <h6 className="mb-0">Filter Matches</h6>
 
@@ -694,7 +687,11 @@ function Cricketlist() {
                           className="actionbutton edit"
                           onClick={() => handleImportEvent(game)}
                           title="Import"
-                          disabled={importing === game._id || !game.sport_id || !game.series_id}
+                          disabled={
+                            importing === game._id ||
+                            !game.sport_id ||
+                            !game.series_id
+                          }
                         >
                           {importing === game._id ? (
                             <FaSpinner className="spinner fa-spin" />
@@ -702,8 +699,6 @@ function Cricketlist() {
                             <FaDownload />
                           )}
                         </button>
-
-
 
                         <button
                           className="actionbutton delete"
@@ -725,8 +720,10 @@ function Cricketlist() {
                       </div>
 
                       <div className="d-flex flex-wrap align-items-center gap-2 position-relative">
-                        {/* ===== NEW 3-DOT DROPDOWN (EXTRA) ===== */}
-                        <div className="dropdown position-relative" ref={actionRef}>
+                        <div
+                          className="dropdown position-relative"
+                          ref={actionRef}
+                        >
                           <button
                             className="btn btn-icon btn-sm"
                             onClick={() => toggleAction(game._id)}
@@ -771,8 +768,6 @@ function Cricketlist() {
                                 >
                                   <FaTrashAlt /> Delete
                                 </button>
-
-
                               </li>
                               <li>
                                 <button
@@ -780,7 +775,7 @@ function Cricketlist() {
                                   onClick={() =>
                                     fetchSeriesMatches(
                                       game.series_id,
-                                      game.name
+                                      game.name,
                                     )
                                   }
                                   title="View Series Matches"

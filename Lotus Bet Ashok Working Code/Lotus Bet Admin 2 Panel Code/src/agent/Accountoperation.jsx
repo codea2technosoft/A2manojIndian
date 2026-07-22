@@ -10,8 +10,8 @@ import {
   Spinner,
   Form,
   Button,
-  Badge
-}from "react-bootstrap";
+  Badge,
+} from "react-bootstrap";
 
 const Accountoperation = () => {
   const navigate = useNavigate();
@@ -50,10 +50,10 @@ const Accountoperation = () => {
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       console.log("API Response:", response.data);
@@ -81,18 +81,30 @@ const Accountoperation = () => {
               }
 
               // Format as DD-MMM-YYYY HH:MM AM/PM
-              const day = dateObj.getDate().toString().padStart(2, '0');
-              const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
-                'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+              const day = dateObj.getDate().toString().padStart(2, "0");
+              const monthNames = [
+                "JAN",
+                "FEB",
+                "MAR",
+                "APR",
+                "MAY",
+                "JUN",
+                "JUL",
+                "AUG",
+                "SEP",
+                "OCT",
+                "NOV",
+                "DEC",
+              ];
               const month = monthNames[dateObj.getMonth()];
               const year = dateObj.getFullYear();
 
               // Format time in 12-hour format
               let hours = dateObj.getHours();
-              const minutes = dateObj.getMinutes().toString().padStart(2, '0');
-              const ampm = hours >= 12 ? 'PM' : 'AM';
+              const minutes = dateObj.getMinutes().toString().padStart(2, "0");
+              const ampm = hours >= 12 ? "PM" : "AM";
               hours = hours % 12;
-              hours = hours ? hours.toString().padStart(2, '0') : '12'; // the hour '0' should be '12'
+              hours = hours ? hours.toString().padStart(2, "0") : "12"; // the hour '0' should be '12'
 
               return `${day}-${month}-${year} ${hours}:${minutes} ${ampm}`;
             } catch (error) {
@@ -134,7 +146,7 @@ const Accountoperation = () => {
             performedById: item.performed_by?.admin_id || "N/A",
             adminId: item.admin_id || "N/A",
             operationType: getOperationType(item.operation || ""),
-            rawDate: item.created_at
+            rawDate: item.created_at,
           };
         });
 
@@ -142,11 +154,16 @@ const Accountoperation = () => {
 
         // Apply search filter
         if (searchTerm) {
-          const filtered = formattedData.filter(item =>
-            item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.operation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.performedBy.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.adminId.toLowerCase().includes(searchTerm.toLowerCase())
+          const filtered = formattedData.filter(
+            (item) =>
+              item.description
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
+              item.operation.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              item.performedBy
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
+              item.adminId.toLowerCase().includes(searchTerm.toLowerCase()),
           );
           setFilteredData(filtered);
         } else {
@@ -165,7 +182,9 @@ const Accountoperation = () => {
           toast.error("Session expired. Please login again.");
           navigate("/login");
         } else {
-          toast.error(error.response?.data?.message || "Failed to load operation data");
+          toast.error(
+            error.response?.data?.message || "Failed to load operation data",
+          );
         }
       }
     } finally {
@@ -184,13 +203,13 @@ const Accountoperation = () => {
   // Pagination handlers
   const handleNext = () => {
     if (currentPage < totalPages) {
-      setCurrentPage(prev => prev + 1);
+      setCurrentPage((prev) => prev + 1);
     }
   };
 
   const handlePrev = () => {
     if (currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
+      setCurrentPage((prev) => prev - 1);
     }
   };
 
@@ -268,119 +287,111 @@ const Accountoperation = () => {
         limit={3}
       />
 
-      <div className="container-fluid">
-        <div className="card">
-          <div className="card-header bg-color-black text-white d-flex justify-content-between align-items-center">
-            <h5 className="mb-0 card-title text-white">
-              <i className="fas fa-history me-2"></i>
-              Account Operations Log
-            </h5>
-            <div className="d-flex align-items-center gap-2">
-              <Form.Control
-                type="text"
-                placeholder="Search operations..."
-                value={searchTerm}
-                onChange={handleSearch}
-                className="me-2"
-                style={{ width: '250px' }}
-              />
-              <button
-                onClick={refreshData}
-                className="backbutton"
-                title="Refresh"
-              >
-                Refresh              </button>
-              <button
-                className="backbutton"
-
-                onClick={() => navigate(-1)}
-              >
-                Back
-              </button>
-            </div>
+      <div className="card">
+        <div className="card-header d-flex justify-content-between align-items-center">
+          <h3 className="mb-0 card-title">Account Operations Log</h3>
+          <div className="d-flex align-items-center gap-2">
+            <Form.Control
+              type="text"
+              placeholder="Search operations..."
+              value={searchTerm}
+              onChange={handleSearch}
+              className="me-2"
+              style={{ width: "250px" }}
+            />
+            <button
+              onClick={refreshData}
+              className="btn btn-light"
+              title="Refresh"
+            >
+              Refresh{" "}
+            </button>
+            <button
+              className="btn btn-outline-light"
+              onClick={() => navigate(-1)}
+            >
+              Back
+            </button>
           </div>
+        </div>
 
-
-          <div className="card-body">
-            {loading ? (
-              <div className="text-center py-5">
-                <Spinner animation="border" variant="primary" />
-                <p className="mt-2">Loading operation logs...</p>
-              </div>
-            ) : filteredData.length === 0 ? (
-              <div className="text-center py-5">
-                <i className="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
-                <h5>NO OPERATION RECORDS FOUND</h5>
-                <p className="text-muted">
-                  {searchTerm ? "No matching operations found for your search" : "No operation logs available"}
-                </p>
-                {searchTerm && (
-                  <button
-                    onClick={clearSearch}
-                    className="refreshbutton"
-                  >
-                    Clear Search
-                  </button>
-                )}
-              </div>
-            ) : (
-              <>
-                {/* Operations Table */}
-                <div className="table-responsive">
-                  <Table striped bordered hover className="mb-0">
-                    <thead className="table-dark">
-                      <tr>
-                        <th width="200">DATE</th>
-                        <th width="250">OPERATION</th>
-                        <th>DESCRIPTION</th>
+        <div className="card-body">
+          {loading ? (
+            <div className="text-center py-5">
+              <Spinner animation="border" variant="primary" />
+              <p className="mt-2">Loading operation logs...</p>
+            </div>
+          ) : filteredData.length === 0 ? (
+            <div className="text-center py-5">
+              <i className="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+              <h5>NO OPERATION RECORDS FOUND</h5>
+              <p className="text-muted">
+                {searchTerm
+                  ? "No matching operations found for your search"
+                  : "No operation logs available"}
+              </p>
+              {searchTerm && (
+                <button onClick={clearSearch} className="refreshbutton">
+                  Clear Search
+                </button>
+              )}
+            </div>
+          ) : (
+            <>
+              {/* Operations Table */}
+              <div className="table-responsive">
+                <Table striped bordered hover className="mb-0">
+                  <thead className="table-dark">
+                    <tr>
+                      <th width="200">DATE</th>
+                      <th width="250">OPERATION</th>
+                      <th>DESCRIPTION</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {getPaginatedData().map((item) => (
+                      <tr key={item.id}>
+                        <td className="text-nowrap">
+                          <div className="fw-semibold">{item.date}</div>
+                        </td>
+                        <td>
+                          <div className={`badgenew ${item.operationType}`}>
+                            {item.operation}
+                          </div>
+                        </td>
+                        <td>
+                          <div className="mb-1" style={{ fontSize: "0.95rem" }}>
+                            {item.description}
+                          </div>
+                          <div className="text-muted small mt-1">
+                            <span className="me-3">
+                              <i className="fas fa-user me-1"></i>
+                              {item.performedBy} ({item.performedById})
+                            </span>
+                            <span>
+                              <i className="fas fa-id-card me-1"></i>
+                              Admin ID: {item.adminId}
+                            </span>
+                          </div>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {getPaginatedData().map((item) => (
-                        <tr key={item.id}>
-                          <td className="text-nowrap">
-                            <div className="fw-semibold">{item.date}</div>
-                          </td>
-                          <td>
-                            <div
-                              className={`badgenew ${item.operationType}`}
-                            >
-                              {item.operation}
-                            </div>
-                          </td>
-                          <td>
-                            <div className="mb-1" style={{ fontSize: '0.95rem' }}>
-                              {item.description}
-                            </div>
-                            <div className="text-muted small mt-1">
-                              <span className="me-3">
-                                <i className="fas fa-user me-1"></i>
-                                {item.performedBy} ({item.performedById})
-                              </span>
-                              <span>
-                                <i className="fas fa-id-card me-1"></i>
-                                Admin ID: {item.adminId}
-                              </span>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                </div>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
 
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="d-flex justify-content-between align-items-center mt-4">
-                    <div className="sohwingallentries">
-                      Showing {((currentPage - 1) * limit) + 1} to{" "}
-                      {Math.min(currentPage * limit, filteredData.length)} of{" "}
-                      {filteredData.length} entries
-                      {searchTerm && " (filtered)"}
-                    </div>
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="d-flex justify-content-between align-items-center mt-4">
+                  <div className="sohwingallentries">
+                    Showing {(currentPage - 1) * limit + 1} to{" "}
+                    {Math.min(currentPage * limit, filteredData.length)} of{" "}
+                    {filteredData.length} entries
+                    {searchTerm && " (filtered)"}
+                  </div>
 
-                    <div className="paginationall d-flex align-items-center gap-1">
-                      {/* <Button
+                  <div className="paginationall d-flex align-items-center gap-1">
+                    {/* <Button
                         variant="outline-primary"
                         size="sm"
                         disabled={currentPage === 1}
@@ -390,35 +401,35 @@ const Accountoperation = () => {
                         <i className="fas fa-angle-double-left"></i>
                       </Button> */}
 
-                      <button
-                        disabled={currentPage === 1}
-                        onClick={handlePrev}
-                        className=""
-                      >
-                        &laquo;
-                      </button>
+                    <button
+                      disabled={currentPage === 1}
+                      onClick={handlePrev}
+                      className=""
+                    >
+                      &laquo;
+                    </button>
 
-                      <div className="d-flex gap-1">
-                        {getPageNumbers().map((page) => (
-                          <div
-                            key={page}
-                            // variant={currentPage === page ? "primary" : "outline-primary"}
-                            className={`paginationnumber     ${currentPage === page ? "active" : "outline-primary"}`}
-                            onClick={() => handlePageClick(page)}
-                          >
-                            {page}
-                          </div>
-                        ))}
-                      </div>
+                    <div className="d-flex gap-1">
+                      {getPageNumbers().map((page) => (
+                        <div
+                          key={page}
+                          // variant={currentPage === page ? "primary" : "outline-primary"}
+                          className={`paginationnumber     ${currentPage === page ? "active" : "outline-primary"}`}
+                          onClick={() => handlePageClick(page)}
+                        >
+                          {page}
+                        </div>
+                      ))}
+                    </div>
 
-                      <button
-                        disabled={currentPage === totalPages}
-                        onClick={handleNext}
-                        className="px-3"
-                      >
-                        &raquo;
-                      </button>
-                      {/*                       
+                    <button
+                      disabled={currentPage === totalPages}
+                      onClick={handleNext}
+                      className="px-3"
+                    >
+                      &raquo;
+                    </button>
+                    {/*                       
                       <Button
                         variant="outline-primary"
                         size="sm"
@@ -428,57 +439,56 @@ const Accountoperation = () => {
                       >
                         <i className="fas fa-angle-double-right"></i>
                       </Button> */}
-                    </div>
-
-                    <div>
-                      <Form.Select
-                        size="sm"
-                        style={{ width: '80px' }}
-                        value={limit}
-                        disabled
-                      >
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="50">50</option>
-                      </Form.Select>
-                    </div>
                   </div>
-                )}
 
-                {/* Search Info */}
-                {searchTerm && (
-                  <div className="alert alert-info mt-3 py-2">
-                    <div className="d-flex justify-content-between align-items-center">
-                      <small>
-                        <i className="fas fa-info-circle me-1"></i>
-                        Showing {filteredData.length} results for: "{searchTerm}"
-                      </small>
-                      <Button
-                        variant="outline-info"
-                        size="sm"
-                        onClick={clearSearch}
-                      >
-                        Clear Search
-                      </Button>
-                    </div>
+                  <div>
+                    <Form.Select
+                      size="sm"
+                      style={{ width: "80px" }}
+                      value={limit}
+                      disabled
+                    >
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                    </Form.Select>
                   </div>
-                )}
-              </>
-            )}
-          </div>
+                </div>
+              )}
 
-          <Card.Footer className="bg-light">
-            <div className="d-flex justify-content-between align-items-center">
-              <small className="text-muted">
-                <i className="fas fa-database me-1"></i>
-                Last updated: {new Date().toLocaleTimeString()}
-              </small>
-              <small className="text-muted">
-                Data source: Account Operations API
-              </small>
-            </div>
-          </Card.Footer>
+              {/* Search Info */}
+              {searchTerm && (
+                <div className="alert alert-info mt-3 py-2">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <small>
+                      <i className="fas fa-info-circle me-1"></i>
+                      Showing {filteredData.length} results for: "{searchTerm}"
+                    </small>
+                    <Button
+                      variant="outline-info"
+                      size="sm"
+                      onClick={clearSearch}
+                    >
+                      Clear Search
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
+
+        <Card.Footer className="bg-light">
+          <div className="d-flex justify-content-between align-items-center">
+            <small className="text-muted">
+              <i className="fas fa-database me-1"></i>
+              Last updated: {new Date().toLocaleTimeString()}
+            </small>
+            <small className="text-muted">
+              Data source: Account Operations API
+            </small>
+          </div>
+        </Card.Footer>
       </div>
     </>
   );

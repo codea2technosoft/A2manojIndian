@@ -138,12 +138,10 @@ function InPlayMatchBet() {
 
 
   return (
-    <div className="card mt-4">
-
-      {/* 🔷 Header (MATCH BOOK + BACK BUTTON) */}
-      <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
-        <h5 className="mb-0 fw-bold">MATCH BETS</h5>
-        <button className="btn btn-sm btn-light"
+    <div className="card">
+      <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
+        <h5 className="mb-0 fw-bold">Match Bets</h5>
+        <button className="btn btn-outline-light"
           onClick={() => navigate(-1)}>
           Back</button>
       </div>
@@ -181,7 +179,7 @@ function InPlayMatchBet() {
       </table> */}
 
 
-      {/* <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+      {/* <div className="card-header d-flex bg-primary-yellow justify-content-between align-items-center">
         FILTER BETS
       </div>
 
@@ -220,7 +218,7 @@ function InPlayMatchBet() {
 
         </div>
       </div> */}
-      {/* <div className="bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+      {/* <div className="d-flex bg-primary-yellow justify-content-between align-items-center">
         MATCH BETS
       </div> */}
 
@@ -228,17 +226,17 @@ function InPlayMatchBet() {
         {loading ? (
           <p className="text-center p-3">Loading...</p>
         ) : (
-          <table className="table table-bordered table-striped mb-0">
-            <thead className="bg-primary text-white">
+          <table className="table table-bordered table-striped">
+            <thead className="table-dark">
               <tr>
-                <th className="text-white">PLACE TIME</th>
-                <th className="text-white">USERNAME</th>
-                <th className="text-white">RUNNER NAME</th>
-                <th className="text-white">BET ON</th>
-                <th className="text-white">BET TYPE</th>
-                <th className="text-white">BET PRICE</th>
-                <th className="text-white">BET VALUE</th>
-                <th className="text-white">BET AMOUNT</th>
+                <th>PLACE TIME</th>
+                <th>USERNAME</th>
+                <th>RUNNER NAME</th>
+                <th>BET ON</th>
+                <th>BET TYPE</th>
+                <th>BET PRICE</th>
+                <th>BET VALUE</th>
+                <th>BET AMOUNT</th>
               </tr>
             </thead>
 

@@ -80,10 +80,8 @@ import BookedPendingBookingLists from "./Pages/bookingManagment/BookedPendingBoo
 import OngoingBookingLists from "./Pages/bookingManagment/OngoingBookingList"
 import CompleteBookingLists from "./Pages/bookingManagment/CompleteBookingList"
 import CancelBookingLists from "./Pages/bookingManagment/CancelBookingList"
-
 import AssignPropertyLeadToSubadmin from "./Pages/leadManagment/AssignPropertyLeadToSubadmin"
 import AssignPropertyLoanLeadToSubadmin from "./Pages/loanManagment/AssignPropertyLoanLeadToSubadmin"
-
 import UploadPropertyLeadCSV from "./Pages/leadManagment/UploadPropertyLeadCSV"
 import UploadPropertyLoanLeadCSV from "./Pages/loanManagment/UploadPropertyLoanLeadCSV"
 import CallingRemarkHistory from "./Pages/leadManagment/CallingRemarkHistory"
@@ -101,59 +99,39 @@ import MyChainUpLine from "./Pages/createAssociate/MyChainUpLine.jsx";
 import AdminTDSReport from "./Pages/expensesManagment/AdminTDSReport.jsx";
 import GiftsOfferManagement from "./Pages/GiftsOfferManagement/AllOfferGifts.jsx";
 import AddsOfferManagement from "./Pages/GiftsOfferManagement/AddOfferGifts.jsx";
-
-
 import LifeTimeRewardsManagement from "./Pages/LifeTimeRewards/AllLifetimeRewardsLists.jsx";
 import AddsLifeTimeRewards from "./Pages/LifeTimeRewards/AddsLifeTimeRewards.jsx";
 import AllLifetimeRewardsWinnerLists from "./Pages/LifeTimeRewards/AllLifetimeRewardsWinnerLists.jsx";
-
 import RewardsMentorRoyalty from "./Pages/GiftsOfferManagement/RewardsMentorRoyalty.jsx";
 import MentorRoyaltyDetails from "./Pages/GiftsOfferManagement/MentorRoyaltyDetails.jsx";
-
-
 import VoicePresidentRewards from "./Pages/GiftsOfferManagement/VoicePresidentRewards.jsx";
 import VoicePresidentRewardsDetails from "./Pages/GiftsOfferManagement/VoicePresidentRewardsDetails.jsx";
-
 import SRVoicePresidentRewards from "./Pages/GiftsOfferManagement/SRVoicePresidentRewards.jsx";
 import SRVoicePresidentRewardsDetails from "./Pages/GiftsOfferManagement/SRVoicePresidentRewardsDetails.jsx";
-
-
 import LifeTimeRewardsWinnerListsDetails from "./Pages/GiftsOfferManagement/LifeTimeRewardsWinnerListsDetails.jsx";
-
-
 import MonthlyORSpecialSelfOffers from "./Pages/GiftsOfferManagement/MonthlyORSpecialSelfOffers.jsx";
 import MonthlyORSpecialCustomerOffers from "./Pages/GiftsOfferManagement/MonthlyORSpecialCustomerOffers.jsx";
-
 import MonthlyORSpecialTeamOffers from "./Pages/GiftsOfferManagement/MonthlyORSpecialTeamOffers.jsx";
 import MyteamchildChainDownLineDetails from "./Pages/createAssociate/MyteamchildChainDownLineDetails.jsx";
-
 import PresidentFundRewards from "./Pages/GiftsOfferManagement/PresidentFundRewards.jsx";
 import PresidentFundRewardsRewardsDetails from "./Pages/GiftsOfferManagement/PresidentFundRewardsRewardsDetails.jsx";
-
-
-
 import PresidentlevelFundRewards from "./Pages/GiftsOfferManagement/PresidentlevelFundRewards.jsx";
 import PresidentlevelFundRewardsDetails from "./Pages/GiftsOfferManagement/PresidentlevelFundRewardsDetails.jsx";
-
 import CreateAssociateByUploadingCSV from "./Pages/createAssociate/CreateAssociateByUploadingCSV.jsx";
 import CreateProjectByUploadingCSV from "./Pages/createProject/CreateProjectByUploadingCSV.jsx";
 import CreateBlocksByUploadingCSV from "./Pages/createProject/CreateBlocksByUploadingCSV.jsx";
 import ALLPropertyUnitisnotsoldLists from "./Pages/incomeManagment/ALLPropertyUnitisnotsoldeList.jsx";
 import ParentUnitisnotsoldePage from "./Pages/incomeManagment/ParentUnitisnotsoldePage"
 import BlockedInactiveAssociatesCommissions from "./Pages/incomeManagment/BlockedInactiveAssociatesCommissions"
-
 import CashCredit from "./Pages/creditReport/CashCreditList";
 import OnlineCredit from "./Pages/creditReport/OnlineCreditList";
 import AllCredit from "./Pages/creditReport/AllCreditList";
-
 import CashDebit from "./Pages/debitReport/CashDebitList";
 import OnlineDebit from "./Pages/debitReport/OnlineDebitList";
 import AllDebit from "./Pages/debitReport/AllDebitList";
-
 import CashBalance from "./Pages/balanceReport/CashBalanceList";
 import OnlineBalance from "./Pages/balanceReport/OnlineBalanceList";
 import AllBalance from "./Pages/balanceReport/AllBalanceList";
-
 import WalletBalance from "./Pages/walletReport/WalletBalanceList";
 import WithdrawalWalletBalance from "./Pages/walletReport/WithdrawalBalanceList";
 import SuccessWalletBalance from "./Pages/walletReport/SuccessBalanceList";
@@ -166,7 +144,6 @@ import PlotLedger from "./Pages/walletReport/PlotLedger.jsx";
 import UnitSQYDAdded from "./Pages/walletReport/Unit_sqyd_added.jsx";
 import UnitSQYDLedger from "./Pages/walletReport/UnitSQYDLedger.jsx";
 import ProjectWiseLedger from "./Pages/walletReport/ProjectWiseLedger.jsx";
-
 import TdsCRList from "./Pages/tdsReport/TdsCRList.jsx";
 import TdsDRList from "./Pages/tdsReport/TdsDRList.jsx";
 import TdsSettleCRList from "./Pages/tdsReport/TdsSellteCRList.jsx";
@@ -180,10 +157,10 @@ import AssociatesBimaAchieverLists from "./Pages/createAssociate/AssociatesBimaA
 import AssociatesBonusAchieverLists from "./Pages/createAssociate/AssociatesBonusAchieverLists";
 import TodayChannelList from "./Pages/channelCreate/TodayChannelList";
 import HomeDashboard from "./Pages/HomeDashboard";
-
 import AssociatesBimaAchieverFormEntriesLists from "./Pages/createAssociate/AssociatesBimaAchieverFormEntriesLists";
 import AssociatesBonusAchieverFormEntriesLists from "./Pages/createAssociate/AssociatesBonusAchieverFormEntriesLists";
 import AllCreatedTicketSupport from "./Pages/ticketSupport/AllCreatedTicketSupport";
+import ApproveLeadList from "./Pages/leadManagment/ApproveLeadList"
 
 
 
@@ -603,17 +580,8 @@ const App = () => {
         <Route path="/account-list" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AccountLists /> </Layout></PrivateRoute>} />
         <Route path="/account-list-status" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AccountStatusLists /> </Layout></PrivateRoute>} />
         <Route path="/withdrawal-list" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <WithdrawalLists /> </Layout></PrivateRoute>} />
-
-
         <Route path="/withdrawal-success-list-status" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <WithdrawalStatusSuccessLists /> </Layout></PrivateRoute>} />
-
-
         <Route path="/withdrawal-rejected-list-status" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <WithdrawalStatusRejectedLists /> </Layout></PrivateRoute>} />
-
-
-
-
-
         <Route path="/visit-date-wise" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <VisitDateWises /> </Layout></PrivateRoute>} />
         <Route path="/visit-by-date/:date" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <VisteByDates /> </Layout></PrivateRoute>} />
         <Route path="/notification-list" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AllNotificationLists /> </Layout></PrivateRoute>} />
@@ -627,17 +595,10 @@ const App = () => {
         <Route path="/booked-pending-booking" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <BookedPendingBookingLists /> </Layout></PrivateRoute>} />
         <Route path="/ongoing-booking" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <OngoingBookingLists /> </Layout></PrivateRoute>} />
         <Route path="/complete-booking" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <CompleteBookingLists /> </Layout></PrivateRoute>} />
-
         <Route path="/cancel-booking" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <CancelBookingLists /> </Layout></PrivateRoute>} />
-
-
         <Route path="/assign-property-lead-to-subadmin" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AssignPropertyLeadToSubadmin /> </Layout></PrivateRoute>} />
-
         <Route path="/assign-property-loan-lead-to-subadmin" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <AssignPropertyLoanLeadToSubadmin /> </Layout></PrivateRoute>} />
-
-
         <Route path="/upload-property-lead-csv" element={<Layout userType={userTypeState} permissions={permissions}> <UploadPropertyLeadCSV /> </Layout>} />
-
         {/* Credit Report List */}
         <Route path="/cash-credit-list" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <CashCredit /> </Layout></PrivateRoute>} />
         <Route path="/online-credit-list" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <OnlineCredit /> </Layout></PrivateRoute>} />
@@ -661,6 +622,7 @@ const App = () => {
         <Route path="/monthly-reward-balance" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <MonthlyRewardBalance /> </Layout></PrivateRoute>} />
         <Route path="/lifetime-reward-balance" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <LifetimeRewardBalance /> </Layout></PrivateRoute>} />
         <Route path="/royalty-balance" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <RoyaltyBalance /> </Layout></PrivateRoute>} />
+        <Route path="/approve-lead-list" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <ApproveLeadList /> </Layout></PrivateRoute>} />
 
 
         {/* <Route path="/upload-property-loan-lead-csv" element={<PrivateRoute allowedRoutes={permissions}><Layout userType={userTypeState} permissions={permissions}> <UploadPropertyLoanLeadCSV/> </Layout></PrivateRoute>} /> */}

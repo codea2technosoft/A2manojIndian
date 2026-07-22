@@ -311,7 +311,7 @@ const DepositeComplete = ({ userId }) => {
         requestBody.status = statusParam;
       }
 
-      console.log("Deposit Complete API Payload:", requestBody);
+      // console.log("Deposit Complete API Payload:", requestBody);
 
       // API URL में / add करो अगर missing है
       const apiUrl = `${process.env.REACT_APP_API_URL}/deposit-success-list`;
@@ -327,14 +327,14 @@ const DepositeComplete = ({ userId }) => {
 
       const result = await res.json();
 
-      console.log("Deposit Complete API Response:", result);
+      // console.log("Deposit Complete API Response:", result);
 
       if (result.success === "1") {
         setWithdrawList(result.data || []);
         setTotalPages(Number(result.totalNumberPage) || 1);
       } else {
         setWithdrawList([]);
-        console.log("API Error or no data:", result.message);
+        // console.log("API Error or no data:", result.message);
       }
     } catch (error) {
       console.error("Fetch Error:", error);
@@ -475,6 +475,8 @@ const DepositeComplete = ({ userId }) => {
                     <tr>
                       <th>#</th>
                       <th>User Name</th>
+                 <th>Deposit Type</th>
+                      <th>Getway Name</th>
                       {/* <th>Mobile</th> */}
                       <th>Amount</th>
                       <th>Order ID</th>
@@ -491,6 +493,8 @@ const DepositeComplete = ({ userId }) => {
                         <tr key={item._id}>
                           <td>{index + 1}</td>
                           <td>{ucWords(item.user_name)}</td>
+                          <td>{ucWords(item.deposit_type)}</td>
+                          <td>{ucWords(item.getway_name)}</td>
                           {/* <td>{item.mobile}</td> */}
                           <td>₹ {item.amount}</td>
                           <td>{item.order_id}</td>

@@ -107,17 +107,17 @@ function Superagent() {
         <h5 className="mb-0">Super Agent  Details</h5>
         <div className="d-flex gap-2">
           <button
-            className="btn btn-success btn-sm"
+            className="btn btn-success"
             onClick={() => navigate(-1)}
           >
             Back
           </button>
           <button
-            className="btn btn-success btn-sm"
+            className="btn btn-success"
             onClick={() => navigate("/")}
           >
             Create Agent
-          </button>        <button className="btn btn-success btn-sm">Update</button>
+          </button>        <button className="btn btn-success">Update</button>
         </div>
       </div>
 

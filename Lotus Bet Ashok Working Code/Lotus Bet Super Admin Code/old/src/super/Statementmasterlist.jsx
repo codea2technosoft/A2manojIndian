@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { MdOutlineKeyboardArrowRight, MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import {
+  MdOutlineKeyboardArrowRight,
+  MdOutlineKeyboardArrowLeft,
+} from "react-icons/md";
 
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,7 +17,7 @@ import {
   Spinner,
   Form,
   Button,
-  Pagination
+  Pagination,
 } from "react-bootstrap";
 
 const Statementmasterlist = () => {
@@ -24,7 +27,7 @@ const Statementmasterlist = () => {
   const [statementData, setStatementData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   // ✅ PAGINATION STATES
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -34,7 +37,7 @@ const Statementmasterlist = () => {
     total_records: 0,
     total_pages: 1,
     current_page: 1,
-    limit: 10
+    limit: 10,
   });
 
   const [total, setTotal] = useState({
@@ -42,7 +45,7 @@ const Statementmasterlist = () => {
     debit: 0,
     commissionPlus: 0,
     commissionMinus: 0,
-    netBalance: 0
+    netBalance: 0,
   });
 
   const token = localStorage.getItem("token");
@@ -67,14 +70,14 @@ const Statementmasterlist = () => {
           admin_id: adminId || loggedInAdminId,
           page: currentPage,
           limit: limit,
-          search: searchTerm
+          search: searchTerm,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       console.log("API Response:", response.data);
@@ -85,7 +88,7 @@ const Statementmasterlist = () => {
           total_records: 0,
           total_pages: 1,
           current_page: 1,
-          limit: 10
+          limit: 10,
         };
 
         // Set pagination data
@@ -122,7 +125,7 @@ const Statementmasterlist = () => {
           // Format date
           const dateObj = item.created_at ? new Date(item.created_at) : null;
           const formattedDate = dateObj
-            ? `${dateObj.getDate().toString().padStart(2, '0')}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}-${dateObj.getFullYear()} ${dateObj.getHours().toString().padStart(2, '0')}:${dateObj.getMinutes().toString().padStart(2, '0')}:${dateObj.getSeconds().toString().padStart(2, '0')}`
+            ? `${dateObj.getDate().toString().padStart(2, "0")}-${(dateObj.getMonth() + 1).toString().padStart(2, "0")}-${dateObj.getFullYear()} ${dateObj.getHours().toString().padStart(2, "0")}:${dateObj.getMinutes().toString().padStart(2, "0")}:${dateObj.getSeconds().toString().padStart(2, "0")}`
             : "N/A";
 
           return {
@@ -138,7 +141,7 @@ const Statementmasterlist = () => {
             type: item.type || "transaction",
             from: item.from_admin_id || "N/A",
             to: item.to_admin_id || "N/A",
-            amount: item.amount || 0
+            amount: item.amount || 0,
           };
         });
 
@@ -154,7 +157,9 @@ const Statementmasterlist = () => {
         toast.error("Session expired. Please login again.");
         navigate("/login");
       } else {
-        toast.error(error.response?.data?.message || "Failed to load statement data");
+        toast.error(
+          error.response?.data?.message || "Failed to load statement data",
+        );
       }
     } finally {
       setLoading(false);
@@ -170,10 +175,10 @@ const Statementmasterlist = () => {
       debit: 0,
       commissionPlus: 0,
       commissionMinus: 0,
-      netBalance: 0
+      netBalance: 0,
     };
 
-    data.forEach(item => {
+    data.forEach((item) => {
       totals.credit += parseFloat(item.credit) || 0;
       totals.debit += parseFloat(item.debit) || 0;
       totals.commissionPlus += parseFloat(item.commissionPlus) || 0;
@@ -202,13 +207,13 @@ const Statementmasterlist = () => {
   // ============================
   const handleNext = () => {
     if (currentPage < totalPages) {
-      setCurrentPage(prev => prev + 1);
+      setCurrentPage((prev) => prev + 1);
     }
   };
 
   const handlePrev = () => {
     if (currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
+      setCurrentPage((prev) => prev - 1);
     }
   };
 
@@ -234,7 +239,7 @@ const Statementmasterlist = () => {
   const getPageNumbers = () => {
     const pageNumbers = [];
     const maxVisiblePages = 5;
-    
+
     if (totalPages <= maxVisiblePages) {
       for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
@@ -242,29 +247,26 @@ const Statementmasterlist = () => {
     } else {
       let start = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
       let end = Math.min(totalPages, start + maxVisiblePages - 1);
-      
+
       if (end - start + 1 < maxVisiblePages) {
         start = end - maxVisiblePages + 1;
       }
-      
+
       for (let i = start; i <= end; i++) {
         pageNumbers.push(i);
       }
     }
-    
+
     return pageNumbers;
   };
 
   return (
     <>
-
-
-      <div className="container-fluid">
-        <div className="card">
-      <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
-            <h5 className="card-title mb-0">Transaction Statement</h5>
-            <div className="d-flex align-items-center">
-              {/* <Form.Control
+      <div className="card">
+        <div className="card-header d-flex bg-primary-yellow justify-content-between align-items-center">
+          <h5 className="card-title mb-0">Transaction Statement</h5>
+          <div className="d-flex align-items-center gap-2">
+            {/* <Form.Control
                 type="text"
                 placeholder="Search transactions..."
                 value={searchTerm}
@@ -272,159 +274,162 @@ const Statementmasterlist = () => {
                 className="me-2"
                 style={{ width: '250px' }}
               /> */}
-              <button 
-                className="backbutton" 
-                onClick={() => navigate(-1)}
-             
-              >
-                Back
-              </button>
-               <button
-                  className="backbutton"
-                  onClick={() => navigate(`/profitandloss/${adminId}`)}
-                >
-                  P&L
-                </button>
-            </div>
+            <button
+              className="btn btn-light"
+              onClick={() => navigate(`/profitandloss/${adminId}`)}
+            >
+              P&L
+            </button>
+            <button
+              className="btn btn-dark"
+              onClick={() => navigate(-1)}
+            >
+              Back
+            </button>
           </div>
-          
-          <div className="card-body">
-            {loading ? (
-              <div className="text-center py-5">
-                <Spinner animation="border" variant="primary" />
-                <p className="mt-2">Loading statement data...</p>
-              </div>
-            ) : filteredData.length === 0 ? (
-              <div className="text-center py-5">
-                <h5>NO DATA</h5>
-                <p className="text-muted">No transaction records found</p>
-                {searchTerm && (
-                  <button 
-                    variant="refreshbutton" 
-                    onClick={() => setSearchTerm("")}
-                    className="mt-2"
-                  >
-                    Clear Search
-                  </button>
-                )}
-              </div>
-            ) : (
-              <>
-                <div className="table-responsive">
-                  <Table striped bordered hover className="mb-0">
-                    <thead className="table-dark">
-                      <tr>
-                        <th>DATE</th>
-                        <th>DESCRIPTION</th>
-                        <th className="text-end">OLD BAL</th>
-                        <th className="text-end">CR</th>
-                        <th className="text-end">DR</th>
-                        {/* <th className="text-end">COMM+</th>
+        </div>
+
+        <div className="card-body">
+          {loading ? (
+            <div className="text-center py-5">
+              <Spinner animation="border" variant="primary" />
+              <p className="mt-2">Loading statement data...</p>
+            </div>
+          ) : filteredData.length === 0 ? (
+            <div className="text-center py-5">
+              <h5>NO DATA</h5>
+              <p className="text-muted">No transaction records found</p>
+              {searchTerm && (
+                <button
+                  variant="refreshbutton"
+                  onClick={() => setSearchTerm("")}
+                  className="mt-2"
+                >
+                  Clear Search
+                </button>
+              )}
+            </div>
+          ) : (
+            <>
+              <div className="table-responsive">
+                <Table striped bordered hover className="mb-0">
+                  <thead className="table-dark">
+                    <tr>
+                      <th>DATE</th>
+                      <th>DESCRIPTION</th>
+                      <th className="text-end">OLD BAL</th>
+                      <th className="text-end">CR</th>
+                      <th className="text-end">DR</th>
+                      {/* <th className="text-end">COMM+</th>
                         <th className="text-end">COMM-</th> */}
-                        <th className="text-end">BALANCE</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredData.map((item, index) => (
-                        <tr key={item.id}>
-                          <td className="text-nowrap">{item.date}</td>
-                          <td>
-                            <div>{item.description}</div>
-                            <small className="text-muted">
-                              From: {item.from} | To: {item.to} | Type: {item.type}
-                            </small>
-                          </td>
-                          <td className="text-end">{formatNumber(item.oldBalance)}</td>
-                          <td className="text-end text-success fw-semibold">
-                            {item.credit > 0 ? `+${formatNumber(item.credit)}` : "0.00"}
-                          </td>
-                          <td className="text-end text-danger fw-semibold">
-                            {item.debit > 0 ? `-${formatNumber(item.debit)}` : "0.00"}
-                          </td>
-                          {/* <td className="text-end">
+                      <th className="text-end">BALANCE</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredData.map((item, index) => (
+                      <tr key={item.id}>
+                        <td className="text-nowrap">{item.date}</td>
+                        <td>
+                          <div>{item.description}</div>
+                          <small className="text-muted">
+                            From: {item.from} | To: {item.to} | Type:{" "}
+                            {item.type}
+                          </small>
+                        </td>
+                        <td className="text-end">
+                          {formatNumber(item.oldBalance)}
+                        </td>
+                        <td className="text-end text-success fw-semibold">
+                          {item.credit > 0
+                            ? `+${formatNumber(item.credit)}`
+                            : "0.00"}
+                        </td>
+                        <td className="text-end text-danger fw-semibold">
+                          {item.debit > 0
+                            ? `-${formatNumber(item.debit)}`
+                            : "0.00"}
+                        </td>
+                        {/* <td className="text-end">
                             {formatNumber(item.commissionPlus)}
                           </td>
                           <td className="text-end">
                             {formatNumber(item.commissionMinus)}
                           </td> */}
-                          <td className="text-end fw-bold">
-                            {formatNumber(item.balance)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                    <tfoot className="table-secondary">
-                      <tr>
-                        <td colSpan="3" className="text-end fw-bold">TOTAL</td>
-                        <td className="text-end fw-bold text-success">
-                          +{formatNumber(total.credit)}
+                        <td className="text-end fw-bold">
+                          {formatNumber(item.balance)}
                         </td>
-                        <td className="text-end fw-bold text-danger">
-                          -{formatNumber(total.debit)}
-                        </td>
-                        {/* <td className="text-end fw-bold">
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot className="table-secondary">
+                    <tr>
+                      <td colSpan="3" className="text-end fw-bold">
+                        TOTAL
+                      </td>
+                      <td className="text-end fw-bold text-success">
+                        +{formatNumber(total.credit)}
+                      </td>
+                      <td className="text-end fw-bold text-danger">
+                        -{formatNumber(total.debit)}
+                      </td>
+                      {/* <td className="text-end fw-bold">
                           {formatNumber(total.commissionPlus)}
                         </td>
                         <td className="text-end fw-bold">
                           {formatNumber(total.commissionMinus)}
                         </td> */}
-                        <td className="text-end fw-bold text-primary">
-                          {formatNumber(total.netBalance)}
-                        </td>
-                      </tr>
-                    </tfoot>
-                  </Table>
-                </div>
+                      <td className="text-end fw-bold text-primary">
+                        {formatNumber(total.netBalance)}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </Table>
+              </div>
 
-                {/* ✅ ENHANCED PAGINATION UI */}
-                {totalPages > 1 && (
-                                  <div className="d-flex justify-content-between align-items-center mt-4">
-                
-                                    <div className="sohwingallentries">
-                                    Showing {((currentPage - 1) * limit) + 1} to{" "}
-                        {Math.min(currentPage * limit, totalRecords)} of{" "}
-                        {totalRecords} entries
-                                    </div>
-                
-                                    <div className="paginationall d-flex align-items-center gap-1">
-                
-                
-                                      <button
-                                        disabled={currentPage === 1}
-                        onClick={handleFirst}
-                                        className=""
-                                      >
-                                        <MdOutlineKeyboardArrowLeft />
-                                      </button>
-                
-                
-                                      <div className="d-flex gap-1">
-                
-                                        {getPageNumbers().map((page) => (
-                                          <div
-                                            key={page}
-                                            className={`paginationnumber ${currentPage === page ? "active" : ""
-                                              }`}
-                                            onClick={() => handlePageClick(page)}
-                                          >
-                                            {page}
-                                          </div>
-                                        ))}
-                                      </div>
-                
-                                      <button
-                                          disabled={currentPage === totalPages}
-                        onClick={handleNext}
-                                        className=""
-                                      >
-                                        <MdOutlineKeyboardArrowRight />
-                                      </button>
-                
-                                    </div>
-                                  </div>
-                                )}
-                
-                {/* {totalPages > 1 && (
+              {/* ✅ ENHANCED PAGINATION UI */}
+              {totalPages > 1 && (
+                <div className="d-flex justify-content-between align-items-center mt-4">
+                  <div className="sohwingallentries">
+                    Showing {(currentPage - 1) * limit + 1} to{" "}
+                    {Math.min(currentPage * limit, totalRecords)} of{" "}
+                    {totalRecords} entries
+                  </div>
+
+                  <div className="paginationall d-flex align-items-center gap-1">
+                    <button
+                      disabled={currentPage === 1}
+                      onClick={handleFirst}
+                      className=""
+                    >
+                      <MdOutlineKeyboardArrowLeft />
+                    </button>
+
+                    <div className="d-flex gap-1">
+                      {getPageNumbers().map((page) => (
+                        <div
+                          key={page}
+                          className={`paginationnumber ${
+                            currentPage === page ? "active" : ""
+                          }`}
+                          onClick={() => handlePageClick(page)}
+                        >
+                          {page}
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      disabled={currentPage === totalPages}
+                      onClick={handleNext}
+                      className=""
+                    >
+                      <MdOutlineKeyboardArrowRight />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* {totalPages > 1 && (
                   <div className="d-flex justify-content-between align-items-center mt-4">
                     <div>
                       <span className="text-muted">
@@ -493,9 +498,8 @@ const Statementmasterlist = () => {
              
                   </div>
                 )} */}
-              </>
-            )}
-          </div>
+            </>
+          )}
         </div>
       </div>
     </>

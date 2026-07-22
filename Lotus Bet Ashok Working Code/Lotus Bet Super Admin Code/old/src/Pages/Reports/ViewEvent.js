@@ -226,7 +226,7 @@ function ViewEvent() {
         />
       )}
       <div className="card">
-        <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+        <div className="card-header d-flex bg-primary-yellow justify-content-between align-items-center">
           <h3 className="card-title mb-0">All Event List</h3>
           <div>
             {/* <button className="btn btn-info me-2" onClick={handleRefresh}>Refresh</button> */}

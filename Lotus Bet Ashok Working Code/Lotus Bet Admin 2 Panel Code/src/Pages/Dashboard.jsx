@@ -42,8 +42,16 @@ const getCardConfigByRole = () => {
       key: "sportsDetails",
       icon: <FaGamepad size={36} className="text-white" />,
       modalLinks: [
-        { label: "Active Games", route: "/InplayGames", icon: <FaGamepad size={16} /> },
-        { label: "Finish Games", route: "/CompletedGames", icon: <FaCheckCircle size={16} /> },
+        {
+          label: "Active Games",
+          route: "/InplayGames",
+          icon: <FaGamepad size={16} />,
+        },
+        {
+          label: "Finish Games",
+          route: "/CompletedGames",
+          icon: <FaCheckCircle size={16} />,
+        },
       ],
     },
     {
@@ -51,10 +59,22 @@ const getCardConfigByRole = () => {
       key: "ledger",
       icon: <FaBook size={36} className="text-white" />,
       modalLinks: [
-        { label: "Profit / Loss", route: "/Profit_Loss", icon: <FaChartLine size={16} /> },
+        {
+          label: "Profit / Loss",
+          route: "/Profit_Loss",
+          icon: <FaChartLine size={16} />,
+        },
         { label: "My Ledger", route: "/My_Ledger", icon: <FaBook size={16} /> },
-        { label: "Agent Master", route: "/agent_master_lager", icon: <FaUserTie size={16} /> },
-        { label: "Client Master", route: "/Client_Ledger", icon: <FaUsers size={16} /> },
+        {
+          label: "Agent Master",
+          route: "/agent_master_lager",
+          icon: <FaUserTie size={16} />,
+        },
+        {
+          label: "Client Master",
+          route: "/Client_Ledger",
+          icon: <FaUsers size={16} />,
+        },
       ],
     },
     {
@@ -63,8 +83,16 @@ const getCardConfigByRole = () => {
       route: "/Superagenttransaction",
       icon: <FaMoneyBillWave size={36} className="text-white" />,
       modalLinks: [
-        { label: "Agent Cash", route: "/cash_agent", icon: <FaUserTie size={16} /> },
-        { label: "Client Cash", route: "/cash_client", icon: <FaUsers size={16} /> },
+        {
+          label: "Agent Cash",
+          route: "/cash_agent",
+          icon: <FaUserTie size={16} />,
+        },
+        {
+          label: "Client Cash",
+          route: "/cash_client",
+          icon: <FaUsers size={16} />,
+        },
       ],
     },
     {
@@ -90,9 +118,21 @@ const getCardConfigByRole = () => {
         icon: <FaUserCircle size={36} className="text-white" />,
         route: "/agent_master",
         modalLinks: [
-          { label: "Super Agent", route: "/agent_lists", icon: <FaUserTie size={16} /> },
-          { label: "Agent User", route: "/AgentMasternew", icon: <FaUsers size={16} /> },
-          { label: "User", route: "/Mastermyuser", icon: <FaUsers size={16} /> },
+          {
+            label: "Super Agent",
+            route: "/agent_lists",
+            icon: <FaUserTie size={16} />,
+          },
+          {
+            label: "Agent User",
+            route: "/AgentMasternew",
+            icon: <FaUsers size={16} />,
+          },
+          {
+            label: "User",
+            route: "/Mastermyuser",
+            icon: <FaUsers size={16} />,
+          },
         ],
       },
       {
@@ -101,9 +141,21 @@ const getCardConfigByRole = () => {
         route: "/AgentMasternew",
         icon: <FaUserCircle size={36} className="text-white" />,
         modalLinks: [
-          { label: "Agent Master", route: "/agent_master", icon: <FaUserTie size={16} /> },
-          { label: "Create Agent", route: "/createagent", icon: <FaUserTie size={16} /> },
-          { label: "Deleted Master List", route: "/deleted_master_lists", icon: <FaUsers size={16} /> },
+          {
+            label: "Agent Master",
+            route: "/agent_master",
+            icon: <FaUserTie size={16} />,
+          },
+          {
+            label: "Create Agent",
+            route: "/createagent",
+            icon: <FaUserTie size={16} />,
+          },
+          {
+            label: "Deleted Master List",
+            route: "/deleted_master_lists",
+            icon: <FaUsers size={16} />,
+          },
         ],
       },
       {
@@ -112,10 +164,14 @@ const getCardConfigByRole = () => {
         route: "/Mastermyuser",
         icon: <FaUserTie size={36} className="text-white" />,
         modalLinks: [
-          { label: "Agent List", route: "/agents", icon: <FaUserTie size={16} /> },
+          {
+            label: "Agent List",
+            route: "/agents",
+            icon: <FaUserTie size={16} />,
+          },
         ],
       },
-      ...commonCards
+      ...commonCards,
     ];
   }
 
@@ -128,9 +184,21 @@ const getCardConfigByRole = () => {
         route: "/AgentMasternew",
         icon: <FaUserCircle size={36} className="text-white" />,
         modalLinks: [
-          { label: "Agent Master", route: "/agent_master", icon: <FaUserTie size={16} /> },
-          { label: "Create Agent", route: "/createagent", icon: <FaUserTie size={16} /> },
-          { label: "Deleted Master List", route: "/deleted_master_lists", icon: <FaUsers size={16} /> },
+          {
+            label: "Agent Master",
+            route: "/agent_master",
+            icon: <FaUserTie size={16} />,
+          },
+          {
+            label: "Create Agent",
+            route: "/createagent",
+            icon: <FaUserTie size={16} />,
+          },
+          {
+            label: "Deleted Master List",
+            route: "/deleted_master_lists",
+            icon: <FaUsers size={16} />,
+          },
         ],
       },
       {
@@ -139,10 +207,14 @@ const getCardConfigByRole = () => {
         route: "/Mastermyuser",
         icon: <FaUserTie size={36} className="text-white" />,
         modalLinks: [
-          { label: "Agent List", route: "/agents", icon: <FaUserTie size={16} /> },
+          {
+            label: "Agent List",
+            route: "/agents",
+            icon: <FaUserTie size={16} />,
+          },
         ],
       },
-      ...commonCards
+      ...commonCards,
     ];
   }
 
@@ -155,10 +227,14 @@ const getCardConfigByRole = () => {
         route: "/Mastermyuser",
         icon: <FaUserTie size={36} className="text-white" />,
         modalLinks: [
-          { label: "Agent List", route: "/agents", icon: <FaUserTie size={16} /> },
+          {
+            label: "Agent List",
+            route: "/agents",
+            icon: <FaUserTie size={16} />,
+          },
         ],
       },
-      ...commonCards
+      ...commonCards,
     ];
   }
 
@@ -170,8 +246,16 @@ const getCardConfigByRole = () => {
       icon: <FaUserCircle size={36} className="text-white" />,
       route: "/agent_master",
       modalLinks: [
-        { label: "Super Agent", route: "/agent_lists", icon: <FaUserTie size={16} /> },
-        { label: "Agent User", route: "/AgentMasternew", icon: <FaUsers size={16} /> },
+        {
+          label: "Super Agent",
+          route: "/agent_lists",
+          icon: <FaUserTie size={16} />,
+        },
+        {
+          label: "Agent User",
+          route: "/AgentMasternew",
+          icon: <FaUsers size={16} />,
+        },
         { label: "User", route: "/Mastermyuser", icon: <FaUsers size={16} /> },
       ],
     },
@@ -181,9 +265,21 @@ const getCardConfigByRole = () => {
       route: "/AgentMasternew",
       icon: <FaUserCircle size={36} className="text-white" />,
       modalLinks: [
-        { label: "Agent Master", route: "/agent_master", icon: <FaUserTie size={16} /> },
-        { label: "Create Agent", route: "/createagent", icon: <FaUserTie size={16} /> },
-        { label: "Deleted Master List", route: "/deleted_master_lists", icon: <FaUsers size={16} /> },
+        {
+          label: "Agent Master",
+          route: "/agent_master",
+          icon: <FaUserTie size={16} />,
+        },
+        {
+          label: "Create Agent",
+          route: "/createagent",
+          icon: <FaUserTie size={16} />,
+        },
+        {
+          label: "Deleted Master List",
+          route: "/deleted_master_lists",
+          icon: <FaUsers size={16} />,
+        },
       ],
     },
     {
@@ -192,10 +288,14 @@ const getCardConfigByRole = () => {
       route: "/Mastermyuser",
       icon: <FaUserTie size={36} className="text-white" />,
       modalLinks: [
-        { label: "Agent List", route: "/agents", icon: <FaUserTie size={16} /> },
+        {
+          label: "Agent List",
+          route: "/agents",
+          icon: <FaUserTie size={16} />,
+        },
       ],
     },
-    ...commonCards
+    ...commonCards,
   ];
 };
 
@@ -215,7 +315,10 @@ const GlobalModal = ({ open, title, links, onClose }) => {
 
         <div className="modal-links">
           {links.map((item, index) => (
-            <div className="d-flex align-items-center gap-2 linksall_new" key={index}>
+            <div
+              className="d-flex align-items-center gap-2 linksall_new"
+              key={index}
+            >
               <span className="text-white">{item.icon}</span>
               <Link to={item.route} onClick={onClose}>
                 {item.label}
@@ -246,7 +349,7 @@ export default function Dashboard() {
   const [gamesLoading, setGamesLoading] = useState(false);
   const [games, setGames] = useState([]);
   const [error, setError] = useState("");
-  const [toast, setToast] = useState({ show: false, message: '', type: '' });
+  const [toast, setToast] = useState({ show: false, message: "", type: "" });
   const [description, setDescription] = useState("");
 
   // Pagination State
@@ -254,19 +357,19 @@ export default function Dashboard() {
     currentPage: 1,
     itemsPerPage: 50,
     totalItems: 0,
-    totalPages: 1
+    totalPages: 1,
   });
 
   const [filters, setFilters] = useState({
     search: "",
     is_completed: "",
-    is_inplay: ""
+    is_inplay: "",
   });
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const sportId = searchParams.get('sportId');
-  const seriesId = searchParams.get('seriesId');
+  const sportId = searchParams.get("sportId");
+  const seriesId = searchParams.get("seriesId");
   const navigate = useNavigate();
 
   // Get card config based on role
@@ -275,14 +378,14 @@ export default function Dashboard() {
   // Logout Handler
   const handleLogout = () => {
     Swal.fire({
-      title: 'Logout Confirmation',
-      text: 'Are you sure you want to logout?',
-      icon: 'warning',
+      title: "Logout Confirmation",
+      text: "Are you sure you want to logout?",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, Logout',
-      cancelButtonText: 'Cancel'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Logout",
+      cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
         // Clear all storage
@@ -291,11 +394,11 @@ export default function Dashboard() {
 
         // Show success message
         Swal.fire({
-          title: 'Logged Out!',
-          text: 'You have been successfully logged out.',
-          icon: 'success',
+          title: "Logged Out!",
+          text: "You have been successfully logged out.",
+          icon: "success",
           timer: 1500,
-          showConfirmButton: false
+          showConfirmButton: false,
         }).then(() => {
           // Redirect to login page
           navigate("/login");
@@ -305,11 +408,11 @@ export default function Dashboard() {
   };
 
   // Updated cardConfig with onClick
-  const updatedCardConfig = cardConfig.map(card => {
+  const updatedCardConfig = cardConfig.map((card) => {
     if (card.key === "logout") {
       return {
         ...card,
-        onClick: handleLogout
+        onClick: handleLogout,
       };
     }
     return card;
@@ -351,30 +454,56 @@ export default function Dashboard() {
 
   const infoCards = adminProfile
     ? [
-      { title: adminProfile.admin_id, subtitle: `You are ${adminProfile.username}`, icon: <FaUser /> },
-      { title: adminProfile.coins, subtitle: "Coins", icon: <FaTrophy /> },
-      {
-        title: (dashboardData.total_super_agent + dashboardData.total_agent + dashboardData.total_user),
-        subtitle: "Total Members",
-        icon: <FaUsers />
-      },
-      { title: `${adminProfile.match_share}%`, subtitle: "My Share", icon: <FaChartBar /> },
-      { title: `${adminProfile.company_share}%`, subtitle: "Company Share", icon: <FaChartBar /> },
-      { title: `${adminProfile.match_comm}%`, subtitle: "Match Commission", icon: <FaChartBar /> },
-      { title: `${adminProfile.session_comm}%`, subtitle: "Session Commission", icon: <FaChartBar /> },
-      {
-        title: "Rules",
-        subtitle: "Game Rules",
-        icon: <FaInfoCircle />,
-        route: "#",
-        isLink: false,
-        onClick: () => navigate("/rules")
-      },
-    ]
+        {
+          title: adminProfile.admin_id,
+          subtitle: `You are ${adminProfile.username}`,
+          icon: <FaUser />,
+        },
+        { title: adminProfile.coins, subtitle: "Coins", icon: <FaTrophy /> },
+        {
+          title:
+            dashboardData.total_super_agent +
+            dashboardData.total_agent +
+            dashboardData.total_user,
+          subtitle: "Total Members",
+          icon: <FaUsers />,
+        },
+        {
+          title: `${adminProfile.match_share}%`,
+          subtitle: "My Share",
+          icon: <FaChartBar />,
+        },
+        {
+          title: `${adminProfile.company_share}%`,
+          subtitle: "Company Share",
+          icon: <FaChartBar />,
+        },
+        {
+          title: `${adminProfile.match_comm}%`,
+          subtitle: "Match Commission",
+          icon: <FaChartBar />,
+        },
+        {
+          title: `${adminProfile.session_comm}%`,
+          subtitle: "Session Commission",
+          icon: <FaChartBar />,
+        },
+        {
+          title: "Rules",
+          subtitle: "Game Rules",
+          icon: <FaInfoCircle />,
+          route: "#",
+          isLink: false,
+          onClick: () => navigate("/rules"),
+        },
+      ]
     : [];
 
   // Fetch events with pagination
-  const fetchEvents = async (page = pagination.currentPage, limit = pagination.itemsPerPage) => {
+  const fetchEvents = async (
+    page = pagination.currentPage,
+    limit = pagination.itemsPerPage,
+  ) => {
     try {
       setGamesLoading(true);
       const params = {
@@ -383,7 +512,7 @@ export default function Dashboard() {
         search: filters.search,
         status: 1,
         is_completed: filters.is_completed,
-        is_inplay: filters.is_inplay
+        is_inplay: filters.is_inplay,
       };
 
       const response = await getAllEvents(sportId, seriesId, params);
@@ -393,22 +522,35 @@ export default function Dashboard() {
 
         // Update pagination from API response
         if (response.data.pagination) {
-          setPagination(prev => ({
+          setPagination((prev) => ({
             ...prev,
-            currentPage: response.data.pagination.page || response.data.pagination.current_page || page,
-            itemsPerPage: response.data.pagination.limit || response.data.pagination.per_page || limit,
-            totalItems: response.data.pagination.total || response.data.pagination.total_records || 0,
-            totalPages: response.data.pagination.totalPages ||
+            currentPage:
+              response.data.pagination.page ||
+              response.data.pagination.current_page ||
+              page,
+            itemsPerPage:
+              response.data.pagination.limit ||
+              response.data.pagination.per_page ||
+              limit,
+            totalItems:
+              response.data.pagination.total ||
+              response.data.pagination.total_records ||
+              0,
+            totalPages:
+              response.data.pagination.totalPages ||
               response.data.pagination.total_pages ||
-              Math.ceil((response.data.pagination.total || 0) / (response.data.pagination.limit || limit))
+              Math.ceil(
+                (response.data.pagination.total || 0) /
+                  (response.data.pagination.limit || limit),
+              ),
           }));
         } else {
           // Fallback if no pagination data
-          setPagination(prev => ({
+          setPagination((prev) => ({
             ...prev,
             currentPage: page,
             totalItems: response.data.data?.length || 0,
-            totalPages: Math.ceil((response.data.data?.length || 0) / limit)
+            totalPages: Math.ceil((response.data.data?.length || 0) / limit),
           }));
         }
 
@@ -426,10 +568,10 @@ export default function Dashboard() {
     }
   };
 
-  const showToast = (message, type = 'success') => {
+  const showToast = (message, type = "success") => {
     setToast({ show: true, message, type });
     setTimeout(() => {
-      setToast({ show: false, message: '', type: '' });
+      setToast({ show: false, message: "", type: "" });
     }, 3000);
   };
 
@@ -456,7 +598,7 @@ export default function Dashboard() {
             // body: JSON.stringify({
             //   id: admin_id,
             // }),
-          }
+          },
         );
 
         const result = await res.json();
@@ -516,7 +658,10 @@ export default function Dashboard() {
         pageNumbers.push(i);
       }
     } else {
-      let start = Math.max(1, pagination.currentPage - Math.floor(maxVisiblePages / 2));
+      let start = Math.max(
+        1,
+        pagination.currentPage - Math.floor(maxVisiblePages / 2),
+      );
       let end = Math.min(pagination.totalPages, start + maxVisiblePages - 1);
 
       if (end - start + 1 < maxVisiblePages) {
@@ -558,11 +703,21 @@ export default function Dashboard() {
           </div>
 
           <div className="modal-links">
-            <p><b>Competition:</b> {game.series_name}</p>
-            <p><b>Open Date:</b> {formatDate(game.openDate)}</p>
-            <p><b>Status:</b> {getStatus(game)}</p>
-            <p><b>Event ID:</b> {game.event_id}</p>
-            <p><b>Market ID:</b> {game.market_id}</p>
+            <p>
+              <b>Competition:</b> {game.series_name}
+            </p>
+            <p>
+              <b>Open Date:</b> {formatDate(game.openDate)}
+            </p>
+            <p>
+              <b>Status:</b> {getStatus(game)}
+            </p>
+            <p>
+              <b>Event ID:</b> {game.event_id}
+            </p>
+            <p>
+              <b>Market ID:</b> {game.market_id}
+            </p>
           </div>
 
           <div className="p-2 d-flex justify-content-end">
@@ -605,13 +760,13 @@ export default function Dashboard() {
             {item.key === "logout" ? (
               // Logout card doesn't need Link wrapper
               <div
-                className="card  shadow-sm primarycolor"
+                className="card shadow-sm primarycolor"
                 style={{ cursor: "pointer" }}
                 onClick={item.onClick}
               >
                 <div className="card-body heightallsdf d-flex align-items-center justify-content-between">
                   <div>
-                    <h6 className="mb-1 text-white">{item.label}</h6>
+                    <h6 className="mb-1">{item.label}</h6>
                   </div>
                   {item.icon}
                 </div>
@@ -631,9 +786,11 @@ export default function Dashboard() {
                 >
                   <div className="card-body heightallsdf d-flex align-items-center justify-content-between">
                     <div>
-                      <h6 className="mb-1 text-white">{item.label}</h6>
+                      <h6 className="mb-1 ">{item.label}</h6>
                       {index < updatedCardConfig.length - 5 && (
-                        <h4 className="text-white">{getValue(dashboardData, item.key)}</h4>
+                        <h4 className="">
+                          {getValue(dashboardData, item.key)}
+                        </h4>
                       )}
                     </div>
                     {item.icon}
@@ -645,22 +802,22 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <div className="row g-3 mt-3">
+      <div className="row g-3 mt-1">
         {infoCards.map((item, index) => (
           <div key={index} className="col-12 col-lg-3">
             <div
               className="text-decoration-none card shadow-sm primarycolor"
-              style={{ cursor: item.onClick ? 'pointer' : 'default' }}
+              style={{ cursor: item.onClick ? "pointer" : "default" }}
               onClick={item.onClick}
             >
               <div className="card-body d-flex align-items-center justify-content-between">
                 <div>
-                  <h6 className="mb-1 text-white">
+                  <h6 className="mb-1">
                     <small>{item.subtitle}</small>
                   </h6>
-                  <h4 className="text-white">{item.title}</h4>
+                  <h4 className="">{item.title}</h4>
                 </div>
-                {item.icon && <div className="card-icon text-white">{item.icon}</div>}
+                {item.icon && <div className="card-icon">{item.icon}</div>}
               </div>
             </div>
           </div>
@@ -674,243 +831,163 @@ export default function Dashboard() {
         onClose={() => setOpenModal(false)}
       />
 
-      <div className="mt-4 activematch">
-        <div className="table-responsive">
-          <table className="table table-bordered table-hover">
-            <thead className="table-dark">
-              <tr>
-                <th>NAME</th>
-                <th>OPEN DATE</th>
-                <th>COMPETITION</th>
-                <th>STATUS</th>
-                <th>ACTION</th>
-              </tr>
-            </thead>
-            <tbody>
-              {gamesLoading ? (
-                <tr>
-                  <td colSpan="5" className="text-center">
-                    <div className="spinner-border spinner-border-sm" role="status">
-                      <span className="visually-hidden">Loading...</span>
-                    </div>
-                    Loading matches...
-                  </td>
-                </tr>
-              ) : games.length === 0 ? (
-                <tr>
-                  <td colSpan="5" className="text-center">
-                    No matches found
-                  </td>
-                </tr>
-              ) : (
-                games.map((game) => (
-                  <tr key={game._id || game.event_id}>
-                    <td>{game.name || "-"}</td>
-                    <td>{game.date_time}</td>
-                    <td>{game.series_name || "-"}</td>
-                    <td>
-                      <span className={`status-badge ${getStatus(game).toLowerCase()}`}>
-                        <span className="blinking-dot"></span>
-                        {getStatus(game)}
-                      </span>
-                    </td>
-                    <td>
-                      <button
-                        className="btn btn-sm btn-primary"
-                        onClick={(e) => handleMatchClicknew(game.market_id, game.event_id, e)}
-                        title="View Match Details"
-                      >
-                        <FaEye /> View
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+      <div className="card mt-5">
+        <div className="card-header justify-content-between align-items-center">
+          <h5 className="card-title mb-0">Active Matches</h5>
         </div>
+        <div className="card-body">
+          <div className="activematch">
+            <div className="table-responsive">
+              <table className="table table-bordered table-hover">
+                <thead className="table-dark">
+                  <tr>
+                    <th>NAME</th>
+                    <th>OPEN DATE</th>
+                    <th>COMPETITION</th>
+                    <th>STATUS</th>
+                    <th>ACTION</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {gamesLoading ? (
+                    <tr>
+                      <td colSpan="5" className="text-center">
+                        <div
+                          className="spinner-border spinner-border-sm"
+                          role="status"
+                        >
+                          <span className="visually-hidden">Loading...</span>
+                        </div>
+                        Loading matches...
+                      </td>
+                    </tr>
+                  ) : games.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="text-center">
+                        No matches found
+                      </td>
+                    </tr>
+                  ) : (
+                    games.map((game) => (
+                      <tr key={game._id || game.event_id}>
+                        <td>{game.name || "-"}</td>
+                        <td>{game.date_time}</td>
+                        <td>{game.series_name || "-"}</td>
+                        <td>
+                          <span
+                            className={`status-badge ${getStatus(game).toLowerCase()}`}
+                          >
+                            <span className="blinking-dot"></span>
+                            {getStatus(game)}
+                          </span>
+                        </td>
+                        <td>
+                          <button
+                            className="btn btn-sm btn-primary"
+                            onClick={(e) =>
+                              handleMatchClicknew(
+                                game.market_id,
+                                game.event_id,
+                                e,
+                              )
+                            }
+                            title="View Match Details"
+                          >
+                            <FaEye /> View
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
 
-        {/* Game Details Modal */}
-        <GameDetailsModal
-          game={detailsOpen ? selectedGame : null}
-          onClose={() => setDetailsOpen(false)}
-        />
+            {/* Game Details Modal */}
+            <GameDetailsModal
+              game={detailsOpen ? selectedGame : null}
+              onClose={() => setDetailsOpen(false)}
+            />
 
-        {/* Rules Modal */}
-        <Modal
-          show={openRuleModal}
-          onHide={() => setOpenRuleModal(false)}
-          backdrop="static"
-          keyboard={false}
-          centered
-          size="md"
-        >
-          <Modal.Header closeButton>
-            <Modal.Title className="text-light">Rules & Regulations</Modal.Title>
-          </Modal.Header>
-
-          <Modal.Body>
-            <GameRulesModal />
-          </Modal.Body>
-
-          <Modal.Footer>
-            <button
-              className="btn btn-primary"
-              onClick={() => setOpenRuleModal(false)}
+            {/* Rules Modal */}
+            <Modal
+              show={openRuleModal}
+              onHide={() => setOpenRuleModal(false)}
+              backdrop="static"
+              keyboard={false}
+              centered
+              size="md"
             >
-              I Agree
-            </button>
-          </Modal.Footer>
-        </Modal>
+              <Modal.Header closeButton>
+                <Modal.Title className="text-light">
+                  Rules & Regulations
+                </Modal.Title>
+              </Modal.Header>
 
-        {/* Pagination Controls */}
-        {pagination.totalPages > 1 && (
-          <div className="d-flex justify-content-between align-items-center mt-4">
-            <div className="showing-entries">
-              Showing {((pagination.currentPage - 1) * pagination.itemsPerPage) + 1} to{" "}
-              {Math.min(pagination.currentPage * pagination.itemsPerPage, pagination.totalItems)} of{" "}
-              {pagination.totalItems} entries
-            </div>
+              <Modal.Body>
+                <GameRulesModal />
+              </Modal.Body>
 
-            <div className="pagination-controls d-flex align-items-center gap-2">
-              <button
-                className="btn btn-sm btn-outline-primary"
-                disabled={pagination.currentPage === 1}
-                onClick={handlePrevPage}
-                title="Previous Page"
-              >
-                <MdOutlineKeyboardArrowLeft /> Prev
-              </button>
+              <Modal.Footer>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setOpenRuleModal(false)}
+                >
+                  I Agree
+                </button>
+              </Modal.Footer>
+            </Modal>
 
-              <div className="d-flex gap-1">
-                {getPageNumbers().map((page) => (
+            {/* Pagination Controls */}
+            {pagination.totalPages > 1 && (
+              <div className="d-flex justify-content-between align-items-center mt-4">
+                <div className="showing-entries">
+                  Showing{" "}
+                  {(pagination.currentPage - 1) * pagination.itemsPerPage + 1}{" "}
+                  to{" "}
+                  {Math.min(
+                    pagination.currentPage * pagination.itemsPerPage,
+                    pagination.totalItems,
+                  )}{" "}
+                  of {pagination.totalItems} entries
+                </div>
+
+                <div className="pagination-controls d-flex align-items-stretch gap-2">
                   <button
-                    key={page}
-                    className={`btn btn-sm ${pagination.currentPage === page ? 'btn-primary' : 'btn-outline-primary'}`}
-                    onClick={() => handlePageClick(page)}
+                    className="btn btn-sm prev_btn"
+                    disabled={pagination.currentPage === 1}
+                    onClick={handlePrevPage}
+                    title="Previous Page"
                   >
-                    {page}
+                    <MdOutlineKeyboardArrowLeft />
                   </button>
-                ))}
+
+                  <div className="d-flex gap-1">
+                    {getPageNumbers().map((page) => (
+                      <button
+                        key={page}
+                        className={`btn btn-sm ${pagination.currentPage === page ? "btn-primary" : "btn-outline-primary page_btn"}`}
+                        onClick={() => handlePageClick(page)}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    className="btn btn-sm next_btn"
+                    disabled={pagination.currentPage === pagination.totalPages}
+                    onClick={handleNextPage}
+                    title="Next Page"
+                  >
+                    <MdOutlineKeyboardArrowRight />
+                  </button>
+                </div>
               </div>
-
-              <button
-                className="btn btn-sm btn-outline-primary"
-                disabled={pagination.currentPage === pagination.totalPages}
-                onClick={handleNextPage}
-                title="Next Page"
-              >
-                Next <MdOutlineKeyboardArrowRight />
-              </button>
-            </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
-
-      <style jsx>{`
-        .toast-notification {
-          position: fixed;
-          top: 20px;
-          right: 20px;
-          padding: 12px 20px;
-          border-radius: 4px;
-          color: white;
-          z-index: 9999;
-          animation: slideIn 0.3s ease;
-        }
-        
-        .toast-notification.success {
-          background-color: #28a745;
-        }
-        
-        .toast-notification.error {
-          background-color: #dc3545;
-        }
-        
-        .marquee-container {
-          background: #f8f9fa;
-          padding: 10px;
-          border-radius: 5px;
-          margin-bottom: 20px;
-          overflow: hidden;
-        }
-        
-        .marquee-text {
-          white-space: nowrap;
-          animation: marquee 30s linear infinite;
-          margin: 0;
-          font-weight: 500;
-          color: #333;
-        }
-        
-        .status-badge {
-          padding: 4px 10px;
-          border-radius: 20px;
-          font-size: 12px;
-          font-weight: 600;
-          text-transform: uppercase;
-        }
-        
-        .status-badge.inplay {
-          color: black;
-          span{
-            height: 10px;
-            width: 10px;
-            background-color: green;
-            border-radius: 50%;
-            display: inline-block;
-            animation: blink 1s infinite;
-            margin-right: 8px;
-          }
-        }
-        
-        .status-badge.upcoming {
-          background-color: #ffc107;
-          color: #212529;
-        }
-        
-        .status-badge.completed {
-          background-color: #6c757d;
-          color: white;
-        }
-        
-        .status-badge.inactive {
-          background-color: #dc3545;
-          color: white;
-        }
-        
-        .showing-entries {
-          font-size: 14px;
-          color: #6c757d;
-        }
-        
-        .pagination-controls .btn {
-          min-width: 40px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        
-        @keyframes slideIn {
-          from {
-            transform: translateX(100%);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-        
-        @keyframes marquee {
-          0% {
-            transform: translateX(100%);
-          }
-          100% {
-            transform: translateX(-100%);
-          }
-        }
-      `}</style>
     </>
   );
 }

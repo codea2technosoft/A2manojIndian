@@ -101,7 +101,6 @@ function AllLeadList() {
     showDateInput = false,
     status = "",
   ) => {
-    // Reset date when opening modal
     if (
       showDateInput &&
       (status === "approved" || status === "unitisnotsold")
@@ -489,52 +488,6 @@ function AllLeadList() {
     }
   };
 
-  // const handleEditLead = async (id) => {
-  //   setLoadingEdit(true);
-  //   try {
-  //     const token = getAuthToken();
-  //     const response = await fetch(`${API_URL}/property-lead-edit`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       body: JSON.stringify({ id }),
-  //     });
-
-  //     if (!response.ok) {
-  //       const errorData = await response.json();
-  //       showCustomMessageModal("Error", errorData.message || "Failed to fetch lead details for edit.", "error");
-  //       setLoadingEdit(false);
-  //       return;
-  //     }
-
-  //     const data = await response.json();
-  //     const leadData = data.data;
-
-  //     setEditFormData({
-  //       id: leadData.id,
-  //       project_id: leadData.project_id,
-  //       block_id: leadData.block_id,
-  //       plot_id: leadData.plot_id,
-  //       customer_name: leadData.customer_name,
-  //       mobile: leadData.mobile,
-  //       income_source: leadData.income_source,
-  //       adhar_card_number: leadData.adhar_card_number,
-  //       pan_card_number: leadData.pan_card_number,
-  //       adharfront: leadData.adhar_front_image || null,
-  //       adharback: leadData.adhar_back_image || null,
-  //       pancard: leadData.pan_card_image || null,
-  //       date: leadData.date || "",
-  //     });
-
-  //     setShowEditModal(true);
-  //   } catch (err) {
-  //     showCustomMessageModal("Error", "An unexpected error occurred while fetching lead details for edit.", "error");
-  //   } finally {
-  //     setLoadingEdit(false);
-  //   }
-  // };
 
   const handleEditLead = async (id) => {
     setLoadingEdit(true);
@@ -906,101 +859,6 @@ function AllLeadList() {
       );
     }
   };
-
-  // const handleStatusUpdate = async (id, newStatus, orderId) => {
-  //   console.warn("newStatus", newStatus);
-
-  //   if (newStatus === 'approved' || newStatus === 'notInterested' || newStatus === 'unitisnotsold') {
-  //     const currentLead = leads.find(lead => lead.id === id);
-  //     if (currentLead && (currentLead.status === 'approved' || currentLead.status === 'notInterested')) {
-  //       showCustomMessageModal(
-  //         "Status Not Changeable",
-  //         "The status cannot be changed from 'Approved' or 'Not Interested'.",
-  //         "error"
-  //       );
-  //       return;
-  //     }
-  //   }
-
-  //   showCustomMessageModal(
-  //     "Confirm Status Change",
-  //     `Are you sure you want to change the status to ${formatStatus(newStatus)}  on ${lead.date}?`,
-  //     "confirmation",
-  //     async (selectedDate) => {
-  //       setLoading(true);
-  //       try {
-  //         const token = getAuthToken();
-
-  //         // Create payload
-  //         const payload = {
-  //           id,
-  //           status: newStatus
-  //         };
-
-  //         // Add status_date only for approved and unitisnotsold statuses
-  //         if ((newStatus === "approved" || newStatus === "unitisnotsold") && selectedDate) {
-  //           payload.status_date = selectedDate;
-  //         }
-
-  //         console.log("Sending payload:", payload);
-
-  //         const response = await fetch(`${API_URL}/property-lead-update-status`, {
-  //           method: "POST",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //           body: JSON.stringify(payload),
-  //         });
-
-  //         if (!response.ok) {
-  //           const errorData = await response.json();
-  //           throw new Error(errorData.message || "Failed to update lead status.");
-  //         }
-
-  //         const result = await response.json();
-
-  //         closeCustomMessageModal();
-  //         showCustomMessageModal("Success", result.message || "Lead status updated successfully.", "success");
-  //         fetchLeads(currentPage, searchQuery);
-
-  //         if (newStatus === "approved") {
-  //           const leadToBook = leads.find((lead) => lead.id === id);
-  //           if (leadToBook) {
-  //             await bookProperty(
-  //               leadToBook.project_id,
-  //               leadToBook.block_id,
-  //               leadToBook.plot_id,
-  //               leadToBook.creater_id
-  //             );
-  //           }
-  //         }
-
-  //         if (socket && socket.readyState === WebSocket.OPEN) {
-  //           const notificationPayload = {
-  //             user_id: userId,
-  //             type: "loan_lead",
-  //             message: `Loan lead ${orderId} status changed to ${newStatus}.`,
-  //             statusremark: newStatus,
-  //             remark: null,
-  //             order_id: orderId,
-  //             action_by: "admin",
-  //             date: new Date().toISOString(),
-  //             status_date: (newStatus === "approved" || newStatus === "unitisnotsold") ? selectedDate : null
-  //           };
-  //           socket.send(JSON.stringify(notificationPayload));
-  //         }
-  //       } catch (err) {
-  //         closeCustomMessageModal();
-  //         showCustomMessageModal("Error", err.message || "An error occurred while updating status.", "error");
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     },
-  //     (newStatus === "approved" || newStatus === "unitisnotsold"), // Show date input only for these statuses
-  //     newStatus
-  //   );
-  // };
 
   const handleStatusUpdate = (lead, newStatus) => {
     showCustomMessageModal(

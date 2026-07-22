@@ -199,7 +199,7 @@ function ActiveAllGames() {
       )}
 
       <div className="card">
-        <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+        <div className="card-header d-flex bg-primary-yellow justify-content-between align-items-center">
           <h3 className="sport card-title mb-0 d-flex align-items-center gap-2">
             <img className="sportIcon"
               src={sportData[sportId]?.image}

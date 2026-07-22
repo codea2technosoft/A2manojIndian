@@ -351,7 +351,7 @@ const DepositePending = ({ userId }) => {
         requestBody.status = statusParam;
       }
 
-      console.log("Deposit Pending API Payload:", requestBody);
+      // console.log("Deposit Pending API Payload:", requestBody);
 
       const res = await fetch(
         `${process.env.REACT_APP_API_URL}/deposit-pending-list`,
@@ -514,6 +514,8 @@ const DepositePending = ({ userId }) => {
                     <tr>
                       <th>#</th>
                       <th>User Name</th>
+                      <th>Deposit Type</th>
+                      <th>Getway Name</th>
                       {/* <th>Mobile</th> */}
                       <th>Amount</th>
                       {/* <th>Account / UPI Info</th>
@@ -530,6 +532,8 @@ const DepositePending = ({ userId }) => {
                         <tr key={item._id}>
                           <td>{index + 1}</td>
                           <td>{ucWords(item.user_name)}</td>
+                          <td>{ucWords(item.deposit_type)}</td>
+                          <td>{ucWords(item.getway_name)}</td>
                           {/* <td>{item.mobile}</td> */}
                           <td>₹ {item.amount}</td>
                           {/* {renderBankFields(item)} */}

@@ -1247,7 +1247,7 @@ function AllProjectList() {
               </div> */}
 
             <>
-              {!allowedDomains.includes(currentDomain) && (
+             
                 <div className="createnewadmin">
                   <Link
                     to="/create-project-by-uploading-csv"
@@ -1256,7 +1256,7 @@ function AllProjectList() {
                     <FaPlus className="me-1" /> Upload New Project
                   </Link>
                 </div>
-              )}
+             
             </>
             <div className="createnewadmin">
               <Link

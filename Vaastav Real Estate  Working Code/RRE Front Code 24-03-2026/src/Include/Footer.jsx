@@ -497,7 +497,7 @@ const Footer = () => {
           <div className="mil-footer-links">
             <ul className="mil-social mil-light">
               <li className="mil-adapt-links">
-                <a href="index.html"> © 2026 Vaastav Real Estates Pvt Ltd. All rights reserved.</a>
+                <a href="index.html"> © 2026 Vaastav Real Estate All rights reserved.</a>
               </li>
             </ul>
             <ul className="mil-additional-links mil-light">

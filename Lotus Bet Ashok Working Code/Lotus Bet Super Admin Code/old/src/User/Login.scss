@@ -1,31 +1,33 @@
 $secondary: #000;
 $darkcolor: #000;
-@import '../asset/css/Color.scss';
+@import "../asset/css/Color.scss";
+
 .login-container {
-  .logo_leftside{
-         width: 100%;
+  background: #f3f3f9;
+  .logo_leftside {
+    width: 100%;
     min-height: 100vh;
     height: 100%;
-    background: #fac049;
+    background: #d89528;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 38px;
   }
-  .login_content{
-    h1{
+  .login_content {
+    h1 {
       font-size: 25px;
       font-weight: 600;
     }
-    p{
+    p {
       font-weight: 500;
       font-size: 16px;
     }
   }
-  .height_100{
+  .height_100 {
     height: 100vh;
   }
-  background: #ffffff;
+
   .bg-login {
     // background: url('../../assets/images/login-bg.jpg') center center;
     background-size: cover;
@@ -50,124 +52,135 @@ $darkcolor: #000;
       opacity: 0.8;
     }
   }
-  .loginimage{
+  .loginimage {
     width: 100%;
-    img{
-        width: 100%;
+    img {
+      width: 100%;
     }
   }
   .py-60 {
     padding-block: 30px;
-}
-.px-24 {
+  }
+  .px-24 {
     padding-inline: 24px;
-}
-.form_design_all{
+  }
+  .form_design_all {
     position: relative;
     z-index: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    &:before{
-      content: '';
+    &:before {
+      content: "";
       position: absolute;
       top: 0px;
       left: 0px;
       width: 100%;
       height: 100%;
-      background: url('../asset/image/bgimage.png');
-          background-size: cover;
-    background-position: top;
-    opacity: 0.2;
-    z-index: -1;
+      background: url("../asset/image/bgimage.png");
+      background-size: cover;
+      background-position: top;
+      opacity: 0.2;
+      z-index: -1;
     }
-
-}
-.max-w-464-px {
-      max-width: 600px;
-    background: #fff;
+  }
+  .max-w-464-px {
+    max-width: 555px;
+    background: #f3f3f9;
     margin: 10px;
     border-radius: 15px;
     margin: auto;
     display: flex;
     flex-direction: column;
     gap: 20px;
-   
-    .form_login{
+    @media screen and (min-width: 992px) {
+      min-width: 470px;
+    }
+
+    .form_login {
       display: flex;
       flex-direction: column;
       gap: 15px;
     }
-    .form_login_input{
-      form{
-  display: flex;
-    flex-direction: column;
-    gap: 15px;
+    .form_login_input {
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
       }
     }
-}
-.height_100vh{
-  height: 100vh;
-}
-.width_50 {
-  width: 50%;
-}
-.h-56-px {
-    height: 2.5rem !important;
-}
-input{
-  &:hover,
-  &:focus,
-  &:active{
-    box-shadow: none;
-    outline: none;
-    
   }
-
-}
-.loginbutton{
-     padding: 10px 14px;
+  .height_100vh {
+    height: 100vh;
+  }
+  .width_50 {
+    width: 50%;
+  }
+  .h-56-px {
+    height: 2.5rem !important;
+  }
+  input {
+    &:hover,
+    &:focus,
+    &:active {
+      box-shadow: none;
+      outline: none;
+    }
+  }
+  .loginbutton {
+    padding: 10px 28px;
     box-shadow: none;
     border: none;
     border-radius: 5px;
     color: #fff;
     background: $primarycolor;
-}
-.form-check-input:checked {
+  }
+  .form-check-input:checked {
     background-color: $secondary;
     border-color: #ffffff;
-}
-.logo-dark{
+  }
+  .logo-dark {
     display: block;
     width: 350px;
-    img{
-        width: 100%;
-    }
-}
-.forgetpassword{
-    font-size: 15px;
-    text-decoration: none;
-    margin: 10px 0px;
-}
-}
-
-
-@media(max-width:992px){
-  .login-container .logo_leftside{
-    display: none;
-  }
-  .login-container{
-    .width_50{
+    img {
       width: 100%;
     }
   }
-  .login-container{
-        padding: 10px;
+  .forgetpassword {
+    font-size: 15px;
+    text-decoration: none;
+    margin: 10px 0px;
+  }
+  .terms {
+    color: #76838f;
+    font-size: 14px;
+    margin-bottom: 10px;
+    a {
+      color: $darkcolor;
+      text-decoration: none;
+      font-size: 14px;
+      &:hover {
+        color: $primarycolor;
+      }
+    }
+  }
+}
+
+@media (max-width: 992px) {
+  .login-container .logo_leftside {
+    display: none;
+  }
+  .login-container {
+    .width_50 {
+      width: 100%;
+    }
+  }
+  .login-container {
+    padding: 10px;
     background: $primarycolor;
   }
   .login-container .max-w-464-px {
     max-width: 600px;
-    background: #ffffff;
     margin: 10px;
     border-radius: 5px;
     margin: auto;
@@ -176,5 +189,5 @@ input{
     gap: 20px;
     padding: 16px;
     backdrop-filter: blur(58px);
-}
+  }
 }

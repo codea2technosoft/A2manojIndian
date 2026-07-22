@@ -1,329 +1,410 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import Toast from "../../User/Toast";
-import { getAllActiveGames } from "../../Server/game.service";
-import { FaLockOpen, FaLock, FaPlayCircle, FaTv } from "react-icons/fa";
-import cricket from '../../asset/image/cricket.png'
-import football from '../../asset/image/football.png'
-import tennis from '../../asset/image/tennis.png'
-import axios from 'axios';
-import Swal from 'sweetalert2';
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  MdOutlineKeyboardArrowRight,
+  MdOutlineKeyboardArrowLeft,
+  MdKeyboardDoubleArrowRight,
+  MdKeyboardDoubleArrowLeft,
+} from "react-icons/md";
+import { getStatementAll,getAccountStatement } from "../../Server/api";
+import { FiSearch } from "react-icons/fi";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Spinner, Form, Button } from "react-bootstrap";
 
-function AccountStatement() {
-  const { sportId } = useParams();
+const AccountStatement = () => {
   const navigate = useNavigate();
-  const [games, setGames] = useState([]);
+  const { adminId } = useParams();
+
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [toast, setToast] = useState({ show: false, message: "", type: "" });
-  const [showRawData, setShowRawData] = useState(false);
-  const [apiResponse, setApiResponse] = useState(null);
-  const [updating, setUpdating] = useState(null);
+  const [statementData, setStatementData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sport, setSport] = useState("ALL");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [transactionType, setTransactionType] = useState("ALL");
 
-  const oddsData = [
-    { back: 2.54, lay: 2.58 },
-    { back: 4.2, lay: 4.3 },
-    { back: 2.68, lay: 2.7 },
-  ];
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [limit] = useState(50);
 
-  const sportData = {
-    "4": {
-      name: "Cricket",
-      image: cricket
-    },
-    "1": {
-      name: "Football",
-      image: football
-    },
-    "2": {
-      name: "Tennis",
-      image: tennis
-    }
-  };
+  const [total, setTotal] = useState({
+    credit: 0,
+    debit: 0,
+    netBalance: 0,
+  });
 
-  const fetchGames = async () => {
+  const hasActiveFilters =
+    searchTerm ||
+    sport !== "ALL" ||
+    fromDate ||
+    toDate ||
+    transactionType !== "ALL";
+
+  useEffect(() => {
+    fetchStatementData(currentPage);
+  }, [
+    adminId,
+    currentPage,
+    searchTerm,
+    sport,
+    fromDate,
+    toDate,
+    transactionType,
+  ]);
+
+  const fetchStatementData = async (page = currentPage) => {
     try {
       setLoading(true);
-      setError("");
+      const loggedInAdminId = localStorage.getItem("admin_id");
+      const res = await getAccountStatement({
+        admin_id: adminId || loggedInAdminId,
+        page,
+        limit,
+        search: searchTerm,
+        sport: sport,
+        from_date: fromDate,
+        to_date: toDate,
+        transaction_type: transactionType,
+      });
 
-      const response = await getAllActiveGames(parseInt(sportId));
-      console.log("API Response:", response);
-
-      setApiResponse(response.data);
-
-      if (response.data && response.data.success) {
-        setGames(response.data.data || []);
-        setError("");
-      } else {
-        const errorMsg = response.data?.message || "Failed to fetch games";
-        setError(errorMsg);
-        showToast(errorMsg, "error");
+      const response = res.data;
+      if (response.success) {
+        const data = response.data || [];
+        setStatementData(data);
+        setTotalPages(response.totalPages || 1);
+        setCurrentPage(response.page || 1);
+        setTotalRecords(response.total || 0);
+        calculateTotals(data);
       }
-    } catch (err) {
-      console.error("Error fetching games:", err);
-      const errorMsg = err.response?.data?.message || err.message || "Failed to fetch games";
-      setError(errorMsg);
-      showToast(errorMsg, "error");
-      setApiResponse(err.response?.data || { error: err.message });
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to fetch statement data");
     } finally {
       setLoading(false);
     }
   };
 
-  const showToast = (message, type = "success") => {
-    setToast({ show: true, message, type });
-  };
+  const calculateTotals = (data) => {
+    let credit = 0;
+    let debit = 0;
 
-  const hideToast = () => {
-    setToast({ show: false, message: "", type: "" });
-  };
-
-  const handleEventClick = (eventId) => {
-    const eventParam = eventId || 'null';
-    navigate(`/viewmatch-fancy/series_idd/null/event_id/${eventParam}`);
-  };
-
-  const toggleGameStatus = async (eventId, currentStatus, e) => {
-    e.stopPropagation(); // Prevent event click when clicking lock button
-    
-    // status: 0 = locked, 1 = open/unlocked
-    const action = currentStatus === 0 ? 'lock' : 'unlock';
-    const confirmMessage = currentStatus === 0 
-      ? 'ARE YOU SURE?\nThis Event Will Be Locked For Down-Line!' 
-      : 'ARE YOU SURE?\nThis Event Will Be Unlocked For Down-Line!';
-    
-    // Sweet Alert confirmation
-    const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: confirmMessage,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, do it!',
-      cancelButtonText: 'Cancel'
-    });
-
-    if (!result.isConfirmed) {
-      return;
-    }
-
-    try {
-      setUpdating(eventId);
-      
-      // Correct URL format with event ID in path
-      const url = `${process.env.REACT_APP_API_URL}/events/${eventId}/toggle-status`;
-      console.log("Toggling status for event:", eventId);
-      console.log("URL:", url);
-      
-      const response = await axios.patch(
-        url,
-        { eventId: eventId }, // Payload with eventId
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: false
-        }
-      );
-
-      console.log("Toggle Status Response:", response);
-
-      if (response.data && response.data.success) {
-        await Swal.fire({
-          icon: 'success',
-          title: 'Success!',
-          text: `Event ${action}ed successfully!`,
-          timer: 2000,
-          showConfirmButton: false
-        });
-        // Refresh the games list to get updated status
-        await fetchGames();
-      } else {
-        const errorMsg = response.data?.message || `Failed to ${action} event`;
-        await Swal.fire({
-          icon: 'error',
-          title: 'Error!',
-          text: errorMsg
-        });
+    data.forEach((item) => {
+      if (item.win_loss === "WIN" || item.type === "credit") {
+        credit += Number(item.amount || 0);
+      } else if (item.win_loss === "LOSS" || item.type === "debit") {
+        debit += Number(item.amount || 0);
       }
-    } catch (err) {
-      console.error("Error toggling game status:", err);
-      const errorMsg = err.response?.data?.message || err.message || "Failed to toggle status";
-      await Swal.fire({
-        icon: 'error',
-        title: 'Error!',
-        text: errorMsg
-      });
-    } finally {
-      setUpdating(null);
-    }
+    });
+    setTotal({
+      credit,
+      debit,
+      netBalance: data.length ? Number(data[data.length - 1].balance || 0) : 0,
+    });
   };
 
-  useEffect(() => {
-    if (sportId) {
-      fetchGames();
+  const formatNumber = (num) => Number(num || 0).toFixed(2);
+
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+  };
+
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxVisiblePages = 2;
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      let start = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+      let end = Math.min(totalPages, start + maxVisiblePages - 1);
+
+      if (end - start + 1 < maxVisiblePages) {
+        start = Math.max(1, end - maxVisiblePages + 1);
+      }
+
+      for (let i = start; i <= end; i++) {
+        pageNumbers.push(i);
+      }
     }
-  }, [sportId]);
 
-  if (loading)
-    return (
-      <div className="text-center mt-3">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-        <p className="mt-2">Loading games...</p>
-      </div>
-    );
+    return pageNumbers;
+  };
 
-  if (error)
-    return (
-      <div className="text-center mt-3">
-        <div className="text-danger mb-3">
-          <p><strong>Error:</strong> {error}</p>
-          <p className="text-muted small">Sport ID: {sportId}</p>
-          {apiResponse && (
-            <pre className="text-start bg-light p-2 rounded" style={{ fontSize: '12px', maxHeight: '200px', overflow: 'auto' }}>
-              {JSON.stringify(apiResponse, null, 2)}
-            </pre>
-          )}
-        </div>
-        <button className="btn btn-primary" onClick={fetchGames}>
-          Retry
-        </button>
-      </div>
-    );
+  const handleSearch = () => {
+    setCurrentPage(1);
+    fetchStatementData(1);
+  };
+
+  const handleClearSearch = () => {
+    setSearchTerm("");
+    setSport("ALL");
+    setFromDate("");
+    setToDate("");
+    setTransactionType("ALL");
+    setCurrentPage(1);
+  };
+
+  const getSport = (item) => {
+    if (!item.match_name) return '-';
+    const matchName = item.match_name.toLowerCase();
+    if (matchName.includes("cricket")) return "Cricket";
+    if (matchName.includes("football")) return "Football";
+    if (matchName.includes("tennis")) return "Tennis";
+    if (matchName.includes("casino")) return "Casino";
+    if (matchName.includes("horse racing")) return "Horse Racing";
+    if (matchName.includes("kabaddi")) return "Kabaddi";
+    if (matchName.includes("politics")) return "Politics";
+    if (matchName.includes("basketball")) return "Basketball";
+    if (matchName.includes("baseball")) return "Baseball";
+    if (matchName.includes("golf")) return "Golf";
+    if (matchName.includes("boxing")) return "Boxing";
+    if (matchName.includes("mma")) return "MMA";
+    if (matchName.includes("wwe")) return "WWE";
+    if (matchName.includes("nfl")) return "NFL";
+    if (matchName.includes("nba")) return "NBA";
+    if (matchName.includes("mlb")) return "MLB";
+    if (matchName.includes("nhl")) return "NHL";
+    if (matchName.includes("rugby")) return "Rugby";
+    if (matchName.includes("f1") || matchName.includes("formula")) return "Formula 1";
+    if (matchName.includes("darts")) return "Darts";
+    if (matchName.includes("snooker")) return "Snooker";
+    if (matchName.includes("badminton")) return "Badminton";
+    if (matchName.includes("handball")) return "Handball";
+    if (matchName.includes("volleyball")) return "Volleyball";
+    if (matchName.includes("table tennis")) return "Table Tennis";
+    if (matchName.includes("esports")) return "Esports";
+    return '-';
+  };
+
+  const getTransactionTypeLabel = (item) => {
+    if (item.win_loss === "WIN") return "Profit & Loss";
+    if (item.win_loss === "LOSS") return "Profit & Loss";
+    if (item.transaction_type === "Bet") return "Profit & Loss";
+    return item.transaction_type || "Profit & Loss";
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '-';
+      return date.toLocaleString('en-IN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      });
+    } catch (error) {
+      return '-';
+    }
+  };
 
   return (
-    <div className="mt-3">
-      {toast.show && (
-        <Toast message={toast.message} type={toast.type} onClose={hideToast} />
-      )}
+    <>
+      <ToastContainer autoClose={500} theme="colored" />
 
       <div className="card">
-        <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
-          <h3 className="sport card-title mb-0 d-flex align-items-center gap-2">
-            <img className="sportIcon"
-              src={sportData[sportId]?.image}
-              alt={sportData[sportId]?.name}
-            />
-            {sportData[sportId]?.name || "Sports"}
-          </h3>
+        <div className="card-header bg-white flex-wrap-mobile d-flex justify-content-between align-items-md-center gap-2">
+          <h5 className="card-title mb-0">Account Statement</h5>
         </div>
 
-        <div className="card-body p-0">
-          <div className="table-responsive">
-            <table className="table table-bordered mb-0">
-              <tbody>
-                {games.length > 0 ? (
-                  games.map((series, seriesIndex) => (
-                    <React.Fragment key={series.series_id || seriesIndex}>
-                      {/* Series Header */}
-                      <tr className="heading1">
-                        <td colSpan="4">
-                          {series.series_name || "Other"}
-                        </td>
-                      </tr>
+        <div className="card-body">
+          {/* Filter Section */}
+          <div className="row mb-3 align-items-center">
+            <div className="col-md-2">
+              <Form.Select
+                value={sport}
+                onChange={(e) => setSport(e.target.value)}
+                style={{ fontSize: '13px' }}
+              >
+                <option value="ALL">ALL</option>
+                <option value="Cricket">Cricket</option>
+                <option value="Football">Football</option>
+                <option value="Tennis">Tennis</option>
+                <option value="Casino">Casino</option>
+                <option value="Horse Racing">Horse Racing</option>
+                <option value="Kabaddi">Kabaddi</option>
+                <option value="Politics">Politics</option>
+              </Form.Select>
+            </div>
 
-                      {/* Events in this series */}
-                      {series.events && series.events.map((event, eventIndex) => {
-                        // Use _id from API response for event ID
-                        const eventId = event._id || event.event_id;
-                        // status: 0 = locked, 1 = open
-                        const isLocked = event.status === 0;
-                        
-                        return (
-                          <tr
-                            key={eventId || eventIndex}
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => handleEventClick(eventId)}
-                          >
-                            <td className="event_id py-0" style={{ width: '65%', padding: '0px 15px' }}>
-                              <div className="d-flex justify-content-between gap-1">
-                                <div className="d-flex justify-content-between align-items-center gap-1">
-                                  {/* Lock/Unlock Icon with click handler */}
-                                  <div 
-                                    onClick={(e) => toggleGameStatus(eventId, event.status || 0, e)}
-                                    style={{ cursor: 'pointer' }}
-                                    title={isLocked ? 'Click to unlock' : 'Click to lock'}
-                                  >
-                                    {updating === eventId ? (
-                                      <span className="spinner-border spinner-border-sm text-primary" role="status">
-                                        <span className="visually-hidden">Loading...</span>
-                                      </span>
-                                    ) : (
-                                      isLocked ? (
-                                        <FaLock className="lockIcon locked" style={{ color: 'red' }} />
-                                      ) : (
-                                        <FaLockOpen className="lockIcon unlocked" style={{ color: 'green' }} />
-                                      )
-                                    )}
-                                  </div>
-                                  <div>
-                                    <div className="event_name"><FaPlayCircle className="play_btn" /> {event.name || "N/A"}</div>
-                                    <span className="d-block time">({event.date_time || "N/A"})</span>
-                                  </div>
-                                </div>
-                                <div className="other_option">
-                                  <span className="my_badge bm_badge">BM</span>
-                                  <span className="my_badge fancy_badge">FANCY</span>
-                                  <FaTv className="my_badge tv" />
-                                </div>
-                              </div>
-                            </td>
-                            <td className="py-0 box_padding px-0" style={{padding:"2px"}}>
-                              <div className="odds_btns_div">
-                                  {oddsData.map((item, index) => (
-                                    <div className="odds_btn" key={index}>
-                                      <button className="back">{item.back}</button>
-                                      <button className="lay">{item.lay}</button>
-                                    </div>
-                                  ))}
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </React.Fragment>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="4" className="text-center py-4">
-                      <div className="text-muted">
-                        No active events found for {sportData[sportId] || "this sport"}
-                      </div>
-                      <button
-                        className="btn btn-primary mt-2"
-                        onClick={fetchGames}
-                      >
-                        Refresh
-                      </button>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+            <div className="col-md-2">
+              <Form.Select
+                value={transactionType}
+                onChange={(e) => setTransactionType(e.target.value)}
+                style={{ fontSize: '13px' }}
+              >
+                <option value="ALL">Profit & Loss</option>
+                <option value="PROFIT_LOSS">Profit & Loss</option>
+                <option value="FREE_CHIPS">Free Chips</option>
+                <option value="CASH">Cash</option>
+                <option value="CASH_ZERO">Cash(0)</option>
+              </Form.Select>
+            </div>
+
+            <div className="col-md-2">
+              <Form.Control
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                style={{ fontSize: '13px' }}
+              />
+            </div>
+
+            <div className="col-md-2">
+              <Form.Control
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+                style={{ fontSize: '13px' }}
+              />
+            </div>
+
+            <div className="col-md-1">
+              <Button onClick={handleSearch} variant="primary" style={{ fontSize: '13px' }}>
+                <FiSearch /> Search
+              </Button>
+            </div>
+
+            {hasActiveFilters && (
+              <div className="col-md-1">
+                <Button variant="secondary" onClick={handleClearSearch} style={{ fontSize: '13px' }}>
+                  Clear
+                </Button>
+              </div>
+            )}
           </div>
+
+          {loading ? (
+            <div className="text-center py-5">
+              <Spinner animation="border" />
+              <p>Loading statement data...</p>
+            </div>
+          ) : statementData.length === 0 ? (
+            <div className="text-center py-5">
+              <h5>NO DATA</h5>
+            </div>
+          ) : (
+            <>
+              <div className="table-responsive">
+                <table className="table table-bordered table-hover table-striped">
+                  <thead className="table-dark">
+                    <tr>
+                      <th style={{ width: '50px' }}>NO</th>
+                      <th>DATE</th>
+                      <th>SPORT</th>
+                      <th>DESC</th>
+                      <th>TYPE</th>
+                      <th>D/C</th>
+                      <th style={{ textAlign: 'right' }}>AMOUNT</th>
+                      <th style={{ textAlign: 'right' }}>TOTAL</th>
+                      <th style={{ textAlign: 'right' }}>BALANCE</th>
+                      <th>DETAILS</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {statementData.map((item, index) => {
+                      const amount = Number(item.amount || 0);
+                      const beforeBalance = Number(item.before_balance_from || 0);
+                      const balance = Number(item.balance || 0);
+                      const trType = item.tr_type || item.type || '-';
+                      const dateValue = item.created_at || item.date;
+                      const sportName = getSport(item);
+
+                      const amountColor = amount < 0 ? 'text-danger' : 'text-success';
+
+                      return (
+                        <tr key={item.transaction_id || index}>
+                          <td>{(currentPage - 1) * limit + index + 1}</td>
+                          <td style={{ fontSize: '12px' }}>{formatDate(dateValue)}</td>
+                          <td style={{ fontSize: '12px' }}>{sportName}</td>
+                          <td style={{ fontSize: '12px' }}>{item.remark || '-'}</td>
+                          <td style={{ fontSize: '12px' }}>{getTransactionTypeLabel(item)}</td>
+                          <td style={{ fontSize: '12px' }}>{trType}</td>
+                          <td style={{ textAlign: 'right', fontSize: '12px', fontWeight: '600' }} className={amountColor}>
+                            {amount.toFixed(2)}
+                          </td>
+                          <td style={{ textAlign: 'right', fontSize: '12px' }}>
+                            {beforeBalance.toFixed(2)}
+                          </td>
+                          <td style={{ textAlign: 'right', fontSize: '12px', fontWeight: '600' }}>
+                            {balance.toFixed(2)}
+                          </td>
+
+                          <td style={{ fontSize: '12px' }}>
+                            <button
+                              className="btn btn-sm btn-outline-info"
+                              onClick={() => navigate(`/bet-history/${item.round_id}/${item.event_type_id}`)}
+                            >
+                              B
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {totalPages > 1 && (
+                <div className="d-flex justify-content-center align-items-center mt-4">
+                  <div className="paginationall d-flex align-items-center gap-1">
+                    <button disabled={currentPage === 1} onClick={handlePrev} className="btn btn-sm btn-outline-secondary">
+                      <MdKeyboardDoubleArrowLeft /> Previous
+                    </button>
+
+                    <div className="d-flex gap-1">
+                      {getPageNumbers().map((page) => (
+                        <div
+                          key={page}
+                          className={`paginationnumber ${currentPage === page ? "active" : ""}`}
+                          onClick={() => handlePageClick(page)}
+                          style={{
+                            padding: '6px 12px',
+                            cursor: 'pointer',
+                            borderRadius: '4px',
+                            backgroundColor: currentPage === page ? '#007bff' : '#f8f9fa',
+                            color: currentPage === page ? '#fff' : '#333',
+                            border: '1px solid #dee2e6'
+                          }}
+                        >
+                          {page}
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      disabled={currentPage === totalPages}
+                      onClick={handleNext}
+                      className="btn btn-sm btn-outline-secondary"
+                    >
+                      Next <MdKeyboardDoubleArrowRight />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
-
-      {/* CSS for lock/unlock styling */}
-      <style jsx>{`
-        .lockIcon {
-          font-size: 18px;
-          margin-right: 8px;
-          transition: all 0.3s ease;
-        }
-        .lockIcon.locked {
-          color: red !important;
-        }
-        .lockIcon.unlocked {
-          color: green !important;
-        }
-        .lockIcon:hover {
-          transform: scale(1.2);
-        }
-      `}</style>
-    </div>
+    </>
   );
-}
+};
 
 export default AccountStatement;

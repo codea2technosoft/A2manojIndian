@@ -245,7 +245,7 @@ function InActiveUserLists() {
           <div className="row mb-3">
             <div className="col-md-6">
               <div className="d-flex">
-                <div className="input-group me-2" style={{ width: "300px" }}>
+                 <div className="input-group me-2" style={{ width: "500px" }}>
                   <input
                     type="text"
                     className="form-control"

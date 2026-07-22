@@ -85,14 +85,13 @@ function MyProfitAndLoss() {
     <div className="row">
       <div className="col-lg-12">
         <div className="card">
-
           {/* HEADER */}
           <div className="card-header bg-primary-yellow">
             <div className="d-flex align-items-center justify-content-between">
-              <h3 className="card-title  mb-0">MATCH PROFIT  LOSS</h3>
+              <h3 className="card-title  mb-0">Match Profit Loss</h3>
 
               <div
-                className="backbutton"
+                className="btn btn-dark"
                 onClick={() => navigate(-1)}
               >
                 <BsArrowLeft className="me-1" /> Back
@@ -102,9 +101,8 @@ function MyProfitAndLoss() {
 
           {/* BODY */}
           <div className="card-body">
-
             {/* FILTERS */}
-            <div className="row mb-4 align-items-end">
+            <div className="row mb-2 align-items-end">
               {/* <div className="col-md-3">
                 <label>Start Date</label>
                 <input
@@ -140,17 +138,16 @@ function MyProfitAndLoss() {
               </div> */}
 
               <div className="col-md-3 text-start">
-                <h4 className="totalprofitloss">
+                <h5 className="totalprofitloss mb-0">
                   TOTAL:{" "}
                   <span
                     style={{
-                      color:
-                        summary.balance >= 0 ? "#28a745" : "#dc3545",
+                      color: summary.balance >= 0 ? "#28a745" : "#dc3545",
                     }}
                   >
                     {summary.balance.toFixed(2)}
                   </span>
-                </h4>
+                </h5>
               </div>
             </div>
 
@@ -191,7 +188,7 @@ function MyProfitAndLoss() {
                         <td>{r.comment}</td>
 
                         <td>
-                          <span className="fw-bold text-primary">
+                          <span className="fw-bold text-info">
                             {r.winner || "-"}
                           </span>
                         </td>
@@ -228,7 +225,6 @@ function MyProfitAndLoss() {
                 <MdOutlineKeyboardArrowRight size={20} />
               </button>
             </div>
-
           </div>
         </div>
       </div>

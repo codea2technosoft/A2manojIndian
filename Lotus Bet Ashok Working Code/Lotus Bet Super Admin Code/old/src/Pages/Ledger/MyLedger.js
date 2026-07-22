@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdCurrencyRupee } from "react-icons/md";
@@ -9,6 +8,8 @@ import {
   MdOutlineKeyboardArrowLeft,
   MdOutlineKeyboardArrowRight,
 } from "react-icons/md";
+import { HiTrendingDown, HiTrendingUp } from "react-icons/hi";
+import { BiSolidWallet } from "react-icons/bi";
 
 function MyLedger() {
   const navigate = useNavigate();
@@ -28,7 +29,6 @@ function MyLedger() {
 
   const [showFilters, setShowFilters] = useState(false);
 
-
   const [searchInput, setSearchInput] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -36,7 +36,6 @@ function MyLedger() {
   const [endDate, setEndDate] = useState("");
 
   const [totalRecords, setTotalRecords] = useState(0);
-
 
   // ---------------- API CALL ----------------
   const fetchLedger = async () => {
@@ -56,7 +55,7 @@ function MyLedger() {
       if (res?.data?.success) {
         setRows(res.data.data?.data || []);
         setTotalRecords(res.data.data.total || 0);
-        const safeNumber = (val) => Number(val) ? Number(val) : 0;
+        const safeNumber = (val) => (Number(val) ? Number(val) : 0);
         setSummary({
           lena: safeNumber(res.data.lena),
           dena: safeNumber(res.data.dena),
@@ -74,14 +73,12 @@ function MyLedger() {
   // useEffect(() => {
   //   fetchLedger();
   // }, [page, limit, startDate, endDate]);
-useEffect(() => {
-  fetchLedger(true);
-}, [page, limit]);
-useEffect(() => {
-  fetchLedger(false); 
-}, [searchTerm, startDate, endDate]);
-
-
+  useEffect(() => {
+    fetchLedger(true);
+  }, [page, limit]);
+  useEffect(() => {
+    fetchLedger(false);
+  }, [searchTerm, startDate, endDate]);
 
   const handleSearch = () => {
     setSearchTerm(searchInput.trim());
@@ -97,15 +94,14 @@ useEffect(() => {
     setSearchTerm("");
   };
 
-
   // ---------------- DATE FILTER ----------------
-const applyDateFilter = () => {
-  if (startDate && endDate && startDate > endDate) {
-    alert("Start date cannot be greater than end date");
-    return;
-  }
-  setPage(1); // sirf page change karo
-};
+  const applyDateFilter = () => {
+    if (startDate && endDate && startDate > endDate) {
+      alert("Start date cannot be greater than end date");
+      return;
+    }
+    setPage(1); // sirf page change karo
+  };
   const clearDateFilter = () => {
     setStartDate("");
     setEndDate("");
@@ -114,7 +110,6 @@ const applyDateFilter = () => {
   };
 
   const totalPages = Math.ceil(totalRecords / limit);
-
 
   const getPageNumbers = () => {
     const pages = [];
@@ -135,7 +130,6 @@ const applyDateFilter = () => {
     return pages;
   };
 
-
   // const totalPages = Math.ceil(totalRecords / limit);
 
   return (
@@ -143,10 +137,8 @@ const applyDateFilter = () => {
       <div className="col-lg-12">
         <div className="card">
           <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
-            <h3 className="card-title  mb-0">MY LEDGER</h3>
-
+            <h3 className="card-title  mb-0">My Ledger</h3>
             <div className="d-flex gap-2">
-
               {/* FILTER TOGGLE BUTTON */}
               {/* <button
                 className="btn btn-success btn-sm"
@@ -155,7 +147,10 @@ const applyDateFilter = () => {
                 {showFilters ? "Hide Filters" : "Show Filters"}
               </button> */}
 
-              <div className="btn btn-success btn-sm" onClick={() => navigate(-1)}>
+              <div
+                className="btn btn-outline-light"
+                onClick={() => navigate(-1)}
+              >
                 Back
               </div>
             </div>
@@ -219,37 +214,67 @@ const applyDateFilter = () => {
               </div>
             </div>
           )} */}
+
           <div className="card-body">
             <div className="row text-center">
               <div className="col-md-4 col-4 text-success">
-                <div className="myLadger">
-                  <h6>LENA </h6>
-                  <MdCurrencyRupee /> {summary.lena.toFixed(2)}
+                <div className="card ladger_card success-green">
+                  <div className="card-body">
+                    <div className="card_icon">
+                      <HiTrendingUp />
+                    </div>
+                    <div className="card_info">
+                      <h6 className="card-title">
+                        In Plus (Profit)
+                      </h6>
+                      <h4 className="mb-0">
+                        {" "}
+                        <MdCurrencyRupee /> {summary.lena.toFixed(2)}
+                      </h4>
+                    </div>
+                  </div>
                 </div>
               </div>
+
               <div className="col-md-4 col-4 text-danger">
-                <div className="myLadger">
-                  <h6> DENA</h6>
-                  <MdCurrencyRupee /> {summary.dena.toFixed(2)}
+                <div className="card ladger_card danger-red">
+                  <div className="card-body">
+                    <div className="card_icon">
+                      <HiTrendingDown />
+                    </div>
+                    <div className="card_info">
+                      <h6 className="card-title">In Minus (Loss)</h6>
+                      <h4 className="mb-0">
+                        {" "}
+                        <MdCurrencyRupee /> {summary.dena.toFixed(2)}
+                      </h4>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="col-md-4 col-4">
-                <div className="myLadger">
-                  <h6>BALANCE</h6>
-                  <span
-                    className={
-                      summary.balance >= 0 ? "text-success" : "text-danger"
-                    }
-                  >
-                    <MdCurrencyRupee /> {Math.abs(summary.balance).toFixed(2)}{" "}
-                    {summary.balance < 0 && "DENA"}
-                  </span>
+
+              <div className="col-md-4">
+                <div className="card ladger_card primary-blue">
+                  <div className="card-body">
+                    <div className="card_icon">
+                      <BiSolidWallet />
+                    </div>
+                    <div className="card_info">
+                      <h6 className="card-title">BALANCE</h6>
+                      <h4 className="mb-0">
+                        {" "}
+                        <MdCurrencyRupee />{" "}
+                        {Math.abs(summary.balance).toFixed(2)}{" "}
+                        {summary.balance < 0 && "DENA"}
+                      </h4>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* ===== TABLE ===== */}
-            <div className="table-responsive">
+            <div className="table-responsive mt-3">
               <table className="table table-bordered text-center">
                 <thead className="table-dark">
                   <tr>
@@ -257,7 +282,7 @@ const applyDateFilter = () => {
                     <th>DR</th>
                     <th>CR</th>
                     <th>BALANCE</th>
-                    <th>PAYMENT TYPE</th>
+                    <th>EVENT NAME</th>
                     <th>REMARK</th>
                   </tr>
                 </thead>
@@ -268,7 +293,9 @@ const applyDateFilter = () => {
                     </tr>
                   ) : rows.length === 0 ? (
                     <tr>
-                      <td colSpan="5">No Data</td>
+                      <td colSpan="6" className="text-center">
+                        No Data
+                      </td>
                     </tr>
                   ) : (
                     rows.map((r) => (
@@ -308,7 +335,6 @@ const applyDateFilter = () => {
             </div>
             {totalRecords > limit && (
               <div className="paginationall d-flex justify-content-end align-items-center gap-1 mt-4">
-
                 {/* PREV BUTTON */}
                 <button
                   className=""
@@ -339,12 +365,8 @@ const applyDateFilter = () => {
                 >
                   <MdOutlineKeyboardArrowRight />
                 </button>
-
               </div>
             )}
-
-
-
           </div>
         </div>
       </div>

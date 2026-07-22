@@ -284,8 +284,8 @@ function GetEventBets() {
   };
 
   return (
-    <div className="card mt-4">
-      <div className="card-header bg-primary-yellow text-white d-flex justify-content-between align-items-md-center align-items-start">
+    <div className="card">
+      <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-md-center align-items-start">
         <h3 className="card-title  mb-0">MATCH STATS</h3>
 
         <div className="filter-controls gap-2 d-flex align-items-center mobilewidthh">
@@ -429,6 +429,7 @@ function GetEventBets() {
                       <div className="row align-items-center justify-content-between w-100">
                         <div className="col-md-6 col-6">
                           <div className="pagination-info">
+                            
                             <small>
                               Showing {((pagination.currentPage - 1) * pagination.pageSize) + 1} to{" "}
                               {Math.min(pagination.currentPage * pagination.pageSize, pagination.totalRecords)} of{" "}
@@ -437,7 +438,7 @@ function GetEventBets() {
                           </div>
                         </div>
                         <div className="col-md-6 col-6">
-                          <div className="pagination-controls d-flex justify-content-end">
+                          <div className="paginationall pagination-controls d-flex justify-content-end">
                             {renderPaginationButtons()}
                           </div>
                         </div>

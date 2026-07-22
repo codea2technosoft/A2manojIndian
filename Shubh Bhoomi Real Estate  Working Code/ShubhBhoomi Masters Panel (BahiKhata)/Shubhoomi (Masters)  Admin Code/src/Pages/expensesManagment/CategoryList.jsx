@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaPlus } from "react-icons/fa";
+import { FaDownload, FaPlus } from "react-icons/fa";
 import {
   Modal,
   Button,
@@ -25,6 +25,7 @@ function CategoryList() {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [exporting, setExporting] = useState(false);
 
   const [editModalData, setEditModalData] = useState({
     show: false,
@@ -212,6 +213,41 @@ function CategoryList() {
     }
   };
 
+  const exportAllToExcel = async () => {
+    try {
+      const token = getAuthToken();
+      if (!token) {
+        alert("Please login!");
+        return;
+      }
+
+      let url = `${API_URL}/expence-categories-exceldownload`;
+
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "text/csv",
+        },
+      });
+
+      if (!response.ok) {
+        alert("Server Error: Unable to download!");
+        return;
+      }
+
+      const csvData = await response.text();
+
+      const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute("download", `category_${Date.now()}.csv`);
+      link.click();
+    } catch (error) {
+      console.error("CSV Export Error:", error);
+      alert("Export Failed! Try again");
+    }
+  };
+
   return (
     <div>
       <div className="card mt-2">
@@ -220,6 +256,29 @@ function CategoryList() {
             <div className="titlepage">
               <h3 className="mb-0">Expense Categories</h3>
             </div>
+
+            <div className="createnewadmin">
+              <button
+                className="exportexcel btn gap-2 btn-success d-inline-flex align-items-center"
+                onClick={exportAllToExcel}
+                disabled={exporting}
+              >
+                <FaDownload />
+                {exporting ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    Exporting All...
+                  </>
+                ) : (
+                  "Export"
+                )}
+              </button>
+            </div>
+
             <Link to="/add-category" className="btn btn-primary">
               <FaPlus className="me-2" />
               Add Category

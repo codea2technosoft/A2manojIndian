@@ -212,7 +212,7 @@ function Ladder() {
 
   return (
     <div className="card">
-      {/*<div className="card-header bg-primary-yellow text-white d-flex justify-content-between align-items-md-center align-items-start">
+      {/*<div className="card-header bg-primary-yellow d-flex justify-content-between align-items-md-center align-items-start">
          <h3 className="card-title  mb-0">Clients Session PL</h3> */}
               {/* <button className="close-btn" onClick={closeLadder}>
                 ×

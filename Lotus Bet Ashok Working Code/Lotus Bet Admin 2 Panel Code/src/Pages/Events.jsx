@@ -2,8 +2,8 @@ import { IoMdInformationCircleOutline } from "react-icons/io";
 import axios from "axios";
 import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import { FiClock } from "react-icons/fi";
-import ladder from '../assets/images/ladder.png'
-import Ladder from '../Pages/Ladder'
+import ladder from "../assets/images/ladder.png";
+import Ladder from "../Pages/Ladder";
 import {
   Row,
   Col,
@@ -264,7 +264,7 @@ const BetSlipModalContent = memo(
         {/* Your existing bet slip modal content */}
       </div>
     );
-  }
+  },
 );
 
 const BetSlip = memo(
@@ -315,8 +315,7 @@ const BetSlip = memo(
             <div className="">
               <div className="datanameandinput d-flex align-items-center stacksCol justify-content-end px-1">
                 <div className="d-flex justify-content-end gap-2 only_pc_100 ">
-                  <div className="pb-0 hideMobile">
-                  </div>
+                  <div className="pb-0 hideMobile"></div>
 
                   <div className="">
                     <input
@@ -347,7 +346,11 @@ const BetSlip = memo(
                       onClick={handlePlaceBet}
                       disabled={!stake || parseInt(stake) === 0 || isPlacingBet}
                     >
-                      {isPlacingBet ? <div className="btn_loader"></div> : "Place Bet"}
+                      {isPlacingBet ? (
+                        <div className="btn_loader"></div>
+                      ) : (
+                        "Place Bet"
+                      )}
                     </button>
                   </div>
                 </div>
@@ -366,7 +369,11 @@ const BetSlip = memo(
                     onClick={handlePlaceBet}
                     disabled={!stake || parseInt(stake) === 0 || isPlacingBet}
                   >
-                    {isPlacingBet ? <div className="btn_loader"></div> : "Place Bet"}
+                    {isPlacingBet ? (
+                      <div className="btn_loader"></div>
+                    ) : (
+                      "Place Bet"
+                    )}
                   </button>
                 </div>
               </div>
@@ -387,11 +394,10 @@ const BetSlip = memo(
         </div>
       </div>
     );
-  }
+  },
 );
 
 const FancyBetSlip = memo(
-
   ({
     selectedOdds,
     stake,
@@ -478,7 +484,11 @@ const FancyBetSlip = memo(
                             !stake || parseInt(stake) === 0 || isPlacingBet
                           }
                         >
-                          {isPlacingBet ? <div className="btn_loader"></div> : "Place Bet"}
+                          {isPlacingBet ? (
+                            <div className="btn_loader"></div>
+                          ) : (
+                            "Place Bet"
+                          )}
                         </button>
                       </div>
                     </div>
@@ -514,21 +524,24 @@ const FancyBetSlip = memo(
                     onClick={handlePlaceBet}
                     disabled={!stake || parseInt(stake) === 0 || isPlacingBet}
                   >
-                    {isPlacingBet ? <div className="btn_loader"></div> : "Place Bet"}
+                    {isPlacingBet ? (
+                      <div className="btn_loader"></div>
+                    ) : (
+                      "Place Bet"
+                    )}
                   </button>
                 </div>
-
               </div>
             </div>
           </div>
         </div>
       </>
     );
-  }
+  },
 );
 
 const MyBetsComponent = memo(({ showMyBets, betsLoading, myBets }) => (
-  <div className="my-bets-section mt-2">
+  <div className="my-bets-section">
     {showMyBets && (
       <div className="bets-container">
         {betsLoading ? (
@@ -590,7 +603,7 @@ const BookmakerTable = memo(
       if (runner.status === "SUSPENDED") {
         showNotification(
           "This market is currently suspended. Betting is not allowed.",
-          "warning"
+          "warning",
         );
         return;
       }
@@ -601,15 +614,17 @@ const BookmakerTable = memo(
     };
 
     const getExposureAmount = (runnerName) => {
-      if (!bookmakerExposureData || typeof bookmakerExposureData !== 'object') {
+      if (!bookmakerExposureData || typeof bookmakerExposureData !== "object") {
         return 0;
       }
 
       // यदि matchesName array है तो team_id के माध्यम से match करें
       if (matchesName && Array.isArray(matchesName)) {
-        const team = matchesName.find(t =>
-          t.team_name && runnerName &&
-          t.team_name.toLowerCase() === runnerName.toLowerCase()
+        const team = matchesName.find(
+          (t) =>
+            t.team_name &&
+            runnerName &&
+            t.team_name.toLowerCase() === runnerName.toLowerCase(),
         );
 
         if (team) {
@@ -632,10 +647,12 @@ const BookmakerTable = memo(
 
       // यदि bookmakerExposureData एक array है (पहले API format के लिए)
       if (Array.isArray(bookmakerExposureData)) {
-        const exposureItem = bookmakerExposureData.find(item =>
-          item && typeof item === 'object' &&
-          (item.team_id?.toString() === runnerName ||
-            item.team_name?.toLowerCase() === runnerName.toLowerCase())
+        const exposureItem = bookmakerExposureData.find(
+          (item) =>
+            item &&
+            typeof item === "object" &&
+            (item.team_id?.toString() === runnerName ||
+              item.team_name?.toLowerCase() === runnerName.toLowerCase()),
         );
 
         if (exposureItem) {
@@ -644,7 +661,7 @@ const BookmakerTable = memo(
       }
 
       // यदि bookmakerExposureData एक object है (दूसरे API format के लिए)
-      if (typeof bookmakerExposureData === 'object') {
+      if (typeof bookmakerExposureData === "object") {
         // सीधे runnerName से check करें
         if (bookmakerExposureData[runnerName] !== undefined) {
           return bookmakerExposureData[runnerName];
@@ -656,11 +673,13 @@ const BookmakerTable = memo(
           const exposure = bookmakerExposureData[key];
 
           // यदि exposure एक object है
-          if (exposure && typeof exposure === 'object') {
+          if (exposure && typeof exposure === "object") {
             if (exposure.amount !== undefined) {
               // team_id या team_name से match करें
-              if (exposure.team_id?.toString() === runnerName ||
-                exposure.team_name?.toLowerCase() === runnerName.toLowerCase()) {
+              if (
+                exposure.team_id?.toString() === runnerName ||
+                exposure.team_name?.toLowerCase() === runnerName.toLowerCase()
+              ) {
                 return exposure.amount;
               }
             }
@@ -676,7 +695,8 @@ const BookmakerTable = memo(
         return "#666";
       }
 
-      const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+      const numAmount =
+        typeof amount === "string" ? parseFloat(amount) : amount;
 
       if (isNaN(numAmount)) {
         return "#666";
@@ -688,8 +708,8 @@ const BookmakerTable = memo(
     };
 
     return (
-      <div className={`${title.toLowerCase().replace(" ", "-")} mt-2`}>
-        <div className="match-odds-part mt-1">
+      <div className={`${title.toLowerCase().replace(" ", "-")}`}>
+        <div className="match-odds-part">
           <div className="table-responsive">
             <table
               className="table position-relative"
@@ -710,7 +730,9 @@ const BookmakerTable = memo(
                         ) : null}
                         My Book
                       </button>
-                      <div onClick={onMyBookClicktotel} className="backbutton">Ttl Book</div>
+                      <div onClick={onMyBookClicktotel} className="backbutton">
+                        Ttl Book
+                      </div>
                     </div>
                   </th>
                   <th align="center" className="back-h" valign="middle">
@@ -758,14 +780,20 @@ const BookmakerTable = memo(
                                           }}
                                         >
                                           {/* ({teamExposure > 0 ? "+" : ""}{formatNumber(teamExposure)}) */}
-                                          ({teamExposure > 0 ? "+" : ""}{formatNumber((Math.round(teamExposure * 100) / 100).toFixed(2))})
-
+                                          ({teamExposure > 0 ? "+" : ""}
+                                          {formatNumber(
+                                            (
+                                              Math.round(teamExposure * 100) /
+                                              100
+                                            ).toFixed(2),
+                                          )}
+                                          )
                                         </div>
                                       )}
                                     </strong>{" "}
                                     {bookMakerShowCurrentExp ? (
                                       teamexposercurrent1Name ===
-                                        runner.runnerName ? (
+                                      runner.runnerName ? (
                                         <div
                                           style={{
                                             color: currentExpbgColor1,
@@ -808,7 +836,6 @@ const BookmakerTable = memo(
                                   </span>
                                 </div>
                               </div>
-
                             </td>
                             <td
                               className="suspend-col d-mobile"
@@ -823,7 +850,7 @@ const BookmakerTable = memo(
                                       market,
                                       "back",
                                       runner.ex.availableToBack[0]?.price,
-                                      runner
+                                      runner,
                                     )
                                   }
                                   style={{
@@ -851,7 +878,7 @@ const BookmakerTable = memo(
                                   </span>
                                   <small>
                                     {formatVolume(
-                                      runner.ex.availableToBack[0]?.size || 0
+                                      runner.ex.availableToBack[0]?.size || 0,
                                     )}
                                   </small>
                                 </div>
@@ -863,7 +890,7 @@ const BookmakerTable = memo(
                                       market,
                                       "lay",
                                       runner.ex.availableToLay[0]?.price,
-                                      runner
+                                      runner,
                                     )
                                   }
                                   style={{
@@ -891,17 +918,14 @@ const BookmakerTable = memo(
                                   </span>
                                   <small>
                                     {formatVolume(
-                                      runner.ex.availableToLay[0]?.size || 0
+                                      runner.ex.availableToLay[0]?.size || 0,
                                     )}
                                   </small>
                                 </div>
-
                               </div>
 
                               {runner.status === "SUSPENDED" && (
-                                <span className="suspend-text">
-                                  SUSPENDED
-                                </span>
+                                <span className="suspend-text">SUSPENDED</span>
                               )}
                             </td>
                           </tr>
@@ -931,13 +955,14 @@ const BookmakerTable = memo(
                                             textAlign: "start",
                                           }}
                                         >
-                                          ({teamExposure > 0 ? "+" : ""}{formatNumber(teamExposure)})
+                                          ({teamExposure > 0 ? "+" : ""}
+                                          {formatNumber(teamExposure)})
                                         </div>
                                       )}
                                     </strong>{" "}
                                     {bookMakerShowCurrentExp ? (
                                       teamexposercurrent1Name ===
-                                        runner.runnerName ? (
+                                      runner.runnerName ? (
                                         <div
                                           style={{
                                             color: currentExpbgColor1,
@@ -990,16 +1015,17 @@ const BookmakerTable = memo(
                                 {[2, 1, 0].map((index) => (
                                   <div
                                     key={`back-${index}`}
-                                    className={`back1 back-${index + 1
-                                      } bettinggrid ${index > 0 ? "boxhide" : ""
-                                      }`}
+                                    className={`back1 back-${
+                                      index + 1
+                                    } bettinggrid ${
+                                      index > 0 ? "boxhide" : ""
+                                    }`}
                                     onClick={() =>
                                       handleOddsClick(
                                         market,
                                         "back",
-                                        runner.ex.availableToBack[index]
-                                          ?.price,
-                                        runner
+                                        runner.ex.availableToBack[index]?.price,
+                                        runner,
                                       )
                                     }
                                     style={{
@@ -1013,8 +1039,7 @@ const BookmakerTable = memo(
                                       ]
                                         ? "#f8e71c"
                                         : "",
-                                      transition:
-                                        "background-color 0.5s ease",
+                                      transition: "background-color 0.5s ease",
                                       padding: "2px 5px",
                                       fontWeight: highlightedMarkets[
                                         `${rowId}-back-${index}`
@@ -1030,7 +1055,7 @@ const BookmakerTable = memo(
                                     <small>
                                       {formatVolume(
                                         runner.ex.availableToBack[index]
-                                          ?.size || 0
+                                          ?.size || 0,
                                       )}
                                     </small>
                                   </div>
@@ -1039,16 +1064,17 @@ const BookmakerTable = memo(
                                 {[0, 1, 2].map((index) => (
                                   <div
                                     key={`lay-${index}`}
-                                    className={`lay3 lay-${index + 1
-                                      } bettinggrid ${index > 0 ? "boxhide" : ""
-                                      }`}
+                                    className={`lay3 lay-${
+                                      index + 1
+                                    } bettinggrid ${
+                                      index > 0 ? "boxhide" : ""
+                                    }`}
                                     onClick={() =>
                                       handleOddsClick(
                                         market,
                                         "lay",
-                                        runner.ex.availableToLay[index]
-                                          ?.price,
-                                        runner
+                                        runner.ex.availableToLay[index]?.price,
+                                        runner,
                                       )
                                     }
                                     style={{
@@ -1062,8 +1088,7 @@ const BookmakerTable = memo(
                                       ]
                                         ? "#26f1f8"
                                         : "",
-                                      transition:
-                                        "background-color 0.5s ease",
+                                      transition: "background-color 0.5s ease",
                                       padding: "2px 5px",
                                       fontWeight: highlightedMarkets[
                                         `${rowId}-lay-${index}`
@@ -1073,13 +1098,13 @@ const BookmakerTable = memo(
                                     }}
                                   >
                                     <span style={{}}>
-                                      {runner.ex.availableToLay[index]
-                                        ?.price || ""}
+                                      {runner.ex.availableToLay[index]?.price ||
+                                        ""}
                                     </span>
                                     <small>
                                       {formatVolume(
-                                        runner.ex.availableToLay[index]
-                                          ?.size || 0
+                                        runner.ex.availableToLay[index]?.size ||
+                                          0,
                                       )}
                                     </small>
                                   </div>
@@ -1087,15 +1112,13 @@ const BookmakerTable = memo(
                               </div>
 
                               {runner.status === "SUSPENDED" && (
-                                <span className="suspend-text">
-                                  SUSPENDED
-                                </span>
+                                <span className="suspend-text">SUSPENDED</span>
                               )}
                             </td>
                           </tr>
                         </React.Fragment>
                       );
-                    })
+                    }),
                   )
                 ) : (
                   <Fakedata />
@@ -1106,13 +1129,14 @@ const BookmakerTable = memo(
         </div>
       </div>
     );
-  }
+  },
 );
 
 function Cricket() {
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [showOpenBook, setShowOpenBook] = useState(false);
-  const { notification, showNotification, closeNotification } = useNotification();
+  const { notification, showNotification, closeNotification } =
+    useNotification();
 
   const [stake, setStake] = useState("");
   const [placebet, setPlacebet] = useState(false);
@@ -1151,20 +1175,41 @@ function Cricket() {
   // Debug effect for exposure data
   useEffect(() => {
     console.log("🔍 Current bookmakerExposureData:", bookmakerExposureData);
-    console.log("🔍 Type of bookmakerExposureData:", typeof bookmakerExposureData);
+    console.log(
+      "🔍 Type of bookmakerExposureData:",
+      typeof bookmakerExposureData,
+    );
 
-    if (bookmakerExposureData && typeof bookmakerExposureData === 'object') {
-      console.log("🔍 Keys in bookmakerExposureData:", Object.keys(bookmakerExposureData));
+    if (bookmakerExposureData && typeof bookmakerExposureData === "object") {
+      console.log(
+        "🔍 Keys in bookmakerExposureData:",
+        Object.keys(bookmakerExposureData),
+      );
 
       // Check specific team IDs
-      console.log("🔍 Team 77707498 exposure:", bookmakerExposureData["77707498"]);
-      console.log("🔍 Team 89060854 exposure:", bookmakerExposureData["89060854"]);
-      console.log("🔍 Team '77707498' (string) exposure:", bookmakerExposureData["77707498"]);
-      console.log("🔍 Team '89060854' (string) exposure:", bookmakerExposureData["89060854"]);
+      console.log(
+        "🔍 Team 77707498 exposure:",
+        bookmakerExposureData["77707498"],
+      );
+      console.log(
+        "🔍 Team 89060854 exposure:",
+        bookmakerExposureData["89060854"],
+      );
+      console.log(
+        "🔍 Team '77707498' (string) exposure:",
+        bookmakerExposureData["77707498"],
+      );
+      console.log(
+        "🔍 Team '89060854' (string) exposure:",
+        bookmakerExposureData["89060854"],
+      );
 
       // Check if it's an array
       if (Array.isArray(bookmakerExposureData)) {
-        console.log("🔍 Bookmaker exposure is an array, length:", bookmakerExposureData.length);
+        console.log(
+          "🔍 Bookmaker exposure is an array, length:",
+          bookmakerExposureData.length,
+        );
         bookmakerExposureData.forEach((item, index) => {
           console.log(`   Item ${index}:`, item);
         });
@@ -1180,7 +1225,7 @@ function Cricket() {
     (id) => {
       setOpenInfoId(openInfoId === id ? null : id);
     },
-    [openInfoId]
+    [openInfoId],
   );
 
   const [fancybet, setFancybet] = useState("fancybetall");
@@ -1256,7 +1301,7 @@ function Cricket() {
       if (!userId) return;
 
       const response = await axios.get(
-        `${baseUrl}/get-button-value?user_id=${userId}`
+        `${baseUrl}/get-button-value?user_id=${userId}`,
       );
 
       if (response.data.status_code === 1 && response.data.data) {
@@ -1389,7 +1434,7 @@ function Cricket() {
 
       setBettingvalueteam(value);
     },
-    [MatchType, bgColor, stackValueteam, selectednameteam]
+    [MatchType, bgColor, stackValueteam, selectednameteam],
   );
 
   const togglebetting = useCallback(() => {
@@ -1434,7 +1479,7 @@ function Cricket() {
 
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/get-match-total-exposer`,
-        { eventid: event_id,role:role,adminid: admin_id}
+        { eventid: event_id, role: role, adminid: admin_id },
       );
 
       console.log("📊 Match total exposure API response:", response.data);
@@ -1447,9 +1492,13 @@ function Cricket() {
 
         // Process match_odds
         if (Array.isArray(response.data.match_odds)) {
-          console.log(`📈 Processing ${response.data.match_odds.length} match odds items`);
-          response.data.match_odds.forEach(item => {
-            console.log(`   Match Odds - team_id: ${item.team_id}, amount: ${item.amount}`);
+          console.log(
+            `📈 Processing ${response.data.match_odds.length} match odds items`,
+          );
+          response.data.match_odds.forEach((item) => {
+            console.log(
+              `   Match Odds - team_id: ${item.team_id}, amount: ${item.amount}`,
+            );
             matchOddsMap[item.team_id] = item.amount;
           });
         }
@@ -1458,35 +1507,49 @@ function Cricket() {
         if (response.data.bookmaker) {
           // Case 1: Array format
           if (Array.isArray(response.data.bookmaker)) {
-            console.log(`📈 Processing ${response.data.bookmaker.length} bookmaker items (Array format)`);
-            response.data.bookmaker.forEach(item => {
-              console.log(`   Bookmaker - team_id: ${item.team_id}, amount: ${item.amount}`);
+            console.log(
+              `📈 Processing ${response.data.bookmaker.length} bookmaker items (Array format)`,
+            );
+            response.data.bookmaker.forEach((item) => {
+              console.log(
+                `   Bookmaker - team_id: ${item.team_id}, amount: ${item.amount}`,
+              );
               bookmakerMap[item.team_id] = item.amount;
             });
           }
           // Case 2: Object with team_id keys
-          else if (typeof response.data.bookmaker === 'object') {
-            console.log("📊 Bookmaker is an object, processing keys:", Object.keys(response.data.bookmaker));
+          else if (typeof response.data.bookmaker === "object") {
+            console.log(
+              "📊 Bookmaker is an object, processing keys:",
+              Object.keys(response.data.bookmaker),
+            );
 
             // Check if it's the direct key-value format
             const keys = Object.keys(response.data.bookmaker);
             const firstKey = keys[0];
 
-            if (firstKey && response.data.bookmaker[firstKey] &&
-              typeof response.data.bookmaker[firstKey] === 'object' &&
-              response.data.bookmaker[firstKey].team_id !== undefined) {
+            if (
+              firstKey &&
+              response.data.bookmaker[firstKey] &&
+              typeof response.data.bookmaker[firstKey] === "object" &&
+              response.data.bookmaker[firstKey].team_id !== undefined
+            ) {
               // It's an array-like object
-              keys.forEach(key => {
+              keys.forEach((key) => {
                 const item = response.data.bookmaker[key];
                 if (item && item.team_id !== undefined) {
-                  console.log(`   Bookmaker - team_id: ${item.team_id}, amount: ${item.amount}`);
+                  console.log(
+                    `   Bookmaker - team_id: ${item.team_id}, amount: ${item.amount}`,
+                  );
                   bookmakerMap[item.team_id] = item.amount;
                 }
               });
             } else {
               // It's a direct key-value object
-              keys.forEach(key => {
-                console.log(`   Bookmaker - key: ${key}, value: ${response.data.bookmaker[key]}`);
+              keys.forEach((key) => {
+                console.log(
+                  `   Bookmaker - key: ${key}, value: ${response.data.bookmaker[key]}`,
+                );
                 bookmakerMap[key] = response.data.bookmaker[key];
               });
             }
@@ -1498,7 +1561,7 @@ function Cricket() {
 
         // Force re-render of bookmaker table
         setTimeout(() => {
-          setBookmakerList(prev => {
+          setBookmakerList((prev) => {
             const newList = [...prev];
             return newList;
           });
@@ -1520,15 +1583,18 @@ function Cricket() {
       }
 
       setIsFetchingExposure(true);
-      console.log("✅ Fetching MY match total exposure for event_id:", event_id);
+      console.log(
+        "✅ Fetching MY match total exposure for event_id:",
+        event_id,
+      );
 
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/get-match-total-exposer-my`,
         {
           eventid: event_id,
           role: role,
-          adminid: admin_id
-        }
+          adminid: admin_id,
+        },
       );
 
       console.log("📊 MY Match total exposure API response:", response.data);
@@ -1537,11 +1603,14 @@ function Cricket() {
         const bookmakerMap = {};
 
         // Directly use response.data.data for bookmaker exposure
-        if (response.data.data && typeof response.data.data === 'object') {
-          console.log("📊 Direct bookmaker data from response.data.data:", response.data.data);
+        if (response.data.data && typeof response.data.data === "object") {
+          console.log(
+            "📊 Direct bookmaker data from response.data.data:",
+            response.data.data,
+          );
 
           // Copy all data from response.data.data to bookmakerMap
-          Object.keys(response.data.data).forEach(teamId => {
+          Object.keys(response.data.data).forEach((teamId) => {
             bookmakerMap[teamId] = response.data.data[teamId];
           });
         }
@@ -1551,7 +1620,7 @@ function Cricket() {
 
         // Force re-render
         setTimeout(() => {
-          setBookmakerList(prev => [...prev]);
+          setBookmakerList((prev) => [...prev]);
         }, 100);
       }
     } catch (error) {
@@ -1573,8 +1642,8 @@ function Cricket() {
   }, [fetchExposuremy]);
 
   useEffect(() => {
-    fetchExposuremy()
-  }, [])
+    fetchExposuremy();
+  }, []);
 
   const fetchMatchTotalExposure = useCallback(async () => {
     try {
@@ -1588,8 +1657,7 @@ function Cricket() {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/get-match-total-exposer`,
         // { eventid: event_id }
-                { eventid: event_id,role:role,adminid: admin_id}
-
+        { eventid: event_id, role: role, adminid: admin_id },
       );
 
       console.log("📊 Match total exposure API response:", response.data);
@@ -1599,9 +1667,13 @@ function Cricket() {
         const bookmakerMap = {};
 
         if (Array.isArray(response.data.match_odds)) {
-          console.log(`📈 Processing ${response.data.match_odds.length} match odds items`);
-          response.data.match_odds.forEach(item => {
-            console.log(`   Match Odds - team_id: ${item.team_id}, amount: ${item.amount}`);
+          console.log(
+            `📈 Processing ${response.data.match_odds.length} match odds items`,
+          );
+          response.data.match_odds.forEach((item) => {
+            console.log(
+              `   Match Odds - team_id: ${item.team_id}, amount: ${item.amount}`,
+            );
             matchOddsMap[item.team_id] = item.amount;
           });
         }
@@ -1610,18 +1682,26 @@ function Cricket() {
           console.log("📊 Bookmaker data structure:", response.data.bookmaker);
 
           if (Array.isArray(response.data.bookmaker)) {
-            console.log(`📈 Processing ${response.data.bookmaker.length} bookmaker items`);
-            response.data.bookmaker.forEach(item => {
-              console.log(`   Bookmaker - team_id: ${item.team_id}, amount: ${item.amount}`);
+            console.log(
+              `📈 Processing ${response.data.bookmaker.length} bookmaker items`,
+            );
+            response.data.bookmaker.forEach((item) => {
+              console.log(
+                `   Bookmaker - team_id: ${item.team_id}, amount: ${item.amount}`,
+              );
               bookmakerMap[item.team_id] = item.amount;
             });
-          }
-          else if (typeof response.data.bookmaker === 'object') {
-            console.log("📊 Bookmaker is an object, processing keys:", Object.keys(response.data.bookmaker));
-            Object.keys(response.data.bookmaker).forEach(key => {
+          } else if (typeof response.data.bookmaker === "object") {
+            console.log(
+              "📊 Bookmaker is an object, processing keys:",
+              Object.keys(response.data.bookmaker),
+            );
+            Object.keys(response.data.bookmaker).forEach((key) => {
               const item = response.data.bookmaker[key];
               if (item && item.team_id !== undefined) {
-                console.log(`   Bookmaker - team_id: ${item.team_id}, amount: ${item.amount}`);
+                console.log(
+                  `   Bookmaker - team_id: ${item.team_id}, amount: ${item.amount}`,
+                );
                 bookmakerMap[item.team_id] = item.amount;
               }
             });
@@ -1635,7 +1715,7 @@ function Cricket() {
         setBookmakerExposureData(bookmakerMap);
 
         setTimeout(() => {
-          setBookmakerList(prev => [...prev]);
+          setBookmakerList((prev) => [...prev]);
         }, 100);
       }
     } catch (error) {
@@ -1685,72 +1765,68 @@ function Cricket() {
   //   }
   // }, [event_id, fancylist]);
 
-
- useEffect(() => {
-  if (event_id && fancylist?.length > 0) {
-    fetchFancyExposureData();
-  }
-}, [event_id, fancylist]);
-
-const fetchFancyExposureData = useCallback(async () => {
-  try {
-    console.log("Running function...");
-
-    const role = localStorage.getItem("role");
-    const admin_id = localStorage.getItem("admin_id");
-    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-
-    if (!token) {
-      console.error("No token found");
-      return;
+  useEffect(() => {
+    if (event_id && fancylist?.length > 0) {
+      fetchFancyExposureData();
     }
+  }, [event_id, fancylist]);
 
-    const exposurePromises = fancylist.map(async (market) => {
-      const fancyId = `${event_id}-${market.SelectionId}`;
-      console.log("Calling API for:", fancyId);
+  const fetchFancyExposureData = useCallback(async () => {
+    try {
+      console.log("Running function...");
 
-      try {
-        const response = await axios.post(
-          `${process.env.REACT_APP_API_URL}/get-fancy-total-exposer`,
-          {
-            fancy_id: fancyId,
-            admin_id,
-            role
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+      const role = localStorage.getItem("role");
+      const admin_id = localStorage.getItem("admin_id");
+      const token =
+        localStorage.getItem("token") || sessionStorage.getItem("token");
 
-        return {
-          fancyId,
-          data: response.data
-        };
-
-      } catch (error) {
-        console.warn(`Failed for ${fancyId}`, error);
-        return null;
+      if (!token) {
+        console.error("No token found");
+        return;
       }
-    });
 
-    const results = await Promise.all(exposurePromises);
-    const exposureMap = {};
+      const exposurePromises = fancylist.map(async (market) => {
+        const fancyId = `${event_id}-${market.SelectionId}`;
+        console.log("Calling API for:", fancyId);
 
-    results.forEach(result => {
-      if (result) exposureMap[result.fancyId] = result.data;
-    });
+        try {
+          const response = await axios.post(
+            `${process.env.REACT_APP_API_URL}/get-fancy-total-exposer`,
+            {
+              fancy_id: fancyId,
+              admin_id,
+              role,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            },
+          );
 
-    setFancyExposureData(exposureMap);
+          return {
+            fancyId,
+            data: response.data,
+          };
+        } catch (error) {
+          console.warn(`Failed for ${fancyId}`, error);
+          return null;
+        }
+      });
 
-  } catch (error) {
-    console.error("Main error:", error);
-  }
-}, [event_id, fancylist]);
+      const results = await Promise.all(exposurePromises);
+      const exposureMap = {};
 
+      results.forEach((result) => {
+        if (result) exposureMap[result.fancyId] = result.data;
+      });
 
+      setFancyExposureData(exposureMap);
+    } catch (error) {
+      console.error("Main error:", error);
+    }
+  }, [event_id, fancylist]);
 
   const fetchMyBets = useCallback(async () => {
     try {
@@ -1852,8 +1928,8 @@ const fetchFancyExposureData = useCallback(async () => {
   }, [matchesName, Matches]);
 
   useEffect(() => {
-    getmarketteamsodds()
-  }, [])
+    getmarketteamsodds();
+  }, []);
 
   const getmarketteamsodds = useCallback(async () => {
     try {
@@ -1864,8 +1940,7 @@ const fetchFancyExposureData = useCallback(async () => {
           params: {
             id: series_idd,
           },
-        }
-
+        },
       );
 
       console.log("API Response:", response.data);
@@ -1874,7 +1949,7 @@ const fetchFancyExposureData = useCallback(async () => {
         response.data?.status_code === 1 &&
         Array.isArray(response.data.data)
       ) {
-        const teams = response.data.data.map(item => ({
+        const teams = response.data.data.map((item) => ({
           id: item._id,
           team_name: item.team_name,
           team_id: item.team_id,
@@ -1912,7 +1987,7 @@ const fetchFancyExposureData = useCallback(async () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       console.log("Match odds API response:", response.data);
@@ -1931,11 +2006,15 @@ const fetchFancyExposureData = useCallback(async () => {
           const transformedMatches = marketData.runners.map((runner) => {
             let teamName = "Unknown Team";
 
-            console.log("Looking for team with selectionId:", runner.selectionId);
+            console.log(
+              "Looking for team with selectionId:",
+              runner.selectionId,
+            );
             console.log("Available matchesName:", matchesName);
 
             const matchedTeam = matchesName.find(
-              team => team.team_id.toString() === runner.selectionId.toString()
+              (team) =>
+                team.team_id.toString() === runner.selectionId.toString(),
             );
 
             if (matchedTeam) {
@@ -2071,7 +2150,7 @@ const fetchFancyExposureData = useCallback(async () => {
               Authorization: `Bearer ${token}`,
             },
             timeout: 10000,
-          }
+          },
         );
 
         console.log("📥 Response:", response.data);
@@ -2079,14 +2158,14 @@ const fetchFancyExposureData = useCallback(async () => {
         if (response.data.status_code === 1) {
           showNotification(
             response.data.message || "Bet placed successfully!",
-            "success"
+            "success",
           );
           window.dispatchEvent(new Event("bet-updated"));
 
           if (response.data.userAmount) {
             localStorage.setItem(
               "userCredit",
-              response.data.userAmount.credit || 0
+              response.data.userAmount.credit || 0,
             );
           }
 
@@ -2095,7 +2174,7 @@ const fetchFancyExposureData = useCallback(async () => {
         } else {
           showNotification(
             response.data.message || "Failed to place bet",
-            "error"
+            "error",
           );
         }
       } catch (error) {
@@ -2117,7 +2196,7 @@ const fetchFancyExposureData = useCallback(async () => {
         setIsPlacingBet(false);
       }
     },
-    [baseUrl, showNotification]
+    [baseUrl, showNotification],
   );
 
   const placeRegularBet = useCallback(
@@ -2156,7 +2235,7 @@ const fetchFancyExposureData = useCallback(async () => {
         if (missingFields.length > 0) {
           showNotification(
             `Missing required fields: ${missingFields.join(", ")}`,
-            "error"
+            "error",
           );
           setIsPlacingBet(false);
           return;
@@ -2185,7 +2264,7 @@ const fetchFancyExposureData = useCallback(async () => {
               Authorization: `Bearer ${token}`,
             },
             timeout: 10000,
-          }
+          },
         );
 
         console.log("📥 Response:", response.data);
@@ -2193,7 +2272,7 @@ const fetchFancyExposureData = useCallback(async () => {
         if (response.data.status_code === 1) {
           showNotification(
             response.data.message || "Bet placed successfully!",
-            "success"
+            "success",
           );
           window.dispatchEvent(new Event("bet-updated"));
 
@@ -2206,7 +2285,7 @@ const fetchFancyExposureData = useCallback(async () => {
         } else {
           showNotification(
             response.data.message || "Failed to place bet",
-            "error"
+            "error",
           );
         }
       } catch (error) {
@@ -2228,7 +2307,7 @@ const fetchFancyExposureData = useCallback(async () => {
         setIsPlacingBet(false);
       }
     },
-    [baseUrl, showNotification]
+    [baseUrl, showNotification],
   );
 
   const getMatchType = useCallback(() => {
@@ -2237,7 +2316,7 @@ const fetchFancyExposureData = useCallback(async () => {
     }
 
     if (selectedOdds.market?.RunnerName || selectedOdds.clickedSide) {
-      console.warn("Fancy bet detected:", selectedOdds.market)
+      console.warn("Fancy bet detected:", selectedOdds.market);
       return "fancy";
     }
 
@@ -2327,7 +2406,9 @@ const fetchFancyExposureData = useCallback(async () => {
 
     let teamName = "Unknown Team";
     if (selectedOdds.rowId && matchesName.length > 0) {
-      const matchedTeam = matchesName.find(team => team.team_id === selectedOdds.rowId);
+      const matchedTeam = matchesName.find(
+        (team) => team.team_id === selectedOdds.rowId,
+      );
       if (matchedTeam) {
         teamName = matchedTeam.team_name;
       } else if (selectedOdds.eventName) {
@@ -2391,23 +2472,27 @@ const fetchFancyExposureData = useCallback(async () => {
       if (market.status === "SUSPENDED") {
         showNotification(
           "This market is currently suspended. Betting is not allowed.",
-          "warning"
+          "warning",
         );
         return;
       }
 
-      const teamInfo = matchesName.find(team => team.team_id === rowId.toString());
-      const teamName = teamInfo ? teamInfo.team_name :
-        (market.team_name || `Team ${rowId}`);
+      const teamInfo = matchesName.find(
+        (team) => team.team_id === rowId.toString(),
+      );
+      const teamName = teamInfo
+        ? teamInfo.team_name
+        : market.team_name || `Team ${rowId}`;
 
       setSelectednameteam(teamName);
       setMatchType("match_odds");
       setBgColor(type === "back" ? "#72bbef" : "#ff6b6b");
       setStackValueteam(oddsValue);
 
-      const size = type === "back"
-        ? market.availableToBack?.[0]?.size || 0
-        : market.availableToLay?.[0]?.size || 0;
+      const size =
+        type === "back"
+          ? market.availableToBack?.[0]?.size || 0
+          : market.availableToLay?.[0]?.size || 0;
 
       setSelectedOdds({
         value: oddsValue,
@@ -2433,7 +2518,13 @@ const fetchFancyExposureData = useCallback(async () => {
 
       setShowBetSlipModal(true);
     },
-    [checkAuthentication, showNotification, stake, valuebettingteam, matchesName]
+    [
+      checkAuthentication,
+      showNotification,
+      stake,
+      valuebettingteam,
+      matchesName,
+    ],
   );
 
   const handleFancyOddsClick = useCallback(
@@ -2446,7 +2537,7 @@ const fetchFancyExposureData = useCallback(async () => {
       ) {
         showNotification(
           "This market is currently suspended. Betting is not allowed.",
-          "warning"
+          "warning",
         );
         return;
       }
@@ -2454,9 +2545,8 @@ const fetchFancyExposureData = useCallback(async () => {
       const rowId = market.SelectionId || market.id;
 
       const price = oddsValue;
-      const size = type === "back"
-        ? market.BackSize1 || 0
-        : market.LaySize1 || 0;
+      const size =
+        type === "back" ? market.BackSize1 || 0 : market.LaySize1 || 0;
 
       setSelectedOdds({
         value: oddsValue,
@@ -2488,7 +2578,7 @@ const fetchFancyExposureData = useCallback(async () => {
 
       setShowBetSlipModal(true);
     },
-    [checkAuthentication, showNotification, stake, valuebettingteam]
+    [checkAuthentication, showNotification, stake, valuebettingteam],
   );
 
   const handleBookmakerOddsClick = useCallback(
@@ -2498,7 +2588,7 @@ const fetchFancyExposureData = useCallback(async () => {
       if (runner.status === "SUSPENDED") {
         showNotification(
           "This market is currently suspended. Betting is not allowed.",
-          "warning"
+          "warning",
         );
         return;
       }
@@ -2540,7 +2630,7 @@ const fetchFancyExposureData = useCallback(async () => {
 
       setShowBetSlipModal(true);
     },
-    [checkAuthentication, stake, valuebettingteam, showNotification]
+    [checkAuthentication, stake, valuebettingteam, showNotification],
   );
 
   const closeBetSlip = useCallback(() => {
@@ -2594,7 +2684,7 @@ const fetchFancyExposureData = useCallback(async () => {
         valuebettingteam(newStake);
       }
     },
-    [selectedOdds, selectednameteam, valuebettingteam]
+    [selectedOdds, selectednameteam, valuebettingteam],
   );
 
   const handleStakeChange = useCallback(
@@ -2606,7 +2696,7 @@ const fetchFancyExposureData = useCallback(async () => {
         valuebettingteam(value);
       }
     },
-    [selectedOdds, selectednameteam, valuebettingteam]
+    [selectedOdds, selectednameteam, valuebettingteam],
   );
 
   const formatDate = useCallback((dateString) => {
@@ -2626,7 +2716,6 @@ const fetchFancyExposureData = useCallback(async () => {
     setSelectedTab(tabName);
   }, []);
 
-
   const getfancylist = useCallback(async () => {
     try {
       setFancyLoading(true);
@@ -2641,7 +2730,7 @@ const fetchFancyExposureData = useCallback(async () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       let data = response.data;
@@ -2681,13 +2770,12 @@ const fetchFancyExposureData = useCallback(async () => {
         setfancylist(data);
 
         fetchFancyExposureData();
-
       } else if (data && Array.isArray(data.data)) {
         setfancylist(data.data);
         fetchFancyExposureData();
       } else if (data && typeof data === "object") {
         const dataArray = Object.values(data).filter(
-          (item) => item && typeof item === "object" && item.SelectionId
+          (item) => item && typeof item === "object" && item.SelectionId,
         );
         setfancylist(dataArray);
         fetchFancyExposureData();
@@ -2716,7 +2804,7 @@ const fetchFancyExposureData = useCallback(async () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       let data = response.data;
@@ -2733,12 +2821,12 @@ const fetchFancyExposureData = useCallback(async () => {
           (market) =>
             market.marketName &&
             (market.marketName.toLowerCase().includes("bookmaker") ||
-              market.marketName.toLowerCase().includes("over"))
+              market.marketName.toLowerCase().includes("over")),
         );
         const tiedMarkets = data.filter(
           (market) =>
             market.marketName &&
-            market.marketName.toLowerCase().includes("tied")
+            market.marketName.toLowerCase().includes("tied"),
         );
 
         bookmakerMarkets.forEach((market) => {
@@ -2801,7 +2889,11 @@ const fetchFancyExposureData = useCallback(async () => {
     if (isInitialLoad && series_idd && event_id) {
       const fetchAllData = async () => {
         try {
-          await Promise.all([getfancylist(), getBookmakerList(), fetchMatchTotalExposure()]);
+          await Promise.all([
+            getfancylist(),
+            getBookmakerList(),
+            fetchMatchTotalExposure(),
+          ]);
         } catch (error) {
         } finally {
           setIsInitialLoad(false);
@@ -2816,7 +2908,7 @@ const fetchFancyExposureData = useCallback(async () => {
     event_id,
     getfancylist,
     getBookmakerList,
-    fetchMatchTotalExposure
+    fetchMatchTotalExposure,
   ]);
 
   useEffect(() => {
@@ -2860,7 +2952,7 @@ const fetchFancyExposureData = useCallback(async () => {
     event_id,
     getfancylist,
     getBookmakerList,
-    fetchMatchTotalExposure
+    fetchMatchTotalExposure,
   ]);
 
   useEffect(() => {
@@ -2896,7 +2988,7 @@ const fetchFancyExposureData = useCallback(async () => {
 
   const MatchOddsSection = memo(() => {
     const getExposureAmount = (teamId) => {
-      if (!matchOddsExposureData || typeof matchOddsExposureData !== 'object') {
+      if (!matchOddsExposureData || typeof matchOddsExposureData !== "object") {
         return 0;
       }
 
@@ -2916,7 +3008,8 @@ const fetchFancyExposureData = useCallback(async () => {
         return "#666";
       }
 
-      const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+      const numAmount =
+        typeof amount === "string" ? parseFloat(amount) : amount;
 
       if (isNaN(numAmount)) {
         return "#666";
@@ -2928,7 +3021,10 @@ const fetchFancyExposureData = useCallback(async () => {
     };
 
     useEffect(() => {
-      console.log("📊 MatchOddsSection - Exposure Data:", matchOddsExposureData);
+      console.log(
+        "📊 MatchOddsSection - Exposure Data:",
+        matchOddsExposureData,
+      );
       console.log("📋 MatchOddsSection - Matches:", Matches);
     }, [matchOddsExposureData, Matches]);
 
@@ -2942,9 +3038,7 @@ const fetchFancyExposureData = useCallback(async () => {
             <p className="mt-2">Loading matches...</p>
           </div>
         ) : (
-          <>
-            {/* Match odds table content */}
-          </>
+          <>{/* Match odds table content */}</>
         )}
       </div>
     );
@@ -2983,37 +3077,63 @@ const fetchFancyExposureData = useCallback(async () => {
                               >
                                 <thead>
                                   <tr>
-                                    <th align="left" className="market-name-th" valign="middle">
+                                    <th
+                                      align="left"
+                                      className="market-name-th"
+                                      valign="middle"
+                                    >
                                       <div className="d-flex justify-content-between align-items-center">
                                         <p className="text_blink"> Fancy Bet</p>
                                       </div>
                                     </th>
-                                    <th align="center" className="back-h" valign="middle">
+                                    <th
+                                      align="center"
+                                      className="back-h"
+                                      valign="middle"
+                                    >
                                       <span>NO</span>
                                     </th>
-                                    <th align="center" className="lay-h" valign="middle">
+                                    <th
+                                      align="center"
+                                      className="lay-h"
+                                      valign="middle"
+                                    >
                                       <span>YES</span>
                                     </th>
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {Array.isArray(fancylist) && fancylist.length > 0 ? (
+                                  {Array.isArray(fancylist) &&
+                                  fancylist.length > 0 ? (
                                     fancylist
-                                      .filter(market => {
+                                      .filter((market) => {
                                         // Filter out markets with "ball run" in RunnerName
                                         if (!market.RunnerName) return false;
-                                        return !market.RunnerName.toLowerCase().includes("ball run");
+                                        return !market.RunnerName.toLowerCase().includes(
+                                          "ball run",
+                                        );
                                       })
                                       .map((market) => {
-                                        const rowId = market.SelectionId || market.id;
+                                        const rowId =
+                                          market.SelectionId || market.id;
                                         const fancyExposureKey = `${event_id}-${market.SelectionId}`;
-                                        const exposureData = fancyExposureData[fancyExposureKey];
-                                        const totalExposer = exposureData?.total_exposer || 0;
-                                        const usersCount = exposureData?.users_count || 0;
+                                        const exposureData =
+                                          fancyExposureData[fancyExposureKey];
+                                        const totalExposer =
+                                          exposureData?.total_exposer || 0;
+                                        const usersCount =
+                                          exposureData?.users_count || 0;
 
                                         return (
-                                          <tr key={rowId} className="white-bg skyDetailsRow">
-                                            <td align="left" className="selaction_name" valign="middle">
+                                          <tr
+                                            key={rowId}
+                                            className="white-bg skyDetailsRow"
+                                          >
+                                            <td
+                                              align="left"
+                                              className="selaction_name"
+                                              valign="middle"
+                                            >
                                               <div className="d-flex height_60 justify-content-between align-items-center">
                                                 <div className="d-flex gap-2">
                                                   <span>
@@ -3022,25 +3142,40 @@ const fetchFancyExposureData = useCallback(async () => {
                                                       Max:{market.max || 1000}
                                                     </small>
                                                   </span>
-                                                  {(totalExposer !== 0 || usersCount !== 0) && (
+                                                  {(totalExposer !== 0 ||
+                                                    usersCount !== 0) && (
                                                     <small className="exposerall">
-                                                      <span>({formatNumber(totalExposer)})</span>
+                                                      <span>
+                                                        (
+                                                        {formatNumber(
+                                                          totalExposer,
+                                                        )}
+                                                        )
+                                                      </span>
                                                     </small>
                                                   )}
                                                 </div>
 
                                                 <div className="d-flex justify-content-end align-items-center">
-                                                  {exposureData && totalExposer > 0 && (
-                                                    <div className="exposure-info">
-                                                      <span
-                                                        className="ladderimage"
-                                                        role="button"
-                                                        onClick={() => openLadder(`${event_id}-${market.SelectionId}`)}
-                                                      >
-                                                        <img src={ladder} alt="ladder" />
-                                                      </span>
-                                                    </div>
-                                                  )}
+                                                  {exposureData &&
+                                                    totalExposer > 0 && (
+                                                      <div className="exposure-info">
+                                                        <span
+                                                          className="ladderimage"
+                                                          role="button"
+                                                          onClick={() =>
+                                                            openLadder(
+                                                              `${event_id}-${market.SelectionId}`,
+                                                            )
+                                                          }
+                                                        >
+                                                          <img
+                                                            src={ladder}
+                                                            alt="ladder"
+                                                          />
+                                                        </span>
+                                                      </div>
+                                                    )}
                                                 </div>
                                               </div>
                                             </td>
@@ -3053,19 +3188,24 @@ const fetchFancyExposureData = useCallback(async () => {
                                             >
                                               <div className="betbox">
                                                 <a
-                                                  className={`td_btn pink_bg ${market.GameStatus === "SUSPENDED" ||
-                                                    market.GameStatus === "BALL RUNNING"
-                                                    ? "suspended-odds"
-                                                    : ""
-                                                    }`}
+                                                  className={`td_btn pink_bg ${
+                                                    market.GameStatus ===
+                                                      "SUSPENDED" ||
+                                                    market.GameStatus ===
+                                                      "BALL RUNNING"
+                                                      ? "suspended-odds"
+                                                      : ""
+                                                  }`}
                                                   onClick={() =>
-                                                    market.GameStatus !== "SUSPENDED" &&
-                                                    market.GameStatus !== "BALL RUNNING" &&
+                                                    market.GameStatus !==
+                                                      "SUSPENDED" &&
+                                                    market.GameStatus !==
+                                                      "BALL RUNNING" &&
                                                     handleFancyOddsClick(
                                                       market.LayPrice1,
                                                       "lay",
                                                       market,
-                                                      "no"
+                                                      "no",
                                                     )
                                                   }
                                                 >
@@ -3073,25 +3213,35 @@ const fetchFancyExposureData = useCallback(async () => {
                                                     {market.LayPrice1 || 0}
                                                   </span>
                                                   <span className="novalue1">
-                                                    {formatVolume(market.LaySize1 || 0)}
+                                                    {formatVolume(
+                                                      market.LaySize1 || 0,
+                                                    )}
                                                   </span>
                                                 </a>
                                               </div>
-                                              <div className="betbox" style={{ right: 0 }}>
+                                              <div
+                                                className="betbox"
+                                                style={{ right: 0 }}
+                                              >
                                                 <a
-                                                  className={`td_btn blue_bg ${market.GameStatus === "SUSPENDED" ||
-                                                    market.GameStatus === "BALL RUNNING"
-                                                    ? "suspended-odds"
-                                                    : ""
-                                                    }`}
+                                                  className={`td_btn blue_bg ${
+                                                    market.GameStatus ===
+                                                      "SUSPENDED" ||
+                                                    market.GameStatus ===
+                                                      "BALL RUNNING"
+                                                      ? "suspended-odds"
+                                                      : ""
+                                                  }`}
                                                   onClick={() =>
-                                                    market.GameStatus !== "SUSPENDED" &&
-                                                    market.GameStatus !== "BALL RUNNING" &&
+                                                    market.GameStatus !==
+                                                      "SUSPENDED" &&
+                                                    market.GameStatus !==
+                                                      "BALL RUNNING" &&
                                                     handleFancyOddsClick(
                                                       market.BackPrice1,
                                                       "back",
                                                       market,
-                                                      "yes"
+                                                      "yes",
                                                     )
                                                   }
                                                 >
@@ -3099,29 +3249,40 @@ const fetchFancyExposureData = useCallback(async () => {
                                                     {market.BackPrice1 || 0}
                                                   </span>
                                                   <span className="novalue1">
-                                                    {formatVolume(market.BackSize1 || 0)}
+                                                    {formatVolume(
+                                                      market.BackSize1 || 0,
+                                                    )}
                                                   </span>
                                                 </a>
                                               </div>
-                                              {(market.GameStatus === "SUSPENDED" ||
-                                                market.GameStatus === "BALL RUNNING") && (
-                                                  <div className="suspend-text">
-                                                    {market.GameStatus === "SUSPENDED"
-                                                      ? "SUSPENDED"
-                                                      : "BALL RUNNING"}
-                                                  </div>
-                                                )}
+                                              {(market.GameStatus ===
+                                                "SUSPENDED" ||
+                                                market.GameStatus ===
+                                                  "BALL RUNNING") && (
+                                                <div className="suspend-text">
+                                                  {market.GameStatus ===
+                                                  "SUSPENDED"
+                                                    ? "SUSPENDED"
+                                                    : "BALL RUNNING"}
+                                                </div>
+                                              )}
                                             </td>
                                           </tr>
                                         );
                                       })
                                   ) : (
                                     <tr className="white-bg skyDetailsRow">
-                                      <td align="left" className="selaction_name" valign="middle">
+                                      <td
+                                        align="left"
+                                        className="selaction_name"
+                                        valign="middle"
+                                      >
                                         <div className="d-flex height_60 justify-content-between align-items-center">
                                           <span>
                                             <a>----</a>
-                                            <small className="max_amt">Max:---</small>
+                                            <small className="max_amt">
+                                              Max:---
+                                            </small>
                                           </span>
                                           <span
                                             className="ladderimage"
@@ -3145,7 +3306,10 @@ const fetchFancyExposureData = useCallback(async () => {
                                             <span className="novalue1">--</span>
                                           </a>
                                         </div>
-                                        <div className="betbox" style={{ right: 0 }}>
+                                        <div
+                                          className="betbox"
+                                          style={{ right: 0 }}
+                                        >
                                           <a className="td_btn blue_bg ">
                                             <span className="novalue">--</span>
                                             <span className="novalue1">--</span>
@@ -3220,7 +3384,10 @@ const fetchFancyExposureData = useCallback(async () => {
       {/* Ladder Modal */}
       {isLadderOpen && (
         <div className="modal-overlay" onClick={closeLadder}>
-          <div className="ladder-modal modal_client" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="ladder-modal modal_client"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-header">
               <h4 className="text-light">MATCH STATS</h4>
               <button className="close-btn" onClick={closeLadder}>
@@ -3243,12 +3410,10 @@ const fetchFancyExposureData = useCallback(async () => {
         <span>TV</span>
       </div>
 
-
       {activeTab === "tv" && (
         <>
           <div className="desktop_all">
             <div className="matchtv mt-2 position-relative">
-
               <div
                 className="live-tv-wrapper"
                 style={{ cursor: "pointer", zIndex: 5 }}
@@ -3256,7 +3421,6 @@ const fetchFancyExposureData = useCallback(async () => {
               >
                 {/* <IoIosCloseCircleOutline size={25} color="#ff4d4f" /> */}
                 <iframe
-
                   src={`https://e765432.diamondcricketid.com/dtv.php?id=${event_id}&sportid=4`}
                   frameBorder="0"
                   width="100%"
@@ -3264,15 +3428,10 @@ const fetchFancyExposureData = useCallback(async () => {
                   allowFullScreen
                 />
               </div>
-
-
-
-
             </div>
           </div>
           <div className="mobile_all">
             <div className="matchtv mt-2 position-relative">
-
               <div
                 className="live-tv-wrapper"
                 style={{ cursor: "pointer", zIndex: 5 }}
@@ -3280,7 +3439,6 @@ const fetchFancyExposureData = useCallback(async () => {
               >
                 {/* <IoIosCloseCircleOutline size={25} color="#ff4d4f" /> */}
                 <iframe
-
                   src={`https://e765432.diamondcricketid.com/dtv.php?id=${event_id}&sportid=4`}
                   frameBorder="0"
                   width="100%"
@@ -3288,10 +3446,6 @@ const fetchFancyExposureData = useCallback(async () => {
                   allowFullScreen
                 />
               </div>
-
-
-
-
             </div>
           </div>
         </>
@@ -3308,130 +3462,140 @@ const fetchFancyExposureData = useCallback(async () => {
       </div>
 
       <section className="cricket_design new_game_design_myxbet">
-
-
-        {successMessage && (
-          <div
-            className="alert alert-success alert-dismissible fade show"
-            role="alert"
-          >
-            {successMessage}
-            <button
-              type="button"
-              className="btn-close"
-              onClick={() => setSuccessMessage("")}
-            ></button>
-          </div>
-        )}
-
-        {activeTab === "mybet" && (
-          <div className="betting betting_bet">
-            <table className="table position-relative text-start table-sm table-bordered">
-              <thead>
-                <tr>
-                  <th className="text-start">Team</th>
-                  <th className="text-start">Odds</th>
-                  <th className="text-start">Total (₹)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentBets.map((bet) => (
-                  <tr
-                    key={bet._id}
-                    className={`placebetdesignall ${bet.bet_on === "back" ? "backsuccess" : "laydesign"
-                      }`}
-                  >
-                    <td className="text-start">{bet.team}</td>
-                    <td className="text-start">{bet.odd}</td>
-                    <td className="text-start">
-                      {bet.total} {bet.bet_on}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {totalPages > 1 && (
-              <div className="pagination d-flex justify-content-between align-items-center mt-3 p-2">
+        <Row>
+          <Col md={6}>
+            {successMessage && (
+              <div
+                className="alert alert-success alert-dismissible fade show"
+                role="alert"
+              >
+                {successMessage}
                 <button
-                  className="page-btn"
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage((p) => p - 1)}
-                >
-                  ◀ Prev
-                </button>
-
-                <div className="page-info">
-                  Page {currentPage} of {totalPages}
-                </div>
-
-                <button
-                  className="page-btn"
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage((p) => p + 1)}
-                >
-                  Next ▶
-                </button>
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setSuccessMessage("")}
+                ></button>
               </div>
             )}
 
-            {currentBets.length === 0 && (
-              <div className="text-center p-3">
-                <p className="text-muted">No bets found</p>
+            {activeTab === "mybet" && (
+              <div className="betting betting_bet">
+                <table className="table position-relative text-start table-sm table-bordered">
+                  <thead>
+                    <tr>
+                      <th className="text-start">Team</th>
+                      <th className="text-start">Odds</th>
+                      <th className="text-start">Total (₹)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentBets.map((bet) => (
+                      <tr
+                        key={bet._id}
+                        className={`placebetdesignall ${
+                          bet.bet_on === "back" ? "backsuccess" : "laydesign"
+                        }`}
+                      >
+                        <td className="text-start">{bet.team}</td>
+                        <td className="text-start">{bet.odd}</td>
+                        <td className="text-start">
+                          {bet.total} {bet.bet_on}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {totalPages > 1 && (
+                  <div className="pagination d-flex justify-content-between align-items-center mt-3 p-2">
+                    <button
+                      className="page-btn"
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage((p) => p - 1)}
+                    >
+                      ◀ Prev
+                    </button>
+
+                    <div className="page-info">
+                      Page {currentPage} of {totalPages}
+                    </div>
+
+                    <button
+                      className="page-btn"
+                      disabled={currentPage === totalPages}
+                      onClick={() => setCurrentPage((p) => p + 1)}
+                    >
+                      Next ▶
+                    </button>
+                  </div>
+                )}
+
+                {currentBets.length === 0 && (
+                  <div className="text-center p-3">
+                    <p className="text-muted">No bets found</p>
+                  </div>
+                )}
               </div>
             )}
-          </div>
-        )}
-        <div>
-          <MyBetsComponent
-            showMyBets={showMyBets}
-            betsLoading={betsLoading}
-          />
-        </div>
+            <div>
+              <MyBetsComponent
+                showMyBets={showMyBets}
+                betsLoading={betsLoading}
+              />
+            </div>
 
-        <div className="cricketbettingalldesign eventsallbetshow">
-          <MatchOddsSection />
+            <div className="cricketbettingalldesign eventsallbetshow">
+              <MatchOddsSection />
 
-          <BookmakerTable
-            markets={bookmakerList}
-            title="Bookmaker"
-            selectedRow={selectedRow}
-            placebet={placebet}
-            selectedOdds={selectedOdds}
-            handleBookmakerOddsClick={handleBookmakerOddsClick}
-            closeBetSlip={closeBetSlip}
-            handlePlaceBet={handlePlaceBet}
-            handleStakeChange={handleStakeChange}
-            decreaseStake={decreaseStake}
-            increaseStake={increaseStake}
-            handleQuickStake={handleQuickStake}
-            isPlacingBet={isPlacingBet}
-            stake={stake}
-            fancyQuickStakes={fancyQuickStakes}
-            formatNumber={formatNumber}
-            showNotification={showNotification}
-            highlightedMarkets={highlightedMarkets}
-            formatVolume={formatVolume}
-            bookMakerShowCurrentExp={bookMakerShowCurrentExp}
-            teamexposercurrent1={teamexposercurrent1}
-            teamexposercurrent2={teamexposercurrent2}
-            teamexposercurrent1Name={teamexposercurrent1Name}
-            currentExpbgColor1={currentExpbgColor1}
-            currentExpbgColor2={currentExpbgColor2}
-            selectednameteam={selectednameteam}
-            betType={betType}
-            bookmakerExposureData={bookmakerExposureData}
-            matchesName={matchesName}
-            onMyBookClick={handleMyBookClick}
-            onMyBookClicktotel={handleMyBookClicktolet}
-            isFetchingExposure={isFetchingExposure}
-          />
+              <BookmakerTable
+                markets={bookmakerList}
+                title="Bookmaker"
+                selectedRow={selectedRow}
+                placebet={placebet}
+                selectedOdds={selectedOdds}
+                handleBookmakerOddsClick={handleBookmakerOddsClick}
+                closeBetSlip={closeBetSlip}
+                handlePlaceBet={handlePlaceBet}
+                handleStakeChange={handleStakeChange}
+                decreaseStake={decreaseStake}
+                increaseStake={increaseStake}
+                handleQuickStake={handleQuickStake}
+                isPlacingBet={isPlacingBet}
+                stake={stake}
+                fancyQuickStakes={fancyQuickStakes}
+                formatNumber={formatNumber}
+                showNotification={showNotification}
+                highlightedMarkets={highlightedMarkets}
+                formatVolume={formatVolume}
+                bookMakerShowCurrentExp={bookMakerShowCurrentExp}
+                teamexposercurrent1={teamexposercurrent1}
+                teamexposercurrent2={teamexposercurrent2}
+                teamexposercurrent1Name={teamexposercurrent1Name}
+                currentExpbgColor1={currentExpbgColor1}
+                currentExpbgColor2={currentExpbgColor2}
+                selectednameteam={selectednameteam}
+                betType={betType}
+                bookmakerExposureData={bookmakerExposureData}
+                matchesName={matchesName}
+                onMyBookClick={handleMyBookClick}
+                onMyBookClicktotel={handleMyBookClicktolet}
+                isFetchingExposure={isFetchingExposure}
+              />
 
-          <FancyBetsSection />
-        </div>
+              <FancyBetsSection />
+            </div>
+          </Col>
+
+          <Col md={6}>
+            <MatchStats />
+          </Col>
+        </Row>
 
         {showBetSlipModal && (
-          <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div
+            className="modal fade show"
+            style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
+          >
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
                 <BetSlipModalContent
@@ -3500,7 +3664,6 @@ const fetchFancyExposureData = useCallback(async () => {
                 />
               </div>
 
-
               <div className="modal-footer fixed-footer">
                 <button
                   className="ok-btn"
@@ -3545,12 +3708,11 @@ const fetchFancyExposureData = useCallback(async () => {
           </div>
         )}
       </section>
+
       {isOn && (
         <div className="amountbetalldsd mt-2">
           <div className="container-fluid">
-
             <div className="row align-items-center justify-content-between g-2 amount-row">
-
               <div className="col-auto">
                 <strong>AMOUNT:</strong>
               </div>
@@ -3587,24 +3749,18 @@ const fetchFancyExposureData = useCallback(async () => {
                   <strong>8</strong>
                 </span>
 
-                <button
-                  className="done-btn"
-                  disabled={!amount}
-                >
+                <button className="done-btn" disabled={!amount}>
                   DONE
                 </button>
               </div>
             </div>
-
           </div>
         </div>
       )}
 
       <Clients_SessionPL />
 
-      <MatchStats />
       {/* <CompletedSessions /> */}
-
     </div>
   );
 }

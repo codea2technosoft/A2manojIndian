@@ -148,7 +148,7 @@ function GetEventBets() {
     <div className="card mt-4">
 
       {/* HEADER */}
-      <div className="card-header bg-primary-yellow text-white d-flex justify-content-between align-items-center">
+      <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
         <h3 className="card-title  mb-0 ">Completed Sessions</h3>
 
         <select

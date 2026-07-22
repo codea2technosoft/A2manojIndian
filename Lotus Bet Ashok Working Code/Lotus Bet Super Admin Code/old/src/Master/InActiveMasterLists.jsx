@@ -222,11 +222,11 @@ function InActiveMasterLists() {
   return (
     <>
       <div className="card agentmaster">
-        <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
           <h5 className="mb-0">Inactive Masters List</h5>
           <div className="d-flex gap-2">
             <button
-              className="btn btn-success btn-sm"
+              className="btn btn-outline-light"
               onClick={handleBack}
             >
               Back
@@ -238,7 +238,7 @@ function InActiveMasterLists() {
             <div className="row mb-3">
               <div className="col-md-6">
                 <div className="d-flex">
-                  <div className="input-group me-2" style={{ width: "300px" }}>
+                   <div className="input-group me-2" style={{ width: "500px" }}>
                     <input
                       type="text"
                       className="form-control"

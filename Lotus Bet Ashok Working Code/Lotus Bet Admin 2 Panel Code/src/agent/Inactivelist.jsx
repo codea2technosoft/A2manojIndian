@@ -371,9 +371,8 @@ function InactiveUserList() {
         </Modal.Footer>
       </Modal>
 
-      <div className="container-fluid">
         <div className="card">
-          <div className="card-header bg-color-black text-white d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div className="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h3 className="card-title text-white mb-0">
               Inactive List
             </h3>
@@ -398,7 +397,7 @@ function InactiveUserList() {
               )} */}
               <button
                 onClick={() => navigate(-1)}
-                className="backbutton"
+                className="btn btn-outline-light"
               >
                 ← Back
               </button>
@@ -596,7 +595,6 @@ function InactiveUserList() {
             </div>
           </Card.Footer>
         </div>
-      </div>
     </>
   );
 }

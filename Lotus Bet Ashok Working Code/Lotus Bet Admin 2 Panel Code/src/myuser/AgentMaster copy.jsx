@@ -829,7 +829,7 @@ Password: ${agent.password || "N/A"}`;
           <div className="d-flex gap-2">
 
             <button
-              className="btn btn-success btn-sm"
+              className="btn btn-success"
               onClick={handleCreateAgent}
             >
               Create User

@@ -6,69 +6,62 @@ import { IoIosArrowDown } from "react-icons/io";
 import { FiUser, FiLogOut } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { io } from "socket.io-client";
+import { CiLock } from "react-icons/ci";
+import { FiSearch } from "react-icons/fi";
 import { IoChatbubbleEllipsesSharp } from "react-icons/io5";
 import Swal from "sweetalert2";
+import profileimage from "../asset/image/user-client.png";
+import { FaAngleDoubleRight } from "react-icons/fa";
+import { MdKeyboardArrowDown, MdOutlineKeyboardArrowUp } from "react-icons/md";
+
 import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios"; // Add axios import
-import {
-  encryptData,
-  decryptData,
-  generateHMAC,
-} from "../Utils/encryption";
+import { encryptData, decryptData, generateHMAC } from "../Utils/encryption";
+import newlogo from "../asset/image/logo.png";
 import { addSuperAdminCoins } from "../Server/api"
-import logo from '../asset/image/logo.png'
 
 function Header({ onToggleSidebar }) {
   const [darkMode, setDarkMode] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const [username, setUsername] = useState("");
-  // console.log("hgh",passwordnew)
-  // alert(passwordnew)
   const [coins, setCoins] = useState(0);
-  console.log("coins", coins)
   const [AdminNotifiaction, setAdminNotifiaction] = useState(0);
   const [adminData, setAdminData] = useState(null);
   const socketRef = useRef(null);
   const token = localStorage.getItem("token");
   const [isLoading, setIsLoading] = useState(false);
-  const [showDepositModal, setShowDepositModal] = useState(false);
+  const navigate = useNavigate();
+  const [allReport, setAllReport] = useState(false);
+  const [allMaster, setAllMaster] = useState(false);
   const [depositAmount, setDepositAmount] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const [showDepositModal, setShowDepositModal] = useState(false);
 
+  const showReport = () => {
+    setAllReport((prev) => !prev);
+    setAllMaster(false);
+  };
+
+  const showMaster = () => {
+    setAllMaster((prev) => !prev);
+    setAllReport(false);
+  };
   useEffect(() => {
     fetchAdminProfile();
   }, []);
-
-  // useEffect(() => {
-  const check = localStorage.getItem("check");
-
-  const [passwordnew, setpasswordnew] = useState("");
-
-  useEffect(() => {
-    if (!passwordnew) return; // empty hone pe skip
-
-    if (check !== passwordnew) {
-      console.log("Not matched", passwordnew);
-      // navigate("/login");
-    } else {
-      console.log("Matched ✅");
-    }
-  }, [passwordnew]);
-  // }, [passwordnew]);// jab bhi password change ho check karega
 
   // const fetchAdminProfile = async () => {
   //   try {
   //     const admin_id = localStorage.getItem("admin_id");
   //     const role = localStorage.getItem("role");
   //     const token = localStorage.getItem("token");
-  //     const check = localStorage.getItem("check");
 
   //     if (!admin_id || !role || !token) {
   //       console.warn("Missing authentication data");
   //       return;
   //     }
+
   //     const response = await axios.post(
   //       `${process.env.REACT_APP_API_URL}/get-data`,
   //       {
@@ -83,97 +76,25 @@ function Header({ onToggleSidebar }) {
   //       }
   //     );
 
-  //     if (response.data.success) {
+  //     if (response.data.success && response.data.data?.admin_profile) {
   //       const adminProfile = response.data.data.admin_profile;
   //       setAdminData(adminProfile);
   //       setUsername(adminProfile.username || "");
-  //       setpasswordnew(adminProfile.password || "");
+  //       localStorage.setItem("super_agent_id", adminProfile.super_agent_id);
+  //       localStorage.setItem("super_admin_id", adminProfile.super_admin_id);
+  //       localStorage.setItem("master_admin_id", adminProfile.master_admin_id);
+
   //       setCoins(adminProfile.coins || 0);
+
+  //       // You can also save to localStorage if needed elsewhere
   //       localStorage.setItem("adminProfile", JSON.stringify(adminProfile));
-
-
-  // const check = localStorage.getItem("check");
-
-  // // 🔥 MAIN LOGIC
-  // if (check !== adminProfile.password) {
-  //   console.log("Password mismatch ❌");
-
-  //   // clear data (optional but good practice)
-  //   localStorage.removeItem("adminProfile");
-
-  //   // redirect
-  //   navigate("/login");
-
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching admin profile:", error);
+  //     // Handle error appropriately
   //   }
   // };
 
-
-
-  const fetchAdminProfile = async () => {
-    try {
-      const admin_id = localStorage.getItem("admin_id");
-      const role = localStorage.getItem("role");
-      const token = localStorage.getItem("token");
-      const check = localStorage.getItem("check");
-
-      // ✅ Auth validation
-      if (!admin_id || !role || !token) {
-        console.warn("Missing authentication data");
-
-        navigate("/login");
-        return;
-      }
-
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/get-data`,
-        {
-          role,
-          admin_id
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
-        }
-      );
-
-      if (response.data.success) {
-        const adminProfile = response.data.data.admin_profile;
-        // console.log("Password mismatch ❌",check,adminProfile.password);
-
-        // ✅ Password check FIRST (important)
-        if (check !== adminProfile.password) {
-          console.log("Password mismatch ramraj ❌", check, adminProfile.password);
-
-          // cleanup
-          localStorage.clear();
-
-          navigate("/login");
-          return; // 🔥 important
-        }
-
-        // ✅ safe to set state now
-        setAdminData(adminProfile);
-        setUsername(adminProfile.username || "");
-        setpasswordnew(adminProfile.password || "");
-        setCoins(adminProfile.coins || 0);
-
-        localStorage.setItem("adminProfile", JSON.stringify(adminProfile));
-
-        console.log("Login valid ✅");
-      } else {
-        console.warn("API failed");
-
-        navigate("/login");
-      }
-
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-
-      navigate("/login");
-    }
-  };
 
   const handleDeposit = async () => {
     if (!depositAmount || !password) {
@@ -217,6 +138,61 @@ function Header({ onToggleSidebar }) {
     }
   };
 
+
+  const fetchAdminProfile = async () => {
+    try {
+      const admin_id = localStorage.getItem("admin_id");
+      const role = localStorage.getItem("role");
+      const token = localStorage.getItem("token");
+
+      if (!admin_id || !role || !token) {
+        console.warn("Missing authentication data");
+        navigate("/login");
+        return;
+      }
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/get-data`,
+        {
+          role: role,
+          admin_id: admin_id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (response.data.success && response.data.data?.admin_profile) {
+        const adminProfile = response.data.data.admin_profile;
+
+        // 🔴 CHECK ACTIVE & BLOCK STATUS
+        if (adminProfile.active === 0 || adminProfile.is_blocked === "1") {
+          localStorage.clear(); // optional but recommended
+          navigate("/login");
+          return;
+        }
+
+        setAdminData(adminProfile);
+        setUsername(adminProfile.username || "");
+        setCoins(adminProfile.coins || 0);
+
+        localStorage.setItem("super_agent_id", adminProfile.super_agent_id);
+        localStorage.setItem("super_admin_id", adminProfile.super_admin_id);
+        localStorage.setItem("master_admin_id", adminProfile.master_admin_id);
+        localStorage.setItem("adminProfile", JSON.stringify(adminProfile));
+      }
+    } catch (error) {
+      console.error("Error fetching admin profile:", error);
+      navigate("/login");
+    }
+  };
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle("dark-theme");
+  };
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -310,106 +286,8 @@ function Header({ onToggleSidebar }) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // const handleSubmit = async () => {
-  //   if (!oldPassword || !newPassword || !confirmPassword) {
-  //     Swal.fire({
-  //       icon: "error",
-  //       title: "Missing Fields",
-  //       text: "Please fill all password fields.",
-  //     });
-  //     return;
-  //   }
-
-  //   if (newPassword !== confirmPassword) {
-  //     Swal.fire({
-  //       icon: "error",
-  //       title: "Failed",
-  //       text: "Confirm Password Wrong",
-  //     });
-  //     return;
-  //   }
-
-  //   setIsLoading(true);
-
-  //   try {
-  //     const secretKey = process.env.REACT_APP_SECRET_KEY;
-
-  //     const requestData = { oldPassword, newPassword, confirmPassword };
-
-  //     const encryptedData = encryptData(requestData, secretKey);
-  //     const hmac = generateHMAC(encryptedData, secretKey);
-
-  //     const token = decryptData(localStorage.getItem("token"), secretKey);
-
-  //     const response = await fetch(`${process.env.REACT_APP_API_URL}/change-password`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       body: JSON.stringify({ encryptedData, hmac }),
-  //     });
-
-  //     const text = await response.text();
-  //     let resJson = {};
-
-  //     try {
-  //       resJson = JSON.parse(text);
-  //     } catch (e) {
-  //       throw new Error("Invalid JSON from server");
-  //     }
-
-  //     if (resJson.encryptedData) {
-  //       const decrypted = decryptData(resJson.encryptedData, secretKey);
-
-  //       if (!decrypted) {
-  //         throw new Error("Failed to decrypt data");
-  //       }
-
-  //       if (decrypted.success) {
-  //         Swal.fire({
-  //           icon: "success",
-  //           title: "Success",
-  //           text: decrypted.message
-  //         });
-  //       } else {
-  //         Swal.fire({
-  //           icon: "error",
-  //           title: "Failed",
-  //           text: decrypted.message
-  //         });
-  //       }
-  //       return;
-  //     }
-
-  //     if (resJson.message) {
-  //       Swal.fire({
-  //         icon: resJson.success ? "success" : "error",
-  //         title: resJson.success ? "Success" : "Error",
-  //         text: resJson.message,
-  //       });
-  //     } else {
-  //       Swal.fire({
-  //         icon: "error",
-  //         title: "Error",
-  //         text: "Unknown response from server",
-  //       });
-  //     }
-
-  //   } catch (err) {
-  //     Swal.fire({
-  //       icon: "error",
-  //       title: "Error",
-  //       text: err.message,
-  //     });
-  //   } finally {
-  //     setIsLoading(false);
-  //     setIsOpen(false);
-  //   }
-  // };
-
   const handleSubmit = async () => {
-    if (!oldPassword || !newPassword) {
+    if (!oldPassword || !newPassword || !confirmPassword) {
       Swal.fire({
         icon: "error",
         title: "Missing Fields",
@@ -418,20 +296,25 @@ function Header({ onToggleSidebar }) {
       return;
     }
 
-    // if (newPassword !== confirmPassword) {
-    //   Swal.fire({
-    //     icon: "error",
-    //     title: "Failed",
-    //     text: "Confirm Password Wrong",
-    //   });
-    //   return;
-    // }
-
+    if (newPassword !== confirmPassword) {
+      Swal.fire({
+        icon: "error",
+        title: "Failed",
+        text: "Confirm Password Wrong",
+      });
+      return;
+    }
     setIsLoading(true);
-
     try {
-      const admin_id = localStorage.getItem("admin_id")
-      const token = localStorage.getItem("token");
+      const secretKey = process.env.REACT_APP_SECRET_KEY;
+
+      const requestData = { oldPassword, newPassword, confirmPassword };
+
+      const encryptedData = encryptData(requestData, secretKey);
+      const hmac = generateHMAC(encryptedData, secretKey);
+
+      const token = decryptData(localStorage.getItem("token"), secretKey);
+
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/change-password`,
         {
@@ -440,33 +323,55 @@ function Header({ onToggleSidebar }) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            admin_id,
-            oldPassword,
-            password: newPassword,
-            // confirmPassword,
-          }),
-        }
+          body: JSON.stringify({ encryptedData, hmac }),
+        },
       );
 
-      const resJson = await response.json();
+      const text = await response.text();
+      let resJson = {};
 
-      if (resJson.success) {
+      try {
+        resJson = JSON.parse(text);
+      } catch (e) {
+        throw new Error("Invalid JSON from server");
+      }
+
+      if (resJson.encryptedData) {
+        const decrypted = decryptData(resJson.encryptedData, secretKey);
+
+        if (!decrypted) {
+          throw new Error("Failed to decrypt data");
+        }
+
+        if (decrypted.success) {
+          Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: decrypted.message,
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Failed",
+            text: decrypted.message,
+          });
+        }
+        return;
+      }
+
+      if (resJson.message) {
         Swal.fire({
-          icon: "success",
-          title: "Success",
+          icon: resJson.success ? "success" : "error",
+          title: resJson.success ? "Success" : "Error",
           text: resJson.message,
-
         });
-        localStorage.setItem("check", newPassword);
       } else {
         Swal.fire({
           icon: "error",
-          title: "Failed",
-          text: resJson.message,
+          title: "Error",
+          text: "Unknown response from server",
         });
       }
-
     } catch (err) {
       Swal.fire({
         icon: "error",
@@ -479,74 +384,92 @@ function Header({ onToggleSidebar }) {
     }
   };
 
-
-
-
   useEffect(() => {
     let startY = 0;
     let isRefreshing = false;
     let pullStartTime = 0;
 
     const onTouchStart = (e) => {
-      startY = e.touches[0].clientY;
-      pullStartTime = Date.now();
+      if (e.touches.length === 1) {
+        startY = e.touches[0].clientY;
+        pullStartTime = Date.now();
+      }
     };
 
     const onTouchMove = (e) => {
       if (window.scrollY <= 10 && e.touches[0].clientY > startY + 50) {
-        e.preventDefault();
+        e.preventDefault(); // stop scroll
       }
     };
 
     const onTouchEnd = (e) => {
       if (isRefreshing) return;
 
-      const distance = e.changedTouches[0].clientY - startY;
-      const duration = Date.now() - pullStartTime;
+      const endY = e.changedTouches[0].clientY;
+      const distance = endY - startY;
+      const pullDuration = Date.now() - pullStartTime;
 
-      if (distance > 120 && duration < 1000 && window.scrollY <= 10) {
+      if (distance > 120 && window.scrollY <= 10 && pullDuration < 1000) {
         isRefreshing = true;
 
+        // ===== LOADER WRAPPER =====
+        const loaderWrap = document.createElement("div");
+        loaderWrap.id = "page-refresh-loader";
+        loaderWrap.style.cssText = `
+        position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99999;
+    opacity: 1;
+    transition: opacity 0.2s;
+    background: #fff;
+    border-radius: 50px;
+    padding: 7px;
+      `;
+
+        // ===== NORMAL GOOGLE-STYLE SPINNER =====
         const loader = document.createElement("div");
-        loader.id = "page-refresh-loader";
-        loader.style.cssText = `
-          position: fixed;
-          top: 60px;
-          left: 50%;
-          transform: translateX(-50%);
-          z-index: 99999;
-          background: #fff;
-          padding: 8px;
-          border-radius: 50px;
-        `;
+        loader.className = "google-spinner";
 
-        loader.innerHTML = `<div class="google-spinner"></div>`;
-        document.body.appendChild(loader);
-
-        if (!document.getElementById("pull-style")) {
+        // ===== CSS INJECT (ONCE) =====
+        if (!document.getElementById("pull-refresh-style")) {
           const style = document.createElement("style");
-          style.id = "pull-style";
+          style.id = "pull-refresh-style";
           style.innerHTML = `
-            .google-spinner {
-              width: 30px;
-              height: 30px;
-              border: 3px solid #ccc;
-              border-top: 3px solid #000;
-              border-radius: 50%;
-              animation: spin 1s linear infinite;
-            }
-            @keyframes spin {
-              to { transform: rotate(360deg); }
-            }
-          `;
+         .google-spinner {
+    border: 3px solid #cdcdcd;
+    border-top: 3px solid #000;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    background: #fff;
+}
+
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `;
           document.head.appendChild(style);
         }
 
+        loaderWrap.appendChild(loader);
+        document.body.appendChild(loaderWrap);
+
+        // ===== SIMULATE REFRESH =====
         setTimeout(() => {
-          document.getElementById("page-refresh-loader")?.remove();
+          console.log("Refresh Done");
+          const el = document.getElementById("page-refresh-loader");
+          if (el) el.remove();
+          isRefreshing = true;
           window.location.reload();
-        }, 600);
+        }, 100);
       }
+
+      startY = 0;
+      pullStartTime = 0;
     };
 
     window.addEventListener("touchstart", onTouchStart, { passive: false });
@@ -559,51 +482,275 @@ function Header({ onToggleSidebar }) {
       window.removeEventListener("touchend", onTouchEnd);
     };
   }, []);
+  const allmasterlist = useRef(null);
+  const allreportref = useRef(null);
+  useEffect(() => {
+    const handleOutside = (event) => {
+      const clickedOutsideReport =
+        allreportref.current && !allreportref.current.contains(event.target);
 
+      const clickedOutsideMaster =
+        allmasterlist.current && !allmasterlist.current.contains(event.target);
+
+      if (clickedOutsideReport) {
+        setAllReport(false);
+      }
+
+      if (clickedOutsideMaster) {
+        setAllMaster(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutside);
+    };
+  }, []);
+  const events = [
+    {
+      id: 31345701,
+      name: "FIFA World Cup",
+      url: "/event/detail/31345701",
+    },
+    {
+      id: 33439203,
+      name: "ICC Women's T20 World Cup",
+      url: "/event/detail/33439203",
+    },
+    {
+      id: 1781349126,
+      name: "FIFA WORLD CUP 2026 XTRA MARKET",
+      url: "/event/detail/1781349126",
+    },
+    {
+      id: 35754708,
+      name: "Zimbabwe v Bangladesh",
+      url: "/event/detail/35754708",
+    },
+    {
+      id: 35761854,
+      name: "Ruzic v E Raducanu",
+      url: "/event/detail/35761854",
+    },
+    {
+      id: 35767500,
+      name: "L Midon v S Haita",
+      url: "/event/detail/35767500",
+    },
+    {
+      id: 35767846,
+      name: "Th Seyboth Wild v Coulibaly",
+      url: "/event/detail/35767846",
+    },
+    {
+      id: 35767803,
+      name: "Ni McDonald v J Martin Manzano",
+      url: "/event/detail/35767803",
+    },
+  ];
+  const [search, setSearch] = useState("");
+  const [show, setShow] = useState(false);
+
+  const wrapperRef = useRef(null);
+
+  const filteredEvents = events.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+        setShow(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className="header" id="header">
-
       <div className="d-flex justify-content-between px-2 w-100">
         <div className="logo-box d-xl-none d-md-none d-sm-block">
-
           <a href="/dashboard">
             <img
-              src={logo}
+              src={isDark ? newlogo : newlogo}
               alt="logo"
               className="logo-lg"
+              style={{
+                width: "50px",
+                height: "auto",
+                objectFit: "contain",
+                maxWidth: "100%",
+              }}
             />
           </a>
         </div>
+        <div className="d-flex align-items-center">
+          <div className=" d-xl-block  d-md-block d-sm-none d-none">
+            <div className="togglebutton">
+              <AiOutlineMenu onClick={onToggleSidebar} />
+            </div>
+          </div>
+          <div className="searchform">
+            <div className="search-wrapper" ref={wrapperRef}>
+              <div className="search-box">
+                <span className="search-icon">
+                  <FiSearch />
+                </span>
 
-        <div className=" d-xl-block  d-md-block d-sm-none d-none">
-          <div className="togglebutton">
-            <AiOutlineMenu onClick={onToggleSidebar} />
+                <input
+                  type="text"
+                  placeholder="Search Events"
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setShow(true);
+                  }}
+                  onFocus={() => setShow(true)}
+                />
+              </div>
+
+              {show && search !== "" && (
+                <div className="search-dropdown">
+                  {filteredEvents.length ? (
+                    filteredEvents.map((item) => (
+                      <a key={item.id} href={item.url} className="search-item">
+                        {item.name}
+                      </a>
+                    ))
+                  ) : (
+                    <div className="no-result">No Events Found</div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div className="linksmode">
+          {/* <div className="darkmode" onClick={toggleDarkMode}>
+            {darkMode ? <FaSun /> : <FaMoon />}
+          </div> */}
 
-
-          {/* Coins Display */}
-          <div className="coins-display d-flex gap-2">
-            <div className="d-flex">
-              <FaCoins className="text-warning" />
-              <span className="fw-bold">Coin:</span>
+          <div className="allreport">
+            <div className="report_design" onClick={showReport}>
+              <span>Reports</span>
+              {allReport ? (
+                <MdOutlineKeyboardArrowUp />
+              ) : (
+                <MdKeyboardArrowDown />
+              )}
             </div>
-            <span className="">{coins}</span>
+            <div className={`allreport_dropdown ${allReport ? "show" : ""}`}>
+              <ul>
+                <li>
+                  <a href="/reports/account-statement">
+                    <FaAngleDoubleRight /> Account Statement
+                  </a>
+                </li>
+
+                <li>
+                  <a href="/reports/profit-loss">
+                    <FaAngleDoubleRight /> Profit Loss
+                  </a>
+                </li>
+
+                <li>
+                  <a href="/reports/chip-statement">
+                    <FaAngleDoubleRight /> Chip Statement
+                  </a>
+                </li>
+
+                <li>
+                  <a href="/reports/chip-summary">
+                    <FaAngleDoubleRight /> Chip Summary
+                  </a>
+                </li>
+
+                <li>
+                  <a href="/reports/settlement-report">
+                    <FaAngleDoubleRight /> Settlement Report
+                  </a>
+                </li>
+
+                <li>
+                  <a href="/reports/sport-summary-report">
+                    <FaAngleDoubleRight /> Sport Summary Report
+                  </a>
+                </li>
+
+                <li>
+                  <a href="/reports/top-clients">
+                    <FaAngleDoubleRight /> Top Clients
+                  </a>
+                </li>
+
+                {/* <li>
+                  <a href="/reports/settlement" className="blink hightlightcolor">
+                    <FaAngleDoubleRight /> Settlement
+                  </a>
+                </li> */}
+
+                 <li>
+                  <a href="/super-agent-ledger" className="blink hightlightcolor">
+                    <FaAngleDoubleRight /> Settlement
+                  </a>
+                </li>
+
+                
+
+                <li>
+                  <a href="/reports/balance-sheet">
+                    <FaAngleDoubleRight /> Balance Sheet
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
+          <div className="allreport">
+            <div className="report_design" onClick={showMaster}>
+              <span>Users</span>
+              {allMaster ? (
+                <MdOutlineKeyboardArrowUp />
+              ) : (
+                <MdKeyboardArrowDown />
+              )}
+            </div>
+            <div
+              ref={allmasterlist}
+              className={`allreport_dropdown ${allMaster ? "show" : ""}`}
+            >
+              <ul>
+                <li>
+                  <Link to={'/agent_lists'}>Super Master</Link>
+                </li>
+
+                <li>
+                  <Link to={'/AgentMasternew'}>Master</Link>
+                </li>
+
+                <li>
+                  <Link to={'/Mastermyuser'}>Client</Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+          {/* Coins Display */}
+          {/* <div className="coins-display d-flex align-items-center gap-2 mx-3">
+            <FaCoins className="text-warning" />
+            <span className="fw-bold">{coins}</span>
+            <span>Coins</span>
+          </div> */}
 
           {/* <div className="chat_header_icon chat_new">
             <Link to="/adminchat">
               <IoChatbubbleEllipsesSharp />
               {AdminNotifiaction > 0 && <span> {AdminNotifiaction}</span>}
             </Link>
-          </div> */}
-          {/* <div className="darkmode" onClick={toggleDarkMode}>
-            {darkMode ? <FaSun /> : <FaMoon />}
-          </div> */}
-
-
+          </div>
+           */}
           <div className="profilie" ref={dropdownRef}>
             <div className="profile-header" onClick={toggleDropdown}>
               {/* <div className="profileimage">
@@ -612,61 +759,63 @@ function Header({ onToggleSidebar }) {
                   alt="Avatar"
                 />
               </div> */}
-              <div className="desktop_device">
-
-                <div className="name d-flex flex-column">
-                  <span>
-                    {username?.split(" ")
-                      .map(word => word.charAt(0).toUpperCase())
-                      .join("")}
-
-                  </span>
-                  {/* <small className="text-muted d-flex align-items-center gap-1"> */}
-                  {/* <FaCoins size={12} /> {coins} Coinsffffffffffff */}
-                  {/* </small> */}
+              <div className="name desktop_device">
+                <div className="d-flex flex-column">
+                  <span>{username}</span>
+                  {/* <small className="text-muted d-flex align-items-center gap-1">
+                    <FaCoins size={12} /> {coins} Coins
+                  </small> */}
                 </div>
               </div>
-              <div
-                className={`arrowprofile transition-transform duration-300 ${dropdownOpen ? "rotate-180" : ""
-                  }`}
-              >
-                <IoIosArrowDown />
+              <div className="profileimage">
+                <img src={profileimage} alt="profileimage" />
               </div>
+              {/* <div className={`arrowprofile transition-transform duration-300 ${dropdownOpen ? "rotate-180" : ""}`}>
+                <IoIosArrowDown />
+              </div> */}
             </div>
 
             {dropdownOpen && (
               <div className="profile-dropdown">
-                <div className="dropdown-item mobile_device">
+                <div className="dropdown-item flex items-center gap-2 balancedesign">
+                  Balance: {coins}
+                </div>
+                {/* <div className="dropdown-item mobile_device">
                   <div className="d-flex gap-2 align-items-center">
-                    {/* <div className="profileimage">
+                    <div className="profileimage">
                       <img
                         src={`${process.env.PUBLIC_URL}/assets/images/avatar-1.jpg`}
                         alt="Avatar"
                       />
-                    </div> */}
+                    </div>
                     <div className="name">
-                      <div>{username.toUpperCase()}</div>
+                      <div>{username}</div>
                       <small className="text-muted d-flex align-items-center gap-1">
-                        {/* <FaCoins size={12} /> {coins} Coinsfffffffffff */}
+                        <FaCoins size={12} /> {coins} Coins
                       </small>
                     </div>
                   </div>
-                </div>
+                </div> */}
                 <div
                   className="dropdown-item flex items-center gap-2"
                   onClick={() => setIsOpen(true)}
                 >
-                  <FiUser /> Change Password
+                  <span><CiLock /></span> Change Password
                 </div>
-                <div className="dropdown-item flex items-center gap-2" onClick={() => setShowDepositModal(true)}>
+
+                <div className="dropdown-item flex items-center gap-2"
+                  onClick={() => setShowDepositModal(true)}>
                   <FaCoins size={14} /> Add Coins
                 </div>
                 <div
                   className="dropdown-item flex items-center gap-2"
                   onClick={handleLogout}
                 >
-                  <FiLogOut /> Logout
+                  <span><FiLogOut /></span> Logout
                 </div>
+                {/* <div className="toggleclassnew">
+                  asa
+                </div> */}
               </div>
             )}
           </div>
@@ -678,7 +827,13 @@ function Header({ onToggleSidebar }) {
           </div>
         </div>
       </div>
-      <Modal show={isOpen} onHide={() => setIsOpen(false)} centered backdrop="static">
+
+      <Modal
+        show={isOpen}
+        onHide={() => setIsOpen(false)}
+        centered
+        backdrop="static"
+      >
         <Modal.Header closeButton>
           <Modal.Title>Change Password</Modal.Title>
         </Modal.Header>
@@ -719,7 +874,11 @@ function Header({ onToggleSidebar }) {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setIsOpen(false)} disabled={isLoading}>
+          <Button
+            variant="secondary"
+            onClick={() => setIsOpen(false)}
+            disabled={isLoading}
+          >
             Cancel
           </Button>
           <Button variant="primary" onClick={handleSubmit} disabled={isLoading}>
@@ -727,6 +886,7 @@ function Header({ onToggleSidebar }) {
           </Button>
         </Modal.Footer>
       </Modal>
+
       <Modal show={showDepositModal} onHide={() => setShowDepositModal(false)} centered backdrop="static">
         <Modal.Header closeButton>
           <Modal.Title>Deposit Coins</Modal.Title>

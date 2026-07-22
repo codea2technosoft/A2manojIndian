@@ -23,55 +23,55 @@ function Adminchat() {
     // fetchChats();
   }, [token]);
 
-  useEffect(() => {
-    console.log("🟠 Setting up socket...");
-    if (!socketRef.current) {
-      try {
-        const socket = io("https://chatapi.ankmatka.com", {
-          transports: ["websocket"],
-          withCredentials: true,
-          reconnection: true,
-        });
+  // useEffect(() => {
+  //   console.log("🟠 Setting up socket...");
+  //   if (!socketRef.current) {
+  //     try {
+  //       const socket = io("https://chatapi.ankmatka.com", {
+  //         transports: ["websocket"],
+  //         withCredentials: true,
+  //         reconnection: true,
+  //       });
 
-        socketRef.current = socket;
+  //       socketRef.current = socket;
 
-        socket.on("connect", () => {
-          console.log("✅ Connected with socket ID:", socket.id);
-          socket.emit("join", {
-            userId: "user123",
-            role: "user",
-          });
-        });
+  //       socket.on("connect", () => {
+  //         console.log("✅ Connected with socket ID:", socket.id);
+  //         socket.emit("join", {
+  //           userId: "user123",
+  //           role: "user",
+  //         });
+  //       });
 
-        socket.on("receive_messageAdmin", (data) => {
-          console.warn("📥 Messagesasasas received: ", data);
-          setFilteredUsers(data.chatlistAdmin);
-        });
+  //       socket.on("receive_messageAdmin", (data) => {
+  //         console.warn("📥 Messagesasasas received: ", data);
+  //         setFilteredUsers(data.chatlistAdmin);
+  //       });
 
-        socket.on("disconnect", () => {
-          console.log("⚠️ Socket disconnected");
-        });
+  //       socket.on("disconnect", () => {
+  //         console.log("⚠️ Socket disconnected");
+  //       });
 
-        socket.on("connect_error", (err) => {
-          console.error("❌ Connection Error:", err);
-        });
+  //       socket.on("connect_error", (err) => {
+  //         console.error("❌ Connection Error:", err);
+  //       });
 
-        socket.on("error", (err) => {
-          console.error("❌ General Socket Error:", err);
-        });
-      } catch (e) {
-        console.error("❌ Exception in socket setup:", e);
-      }
-    }
+  //       socket.on("error", (err) => {
+  //         console.error("❌ General Socket Error:", err);
+  //       });
+  //     } catch (e) {
+  //       console.error("❌ Exception in socket setup:", e);
+  //     }
+  //   }
 
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-        console.log("🔌 Socket disconnected on unmount");
-        socketRef.current = null;
-      }
-    };
-  }, []);
+  //   return () => {
+  //     if (socketRef.current) {
+  //       socketRef.current.disconnect();
+  //       console.log("🔌 Socket disconnected on unmount");
+  //       socketRef.current = null;
+  //     }
+  //   };
+  // }, []);
 
   const [fillter, setFillter] = useState(false);
   const [totalPages, setTotalPages] = useState(1);

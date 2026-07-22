@@ -36,6 +36,7 @@ function AppSetting() {
     home_screen_marquee: "",
     apk_version: "",
     payinPaymentMode: "",
+    withdraw_upi: "",
   });
 
   const [emailError, setEmailError] = useState("");
@@ -725,6 +726,24 @@ function AppSetting() {
                     <option value="no">No</option>
                   </select>
                 </div>
+
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Select Withdraw UPI
+                  </label>
+                  <select
+                    className="form-control"
+                    name="withdraw_upi"
+                    value={settings.withdraw_upi}
+                    onChange={handleChange}
+                  >
+                    <option value="true">True</option>
+                    <option value="false">False</option>
+                  </select>
+                </div>
+
+
 
                 <div className="col-md-6 mb-3">
                   <label className="form-label">

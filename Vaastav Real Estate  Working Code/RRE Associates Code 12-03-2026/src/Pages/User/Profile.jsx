@@ -502,6 +502,12 @@ const Profile = () => {
                     label: "Designation",
                     value: profile?.designation || "NA"
                   },
+
+                   {
+                    label: "Current Slab",
+                    value: profile?.currentSlab || "NA"
+                  },
+
                   { label: "Email", value: profile?.email || "N/A" },
                   {
                     label: "Parent Name",

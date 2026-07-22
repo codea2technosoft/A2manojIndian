@@ -1,13 +1,24 @@
 import { useState, useRef, useEffect } from "react";
 import {
-  FiSearch, FiEdit2, FiMoreVertical, FiUser, FiUserCheck,
-  FiUserX, FiLock, FiTrash2, FiSlash, FiPlusCircle,
-  FiMinusCircle, FiEye, FiEyeOff, FiCopy
+  FiSearch,
+  FiEdit2,
+  FiMoreVertical,
+  FiUser,
+  FiUserCheck,
+  FiUserX,
+  FiLock,
+  FiTrash2,
+  FiSlash,
+  FiPlusCircle,
+  FiMinusCircle,
+  FiEye,
+  FiEyeOff,
+  FiCopy,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Button } from "react-bootstrap";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -37,12 +48,12 @@ function AgentMaster() {
   const [passwordData, setPasswordData] = useState({
     oldPassword: "",
     newPassword: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
   const [showPasswords, setShowPasswords] = useState({
     oldPassword: false,
     newPassword: false,
-    confirmPassword: false
+    confirmPassword: false,
   });
 
   const [depositAmount, setDepositAmount] = useState("");
@@ -52,7 +63,7 @@ function AgentMaster() {
   const [dropdownPosition, setDropdownPosition] = useState({
     top: 0,
     left: 0,
-    rowId: null
+    rowId: null,
   });
   const [currentRowData, setCurrentRowData] = useState(null);
   const buttonRefs = useRef({});
@@ -69,11 +80,11 @@ function AgentMaster() {
     total_records: 0,
     total_pages: 1,
     current_page: 1,
-    limit: 10
+    limit: 10,
   });
 
   const admin_id = localStorage.getItem("admin_id");
-  const master_role = "2"
+  const master_role = "2";
   const role = "5";
   const token = localStorage.getItem("token");
   const dropdownRef = useRef(null);
@@ -125,16 +136,16 @@ function AgentMaster() {
   // PASSWORD VISIBILITY HANDLERS
   // ============================
   const togglePasswordVisibility = (field) => {
-    setShowPasswords(prev => ({
+    setShowPasswords((prev) => ({
       ...prev,
-      [field]: !prev[field]
+      [field]: !prev[field],
     }));
   };
 
   const handlePasswordDataChange = (field, value) => {
-    setPasswordData(prev => ({
+    setPasswordData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -202,7 +213,12 @@ function AgentMaster() {
   // FETCH AGENT DATA
   // ============================
   const adminId = localStorage.getItem("admin_id_new");
-  const fetchAgentData = async (page = currentPage, limit = itemsPerPage, search = searchTerm, filterParams = filters) => {
+  const fetchAgentData = async (
+    page = currentPage,
+    limit = itemsPerPage,
+    search = searchTerm,
+    filterParams = filters,
+  ) => {
     try {
       setIsSearching(true);
 
@@ -233,17 +249,17 @@ function AgentMaster() {
         requestData,
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
         // Map API data to match your table structure
         const formattedData = response.data.data.map((agent, index) => ({
           id: agent._id,
-          _id: agent._id,  // Add this line
+          _id: agent._id, // Add this line
 
           admin_id: agent.admin_id,
           agent_id: agent.agent_id,
@@ -266,7 +282,7 @@ function AgentMaster() {
           status: agent.active === 1 ? "Active" : "Inactive",
           is_blocked: agent.is_blocked,
           super_agent_id: agent.super_agent_id || agent.admin_id,
-          originalData: agent // Store original data for editing
+          originalData: agent, // Store original data for editing
         }));
 
         setAgentData(formattedData);
@@ -274,9 +290,18 @@ function AgentMaster() {
         // Update pagination info from API response
         if (response.data.pagination) {
           setPaginationData(response.data.pagination);
-          setTotalItems(response.data.pagination.total_records || response.data.pagination.total);
-          setTotalPages(response.data.pagination.total_pages || response.data.pagination.totalPages);
-          setCurrentPage(response.data.pagination.current_page || response.data.pagination.currentPage);
+          setTotalItems(
+            response.data.pagination.total_records ||
+              response.data.pagination.total,
+          );
+          setTotalPages(
+            response.data.pagination.total_pages ||
+              response.data.pagination.totalPages,
+          );
+          setCurrentPage(
+            response.data.pagination.current_page ||
+              response.data.pagination.currentPage,
+          );
           setItemsPerPage(response.data.pagination.limit || limit);
         }
 
@@ -290,7 +315,9 @@ function AgentMaster() {
       }
     } catch (error) {
       console.error("Error fetching agent data:", error);
-      showErrorToast("Failed to load agent data. Please check your connection.");
+      showErrorToast(
+        "Failed to load agent data. Please check your connection.",
+      );
     } finally {
       setLoading(false);
       setIsSearching(false);
@@ -308,14 +335,14 @@ function AgentMaster() {
           admin_id: adminId || admin_id,
           role: role,
           page: 1,
-          limit: 10
+          limit: 10,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
@@ -355,7 +382,7 @@ function AgentMaster() {
   };
 
   const handleSearchKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };
@@ -410,7 +437,7 @@ function AgentMaster() {
       setDropdownPosition({
         top: top + 5, // थोड़ा spacing नीचे
         left: left,
-        rowId: row.id
+        rowId: row.id,
       });
     }
   };
@@ -421,7 +448,7 @@ function AgentMaster() {
       if (
         actionDropdownRef.current &&
         !actionDropdownRef.current.contains(event.target) &&
-        !event.target.closest('.dropdown-toggle.newtoggle')
+        !event.target.closest(".dropdown-toggle.newtoggle")
       ) {
         setDropdownOpen(null);
         setCurrentRowData(null);
@@ -450,26 +477,28 @@ function AgentMaster() {
         {
           admin_id: selectedAgent.admin_id,
           role: role,
-          active: newStatus
+          active: newStatus,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
-        showSuccessToast(`Agent ${newStatus === 1 ? "activated" : "deactivated"} successfully`);
+        showSuccessToast(
+          `Agent ${newStatus === 1 ? "activated" : "deactivated"} successfully`,
+        );
 
         // Update local state
-        setAgentData(prevData =>
-          prevData.map(agent =>
+        setAgentData((prevData) =>
+          prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? { ...agent, status: newStatus === 1 ? "Active" : "Inactive" }
-              : agent
-          )
+              : agent,
+          ),
         );
 
         setShowStatusModal(false);
@@ -494,32 +523,36 @@ function AgentMaster() {
         {
           admin_id: selectedAgent.admin_id,
           role: role,
-          is_blocked: newBlockStatus
+          is_blocked: newBlockStatus,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success == true) {
-        showSuccessToast(`Agent ${newBlockStatus == 1 ? "blocked" : "unblocked"} successfully`);
+        showSuccessToast(
+          `Agent ${newBlockStatus == 1 ? "blocked" : "unblocked"} successfully`,
+        );
 
         // Update local state
-        setAgentData(prevData =>
-          prevData.map(agent =>
+        setAgentData((prevData) =>
+          prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? { ...agent, is_blocked: newBlockStatus }
-              : agent
-          )
+              : agent,
+          ),
         );
 
         setShowBlockModal(false);
         setSelectedAgent(null);
       } else {
-        showErrorToast(response.data.message || "Failed to update block status");
+        showErrorToast(
+          response.data.message || "Failed to update block status",
+        );
       }
     } catch (error) {
       console.error("Error updating block status:", error);
@@ -536,14 +569,14 @@ function AgentMaster() {
         `${process.env.REACT_APP_API_URL}/delete-agent-user`,
         {
           admin_id: selectedAgent.admin_id,
-          role: role
+          role: role,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
@@ -587,26 +620,26 @@ function AgentMaster() {
           role: role,
           oldPassword: passwordData.oldPassword,
           newPassword: passwordData.newPassword,
-          confirmPassword: passwordData.confirmPassword
+          confirmPassword: passwordData.confirmPassword,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
         showSuccessToast("Password updated successfully");
 
         // Update local state
-        setAgentData(prevData =>
-          prevData.map(agent =>
+        setAgentData((prevData) =>
+          prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? { ...agent, password: passwordData.newPassword }
-              : agent
-          )
+              : agent,
+          ),
         );
 
         setShowPasswordModal(false);
@@ -614,12 +647,12 @@ function AgentMaster() {
         setPasswordData({
           oldPassword: "",
           newPassword: "",
-          confirmPassword: ""
+          confirmPassword: "",
         });
         setShowPasswords({
           oldPassword: false,
           newPassword: false,
-          confirmPassword: false
+          confirmPassword: false,
         });
       } else {
         showErrorToast(response.data.message || "Failed to update password");
@@ -628,7 +661,9 @@ function AgentMaster() {
       console.error("Error updating password:", error);
 
       if (error.response && error.response.data) {
-        showErrorToast(error.response.data.message || "Failed to update password");
+        showErrorToast(
+          error.response.data.message || "Failed to update password",
+        );
       } else if (error.request) {
         showErrorToast("Network error. Please check your connection.");
       } else {
@@ -670,29 +705,31 @@ function AgentMaster() {
           role: role,
           rem_role: rem_role,
 
-          agent_id: selectedAgent.agent_id
+          agent_id: selectedAgent.agent_id,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
-        showSuccessToast(`₹${depositAmount} deposited successfully to ${selectedAgent.name}`);
+        showSuccessToast(
+          `₹${depositAmount} deposited successfully to ${selectedAgent.name}`,
+        );
 
         // Update local state
-        setAgentData(prevData =>
-          prevData.map(agent =>
+        setAgentData((prevData) =>
+          prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? {
-                ...agent,
-                chips: (Number(agent.chips) + depositValue).toString()
-              }
-              : agent
-          )
+                  ...agent,
+                  chips: (Number(agent.chips) + depositValue).toString(),
+                }
+              : agent,
+          ),
         );
 
         setShowDepositModal(false);
@@ -700,7 +737,9 @@ function AgentMaster() {
         setDepositAmount("");
       } else {
         if (response.data.message === "Insufficient balance in Master Admin") {
-          showErrorToast("Master Admin has insufficient balance. Please add funds to your account first.");
+          showErrorToast(
+            "Master Admin has insufficient balance. Please add funds to your account first.",
+          );
         } else {
           showErrorToast(response.data.message || "Failed to deposit amount");
         }
@@ -709,10 +748,18 @@ function AgentMaster() {
       console.error("Error depositing amount:", error);
 
       if (error.response) {
-        if (error.response.data && error.response.data.message === "Insufficient balance in Master Admin") {
-          showErrorToast("Master Admin has insufficient balance. Please add funds to your account first.");
+        if (
+          error.response.data &&
+          error.response.data.message === "Insufficient balance in Master Admin"
+        ) {
+          showErrorToast(
+            "Master Admin has insufficient balance. Please add funds to your account first.",
+          );
         } else {
-          showErrorToast(error.response.data?.message || "Failed to deposit amount. Please try again.");
+          showErrorToast(
+            error.response.data?.message ||
+              "Failed to deposit amount. Please try again.",
+          );
         }
       } else if (error.request) {
         showErrorToast("Network error. Please check your connection.");
@@ -732,14 +779,20 @@ function AgentMaster() {
     if (!selectedAgent) return;
 
     // Validation
-    if (!withdrawAmount || isNaN(withdrawAmount) || Number(withdrawAmount) <= 0) {
+    if (
+      !withdrawAmount ||
+      isNaN(withdrawAmount) ||
+      Number(withdrawAmount) <= 0
+    ) {
       showErrorToast("Please enter a valid amount");
       return;
     }
 
     const withdrawValue = parseFloat(withdrawAmount);
     if (withdrawValue > Number(selectedAgent.chips)) {
-      showErrorToast(`Insufficient balance. Maximum withdrawable amount is ₹${selectedAgent.chips}`);
+      showErrorToast(
+        `Insufficient balance. Maximum withdrawable amount is ₹${selectedAgent.chips}`,
+      );
       return;
     }
 
@@ -756,25 +809,27 @@ function AgentMaster() {
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success) {
-        showSuccessToast(`₹${withdrawAmount} withdrawn successfully from ${selectedAgent.name}`);
+        showSuccessToast(
+          `₹${withdrawAmount} withdrawn successfully from ${selectedAgent.name}`,
+        );
 
         // Update local state
-        setAgentData(prevData =>
-          prevData.map(agent =>
+        setAgentData((prevData) =>
+          prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? {
-                ...agent,
-                chips: (Number(agent.chips) - withdrawValue).toString()
-              }
-              : agent
-          )
+                  ...agent,
+                  chips: (Number(agent.chips) - withdrawValue).toString(),
+                }
+              : agent,
+          ),
         );
 
         setShowWithdrawModal(false);
@@ -806,7 +861,6 @@ function AgentMaster() {
     navigate(`/Superagentadminview/${agent.admin_id}`);
   };
 
-
   const handleUpdateSuperAgent = (agent) => {
     navigate(`/Updatesuperagentmyuser/${agent.admin_id}`);
     localStorage.setItem("super_agent_idnew", agent.agent_id);
@@ -833,11 +887,6 @@ function AgentMaster() {
     navigate(`/Client_user_list`);
   };
 
-
-
-
-
-
   const handleStatementmasterlistoperation = (agent) => {
     navigate(`/Accountoperationmyuser/${agent.admin_id}`);
   };
@@ -855,7 +904,8 @@ Link: ${process.env.REACT_APP_API_URL_link_proje_frontt}
 User ID: ${agent.admin_id || "N/A"}
 Password: ${agent.password || "N/A"}`;
 
-    navigator.clipboard.writeText(textToCopy)
+    navigator.clipboard
+      .writeText(textToCopy)
       .then(() => {
         showSuccessToast(" login details copied!");
       })
@@ -870,7 +920,10 @@ Password: ${agent.password || "N/A"}`;
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }}
+      >
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
@@ -884,10 +937,7 @@ Password: ${agent.password || "N/A"}`;
         <div className="card-header bg-color-black text-white d-flex justify-content-between align-items-center">
           <h5 className="mb-0"> User list</h5>
           <div className="d-flex gap-2">
-            <button
-              className="btn btn-success btn-sm"
-              onClick={handleCreateAgent}
-            >
+            <button className="btn btn-success" onClick={handleCreateAgent}>
               Create User
             </button>
           </div>
@@ -928,9 +978,7 @@ Password: ${agent.password || "N/A"}`;
 
                 {hasActiveFilters && (
                   <div className="d-flex align-items-center">
-                    <span className="badge bg-info me-2">
-                      Filters Active
-                    </span>
+                    <span className="badge bg-info me-2">Filters Active</span>
                   </div>
                 )}
               </div>
@@ -992,8 +1040,12 @@ Password: ${agent.password || "N/A"}`;
             <table className="table table-bordered table-hover">
               <thead className="table-dark">
                 <tr>
-                  <th rowSpan={2} className="text-center align-middle">#</th>
-                  <th rowSpan={2} className="text-center align-middle">Copy</th>
+                  <th rowSpan={2} className="text-center align-middle">
+                    #
+                  </th>
+                  <th rowSpan={2} className="text-center align-middle">
+                    Copy
+                  </th>
                   <th rowSpan={2}>Actions</th>
 
                   {/* Code */}
@@ -1025,7 +1077,9 @@ Password: ${agent.password || "N/A"}`;
                   <th rowSpan={2}>D.O.J</th>
                   {/* <th rowSpan={2}>Password</th> */}
                   {/* <th rowSpan={2}>Share</th> */}
-                  <th colSpan={3} className="text-center">Comm %</th>
+                  <th colSpan={3} className="text-center">
+                    Comm %
+                  </th>
                   <th rowSpan={2}>exposer</th>
                   <th rowSpan={2}>Balance</th>
 
@@ -1044,7 +1098,9 @@ Password: ${agent.password || "N/A"}`;
                 {agentData.length > 0 ? (
                   agentData.map((row, index) => (
                     <tr key={row.id}>
-                      <td className="text-center">{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                      <td className="text-center">
+                        {(currentPage - 1) * itemsPerPage + index + 1}
+                      </td>
                       <td className="text-center">
                         <button
                           className="viewdetailsbutton"
@@ -1059,14 +1115,18 @@ Password: ${agent.password || "N/A"}`;
                           className="dropdown-toggle newtoggle"
                           style={{ cursor: "pointer", display: "inline-block" }}
                           onClick={(e) => toggleActionDropdown(row, e)}
-                          ref={el => buttonRefs.current[row.id] = el}
+                          ref={(el) => (buttonRefs.current[row.id] = el)}
                         >
                           <FiMoreVertical />
                         </div>
                       </td>
                       <td>{row.code}</td>
                       <td>{row.name}</td>
-                      <td className="text-center">{row.agent_id}<br></br>{row.parent_username}</td>
+                      <td className="text-center">
+                        {row.agent_id}
+                        <br></br>
+                        {row.parent_username}
+                      </td>
                       <td className="text-center">{row.reference}</td>
                       <td className="text-center">{row.doj}</td>
                       {/* <td className="text-center d-flex">
@@ -1087,9 +1147,7 @@ Password: ${agent.password || "N/A"}`;
                         </span>
                       </td> */}
                       {/* <td className="text-center">{row.share}</td> */}
-                      <td className="text-center">
-                        {row.commission_type}
-                      </td>
+                      <td className="text-center">{row.commission_type}</td>
                       <td className="text-center">{row.commMatch}</td>
                       <td className="text-center">{row.commSession}</td>
                       <td
@@ -1100,7 +1158,7 @@ Password: ${agent.password || "N/A"}`;
                           color: row.exposer ? "#0d6efd" : "#6c757d",
                           cursor: row.exposer ? "pointer" : "default",
                           textDecoration: "none",
-                          fontWeight: row.exposer ? "500" : "normal"
+                          fontWeight: row.exposer ? "500" : "normal",
                         }}
                       >
                         {row.exposer !== null && row.exposer !== undefined
@@ -1108,15 +1166,16 @@ Password: ${agent.password || "N/A"}`;
                           : "-"}
                       </td>
 
-
-
                       <td className="text-center">
                         <div className="d-flex align-items-center justify-content-center">
                           {/* <span className="me-2">
                             ₹{Number(row.chips) - Number(row.exposer).toFixed(2)}
                           </span> */}
                           <span className="me-2">
-                            ₹{(Number(row.chips) - Number(row.exposer)).toFixed(2)}
+                            ₹
+                            {(Number(row.chips) - Number(row.exposer)).toFixed(
+                              2,
+                            )}
                           </span>
 
                           <div
@@ -1144,7 +1203,9 @@ Password: ${agent.password || "N/A"}`;
                         </div>
                       </td>
                       <td className="text-center">
-                        <span className={`badge ${row.status === "Active" ? "activebadge" : "inactivebadge"}`}>
+                        <span
+                          className={`badge ${row.status === "Active" ? "activebadge" : "inactivebadge"}`}
+                        >
                           {row.status}
                         </span>
                       </td>
@@ -1165,16 +1226,13 @@ Password: ${agent.password || "N/A"}`;
           {totalPages > 1 && (
             <div className="d-flex justify-content-between align-items-center mt-4">
               <div className="sohwingallentries">
-                Showing {((currentPage - 1) * itemsPerPage) + 1} to{" "}
+                Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
                 {Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
                 {totalItems} entries
               </div>
 
               <div className="paginationall d-flex align-items-center gap-1">
-                <button
-                  disabled={currentPage === 1}
-                  onClick={handlePrev}
-                >
+                <button disabled={currentPage === 1} onClick={handlePrev}>
                   &laquo;
                 </button>
 
@@ -1216,7 +1274,7 @@ Password: ${agent.password || "N/A"}`;
             backgroundColor: "white",
             border: "1px solid rgba(0,0,0,.15)",
             borderRadius: "0.25rem",
-            boxShadow: "0 0.5rem 1rem rgba(0, 0, 0, 0.15)"
+            boxShadow: "0 0.5rem 1rem rgba(0, 0, 0, 0.15)",
           }}
         >
           {/* Deposit Chips */}
@@ -1323,12 +1381,12 @@ Password: ${agent.password || "N/A"}`;
               setPasswordData({
                 oldPassword: "",
                 newPassword: "",
-                confirmPassword: ""
+                confirmPassword: "",
               });
               setShowPasswords({
                 oldPassword: false,
                 newPassword: false,
-                confirmPassword: false
+                confirmPassword: false,
               });
               setShowPasswordModal(true);
               setDropdownOpen(null);
@@ -1434,7 +1492,11 @@ Password: ${agent.password || "N/A"}`;
 
       {/* Status Change Modal */}
       {showStatusModal && selectedAgent && (
-        <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
@@ -1451,8 +1513,12 @@ Password: ${agent.password || "N/A"}`;
               <div className="modal-body">
                 <p>
                   Are you sure you want to change the status of agent{" "}
-                  <strong>{selectedAgent.name}</strong> ({selectedAgent.code}) to{" "}
-                  <strong>{selectedAgent.status === "Active" ? "Inactive" : "Active"}</strong>?
+                  <strong>{selectedAgent.name}</strong> ({selectedAgent.code})
+                  to{" "}
+                  <strong>
+                    {selectedAgent.status === "Active" ? "Inactive" : "Active"}
+                  </strong>
+                  ?
                 </p>
               </div>
               <div className="modal-footer">
@@ -1481,7 +1547,11 @@ Password: ${agent.password || "N/A"}`;
 
       {/* Block/Unblock Modal */}
       {showBlockModal && selectedAgent && (
-        <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
@@ -1498,8 +1568,11 @@ Password: ${agent.password || "N/A"}`;
               <div className="modal-body">
                 <p>
                   Are you sure you want to{" "}
-                  <strong>{selectedAgent.is_blocked === 1 ? "unblock" : "block"}</strong> agent{" "}
-                  <strong>{selectedAgent.name}</strong> ({selectedAgent.code})?
+                  <strong>
+                    {selectedAgent.is_blocked === 1 ? "unblock" : "block"}
+                  </strong>{" "}
+                  agent <strong>{selectedAgent.name}</strong> (
+                  {selectedAgent.code})?
                 </p>
               </div>
               <div className="modal-footer">
@@ -1528,7 +1601,11 @@ Password: ${agent.password || "N/A"}`;
 
       {/* Delete Modal */}
       {showDeleteModal && selectedAgent && (
-        <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
@@ -1547,7 +1624,9 @@ Password: ${agent.password || "N/A"}`;
                   Are you sure you want to delete agent{" "}
                   <strong>{selectedAgent.name}</strong> ({selectedAgent.code})?
                   <br />
-                  <strong className="text-danger">This action cannot be undone.</strong>
+                  <strong className="text-danger">
+                    This action cannot be undone.
+                  </strong>
                 </p>
               </div>
               <div className="modal-footer">
@@ -1576,11 +1655,17 @@ Password: ${agent.password || "N/A"}`;
 
       {/* Password Change Modal */}
       {showPasswordModal && selectedAgent && (
-        <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Change Password - {selectedAgent.name}</h5>
+                <h5 className="modal-title">
+                  Change Password - {selectedAgent.name}
+                </h5>
                 <button
                   type="button"
                   className="btn-close"
@@ -1590,12 +1675,12 @@ Password: ${agent.password || "N/A"}`;
                     setPasswordData({
                       oldPassword: "",
                       newPassword: "",
-                      confirmPassword: ""
+                      confirmPassword: "",
                     });
                     setShowPasswords({
                       oldPassword: false,
                       newPassword: false,
-                      confirmPassword: false
+                      confirmPassword: false,
                     });
                   }}
                 ></button>
@@ -1608,14 +1693,20 @@ Password: ${agent.password || "N/A"}`;
                       type={showPasswords.oldPassword ? "text" : "password"}
                       className="form-control"
                       value={passwordData.oldPassword}
-                      onChange={(e) => handlePasswordDataChange("oldPassword", e.target.value)}
+                      onChange={(e) =>
+                        handlePasswordDataChange("oldPassword", e.target.value)
+                      }
                       placeholder="Enter old password"
                     />
                     <button
                       className="btn btn-outline-secondary"
                       type="button"
                       onClick={() => togglePasswordVisibility("oldPassword")}
-                      title={showPasswords.oldPassword ? "Hide password" : "Show password"}
+                      title={
+                        showPasswords.oldPassword
+                          ? "Hide password"
+                          : "Show password"
+                      }
                     >
                       {showPasswords.oldPassword ? (
                         <FiEyeOff size={18} />
@@ -1632,14 +1723,20 @@ Password: ${agent.password || "N/A"}`;
                       type={showPasswords.newPassword ? "text" : "password"}
                       className="form-control"
                       value={passwordData.newPassword}
-                      onChange={(e) => handlePasswordDataChange("newPassword", e.target.value)}
+                      onChange={(e) =>
+                        handlePasswordDataChange("newPassword", e.target.value)
+                      }
                       placeholder="Enter new password (min. 6 characters)"
                     />
                     <button
                       className="btn btn-outline-secondary"
                       type="button"
                       onClick={() => togglePasswordVisibility("newPassword")}
-                      title={showPasswords.newPassword ? "Hide password" : "Show password"}
+                      title={
+                        showPasswords.newPassword
+                          ? "Hide password"
+                          : "Show password"
+                      }
                     >
                       {showPasswords.newPassword ? (
                         <FiEyeOff size={18} />
@@ -1659,14 +1756,25 @@ Password: ${agent.password || "N/A"}`;
                       type={showPasswords.confirmPassword ? "text" : "password"}
                       className="form-control"
                       value={passwordData.confirmPassword}
-                      onChange={(e) => handlePasswordDataChange("confirmPassword", e.target.value)}
+                      onChange={(e) =>
+                        handlePasswordDataChange(
+                          "confirmPassword",
+                          e.target.value,
+                        )
+                      }
                       placeholder="Confirm new password"
                     />
                     <button
                       className="btn btn-outline-secondary"
                       type="button"
-                      onClick={() => togglePasswordVisibility("confirmPassword")}
-                      title={showPasswords.confirmPassword ? "Hide password" : "Show password"}
+                      onClick={() =>
+                        togglePasswordVisibility("confirmPassword")
+                      }
+                      title={
+                        showPasswords.confirmPassword
+                          ? "Hide password"
+                          : "Show password"
+                      }
                     >
                       {showPasswords.confirmPassword ? (
                         <FiEyeOff size={18} />
@@ -1680,17 +1788,11 @@ Password: ${agent.password || "N/A"}`;
                   <span className="mb-1">New Password</span>
                   <div className="col-md-12">
                     <span>Current Password:</span>
-                    <span className="ms-2">
-                      {selectedAgent.password}
-
-                    </span>
+                    <span className="ms-2">{selectedAgent.password}</span>
                   </div>
                   <div className="col-md-12">
                     <span>Code:</span>
-                    <span className="ms-2">
-                      {selectedAgent.code}
-
-                    </span>
+                    <span className="ms-2">{selectedAgent.code}</span>
                   </div>
                   {/* <div className="col-md-12">
                     <span>Current OTP:</span>
@@ -1701,25 +1803,31 @@ Password: ${agent.password || "N/A"}`;
                   </div> */}
                   <div className="col-md-12">
                     <span> Link:</span>
-                    <span className="ms-2">{process.env.REACT_APP_API_URL_link_projet}</span>
+                    <span className="ms-2">
+                      {process.env.REACT_APP_API_URL_link_projet}
+                    </span>
                   </div>
-
                 </div>
                 {/* Validation messages */}
-                {passwordData.newPassword && passwordData.newPassword.length < 6 && (
-                  <div className="alert alert-warning py-2">
-                    <small>Password must be at least 6 characters long</small>
-                  </div>
-                )}
-
-                {passwordData.newPassword && passwordData.confirmPassword &&
-                  passwordData.newPassword !== passwordData.confirmPassword && (
-                    <div className="alert alert-danger py-2">
-                      <small>New password and confirm password do not match</small>
+                {passwordData.newPassword &&
+                  passwordData.newPassword.length < 6 && (
+                    <div className="alert alert-warning py-2">
+                      <small>Password must be at least 6 characters long</small>
                     </div>
                   )}
 
-                {passwordData.newPassword && passwordData.confirmPassword &&
+                {passwordData.newPassword &&
+                  passwordData.confirmPassword &&
+                  passwordData.newPassword !== passwordData.confirmPassword && (
+                    <div className="alert alert-danger py-2">
+                      <small>
+                        New password and confirm password do not match
+                      </small>
+                    </div>
+                  )}
+
+                {passwordData.newPassword &&
+                  passwordData.confirmPassword &&
                   passwordData.newPassword === passwordData.confirmPassword &&
                   passwordData.newPassword.length >= 6 && (
                     <div className="alert alert-success py-2">
@@ -1737,12 +1845,12 @@ Password: ${agent.password || "N/A"}`;
                     setPasswordData({
                       oldPassword: "",
                       newPassword: "",
-                      confirmPassword: ""
+                      confirmPassword: "",
                     });
                     setShowPasswords({
                       oldPassword: false,
                       newPassword: false,
-                      confirmPassword: false
+                      confirmPassword: false,
                     });
                   }}
                 >
@@ -1771,7 +1879,11 @@ Password: ${agent.password || "N/A"}`;
 
       {/* Deposit Modal */}
       {showDepositModal && selectedAgent && (
-        <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
@@ -1788,7 +1900,8 @@ Password: ${agent.password || "N/A"}`;
               </div>
               <div className="modal-body">
                 <p>
-                  Deposit Balance to agent: <strong>{selectedAgent.name}</strong>
+                  Deposit Balance to agent:{" "}
+                  <strong>{selectedAgent.name}</strong>
                 </p>
                 <p className="mb-3">
                   Parent Balance: <strong>₹{selectedAgent.parent_coins}</strong>
@@ -1808,12 +1921,16 @@ Password: ${agent.password || "N/A"}`;
                     step="0.01"
                   />
                   <div className="form-text">
-                    Enter the amount you want to deposit to this agent's account.
+                    Enter the amount you want to deposit to this agent's
+                    account.
                   </div>
                 </div>
                 {depositAmount && !isNaN(depositAmount) && (
                   <div className="alert alert-info">
-                    <strong>New Balance:</strong> ₹{(Number(selectedAgent.chips) + Number(depositAmount)).toLocaleString()}
+                    <strong>New Balance:</strong> ₹
+                    {(
+                      Number(selectedAgent.chips) + Number(depositAmount)
+                    ).toLocaleString()}
                   </div>
                 )}
               </div>
@@ -1833,7 +1950,11 @@ Password: ${agent.password || "N/A"}`;
                   type="button"
                   className="btn btn-success"
                   onClick={handleDepositToAgent}
-                  disabled={!depositAmount || isNaN(depositAmount) || Number(depositAmount) <= 0}
+                  disabled={
+                    !depositAmount ||
+                    isNaN(depositAmount) ||
+                    Number(depositAmount) <= 0
+                  }
                 >
                   <FiPlusCircle className="me-2" />
                   {isSubmitting ? "Processing..." : "Deposit"}
@@ -1846,7 +1967,11 @@ Password: ${agent.password || "N/A"}`;
 
       {/* Withdraw Modal */}
       {showWithdrawModal && selectedAgent && (
-        <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
@@ -1863,7 +1988,8 @@ Password: ${agent.password || "N/A"}`;
               </div>
               <div className="modal-body">
                 <p>
-                  Withdraw Balance from agent: <strong>{selectedAgent.name}</strong>
+                  Withdraw Balance from agent:{" "}
+                  <strong>{selectedAgent.name}</strong>
                 </p>
                 <p className="mb-3">
                   Parent Balance: <strong>₹{selectedAgent.parent_coins}</strong>
@@ -1889,14 +2015,19 @@ Password: ${agent.password || "N/A"}`;
                 </div>
                 {withdrawAmount && !isNaN(withdrawAmount) && (
                   <div className="alert alert-info">
-                    <strong>New Balance:</strong> ₹{(Number(selectedAgent.chips) - Number(withdrawAmount)).toLocaleString()}
+                    <strong>New Balance:</strong> ₹
+                    {(
+                      Number(selectedAgent.chips) - Number(withdrawAmount)
+                    ).toLocaleString()}
                   </div>
                 )}
-                {withdrawAmount && Number(withdrawAmount) > Number(selectedAgent.chips) && (
-                  <div className="alert alert-danger">
-                    <strong>Error:</strong> Withdraw amount cannot exceed current balance
-                  </div>
-                )}
+                {withdrawAmount &&
+                  Number(withdrawAmount) > Number(selectedAgent.chips) && (
+                    <div className="alert alert-danger">
+                      <strong>Error:</strong> Withdraw amount cannot exceed
+                      current balance
+                    </div>
+                  )}
               </div>
               <div className="modal-footer">
                 <button
@@ -1914,7 +2045,12 @@ Password: ${agent.password || "N/A"}`;
                   type="button"
                   className="btn btn-danger"
                   onClick={handleWithdrawFromAgent}
-                  disabled={!withdrawAmount || isNaN(withdrawAmount) || Number(withdrawAmount) <= 0 || Number(withdrawAmount) > Number(selectedAgent.chips)}
+                  disabled={
+                    !withdrawAmount ||
+                    isNaN(withdrawAmount) ||
+                    Number(withdrawAmount) <= 0 ||
+                    Number(withdrawAmount) > Number(selectedAgent.chips)
+                  }
                 >
                   <FiMinusCircle className="me-2" />
                   {isSubmitting ? "Processing..." : "Withdraw"}
@@ -1927,7 +2063,11 @@ Password: ${agent.password || "N/A"}`;
 
       {/* Edit Modal */}
       {showEditModal && selectedAgent && (
-        <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
@@ -1942,7 +2082,10 @@ Password: ${agent.password || "N/A"}`;
                 ></button>
               </div>
               <div className="modal-body">
-                <p>Edit functionality would go here for agent: {selectedAgent.name}</p>
+                <p>
+                  Edit functionality would go here for agent:{" "}
+                  {selectedAgent.name}
+                </p>
                 {/* Add your edit form fields here */}
               </div>
               <div className="modal-footer">

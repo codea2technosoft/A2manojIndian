@@ -17,7 +17,7 @@ function MatchAndSessionPLReport() {
   return (
     <div className="card mt-4">
       {/* Header */}
-      <div className="card-header bg-primary-yellow text-white d-flex justify-content-between">
+      <div className="card-header bg-primary-yellow d-flex justify-content-between">
         <h3 className="card-title  mb-0">{matchData.title}</h3>
 
         <div>

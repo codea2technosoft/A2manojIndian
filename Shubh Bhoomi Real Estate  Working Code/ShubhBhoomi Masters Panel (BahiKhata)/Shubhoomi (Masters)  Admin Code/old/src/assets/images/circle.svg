@@ -1,0 +1,18 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 153 187" width="153" height="187">
+	<title>circle</title>
+	<style>
+		.s0 { opacity: .2;fill: #127937 } 
+	</style>
+	<g>
+		<g id="Mask-_x2B_-Mask-Mask">
+			<g id="Mask">
+			</g>
+			<g id="Mask_1_">
+				<path class="s0" d="m152 141.2c-3.6 0.5-7.3 0.8-11 0.8-29.6 0-55.4-16.5-68.6-40.9-6-11-9.4-23.7-9.4-37.1 0-26.5 13.2-49.9 33.4-64h55.6v129.5"/>
+			</g>
+			<g id="Mask_2_">
+				<path class="s0" d="m152 141.2v45.8h-153c0.2-43.3 31.9-79.1 73.4-85.9 4.6-0.8 9.3-1.1 14.1-1.1 26.1 0 49.5 11.4 65.5 29.5"/>
+			</g>
+		</g>
+	</g>
+</svg>

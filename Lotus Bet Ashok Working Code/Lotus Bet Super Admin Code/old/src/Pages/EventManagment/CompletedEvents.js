@@ -263,7 +263,7 @@ function CompletedEvents() {
                 />
             )}
             <div className="card">
-                <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+                <div className="card-header d-flex bg-primary-yellow justify-content-between align-items-center">
                     <h3 className="card-title mb-0">Completed Event List</h3>
                     <div>
                       <button
@@ -284,7 +284,7 @@ function CompletedEvents() {
                         <div className="row mb-3">
                             <div className="col-md-6">
                                 <div className="d-flex">
-                                    <div className="input-group me-2" style={{ width: "300px" }}>
+                                     <div className="input-group me-2" style={{ width: "500px" }}>
                                         <input
                                             type="text"
                                             className="form-control"

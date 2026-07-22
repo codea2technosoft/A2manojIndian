@@ -74,8 +74,8 @@ function MatchAndSessionPl() {
   );
 
   return (
-    <div className="card mt-4">
-      <div className="card-header bg-primary-yellow text-white d-flex justify-content-between align-items-center">
+    <div className="card">
+      <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
         <h3 className="card-title mb-0">MATCH & SESSION P&L</h3>
       </div>
 
@@ -156,7 +156,7 @@ function MatchAndSessionPl() {
 
               {!loading && filteredData.length === 0 && (
                 <tr>
-                  <td colSpan="9">No Data Found</td>
+                  <td colSpan="9" className="text-center">No Data Found</td>
                 </tr>
               )}
 

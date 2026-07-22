@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Button } from "react-bootstrap";
 import { getInactiveMasterList, updateClientStatus } from "../Server/api";
 function InActiveSuperAgentLists() {
@@ -10,10 +10,10 @@ function InActiveSuperAgentLists() {
   const token = localStorage.getItem("token");
   const [masterData, setMasterData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage,setCurrentPage] = useState(1)
-const [itemsPerPage,setItemsPerPage] = useState(10)
-const [totalItems,setTotalItems] = useState(0)
-const [totalPages,setTotalPages] = useState(1)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [isSearching, setIsSearching] = useState(false);
@@ -51,7 +51,11 @@ const [totalPages,setTotalPages] = useState(1)
     });
   };
 
-  const fetchInactiveMasters = async (page = 1, limit = itemsPerPage, search = "") => {
+  const fetchInactiveMasters = async (
+    page = 1,
+    limit = itemsPerPage,
+    search = "",
+  ) => {
     try {
       setIsSearching(true);
       setLoading(true);
@@ -59,7 +63,7 @@ const [totalPages,setTotalPages] = useState(1)
         role: role,
         page: page,
         limit: limit,
-        ...(search && { search: search })
+        ...(search && { search: search }),
       };
 
       const response = await getInactiveMasterList(payload);
@@ -95,12 +99,12 @@ const [totalPages,setTotalPages] = useState(1)
         selectedAgent.admin_id,
         role,
         1,
-        newStatus
+        newStatus,
       );
 
       if (response.data.success) {
         showSuccessToast(
-          `Agent ${newStatus === 1 ? "activated" : "deactivated"} successfully`
+          `Agent ${newStatus === 1 ? "activated" : "deactivated"} successfully`,
         );
 
         fetchInactiveMasters(currentPage, itemsPerPage, searchTerm, filters);
@@ -144,7 +148,7 @@ const [totalPages,setTotalPages] = useState(1)
   };
 
   const handleSearchKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };
@@ -214,7 +218,10 @@ const [totalPages,setTotalPages] = useState(1)
 
   if (loading && masterData.length === 0) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }}
+      >
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
@@ -225,82 +232,75 @@ const [totalPages,setTotalPages] = useState(1)
   return (
     <>
       <div className="card agentmaster">
-        <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
           <h5 className="mb-0">Inactive Super Agent List</h5>
           <div className="d-flex gap-2">
-            <button
-              className="btn btn-success btn-sm"
-              onClick={handleBack}
-            >
+            <button className="btn btn-outline-light" onClick={handleBack}>
               Back
             </button>
           </div>
         </div>
+
         <div className="card-body">
           {/* Search Controls */}
-  {masterData.length > 0 &&(
-   <div className="row mb-3">
-            <div className="col-md-6">
-              <div className="d-flex">
-                <div className="input-group me-2" style={{ width: "300px" }}>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search inactive Super Agent..."
-                    value={searchInput}
-                    onChange={handleSearchInputChange}
-                    onKeyPress={handleSearchKeyPress}
-                  />
-                  <button
-                    className="btn btn-outline-primary"
-                    type="button"
-                    onClick={handleSearch}
-                    disabled={isSearching}
-                  >
-                    <FiSearch />
-                  </button>
-                  {searchTerm && (
+          {masterData.length > 0 && (
+            <div className="row mb-3">
+              <div className="col-md-6">
+                <div className="d-flex">
+                  <div className="input-group me-2 d-flex align-items-center" style={{ width: "500px" }}>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Search inactive Super Agent..."
+                      value={searchInput}
+                      onChange={handleSearchInputChange}
+                      onKeyPress={handleSearchKeyPress}
+                    />
                     <button
-                      className="btn btn-outline-secondary"
+                      className="btn btn-primary"
                       type="button"
-                      onClick={handleClearSearch}
+                      onClick={handleSearch}
+                      disabled={isSearching}
                     >
-                      Clear
+                      <FiSearch />
                     </button>
-                  )}
+                    {searchTerm && (
+                      <button
+                        className="btn btn-outline-secondary"
+                        type="button"
+                        onClick={handleClearSearch}
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                </div>
+                {searchTerm && (
+                  <div className="mt-2">
+                    <small className="text-muted">
+                      Search results for: <strong>"{searchTerm}"</strong>
+                    </small>
+                  </div>
+                )}
+              </div>
+              <div className="col-md-6">
+                <div className="d-flex justify-content-end mb-3">
+                  <select
+                    className="form-select form-select-sm"
+                    style={{ width: "90px" }}
+                    value={itemsPerPage}
+                    onChange={handleLimitChange}
+                  >
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                    <option value={30}>30</option>
+                    <option value={40}>40</option>
+                    <option value={50}>50</option>
+                  </select>
                 </div>
               </div>
-              {searchTerm && (
-                <div className="mt-2">
-                  <small className="text-muted">
-                    Search results for: <strong>"{searchTerm}"</strong>
-                  </small>
-                </div>
-              )}
             </div>
-            <div className="col-md-6">
-              <div className="d-flex justify-content-end mb-3">
-                <select
-                  className="form-select form-select-sm"
-                  style={{ width: "90px" }}
-                  value={itemsPerPage}
-                  onChange={handleLimitChange}
-                >
-                  <option value={10}>10</option>
-                  <option value={20}>20</option>
-                  <option value={30}>30</option>
-                  <option value={40}>40</option>
-                  <option value={50}>50</option>
-               </select>
-              </div>
-            </div>
-          </div>
-
-  )
-  }
-
-       
-
+          )}
 
           <div className="table-responsive">
             <table className="table table-bordered table-hover">
@@ -325,7 +325,9 @@ const [totalPages,setTotalPages] = useState(1)
                 {masterData.length > 0 ? (
                   masterData.map((row, index) => (
                     <tr key={row.id || index}>
-                      <td className="text-center">{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                      <td className="text-center">
+                        {(currentPage - 1) * itemsPerPage + index + 1}
+                      </td>
                       <td>{row.admin_id || "N/A"}</td>
                       <td>{row.username || "N/A"}</td>
                       <td>
@@ -333,10 +335,15 @@ const [totalPages,setTotalPages] = useState(1)
                         <small>{row.parent_username || "N/A"}</small>
                       </td>
                       <td>
-                        {row.created_at ? new Date(row.created_at).toLocaleDateString() : "N/A"}
+                        {row.created_at
+                          ? new Date(row.created_at).toLocaleDateString()
+                          : "N/A"}
                       </td>
                       <td>
-                        <div className="input-group input-group-sm" style={{ width: "120px" }}>
+                        <div
+                          className="input-group input-group-sm"
+                          style={{ width: "120px" }}
+                        >
                           <input
                             type="password"
                             className="form-control form-control-sm"
@@ -349,9 +356,11 @@ const [totalPages,setTotalPages] = useState(1)
                       <td>{row.admin_otp || "0"}</td>
                       <td className="text-center">{row.match_share || "0"}</td>
                       <td className="text-center">
-                        {String(row.commission_type) === "1" ? "BBB" :
-                          String(row.commission_type) === "0" ? "NOS" :
-                            "N/A"}
+                        {String(row.commission_type) === "1"
+                          ? "BBB"
+                          : String(row.commission_type) === "0"
+                            ? "NOS"
+                            : "N/A"}
                       </td>
                       <td className="text-center">{row.match_comm || "0"}</td>
                       <td className="text-center">{row.session_comm || "0"}</td>
@@ -375,7 +384,9 @@ const [totalPages,setTotalPages] = useState(1)
                 ) : (
                   <tr>
                     <td colSpan="13" className="text-center text-muted">
-                      {isSearching ? "Searching..." : "No inactive masters found"}
+                      {isSearching
+                        ? "Searching..."
+                        : "No inactive masters found"}
                     </td>
                   </tr>
                 )}
@@ -448,17 +459,17 @@ const [totalPages,setTotalPages] = useState(1)
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="d-flex justify-content-between align-items-center mt-4">
-              <div>
+            <div className="paginationall d-flex justify-content-center align-items-center mt-4">
+              {/* <div>
                 <span className="text-muted">
-                  Showing {((currentPage - 1) * itemsPerPage) + 1} to{" "}
+                  Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
                   {Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
                   {totalItems} entries
                 </span>
-              </div>
+              </div> */}
 
               <div className="d-flex align-items-center gap-1">
-                <Button
+                {/* <Button
                   variant="outline-primary"
                   size="sm"
                   disabled={currentPage === 1}
@@ -466,7 +477,7 @@ const [totalPages,setTotalPages] = useState(1)
                   className="px-3"
                 >
                   First
-                </Button>
+                </Button> */}
 
                 <Button
                   variant="outline-primary"
@@ -482,7 +493,9 @@ const [totalPages,setTotalPages] = useState(1)
                   {getPageNumbers().map((page) => (
                     <Button
                       key={page}
-                      variant={currentPage === page ? "primary" : "outline-primary"}
+                      variant={
+                        currentPage === page ? "primary" : "outline-primary"
+                      }
                       size="sm"
                       onClick={() => handlePageClick(page)}
                       className="px-3"
@@ -502,7 +515,7 @@ const [totalPages,setTotalPages] = useState(1)
                   Next &raquo;
                 </Button>
 
-                <Button
+                {/* <Button
                   variant="outline-primary"
                   size="sm"
                   disabled={currentPage === totalPages}
@@ -510,7 +523,7 @@ const [totalPages,setTotalPages] = useState(1)
                   className="px-3"
                 >
                   Last
-                </Button>
+                </Button> */}
               </div>
             </div>
           )}

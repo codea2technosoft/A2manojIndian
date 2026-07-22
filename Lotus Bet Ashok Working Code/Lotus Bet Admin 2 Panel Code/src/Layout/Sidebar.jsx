@@ -7,7 +7,18 @@ import { IoMdClose } from "react-icons/io";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from "axios"; // Add axios import
-import newlogo from "../assets/images/logonew.png"
+import newlogo from "../assets/images/logonew.png";
+import {
+  MdDashboard,
+  MdAdminPanelSettings,
+  MdSportsSoccer,
+  MdAssessment,
+  MdMenuBook,
+  MdPayments,
+  MdSettings,
+  MdLogout,
+} from "react-icons/md";
+
 const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
   const [activeParent, setActiveParent] = useState(null);
   const [activeDropdowns, setActiveDropdowns] = useState({});
@@ -17,7 +28,8 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
   const navigate = useNavigate();
   const isMobileview = window.innerWidth <= 991;
   const userTypes = localStorage.getItem("isLoggedIn");
-  const storedPermissions = JSON.parse(localStorage.getItem("permissions")) || [];
+  const storedPermissions =
+    JSON.parse(localStorage.getItem("permissions")) || [];
   const [isDark, setIsDark] = useState(false);
   const role = Number(localStorage.getItem("role")); // role = 2 | 3 | 4
 
@@ -34,11 +46,10 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
       // 🔁 Check children recursively
       if (item.children && item.children.length > 0) {
-        const found = findActiveItemAndParents(
-          item.children,
-          pathname,
-          [...parentChain, item.id]
-        );
+        const found = findActiveItemAndParents(item.children, pathname, [
+          ...parentChain,
+          item.id,
+        ]);
 
         if (found) return found;
       }
@@ -59,7 +70,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
         // Open all parent dropdowns
         const newDropdowns = {};
-        result.parents.forEach(parentId => {
+        result.parents.forEach((parentId) => {
           newDropdowns[parentId] = true;
         });
 
@@ -131,8 +142,14 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
       handleReloadLogic();
     }
 
-    // ✅ NEW: 检查并移除 superagent_admin_id 值（针对 Superagenttransaction 和 Agenttransaction） 
-    if (item.id === "Superagenttransaction" || item.id === "Agenttransaction" || item.id === "Client_Ledger" || item.id === "Client" || item.id === "agent_master_lager") {
+    // ✅ NEW: 检查并移除 superagent_admin_id 值（针对 Superagenttransaction 和 Agenttransaction）
+    if (
+      item.id === "Superagenttransaction" ||
+      item.id === "Agenttransaction" ||
+      item.id === "Client_Ledger" ||
+      item.id === "Client" ||
+      item.id === "agent_master_lager"
+    ) {
       const superagentAdminId = localStorage.getItem("superagent_admin_id");
       if (superagentAdminId) {
         localStorage.removeItem("superagent_admin_id");
@@ -151,9 +168,9 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
     // Child dropdown open
     if (parentId) {
-      setActiveDropdowns(prev => ({
+      setActiveDropdowns((prev) => ({
         ...prev,
-        [parentId]: true
+        [parentId]: true,
       }));
     }
   };
@@ -168,7 +185,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
       }
       localStorage.removeItem("admin_id_new");
       localStorage.removeItem("superagent_admin_id");
-
     };
 
     window.addEventListener("popstate", handleBack);
@@ -178,8 +194,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
       window.removeEventListener("popstate", handleBack);
     };
   }, []);
-
-
 
   const handleLogout = async () => {
     const result = await Swal.fire({
@@ -233,7 +247,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
     }
   };
 
-
   // 🔒 Check permissions
   const isPermitted = (id) => {
     if (userTypes === "true") return true;
@@ -260,7 +273,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
   useEffect(() => {
     fetchAdminProfile();
-  }, [])
+  }, []);
   const fetchAdminProfile = async () => {
     try {
       const admin_id = localStorage.getItem("admin_id");
@@ -277,14 +290,14 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         `${process.env.REACT_APP_API_URL}/get-data`,
         {
           role: role,
-          admin_id: admin_id
+          admin_id: admin_id,
         },
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
-        }
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.data.success && response.data.data?.admin_profile) {
@@ -320,7 +333,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
     // Check if item or any of its children are permitted
     const canShowItem =
       isPermitted(item.id) ||
-      (item.dropdown && item.children?.some(child => isPermitted(child.id)));
+      (item.dropdown && item.children?.some((child) => isPermitted(child.id)));
 
     if (!canShowItem) return null;
 
@@ -416,7 +429,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
     );
   };
 
-
   const toggleDropdown = (id) => {
     setActiveDropdowns((prev) => {
       // agar same dropdown click ho raha hai → toggle
@@ -431,7 +443,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
     });
   };
 
-
   // 📋 Menu items definition
   const menuItems = [
     {
@@ -441,45 +452,21 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
           id: "dashboard",
           title: "Dashboard",
           href: "/dashboard",
-          icon: (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-              <polyline points="9 22 9 12 15 12 15 22"></polyline>
-            </svg>
-          ),
+          icon: <MdDashboard size={22} />,
         },
         {
           id: "adminsdetails",
           title: "Admin Details",
           dropdown: true,
-          icon: (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-          ),
+          icon: <MdAdminPanelSettings size={22} />,
           children:
             role === 2
               ? [
-                {
-                  id: "Master",
-                  title: "Super Agent",
-                  href: "/agent_master",
-                },
-                {
-                  id: "super-agent",
-                  title: "Agent",
-                  href: "/AgentMasternew",
-                },
-                {
-                  id: "myuserMaster",
-                  title: "User",
-                  href: "/Mastermyuser",
-                },
-              ]
-              : role === 3
-                ? [
+                  {
+                    id: "Master",
+                    title: "Super Agent",
+                    href: "/agent_master",
+                  },
                   {
                     id: "super-agent",
                     title: "Agent",
@@ -491,27 +478,34 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
                     href: "/Mastermyuser",
                   },
                 ]
-                : role === 4
-                  ? [
+              : role === 3
+                ? [
+                    {
+                      id: "super-agent",
+                      title: "Agent",
+                      href: "/AgentMasternew",
+                    },
                     {
                       id: "myuserMaster",
                       title: "User",
                       href: "/Mastermyuser",
                     },
                   ]
+                : role === 4
+                  ? [
+                      {
+                        id: "myuserMaster",
+                        title: "User",
+                        href: "/Mastermyuser",
+                      },
+                    ]
                   : [],
         },
         {
           id: "SportsBetting",
           title: "Sports Betting",
           dropdown: true,
-          icon: (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-          ),
+          icon: <MdSportsSoccer size={22} />,
           children: [
             {
               id: "InplayGames",
@@ -528,15 +522,9 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         },
         {
           id: "Comm_Report",
-          title: "Comm. Report",
+          title: "Commission Report",
           dropdown: true,
-          icon: (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-          ),
+          icon: <MdAssessment size={22} />,
           children: [
             {
               id: "CommisssionReport",
@@ -549,37 +537,11 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
           id: "Ledger",
           title: "Ledger",
           dropdown: true,
-          icon: (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-          ),
+          icon: <MdMenuBook size={22} />,
           children:
             role === 4
               ? [
-                // Role 4: Only show Profit_Loss and My_Ledger
-                {
-                  id: "peofit_loss",
-                  title: "Profit And Loss",
-                  href: "/Profit_Loss",
-                },
-                {
-                  id: "My_Ledger",
-                  title: "My Ledger",
-                  href: "/My_Ledger",
-                },
-
-                {
-                  id: "Client",
-                  title: "User",
-                  href: "/Client_user",
-                },
-              ]
-              : role === 3
-                ? [
-                  // Role 3: Don't show agent_master_lager, show others
+                  // Role 4: Only show Profit_Loss and My_Ledger
                   {
                     id: "peofit_loss",
                     title: "Profit And Loss",
@@ -590,79 +552,75 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
                     title: "My Ledger",
                     href: "/My_Ledger",
                   },
-                  {
-                    id: "Client_Ledger",
-                    title: "agent",
-                    href: "/Client_Ledger",
-                  },
+
                   {
                     id: "Client",
                     title: "User",
                     href: "/Client_user",
                   },
                 ]
+              : role === 3
+                ? [
+                    // Role 3: Don't show agent_master_lager, show others
+                    {
+                      id: "peofit_loss",
+                      title: "Profit And Loss",
+                      href: "/Profit_Loss",
+                    },
+                    {
+                      id: "My_Ledger",
+                      title: "My Ledger",
+                      href: "/My_Ledger",
+                    },
+                    {
+                      id: "Client_Ledger",
+                      title: "agent",
+                      href: "/Client_Ledger",
+                    },
+                    {
+                      id: "Client",
+                      title: "User",
+                      href: "/Client_user",
+                    },
+                  ]
                 : [
-                  // Role 2: Show all
-                  {
-                    id: "peofit_loss",
-                    title: "Profit And Loss",
-                    href: "/Profit_Loss",
-                  },
-                  {
-                    id: "My_Ledger",
-                    title: "My Ledger",
-                    href: "/My_Ledger",
-                  },
-                  {
-                    id: "agent_master",
-                    title: "Super agent",
-                    href: "/agent_master_lager",
-                  },
-                  {
-                    id: "Client_Ledger",
-                    title: "agent",
-                    href: "/Client_Ledger",
-                  },
-                  {
-                    id: "Client",
-                    title: "User",
-                    href: "/Client_user",
-                  },
-                ],
+                    // Role 2: Show all
+                    {
+                      id: "peofit_loss",
+                      title: "Profit And Loss",
+                      href: "/Profit_Loss",
+                    },
+                    {
+                      id: "My_Ledger",
+                      title: "My Ledger",
+                      href: "/My_Ledger",
+                    },
+                    {
+                      id: "agent_master",
+                      title: "Super agent",
+                      href: "/agent_master_lager",
+                    },
+                    {
+                      id: "Client_Ledger",
+                      title: "agent",
+                      href: "/Client_Ledger",
+                    },
+                    {
+                      id: "Client",
+                      title: "User",
+                      href: "/Client_user",
+                    },
+                  ],
         },
 
         {
           id: "Superagenttransaction",
           title: "Cash Transactions",
           dropdown: true,
-          icon: (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-          ),
+          icon: <MdPayments size={22} />,
           children:
             role === 4
               ? [
-                {
-                  id: "Client_user_list",
-                  title: "User",
-                  href: "/Client_user_list",
-                },
-                {
-                  id: "Report",
-                  title: "Report",
-                  href: "/Report",
-                },
-              ]
-              : role === 3
-                ? [
-                  {
-                    id: "Agenttransaction",
-                    title: "Agent",
-                    href: "/Agenttransaction",
-                  },
                   {
                     id: "Client_user_list",
                     title: "User",
@@ -674,41 +632,53 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
                     href: "/Report",
                   },
                 ]
+              : role === 3
+                ? [
+                    {
+                      id: "Agenttransaction",
+                      title: "Agent",
+                      href: "/Agenttransaction",
+                    },
+                    {
+                      id: "Client_user_list",
+                      title: "User",
+                      href: "/Client_user_list",
+                    },
+                    {
+                      id: "Report",
+                      title: "Report",
+                      href: "/Report",
+                    },
+                  ]
                 : [
-                  {
-                    id: "Superagenttransaction",
-                    title: "Super Agent",
-                    href: "/Superagenttransaction",
-                  },
-                  {
-                    id: "Agenttransaction",
-                    title: "Agent",
-                    href: "/Agenttransaction",
-                  },
-                  {
-                    id: "Client_user_list",
-                    title: "User",
-                    href: "/Client_user_list",
-                  },
-                  {
-                    id: "Report",
-                    title: "Report",
-                    href: "/Report",
-                  },
-                ],
+                    {
+                      id: "Superagenttransaction",
+                      title: "Super Agent",
+                      href: "/Superagenttransaction",
+                    },
+                    {
+                      id: "Agenttransaction",
+                      title: "Agent",
+                      href: "/Agenttransaction",
+                    },
+                    {
+                      id: "Client_user_list",
+                      title: "User",
+                      href: "/Client_user_list",
+                    },
+                    {
+                      id: "Report",
+                      title: "Report",
+                      href: "/Report",
+                    },
+                  ],
         },
 
         {
           id: "general_setting",
           title: "Admin Setting",
           href: "/setting",
-          icon: (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-              <polyline points="16 17 21 12 16 7"></polyline>
-              <line x1="21" y1="12" x2="9" y2="12"></line>
-            </svg>
-          ),
+          icon: <MdSettings size={22} />,
         },
 
         {
@@ -716,13 +686,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
           title: "Logout",
           onClick: handleLogout,
           href: "#",
-          icon: (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-              <polyline points="16 17 21 12 16 7"></polyline>
-              <line x1="21" y1="12" x2="9" y2="12"></line>
-            </svg>
-          ),
+          icon: <MdLogout size={22} />,
         },
       ],
     },
@@ -746,12 +710,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
                 src={isDark ? newlogo : newlogo}
                 alt="logo"
                 className="logo-lg"
-                style={{
-                  width: "70px",
-                  height: "auto",
-                  objectFit: "contain",
-                  maxWidth: "100%",
-                }}
               />
             </a>
           </div>

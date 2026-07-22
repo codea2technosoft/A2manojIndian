@@ -27,13 +27,11 @@ import Clients_SessionPL from "../viewmatchAndFancy/Clients_SessionPL";
 import MatchStats from "../viewmatchAndFancy/MatchStats";
 import CompletedSessions from "../viewmatchAndFancy/CompletedSessions";
 import Fakedata from "../viewmatchAndFancy/Fakedata";
-// import Clients_SessionPL from "../Pages/Clients_SessionPL";
-// import MatchStats from "../Pages/MatchStats";
-// import CompletedSessions from "../Pages/CompletedSessions";
-// import Fakedata from "../Pages/Fakedata";
 
 const CustomNotification = memo(({ notification, onClose }) => {
   const timeoutRef = useRef(null);
+  const location = useLocation();
+  const marketId = location.pathname.match(/series_idd\/([^/]+)/)?.[1];
 
   useEffect(() => {
     if (timeoutRef.current) {
@@ -162,11 +160,11 @@ const useNotification = () => {
 const getBetSlipBackgroundColor = (betType) => {
   switch (betType) {
     case "back":
-      return "#72bbef"; // Blue
+      return "#72bbef";
     case "lay":
-      return "#ff6b6b"; // Red
+      return "#ff6b6b";
     default:
-      return "#f8f9fa"; // Default
+      return "#f8f9fa";
   }
 };
 
@@ -266,7 +264,90 @@ const BetSlipModalContent = memo(
 
     return (
       <div className="bet-slip-modal-content">
-        {/* Your existing bet slip modal content */}
+        <div className="py-2">
+          <div className="fancy-quick-tr placebet">
+            <div className="slip-back">
+              <div className="">
+                <div className="datanameandinput d-flex align-items-center stacksCol justify-content-end px-1">
+                  <div className="d-flex justify-content-end gap-2 only_pc_100 ">
+                    <div className="pb-0 hideMobile"></div>
+
+                    <div className="">
+                      <input
+                        type="text"
+                        placeholder="0"
+                        className="stakeinput input-Betslip text-center selectodd"
+                        value={selectedOdds?.value}
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                      />
+                    </div>
+                    <div className="d-flex align-items-center">
+                      <input
+                        ref={stakeInputRef}
+                        type="text"
+                        placeholder="0"
+                        className="stakeinput input-Betslip text-center"
+                        value={stake}
+                        onChange={handleStakeChange}
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                      />
+                    </div>
+
+                    <div className="pb-0 hideMobile">
+                      <button
+                        className="btn btn-send text-light"
+                        onClick={handlePlaceBet}
+                        disabled={!stake || parseInt(stake) === 0 || isPlacingBet}
+                      >
+                        {isPlacingBet ? (
+                          <div className="btn_loader"></div>
+                        ) : (
+                          "Place Bet"
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-0 mb-2 p-0 stackbutton padddingZero hideDesktop">
+                  <div className="datanameandinput w-100 d-flex gap-2 p-1">
+                    <button
+                      className="btn btn-block btn-cancel col"
+                      onClick={closeBetSlip}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="btn btn-send col"
+                      onClick={handlePlaceBet}
+                      disabled={!stake || parseInt(stake) === 0 || isPlacingBet}
+                    >
+                      {isPlacingBet ? (
+                        <div className="btn_loader"></div>
+                      ) : (
+                        "Place Bet"
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className=" d-flex stackbutton pt-0 pb-0 slip-back-br">
+            {fancyQuickStakes.map((amount) => (
+              <div key={amount} className="fancy_design_button p-1">
+                <button
+                  className="btn btn-block fancy-quick-btn"
+                  onClick={() => handleQuickStake(amount)}
+                >
+                  {formatNumber(amount)}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   },
@@ -568,15 +649,15 @@ const MyBetsComponent = memo(({ showMyBets, betsLoading, myBets }) => (
   </div>
 ));
 
-// FIXED BookmakerTable Component
-const BookmakerTable = memo(
+// MatchOddsTable Component - This displays the Match Odds data
+const MatchOddsTable = memo(
   ({
-    markets,
+    matches,
     title,
     selectedRow,
     placebet,
     selectedOdds,
-    handleBookmakerOddsClick,
+    handleMatchOddsClick,
     closeBetSlip,
     handlePlaceBet,
     handleStakeChange,
@@ -590,7 +671,7 @@ const BookmakerTable = memo(
     showNotification,
     highlightedMarkets,
     formatVolume,
-    bookMakerShowCurrentExp,
+    matchOddsShowCurrentExp,
     teamexposercurrent1,
     teamexposercurrent2,
     teamexposercurrent1Name,
@@ -598,81 +679,53 @@ const BookmakerTable = memo(
     currentExpbgColor2,
     selectednameteam,
     betType,
-    bookmakerExposureData,
+    matchOddsExposureData,
     matchesName,
     onMyBookClicktotel,
     onMyBookClick,
   }) => {
-    const handleOddsClick = (market, type, price, runner) => {
-      if (runner.status === "SUSPENDED") {
-        showNotification(
-          "This market is currently suspended. Betting is not allowed.",
-          "warning",
-        );
-        return;
-      }
-
-      if (!price || price === 0) return;
-
-      handleBookmakerOddsClick(market, type, price, runner);
-    };
-
-    const getExposureAmount = (runnerName) => {
-      if (!bookmakerExposureData || typeof bookmakerExposureData !== "object") {
+    const getExposureAmount = (teamId) => {
+      if (!matchOddsExposureData || typeof matchOddsExposureData !== 'object') {
         return 0;
       }
 
-      if (matchesName && Array.isArray(matchesName)) {
-        const team = matchesName.find(
-          (t) =>
-            t.team_name &&
-            runnerName &&
-            t.team_name.toLowerCase() === runnerName.toLowerCase(),
-        );
-
-        if (team && bookmakerExposureData[team.team_id] !== undefined) {
-          return bookmakerExposureData[team.team_id];
-        }
-
-        if (
-          team &&
-          bookmakerExposureData[team.team_id?.toString()] !== undefined
-        ) {
-          return bookmakerExposureData[team.team_id.toString()];
-        }
+      if (matchOddsExposureData[teamId] !== undefined) {
+        return matchOddsExposureData[teamId];
       }
 
-      const keys = Object.keys(bookmakerExposureData);
-      for (const key of keys) {
-        const exposure = bookmakerExposureData[key];
-        if (
-          exposure &&
-          typeof exposure === "object" &&
-          exposure.amount !== undefined
-        ) {
-          return exposure.amount;
-        }
-        return exposure;
+      if (matchOddsExposureData[teamId?.toString()] !== undefined) {
+        return matchOddsExposureData[teamId.toString()];
       }
 
       return 0;
     };
 
     const getExposureColor = (amount) => {
-      if (!amount && amount !== 0) {
-        return "#666";
-      }
+      if (!amount && amount !== 0) return "#666";
 
-      const numAmount =
-        typeof amount === "string" ? parseFloat(amount) : amount;
+      const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
 
       if (numAmount > 0) return "#108f10ff";
       if (numAmount < 0) return "#ff0000";
       return "#666";
     };
 
+    const handleOddsClick = (price, type, market, teamName, rowId) => {
+      if (market.status === "SUSPENDED") {
+        showNotification(
+          "This market is currently suspended. Betting is not allowed.",
+          "warning"
+        );
+        return;
+      }
+
+      if (!price || price === 0) return;
+
+      handleMatchOddsClick(price, type, market, teamName, rowId);
+    };
+
     return (
-      <div className={`${title.toLowerCase().replace(" ", "-")}`}>
+      <div className="match-odds-section">
         <div className="match-odds-part">
           <div className="table-responsive">
             <table
@@ -684,24 +737,7 @@ const BookmakerTable = memo(
                 <tr>
                   <th align="left" className="market-name-th" valign="middle">
                     <div className="d-flex justify-content-between align-items-center">
-                      {/* <p className="text_blink"> Bookmaker</p> */}
-                      {/* <p className="stack-info text_blink">
-                        <span className="text_blink">Max:</span><span className="text_blink"> 10000</span>
-                      </p> */}
-
-                      <button
-                        className="backbutton"
-                        onClick={onMyBookClick}
-                        // disabled={isFetchingExposure}
-                      >
-                        {/* {isFetchingExposure ? (
-                          <span className="spinner-border spinner-border-sm me-1"></span>
-                        ) : null} */}
-                        My Book
-                      </button>
-                      <div onClick={onMyBookClicktotel} className="backbutton">
-                        Ttl Book
-                      </div>
+                       Match Odds 
                     </div>
                   </th>
                   <th align="center" className="back-h" valign="middle">
@@ -713,372 +749,364 @@ const BookmakerTable = memo(
                 </tr>
               </thead>
 
-              <tbody className="">
-                {Array.isArray(markets) && markets.length > 0 ? (
-                  markets.slice(0, 1).map((market) =>
-                    market.runners.map((runner) => {
-                      const rowId = `${market.marketId}_${runner.selectionId}`;
-                      const teamExposure = getExposureAmount(runner.runnerName);
-                      const exposureColor = getExposureColor(teamExposure);
+              <tbody>
+                {Array.isArray(matches) && matches.length > 0 ? (
+                  matches.map((market) => {
+                    const teamName = market.team_name;
+                    const teamExposure = getExposureAmount(market.id);
+                    const exposureColor = getExposureColor(teamExposure);
 
-                      return (
-                        <React.Fragment key={rowId}>
-                          <tr
-                            className="white-bg skyDetailsRow d-mobile"
-                            style={{ backgroundColor: "rgb(250, 248, 216)" }}
+                    return (
+                      <React.Fragment key={market.id}>
+                        <tr
+                          className="white-bg skyDetailsRow d-mobile"
+                          style={{ backgroundColor: "rgb(250, 248, 216)" }}
+                        >
+                          <td
+                            align="left"
+                            className="selaction_name"
+                            valign="middle"
                           >
-                            <td
-                              align="left"
-                              className="selaction_name"
-                              valign="middle"
-                            >
-                              <div className="d-flex height_60 justify-content-between align-items-center">
-                                <div className="d-flex gap-2">
-                                  <a>{runner.runnerName}</a>
-                                  <span className="forstrongchang">
-                                    <strong className="red d-flex gap-1 align-items-center">
-                                      {teamExposure !== 0 && (
-                                        <div
-                                          style={{
-                                            color: exposureColor,
-                                            display: "inline-block",
-                                            fontSize: "12px",
-                                            fontWeight: "bold",
-                                            minWidth: "60px",
-                                            textAlign: "start",
-                                          }}
-                                        >
-                                          ({teamExposure > 0 ? "+" : ""}
-                                          {formatNumber(teamExposure)})
-                                        </div>
-                                      )}
-                                    </strong>{" "}
-                                    {bookMakerShowCurrentExp ? (
-                                      teamexposercurrent1Name ===
-                                      runner.runnerName ? (
-                                        <div
-                                          style={{
-                                            color: currentExpbgColor1,
-                                            display: "inline-block",
-                                            marginLeft: "10px",
-                                            fontSize: "12px",
-                                            fontWeight: "bold",
-                                          }}
-                                        >
-                                          {teamexposercurrent1 === 0 ? (
-                                            <></>
-                                          ) : (
-                                            "(" +
-                                            formatNumber(teamexposercurrent1) +
-                                            ")"
-                                          )}
-                                        </div>
-                                      ) : (
-                                        <div
-                                          style={{
-                                            color: currentExpbgColor2,
-                                            display: "inline-block",
-                                            marginLeft: "10px",
-                                            fontSize: "12px",
-                                            fontWeight: "bold",
-                                          }}
-                                        >
-                                          {teamexposercurrent2 === 0 ? (
-                                            <></>
-                                          ) : (
-                                            "(" +
-                                            formatNumber(teamexposercurrent2) +
-                                            ")"
-                                          )}
-                                        </div>
-                                      )
-                                    ) : (
-                                      <></>
+                            <div className="d-flex height_60 justify-content-between align-items-center">
+                              <div className="d-flex gap-2">
+                                <a>{teamName}</a>
+                                <span className="forstrongchang">
+                                  <strong className="red d-flex gap-1 align-items-center">
+                                    {teamExposure !== 0 && (
+                                      <div
+                                        style={{
+                                          color: exposureColor,
+                                          display: "inline-block",
+                                          fontSize: "12px",
+                                          fontWeight: "bold",
+                                          minWidth: "60px",
+                                          textAlign: "start",
+                                        }}
+                                      >
+                                        ({teamExposure > 0 ? "+" : ""}
+                                        {formatNumber(teamExposure)})
+                                      </div>
                                     )}
-                                  </span>
-                                </div>
+                                  </strong>{" "}
+                                  {matchOddsShowCurrentExp ? (
+                                    teamexposercurrent1Name === teamName ? (
+                                      <div
+                                        style={{
+                                          color: currentExpbgColor1,
+                                          display: "inline-block",
+                                          marginLeft: "10px",
+                                          fontSize: "12px",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        {teamexposercurrent1 === 0 ? (
+                                          <></>
+                                        ) : (
+                                          "(" +
+                                          formatNumber(teamexposercurrent1) +
+                                          ")"
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <div
+                                        style={{
+                                          color: currentExpbgColor2,
+                                          display: "inline-block",
+                                          marginLeft: "10px",
+                                          fontSize: "12px",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        {teamexposercurrent2 === 0 ? (
+                                          <></>
+                                        ) : (
+                                          "(" +
+                                          formatNumber(teamexposercurrent2) +
+                                          ")"
+                                        )}
+                                      </div>
+                                    )
+                                  ) : (
+                                    <></>
+                                  )}
+                                </span>
                               </div>
-                            </td>
-                            <td
-                              className="suspend-col d-mobile"
-                              colSpan={2}
-                              style={{ position: "relative" }}
-                            >
-                              <div className="d-flex justify-content-start">
+                            </div>
+                          </td>
+                          <td
+                            className="suspend-col d-mobile"
+                            colSpan={2}
+                            style={{ position: "relative" }}
+                          >
+                            <div className="d-flex justify-content-start">
+                              {market.availableToBack && market.availableToBack.length > 0 && (
                                 <div
                                   className="back1 back-1 bettinggrid"
                                   onClick={() =>
                                     handleOddsClick(
-                                      market,
+                                      market.availableToBack[0]?.price,
                                       "back",
-                                      runner.ex.availableToBack[0]?.price,
-                                      runner,
+                                      market,
+                                      teamName,
+                                      market.id
                                     )
                                   }
                                   style={{
                                     cursor:
-                                      runner.status === "SUSPENDED"
+                                      market.status === "SUSPENDED"
                                         ? "not-allowed"
                                         : "pointer",
                                     color: "#000",
                                     background: highlightedMarkets[
-                                      `${rowId}-back`
+                                      `${market.id}-back-0`
                                     ]
                                       ? "#f8e71c"
                                       : "",
                                     transition: "background-color 0.5s ease",
                                     padding: "2px 5px",
                                     fontWeight: highlightedMarkets[
-                                      `${rowId}-back`
+                                      `${market.id}-back-0`
                                     ]
                                       ? "bold"
                                       : "700",
                                   }}
                                 >
-                                  <span style={{}}>
-                                    {runner.ex.availableToBack[0]?.price || 0}
+                                  <span>
+                                    {market.availableToBack[0]?.price || 0}
                                   </span>
                                   <small>
-                                    {formatVolume(
-                                      runner.ex.availableToBack[0]?.size || 0,
-                                    )}
+                                    {formatVolume(market.availableToBack[0]?.size || 0)}
                                   </small>
                                 </div>
+                              )}
 
+                              {market.availableToLay && market.availableToLay.length > 0 && (
                                 <div
                                   className="lay3 lay-1 bettinggrid"
                                   onClick={() =>
                                     handleOddsClick(
-                                      market,
+                                      market.availableToLay[0]?.price,
                                       "lay",
-                                      runner.ex.availableToLay[0]?.price,
-                                      runner,
+                                      market,
+                                      teamName,
+                                      market.id
                                     )
                                   }
                                   style={{
                                     cursor:
-                                      runner.status === "SUSPENDED"
+                                      market.status === "SUSPENDED"
                                         ? "not-allowed"
                                         : "pointer",
                                     color: "#000",
                                     background: highlightedMarkets[
-                                      `${rowId}-lay`
+                                      `${market.id}-lay-0`
                                     ]
                                       ? "#26f1f8"
                                       : "",
                                     transition: "background-color 0.5s ease",
                                     padding: "2px 5px",
                                     fontWeight: highlightedMarkets[
-                                      `${rowId}-lay`
+                                      `${market.id}-lay-0`
                                     ]
                                       ? "bold"
                                       : "700",
                                   }}
                                 >
-                                  <span style={{}}>
-                                    {runner.ex.availableToLay[0]?.price || 0}
+                                  <span>
+                                    {market.availableToLay[0]?.price || 0}
                                   </span>
                                   <small>
-                                    {formatVolume(
-                                      runner.ex.availableToLay[0]?.size || 0,
-                                    )}
+                                    {formatVolume(market.availableToLay[0]?.size || 0)}
                                   </small>
                                 </div>
-                              </div>
-                              {runner.status === "SUSPENDED" && (
-                                <span className="suspend-text">SUSPENDED</span>
                               )}
-                            </td>
-                          </tr>
-                          <tr
-                            className="white-bg skyDetailsRow d-desk"
-                            style={{ backgroundColor: "rgb(250, 248, 216)" }}
+                            </div>
+                            {market.status === "SUSPENDED" && (
+                              <span className="suspend-text">SUSPENDED</span>
+                            )}
+                          </td>
+                        </tr>
+                        <tr
+                          className="white-bg skyDetailsRow d-desk"
+                          style={{ backgroundColor: "rgb(250, 248, 216)" }}
+                        >
+                          <td
+                            align="left"
+                            className="selaction_name"
+                            valign="middle"
                           >
-                            <td
-                              align="left"
-                              className="selaction_name"
-                              valign="middle"
-                            >
-                              <div className="d-flex height_60 justify-content-between align-items-center">
-                                <div className="d-flex gap-2">
-                                  <a>{runner.runnerName}</a>
-                                  <span className="forstrongchang">
-                                    <strong className="red d-flex gap-1 align-items-center">
-                                      {teamExposure !== 0 && (
-                                        <div
-                                          style={{
-                                            color: exposureColor,
-                                            display: "inline-block",
-                                            fontSize: "12px",
-                                            fontWeight: "bold",
-                                            minWidth: "60px",
-                                            textAlign: "start",
-                                          }}
-                                        >
-                                          ({teamExposure > 0 ? "+" : ""}
-                                          {formatNumber(teamExposure)})
-                                        </div>
-                                      )}
-                                    </strong>{" "}
-                                    {bookMakerShowCurrentExp ? (
-                                      teamexposercurrent1Name ===
-                                      runner.runnerName ? (
-                                        <div
-                                          style={{
-                                            color: currentExpbgColor1,
-                                            display: "inline-block",
-                                            marginLeft: "10px",
-                                            fontSize: "12px",
-                                            fontWeight: "bold",
-                                          }}
-                                        >
-                                          {teamexposercurrent1 === 0 ? (
-                                            <></>
-                                          ) : (
-                                            "(" +
-                                            formatNumber(teamexposercurrent1) +
-                                            ")"
-                                          )}
-                                        </div>
-                                      ) : (
-                                        <div
-                                          style={{
-                                            color: currentExpbgColor2,
-                                            display: "inline-block",
-                                            marginLeft: "10px",
-                                            fontSize: "12px",
-                                            fontWeight: "bold",
-                                          }}
-                                        >
-                                          {teamexposercurrent2 === 0 ? (
-                                            <></>
-                                          ) : (
-                                            "(" +
-                                            formatNumber(teamexposercurrent2) +
-                                            ")"
-                                          )}
-                                        </div>
-                                      )
-                                    ) : (
-                                      <></>
+                            <div className="d-flex height_60 justify-content-between align-items-center">
+                              <div className="d-flex gap-2">
+                                <a>{teamName}</a>
+                                <span className="forstrongchang">
+                                  <strong className="red d-flex gap-1 align-items-center">
+                                    {teamExposure !== 0 && (
+                                      <div
+                                        style={{
+                                          color: exposureColor,
+                                          display: "inline-block",
+                                          fontSize: "12px",
+                                          fontWeight: "bold",
+                                          minWidth: "60px",
+                                          textAlign: "start",
+                                        }}
+                                      >
+                                        ({teamExposure > 0 ? "+" : ""}
+                                        {formatNumber(teamExposure)})
+                                      </div>
                                     )}
-                                  </span>
-                                </div>
+                                  </strong>{" "}
+                                  {matchOddsShowCurrentExp ? (
+                                    teamexposercurrent1Name === teamName ? (
+                                      <div
+                                        style={{
+                                          color: currentExpbgColor1,
+                                          display: "inline-block",
+                                          marginLeft: "10px",
+                                          fontSize: "12px",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        {teamexposercurrent1 === 0 ? (
+                                          <></>
+                                        ) : (
+                                          "(" +
+                                          formatNumber(teamexposercurrent1) +
+                                          ")"
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <div
+                                        style={{
+                                          color: currentExpbgColor2,
+                                          display: "inline-block",
+                                          marginLeft: "10px",
+                                          fontSize: "12px",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        {teamexposercurrent2 === 0 ? (
+                                          <></>
+                                        ) : (
+                                          "(" +
+                                          formatNumber(teamexposercurrent2) +
+                                          ")"
+                                        )}
+                                      </div>
+                                    )
+                                  ) : (
+                                    <></>
+                                  )}
+                                </span>
                               </div>
-                            </td>
-                            <td
-                              className="suspend-col d-desk"
-                              colSpan={6}
-                              style={{ position: "relative" }}
-                            >
-                              <div className="d-flex justify-content-start">
-                                {[2, 1, 0].map((index) => (
-                                  <div
-                                    key={`back-${index}`}
-                                    className={`back1 back-${
-                                      index + 1
-                                    } bettinggrid ${
-                                      index > 0 ? "boxhide" : ""
-                                    }`}
-                                    onClick={() =>
-                                      handleOddsClick(
-                                        market,
-                                        "back",
-                                        runner.ex.availableToBack[index]?.price,
-                                        runner,
-                                      )
-                                    }
-                                    style={{
-                                      cursor:
-                                        runner.status === "SUSPENDED"
-                                          ? "not-allowed"
-                                          : "pointer",
-                                      color: "#000",
-                                      background: highlightedMarkets[
-                                        `${rowId}-back-${index}`
-                                      ]
-                                        ? "#f8e71c"
-                                        : "",
-                                      transition: "background-color 0.5s ease",
-                                      padding: "2px 5px",
-                                      fontWeight: highlightedMarkets[
-                                        `${rowId}-back-${index}`
-                                      ]
-                                        ? "bold"
-                                        : "700",
-                                    }}
-                                  >
-                                    <span style={{}}>
-                                      {runner.ex.availableToBack[index]
-                                        ?.price || ""}
-                                    </span>
-                                    <small>
-                                      {formatVolume(
-                                        runner.ex.availableToBack[index]
-                                          ?.size || 0,
-                                      )}
-                                    </small>
-                                  </div>
-                                ))}
-
-                                {[0, 1, 2].map((index) => (
-                                  <div
-                                    key={`lay-${index}`}
-                                    className={`lay3 lay-${
-                                      index + 1
-                                    } bettinggrid ${
-                                      index > 0 ? "boxhide" : ""
-                                    }`}
-                                    onClick={() =>
-                                      handleOddsClick(
-                                        market,
-                                        "lay",
-                                        runner.ex.availableToLay[index]?.price,
-                                        runner,
-                                      )
-                                    }
-                                    style={{
-                                      cursor:
-                                        runner.status === "SUSPENDED"
-                                          ? "not-allowed"
-                                          : "pointer",
-                                      color: "#000",
-                                      background: highlightedMarkets[
-                                        `${rowId}-lay-${index}`
-                                      ]
-                                        ? "#26f1f8"
-                                        : "",
-                                      transition: "background-color 0.5s ease",
-                                      padding: "2px 5px",
-                                      fontWeight: highlightedMarkets[
-                                        `${rowId}-lay-${index}`
-                                      ]
-                                        ? "bold"
-                                        : "700",
-                                    }}
-                                  >
-                                    <span style={{}}>
-                                      {runner.ex.availableToLay[index]?.price ||
-                                        ""}
-                                    </span>
-                                    <small>
-                                      {formatVolume(
-                                        runner.ex.availableToLay[index]?.size ||
-                                          0,
-                                      )}
-                                    </small>
-                                  </div>
-                                ))}
-                              </div>
-                              {runner.status === "SUSPENDED" && (
-                                <span className="suspend-text">SUSPENDED</span>
+                            </div>
+                          </td>
+                          <td
+                            className="suspend-col d-desk"
+                            colSpan={6}
+                            style={{ position: "relative" }}
+                          >
+                            <div className="d-flex justify-content-start">
+                              {market.availableToBack && market.availableToBack.length > 0 && (
+                                <>
+                                  {[2, 1, 0].map((index) => (
+                                    <div
+                                      key={`back-${index}`}
+                                      className={`back1 back-${index + 1} bettinggrid ${index > 0 ? "boxhide" : ""}`}
+                                      onClick={() =>
+                                        handleOddsClick(
+                                          market.availableToBack[index]?.price,
+                                          "back",
+                                          market,
+                                          teamName,
+                                          market.id
+                                        )
+                                      }
+                                      style={{
+                                        cursor:
+                                          market.status === "SUSPENDED"
+                                            ? "not-allowed"
+                                            : "pointer",
+                                        color: "#000",
+                                        background: highlightedMarkets[
+                                          `${market.id}-back-${index}`
+                                        ]
+                                          ? "#f8e71c"
+                                          : "",
+                                        transition: "background-color 0.5s ease",
+                                        padding: "2px 5px",
+                                        fontWeight: highlightedMarkets[
+                                          `${market.id}-back-${index}`
+                                        ]
+                                          ? "bold"
+                                          : "700",
+                                      }}
+                                    >
+                                      <span>
+                                        {market.availableToBack[index]?.price || ""}
+                                      </span>
+                                      <small>
+                                        {formatVolume(market.availableToBack[index]?.size || 0)}
+                                      </small>
+                                    </div>
+                                  ))}
+                                </>
                               )}
-                            </td>
-                          </tr>
-                        </React.Fragment>
-                      );
-                    }),
-                  )
+
+                              {market.availableToLay && market.availableToLay.length > 0 && (
+                                <>
+                                  {[0, 1, 2].map((index) => (
+                                    <div
+                                      key={`lay-${index}`}
+                                      className={`lay3 lay-${index + 1} bettinggrid ${index > 0 ? "boxhide" : ""}`}
+                                      onClick={() =>
+                                        handleOddsClick(
+                                          market.availableToLay[index]?.price,
+                                          "lay",
+                                          market,
+                                          teamName,
+                                          market.id
+                                        )
+                                      }
+                                      style={{
+                                        cursor:
+                                          market.status === "SUSPENDED"
+                                            ? "not-allowed"
+                                            : "pointer",
+                                        color: "#000",
+                                        background: highlightedMarkets[
+                                          `${market.id}-lay-${index}`
+                                        ]
+                                          ? "#26f1f8"
+                                          : "",
+                                        transition: "background-color 0.5s ease",
+                                        padding: "2px 5px",
+                                        fontWeight: highlightedMarkets[
+                                          `${market.id}-lay-${index}`
+                                        ]
+                                          ? "bold"
+                                          : "700",
+                                      }}
+                                    >
+                                      <span>
+                                        {market.availableToLay[index]?.price || ""}
+                                      </span>
+                                      <small>
+                                        {formatVolume(market.availableToLay[index]?.size || 0)}
+                                      </small>
+                                    </div>
+                                  ))}
+                                </>
+                              )}
+                            </div>
+                            {market.status === "SUSPENDED" && (
+                              <span className="suspend-text">SUSPENDED</span>
+                            )}
+                          </td>
+                        </tr>
+                      </React.Fragment>
+                    );
+                  })
                 ) : (
                   <Fakedata />
                 )}
@@ -1090,6 +1118,657 @@ const BookmakerTable = memo(
     );
   },
 );
+
+// FancyBetsSection Component
+const FancyBetsSection = memo(({ 
+  fancylist, 
+  fancyLoading, 
+  isInitialLoad, 
+  selectedTab, 
+  formatNumber, 
+  formatVolume, 
+  openLadder, 
+  handleFancyOddsClick, 
+  fancyExposureData,
+  event_id
+}) => (
+  <div className="fancybetcontent">
+    <div>
+      <div className="tab-content-fancy">
+        {selectedTab === "ALL" && (
+          <>
+            {fancyLoading && isInitialLoad ? (
+              <div className="text-center p-4">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">
+                    Loading fancy bets...
+                  </span>
+                </div>
+                <p className="mt-2">Loading fancy bets...</p>
+              </div>
+            ) : (
+              <div className="fancybetsportsbook mt-2">
+                <div className="tabsfancycontent">
+                  <div className="fancybetcontent">
+                    <div>
+                      <div className="tab-content-fancy">
+                        <div className="indian-fancy-part skyDetailsRow">
+                          <div className="table-part position-relative">
+                            <table
+                              border={0}
+                              cellPadding={0}
+                              cellSpacing={0}
+                              className="table"
+                              width="100%"
+                              style={{ margin: 0 }}
+                            >
+                              <thead>
+                                <tr>
+                                  <th
+                                    align="left"
+                                    className="market-name-th"
+                                    valign="middle"
+                                  >
+                                    <div className="d-flex justify-content-between align-items-center">
+                                      <p className="text_blink"> Fancy Bet</p>
+                                    </div>
+                                  </th>
+                                  <th
+                                    align="center"
+                                    className="back-h"
+                                    valign="middle"
+                                  >
+                                    <span>NO</span>
+                                  </th>
+                                  <th
+                                    align="center"
+                                    className="lay-h"
+                                    valign="middle"
+                                  >
+                                    <span>YES</span>
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {Array.isArray(fancylist) &&
+                                  fancylist.length > 0 ? (
+                                  fancylist.map((market) => {
+                                    const rowId =
+                                      market.SelectionId || market.id;
+                                    const fancyExposureKey = `${event_id}-${market.SelectionId}`;
+                                    const exposureData =
+                                      fancyExposureData[fancyExposureKey];
+                                    const totalExposer =
+                                      exposureData?.total_exposer || 0;
+                                    const usersCount =
+                                      exposureData?.users_count || 0;
+
+                                    return (
+                                      <tr
+                                        key={rowId}
+                                        className="white-bg skyDetailsRow"
+                                      >
+                                        <td
+                                          align="left"
+                                          className="selaction_name"
+                                          valign="middle"
+                                        >
+                                          <div className="d-flex height_60 justify-content-between align-items-center">
+                                            <div className="d-flex gap-2">
+                                              <span>
+                                                <a>{market.RunnerName}</a>
+                                                <small className="max_amt">
+                                                  Max:{market.max || 1000}
+                                                </small>
+                                              </span>
+                                              {(totalExposer !== 0 ||
+                                                usersCount !== 0) && (
+                                                  <small className="exposerall">
+                                                    <span className="totalnewall">
+                                                      (
+                                                      {formatNumber(
+                                                        totalExposer,
+                                                      )}
+                                                      )
+                                                    </span>
+                                                  </small>
+                                                )}
+                                            </div>
+
+                                            <div className="d-flex justify-content-end align-items-center">
+                                              {exposureData &&
+                                                totalExposer > 0 && (
+                                                  <div className="exposure-info">
+                                                    <span
+                                                      className="ladderimage"
+                                                      role="button"
+                                                      onClick={() =>
+                                                        openLadder(
+                                                          `${event_id}-${market.SelectionId}`,
+                                                        )
+                                                      }
+                                                    >
+                                                      <img
+                                                        src={ladder}
+                                                        alt="ladder"
+                                                      />
+                                                    </span>
+                                                  </div>
+                                                )}
+                                            </div>
+                                          </div>
+                                        </td>
+                                        <td
+                                          align="center"
+                                          className="padding_0 p-0"
+                                          colSpan={2}
+                                          valign="middle"
+                                          style={{ position: "relative" }}
+                                        >
+                                          <div className="betbox">
+                                            <a
+                                              className={`td_btn pink_bg ${market.GameStatus ===
+                                                  "SUSPENDED" ||
+                                                  market.GameStatus ===
+                                                  "BALL RUNNING"
+                                                  ? "suspended-odds"
+                                                  : ""
+                                                }`}
+                                              onClick={() =>
+                                                market.GameStatus !==
+                                                "SUSPENDED" &&
+                                                market.GameStatus !==
+                                                "BALL RUNNING" &&
+                                                handleFancyOddsClick(
+                                                  market.LayPrice1,
+                                                  "lay",
+                                                  market,
+                                                  "no",
+                                                )
+                                              }
+                                            >
+                                              <span className="novalue">
+                                                {market.LayPrice1 || 0}
+                                              </span>
+                                              <span className="novalue1">
+                                                {formatVolume(
+                                                  market.LaySize1 || 0,
+                                                )}
+                                              </span>
+                                            </a>
+                                          </div>
+                                          <div
+                                            className="betbox"
+                                            style={{ right: 0 }}
+                                          >
+                                            <a
+                                              className={`td_btn blue_bg ${market.GameStatus ===
+                                                  "SUSPENDED" ||
+                                                  market.GameStatus ===
+                                                  "BALL RUNNING"
+                                                  ? "suspended-odds"
+                                                  : ""
+                                                }`}
+                                              onClick={() =>
+                                                market.GameStatus !==
+                                                "SUSPENDED" &&
+                                                market.GameStatus !==
+                                                "BALL RUNNING" &&
+                                                handleFancyOddsClick(
+                                                  market.BackPrice1,
+                                                  "back",
+                                                  market,
+                                                  "yes",
+                                                )
+                                              }
+                                            >
+                                              <span className="novalue">
+                                                {market.BackPrice1 || 0}
+                                              </span>
+                                              <span className="novalue1">
+                                                {formatVolume(
+                                                  market.BackSize1 || 0,
+                                                )}
+                                              </span>
+                                            </a>
+                                          </div>
+                                          {(market.GameStatus ===
+                                            "SUSPENDED" ||
+                                            market.GameStatus ===
+                                            "BALL RUNNING") && (
+                                              <div className="suspend-text">
+                                                {market.GameStatus ===
+                                                  "SUSPENDED"
+                                                  ? "SUSPENDED"
+                                                  : "BALL RUNNING"}
+                                              </div>
+                                            )}
+                                        </td>
+                                      </tr>
+                                    );
+                                  })
+                                ) : (
+                                  <tr className="white-bg skyDetailsRow">
+                                    <td
+                                      align="left"
+                                      className="selaction_name"
+                                      valign="middle"
+                                    >
+                                      <div className="d-flex height_60 justify-content-between align-items-center">
+                                        <span>
+                                          <a>----</a>
+                                          <small className="max_amt">
+                                            Max:---
+                                          </small>
+                                        </span>
+                                        <span
+                                          className="ladderimage"
+                                          role="button"
+                                          onClick={() => openLadder()}
+                                        >
+                                          <img alt="ladder" src={ladder} />
+                                        </span>
+                                      </div>
+                                    </td>
+                                    <td
+                                      align="center"
+                                      className="padding_0 p-0"
+                                      colSpan={2}
+                                      valign="middle"
+                                      style={{ position: "relative" }}
+                                    >
+                                      <div className="betbox">
+                                        <a className="td_btn pink_bg ">
+                                          <span className="novalue">--</span>
+                                          <span className="novalue1">--</span>
+                                        </a>
+                                      </div>
+                                      <div
+                                        className="betbox"
+                                        style={{ right: 0 }}
+                                      >
+                                        <a className="td_btn blue_bg ">
+                                          <span className="novalue">--</span>
+                                          <span className="novalue1">--</span>
+                                        </a>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {selectedTab === "Fancy" && (
+          <div className="text-center p-4">
+            <p className="text-muted">
+              Fancy bets content will be displayed here
+            </p>
+          </div>
+        )}
+        {selectedTab === "Line Markets" && (
+          <div className="text-center p-4">
+            <p className="text-muted">
+              Line Markets content will be displayed here
+            </p>
+          </div>
+        )}
+        {selectedTab === "Ball by Ball" && (
+          <div className="text-center p-4">
+            <p className="text-muted">
+              Ball by Ball content will be displayed here
+            </p>
+          </div>
+        )}
+        {selectedTab === "Meter Markets" && (
+          <div className="text-center p-4">
+            <p className="text-muted">
+              Meter Markets content will be displayed here
+            </p>
+          </div>
+        )}
+        {selectedTab === "Khado Markets" && (
+          <div className="text-center p-4">
+            <p className="text-muted">
+              Khado Markets content will be displayed here
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+));
+
+// BookmakerSection Component - Shows only 2 teams like Match Odds with exposure
+const BookmakerSection = memo(({
+  bookmakerList,
+  formatNumber,
+  formatVolume,
+  highlightedMarkets,
+  handleBookmakerClick,
+  showNotification,
+  matchesName,
+  bookmakerExposureData,
+}) => {
+  // Filter to get only the main bookmaker market (first one)
+  const mainBookmakerMarkets = React.useMemo(() => {
+    if (!Array.isArray(bookmakerList) || bookmakerList.length === 0) {
+      return [];
+    }
+
+    // Find the main bookmaker market (usually the first one or the one with "bookmaker" in name)
+    const bookmakerMarket = bookmakerList.find(market => 
+      market.marketName && 
+      market.marketName.toLowerCase().includes("bookmaker")
+    );
+
+    // If found, return it as an array
+    if (bookmakerMarket) {
+      return [bookmakerMarket];
+    }
+
+    // If no bookmaker market found, take the first market
+    if (bookmakerList.length > 0) {
+      return [bookmakerList[0]];
+    }
+
+    return [];
+  }, [bookmakerList]);
+
+  const getExposureAmount = useCallback((teamId, teamName) => {
+    if (!bookmakerExposureData || typeof bookmakerExposureData !== 'object') {
+      return 0;
+    }
+
+    // Try direct match with teamId
+    if (bookmakerExposureData[teamId] !== undefined) {
+      return bookmakerExposureData[teamId];
+    }
+
+    // Try string conversion
+    if (bookmakerExposureData[teamId?.toString()] !== undefined) {
+      return bookmakerExposureData[teamId.toString()];
+    }
+
+    // Try to find by matching team name from matchesName
+    if (matchesName && matchesName.length > 0) {
+      // Try to match by team name (case insensitive)
+      const matchedTeam = matchesName.find(team => 
+        team.team_name && team.team_name.toLowerCase() === teamName?.toLowerCase()
+      );
+      if (matchedTeam) {
+        if (bookmakerExposureData[matchedTeam.team_id] !== undefined) {
+          return bookmakerExposureData[matchedTeam.team_id];
+        }
+        if (bookmakerExposureData[matchedTeam.team_id.toString()] !== undefined) {
+          return bookmakerExposureData[matchedTeam.team_id.toString()];
+        }
+      }
+
+      // Try by team_id
+      const matchedTeamById = matchesName.find(team => 
+        team.team_id.toString() === teamId.toString()
+      );
+      if (matchedTeamById) {
+        if (bookmakerExposureData[matchedTeamById.team_id] !== undefined) {
+          return bookmakerExposureData[matchedTeamById.team_id];
+        }
+        if (bookmakerExposureData[matchedTeamById.team_id.toString()] !== undefined) {
+          return bookmakerExposureData[matchedTeamById.team_id.toString()];
+        }
+      }
+    }
+
+    // Try to find by iterating through all keys
+    const keys = Object.keys(bookmakerExposureData);
+    for (const key of keys) {
+      const value = bookmakerExposureData[key];
+      if (typeof value === 'number' || typeof value === 'string') {
+        // Check if key contains teamId or teamName
+        if (key.toString().includes(teamId.toString()) || teamId.toString().includes(key.toString())) {
+          return parseFloat(value) || 0;
+        }
+        if (teamName && key.toLowerCase().includes(teamName.toLowerCase())) {
+          return parseFloat(value) || 0;
+        }
+      }
+    }
+
+    return 0;
+  }, [bookmakerExposureData, matchesName]);
+
+  const getExposureColor = useCallback((amount) => {
+    if (!amount && amount !== 0) return "#666";
+
+    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+
+    if (numAmount > 0) return "#108f10ff";
+    if (numAmount < 0) return "#ff0000";
+    return "#666";
+  }, []);
+
+  // Helper function to get price value from odds data
+  const getPriceValue = (oddsData) => {
+    if (!oddsData) return null;
+    if (typeof oddsData === 'object' && oddsData !== null) {
+      return oddsData.price || oddsData.price1 || null;
+    }
+    return oddsData;
+  };
+
+  // Helper function to get size value from odds data
+  const getSizeValue = (oddsData) => {
+    if (!oddsData) return 0;
+    if (typeof oddsData === 'object' && oddsData !== null) {
+      return oddsData.size || 0;
+    }
+    return 0;
+  };
+
+  return (
+    <div className="bookmaker-section">
+      <div className="match-odds-part">
+        <div className="table-responsive">
+          <table className="table position-relative" style={{ marginBottom: 0 }} width="100%">
+            <thead>
+              <tr>
+                <th align="left" className="market-name-th" valign="middle">
+                  <div className="d-flex justify-content-between align-items-center">
+                    Book Maker
+                  </div>
+                </th>
+                <th align="center" className="back-h" valign="middle">
+                  <span>Back</span>
+                </th>
+                <th align="center" className="lay-h" valign="middle">
+                  <span>Lay</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {mainBookmakerMarkets.length > 0 ? (
+                mainBookmakerMarkets.map((market) => {
+                  const runners = market.runners || [];
+                  
+                  // We want only 2 runners (both teams)
+                  const sortedRunners = runners.slice(0, 2);
+                  
+                  return sortedRunners.map((runner, index) => {
+                    const teamName = runner.runnerName || runner.name || "Unknown";
+                    const teamId = runner.selectionId || runner.id || index;
+                    const marketId = `${market.marketId || market.id || 'book'}_${teamId}`;
+                    const teamExposure = getExposureAmount(teamId, teamName);
+                    const exposureColor = getExposureColor(teamExposure);
+                    const exposureDisplay = teamExposure !== 0 ? 
+                      `${teamExposure > 0 ? '+' : ''}${formatNumber(teamExposure)}` : '';
+                    
+                    // Get back and lay odds - try multiple possible data structures
+                    const backOdds = runner.ex?.availableToBack || runner.back || [];
+                    const layOdds = runner.ex?.availableToLay || runner.lay || [];
+                    
+                    return (
+                      <tr key={marketId} className="white-bg skyDetailsRow" style={{ backgroundColor: "rgb(250, 248, 216)" }}>
+                        <td align="left" className="selaction_name" valign="middle">
+                          <div className="d-flex height_60 justify-content-between align-items-center">
+                            <div className="d-flex gap-2">
+                              <a>{teamName}</a>
+                              {exposureDisplay && (
+                                <span className="forstrongchang">
+                                  <strong className="red d-flex gap-1 align-items-center">
+                                    <div
+                                      style={{
+                                        color: exposureColor,
+                                        display: "inline-block",
+                                        fontSize: "12px",
+                                        fontWeight: "bold",
+                                        minWidth: "60px",
+                                        textAlign: "start",
+                                      }}
+                                    >
+                                      ({exposureDisplay})
+                                    </div>
+                                  </strong>
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="suspend-col d-desk" colSpan={6} style={{ position: "relative" }}>
+                          <div className="d-flex justify-content-start">
+                            {/* Back Odds - Show 3 prices like Match Odds */}
+                            {backOdds && backOdds.length > 0 ? (
+                              <>
+                                {[2, 1, 0].map((idx) => {
+                                  const oddsData = backOdds[idx] || {};
+                                  const price = getPriceValue(oddsData);
+                                  const size = getSizeValue(oddsData);
+                                  return (
+                                    <div
+                                      key={`back-${idx}`}
+                                      className={`back1 back-${idx + 1} bettinggrid ${idx > 0 ? "boxhide" : ""}`}
+                                      onClick={() => {
+                                        if (market.status === "SUSPENDED") {
+                                          showNotification("Market is suspended", "warning");
+                                          return;
+                                        }
+                                        if (price && parseFloat(price) > 0) {
+                                          handleBookmakerClick(price, "back", runner, teamName, teamId);
+                                        }
+                                      }}
+                                      style={{
+                                        cursor: market.status === "SUSPENDED" ? "not-allowed" : "pointer",
+                                        color: "#000",
+                                        background: highlightedMarkets[`${marketId}-back-${idx}`] ? "#f8e71c" : "",
+                                        transition: "background-color 0.5s ease",
+                                        padding: "2px 5px",
+                                        fontWeight: highlightedMarkets[`${marketId}-back-${idx}`] ? "bold" : "700",
+                                      }}
+                                    >
+                                      <span>{price || ""}</span>
+                                      <small>{formatVolume(size)}</small>
+                                    </div>
+                                  );
+                                })}
+                              </>
+                            ) : (
+                              <div className="d-flex">
+                                <div className="back1 back-1 bettinggrid">
+                                  <span>--</span>
+                                </div>
+                                <div className="back1 back-2 bettinggrid boxhide">
+                                  <span>--</span>
+                                </div>
+                                <div className="back1 back-3 bettinggrid boxhide">
+                                  <span>--</span>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Lay Odds - Show 3 prices like Match Odds */}
+                            {layOdds && layOdds.length > 0 ? (
+                              <>
+                                {[0, 1, 2].map((idx) => {
+                                  const oddsData = layOdds[idx] || {};
+                                  const price = getPriceValue(oddsData);
+                                  const size = getSizeValue(oddsData);
+                                  return (
+                                    <div
+                                      key={`lay-${idx}`}
+                                      className={`lay3 lay-${idx + 1} bettinggrid ${idx > 0 ? "boxhide" : ""}`}
+                                      onClick={() => {
+                                        if (market.status === "SUSPENDED") {
+                                          showNotification("Market is suspended", "warning");
+                                          return;
+                                        }
+                                        if (price && parseFloat(price) > 0) {
+                                          handleBookmakerClick(price, "lay", runner, teamName, teamId);
+                                        }
+                                      }}
+                                      style={{
+                                        cursor: market.status === "SUSPENDED" ? "not-allowed" : "pointer",
+                                        color: "#000",
+                                        background: highlightedMarkets[`${marketId}-lay-${idx}`] ? "#26f1f8" : "",
+                                        transition: "background-color 0.5s ease",
+                                        padding: "2px 5px",
+                                        fontWeight: highlightedMarkets[`${marketId}-lay-${idx}`] ? "bold" : "700",
+                                      }}
+                                    >
+                                      <span>{price || ""}</span>
+                                      <small>{formatVolume(size)}</small>
+                                    </div>
+                                  );
+                                })}
+                              </>
+                            ) : (
+                              <div className="d-flex">
+                                <div className="lay3 lay-1 bettinggrid">
+                                  <span>--</span>
+                                </div>
+                                <div className="lay3 lay-2 bettinggrid boxhide">
+                                  <span>--</span>
+                                </div>
+                                <div className="lay3 lay-3 bettinggrid boxhide">
+                                  <span>--</span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          {market.status === "SUSPENDED" && (
+                            <span className="suspend-text">SUSPENDED</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  });
+                })
+              ) : (
+                <tr className="white-bg skyDetailsRow">
+                  <td align="left" className="selaction_name" valign="middle">
+                    <div className="d-flex height_60 justify-content-between align-items-center">
+                      <span>No Bookmaker data available</span>
+                    </div>
+                  </td>
+                  <td className="suspend-col" colSpan={6}>
+                    <div className="text-center">--</div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+});
 
 function Cricket() {
   const [showInfoModal, setShowInfoModal] = useState(false);
@@ -1123,7 +1802,6 @@ function Cricket() {
   const [fancyExposureData, setFancyExposureData] = useState({});
   const [matchOddsExposureData, setMatchOddsExposureData] = useState({});
   const [bookmakerExposureData, setBookmakerExposureData] = useState({});
-  // Ladder Modal State
   const [isLadderOpen, setIsLadderOpen] = useState(false);
   const [selectedFancyId, setSelectedFancyId] = useState(null);
   const toggleInfo = useCallback(
@@ -1159,6 +1837,25 @@ function Cricket() {
   const pathParts = location.pathname.split("/");
   const seriesIndex = pathParts.indexOf("series_idd");
   const eventIndex = pathParts.indexOf("event_id");
+
+  const [marketId, setMarketId] = useState("");
+  const [sportId, setSportId] = useState("");
+
+  useEffect(() => {
+    const parts = location.pathname.split("/");
+   
+    const marketIndex = parts.indexOf("series_idd");
+    if (marketIndex !== -1 && parts[marketIndex + 1]) {
+      setMarketId(parts[marketIndex + 1]);
+    }
+
+    const sportIndex = parts.indexOf("sport_id");
+    if (sportIndex !== -1 && parts[sportIndex + 1]) {
+      setSportId(parts[sportIndex + 1]);
+    }
+
+  }, [location.pathname]);
+
   const series_idd = seriesIndex !== -1 ? pathParts[seriesIndex + 1] : "";
   const event_id = eventIndex !== -1 ? pathParts[eventIndex + 1] : "";
 
@@ -1280,7 +1977,7 @@ function Cricket() {
         setbookMakerShowCurrentExp(false);
       } else if (MatchType === "bookmaker") {
         if (bgColor === "#72bbef") {
-          var abc = (parseFloat(value) * parseFloat(stackValueteam)) / 100;
+          var abc = parseFloat(value) * parseFloat(stackValueteam) - parseFloat(value);
           setteamexposercurrent1Name(selectednameteam);
           setteamexposercurrent2Name("none");
 
@@ -1292,7 +1989,7 @@ function Cricket() {
           setcurrentExpbgColor1(color1);
           setcurrentExpbgColor2(color2);
         } else {
-          var abc = (parseFloat(value) * parseFloat(stackValueteam)) / 100;
+          var abc = parseFloat(value) * parseFloat(stackValueteam) - parseFloat(value);
           setteamexposercurrent1Name(selectednameteam);
           setteamexposercurrent2Name("none");
 
@@ -1379,51 +2076,50 @@ function Cricket() {
         { eventid: event_id, adminid: admin_id, role: role },
       );
 
+      console.log("📊 Full Exposure API Response:", response.data);
+
       if (response.data?.status_code === 1) {
         const matchOddsMap = {};
         const bookmakerMap = {};
 
+        // Process match_odds exposure
         if (Array.isArray(response.data.match_odds)) {
+          console.log(`📈 Processing ${response.data.match_odds.length} match odds items`);
           response.data.match_odds.forEach((item) => {
-            console.log(
-              `   Match Odds - team_id: ${item.team_id}, amount: ${item.amount}`,
-            );
+            console.log(`   Match Odds - team_id: ${item.team_id}, amount: ${item.amount}`);
             matchOddsMap[item.team_id] = item.amount;
           });
         } else {
           console.log("⚠️ match_odds is not an array or is missing");
         }
 
+        // Process bookmaker exposure
         if (response.data.bookmaker) {
           console.log("📊 Bookmaker data structure:", response.data.bookmaker);
 
           if (Array.isArray(response.data.bookmaker)) {
-            console.log(
-              `📈 Processing ${response.data.bookmaker.length} bookmaker items`,
-            );
+            console.log(`📈 Processing ${response.data.bookmaker.length} bookmaker items`);
             response.data.bookmaker.forEach((item) => {
-              console.log(
-                `   Bookmaker - team_id: ${item.team_id}, amount: ${item.amount}`,
-              );
+              console.log(`   Bookmaker - team_id: ${item.team_id}, amount: ${item.amount}`);
               bookmakerMap[item.team_id] = item.amount;
             });
           } else if (typeof response.data.bookmaker === "object") {
-            console.log(
-              "📊 Bookmaker is an object, processing keys:",
-              Object.keys(response.data.bookmaker),
-            );
+            console.log("📊 Bookmaker is an object, processing keys:", Object.keys(response.data.bookmaker));
             Object.keys(response.data.bookmaker).forEach((key) => {
               const item = response.data.bookmaker[key];
               if (item && item.team_id !== undefined) {
-                console.log(
-                  `   Bookmaker - team_id: ${item.team_id}, amount: ${item.amount}`,
-                );
+                console.log(`   Bookmaker - team_id: ${item.team_id}, amount: ${item.amount}`);
                 bookmakerMap[item.team_id] = item.amount;
+              } else if (item && typeof item === 'number') {
+                console.log(`   Bookmaker - key: ${key}, amount: ${item}`);
+                bookmakerMap[key] = item;
               }
             });
+          } else if (typeof response.data.bookmaker === 'number') {
+            console.log(`📊 Bookmaker is a single number: ${response.data.bookmaker}`);
           }
         } else {
-          console.log("⚠️ bookmaker data is missing");
+          console.log("⚠️ bookmaker data is missing from response");
         }
 
         console.log("✅ Final Match odds exposure map:", matchOddsMap);
@@ -1468,7 +2164,6 @@ function Cricket() {
         const matchOddsMap = {};
         const bookmakerMap = {};
 
-        // Process match_odds if exists
         if (Array.isArray(response.data.match_odds)) {
           console.log(
             `📈 Processing ${response.data.match_odds.length} match odds items`,
@@ -1483,14 +2178,12 @@ function Cricket() {
           console.log("⚠️ match_odds is not an array or is missing");
         }
 
-        // NEW: Directly use response.data.data for bookmaker exposure
         if (response.data.data && typeof response.data.data === "object") {
           console.log(
             "📊 Direct bookmaker data from response.data.data:",
             response.data.data,
           );
 
-          // Copy all data from response.data.data to bookmakerMap
           Object.keys(response.data.data).forEach((teamId) => {
             bookmakerMap[teamId] = response.data.data[teamId];
           });
@@ -1502,7 +2195,6 @@ function Cricket() {
         setMatchOddsExposureData(matchOddsMap);
         setBookmakerExposureData(bookmakerMap);
 
-        // Show success notification
         showNotification("Exposure data updated successfully!", "success");
 
         setTimeout(() => {
@@ -1517,30 +2209,17 @@ function Cricket() {
       console.error("Error details:", error.response?.data || error.message);
       showNotification("Error fetching exposure data", "error");
     }
-    //  finally {
-    //   setIsFetchingExposure(false);
-    // }
   }, [event_id, showNotification, role]);
 
-  // Handler for My Book button click
   const handleMyBookClick = useCallback(() => {
     console.log("📘 My Book button clicked");
     totalexposermy();
-    // totalexposermy();
   }, [totalexposermy]);
 
   const handleMyBookClicktolet = useCallback(() => {
     console.log("📘 My Book button clicked");
     fetchMatchTotalExposure();
-
-    // totalexposermy();
   }, [fetchMatchTotalExposure]);
-
-  //   const handleMyBookClick = useCallback(() => {
-  //   console.log("📘 My Book button clicked");
-  //   totalexposermy();
-  //   // totalexposermy();
-  // }, [totalexposermy]);
 
   useEffect(() => {
     if (event_id && fancylist?.length > 0) {
@@ -1548,61 +2227,6 @@ function Cricket() {
     }
   }, [event_id, fancylist]);
 
-  // const fetchFancyExposureData = useCallback(async () => {
-  //   try {
-  //     if (!event_id) return;
-
-  //     console.log("Fetching fancy exposure data for event_id:", event_id);
-
-  //     const exposurePromises = fancylist.map(async (market) => {
-  //       const fancyId = `${event_id}-${market.SelectionId}`;
-
-  //       try {
-  //         // const response = await axios.post(
-  //         //   `${process.env.REACT_APP_API_URL}/get-fancy-total-exposer?fancy_id=${fancyId}`
-  //         // );
-
-  //         const response = await axios.post(
-  //           `${process.env.REACT_APP_API_URL}/get-fancy-total-exposer`,
-  //           {
-  //             fancy_id: fancyId,
-  //             role: "1",
-  //             admin_id: admin_id
-  //           },
-  //           {
-  //             headers: {
-  //               Authorization: `Bearer ${token}`,
-  //               "Content-Type": "application/json",
-  //             },
-  //           }
-  //         );
-  //         if (response.data?.status_code === 1) {
-  //           return {
-  //             fancyId: fancyId,
-  //             data: response.data
-  //           };
-  //         }
-  //       } catch (error) {
-  //         console.warn(`Failed to fetch exposure for ${fancyId}:`, error);
-  //         return null;
-  //       }
-  //     });
-
-  //     const results = await Promise.all(exposurePromises);
-  //     const validResults = results.filter(result => result !== null);
-
-  //     const exposureMap = {};
-  //     validResults.forEach(result => {
-  //       exposureMap[result.fancyId] = result.data;
-  //     });
-
-  //     setFancyExposureData(exposureMap);
-  //     console.log("Fancy exposure data loaded:", exposureMap);
-
-  //   } catch (error) {
-  //     console.error("Error fetching fancy exposure data:", error);
-  //   }
-  // }, [event_id, fancylist]);
   const fetchFancyExposureData = useCallback(async () => {
     try {
       console.log("Running function...");
@@ -1659,6 +2283,7 @@ function Cricket() {
       console.error("Main error:", error);
     }
   }, [event_id, fancylist]);
+
   const fetchMyBets = useCallback(async () => {
     try {
       if (!userId) return;
@@ -1801,126 +2426,126 @@ function Cricket() {
     getmarketteamsodds();
   }, [getmarketteamsodds]);
 
-  // const matchlist = useCallback(async () => {
-  //   try {
-  //     setMatchLoading(true);
-  //     const token = localStorage.getItem("accessToken");
-  //     if (!series_idd) {
-  //       console.warn("No series_idd available");
-  //       return;
-  //     }
+  const matchlist = useCallback(async () => {
+    try {
+      setMatchLoading(true);
+      const token = localStorage.getItem("accessToken");
+      if (!series_idd) {
+        console.warn("No series_idd available");
+        return;
+      }
 
-  //     const response = await axios.get(
-  //       `https://cricketfancylive.shyammatka.co.in/get-match-odds-list?id=${series_idd}`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
+      const response = await axios.get(
+        `https://cricketapinew.shyammatka.co.in/get-match-odds-list?id=${marketId}&sport_id=${sportId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-  //     console.log("Match odds API response:", response.data);
+      console.log("Match odds API response:", response.data);
 
-  //     if (
-  //       response.data &&
-  //       Array.isArray(response.data) &&
-  //       response.data.length > 0
-  //     ) {
-  //       const marketData = response.data[0];
-  //       if (
-  //         marketData &&
-  //         marketData.runners &&
-  //         Array.isArray(marketData.runners)
-  //       ) {
-  //         const transformedMatches = marketData.runners.map((runner) => {
-  //           let teamName = "Unknown Team";
+      if (
+        response.data &&
+        Array.isArray(response.data) &&
+        response.data.length > 0
+      ) {
+        const marketData = response.data[0];
+        if (
+          marketData &&
+          marketData.runners &&
+          Array.isArray(marketData.runners)
+        ) {
+          const transformedMatches = marketData.runners.map((runner) => {
+            let teamName = "Unknown Team";
 
-  //           console.log("Looking for team with selectionId:", runner.selectionId);
-  //           console.log("Available matchesName:", matchesName);
+            console.log("Looking for team with selectionId:", runner.selectionId);
+            console.log("Available matchesName:", matchesName);
 
-  //           const matchedTeam = matchesName.find(
-  //             team => team.team_id.toString() === runner.selectionId.toString()
-  //           );
+            const matchedTeam = matchesName.find(
+              team => team.team_id.toString() === runner.selectionId.toString()
+            );
 
-  //           if (matchedTeam) {
-  //             teamName = matchedTeam.team_name;
-  //             console.log("Found team:", matchedTeam.team_name);
-  //           } else {
-  //             teamName = runner.runnerName || `Team ${runner.selectionId}`;
-  //             console.log("Using runner name:", teamName);
-  //           }
+            if (matchedTeam) {
+              teamName = matchedTeam.team_name;
+              console.log("Found team:", matchedTeam.team_name);
+            } else {
+              teamName = runner.runnerName || `Team ${runner.selectionId}`;
+              console.log("Using runner name:", teamName);
+            }
 
-  //           const marketId = runner.selectionId;
-  //           const currentValues = {
-  //             backPrice0: runner.ex?.availableToBack?.[0]?.price || 0,
-  //             backPrice1: runner.ex?.availableToBack?.[1]?.price || 0,
-  //             backPrice2: runner.ex?.availableToBack?.[2]?.price || 0,
-  //             layPrice0: runner.ex?.availableToLay?.[0]?.price || 0,
-  //             layPrice1: runner.ex?.availableToLay?.[1]?.price || 0,
-  //             layPrice2: runner.ex?.availableToLay?.[2]?.price || 0,
-  //           };
+            const marketId = runner.selectionId;
+            const currentValues = {
+              backPrice0: runner.ex?.availableToBack?.[0]?.price || 0,
+              backPrice1: runner.ex?.availableToBack?.[1]?.price || 0,
+              backPrice2: runner.ex?.availableToBack?.[2]?.price || 0,
+              layPrice0: runner.ex?.availableToLay?.[0]?.price || 0,
+              layPrice1: runner.ex?.availableToLay?.[1]?.price || 0,
+              layPrice2: runner.ex?.availableToLay?.[2]?.price || 0,
+            };
 
-  //           const previousValues = previousMatchValues.current[marketId];
+            const previousValues = previousMatchValues.current[marketId];
 
-  //           if (previousValues) {
-  //             for (let i = 0; i < 3; i++) {
-  //               const currentBackPrice = runner.ex?.availableToBack?.[i]?.price;
-  //               const previousBackPrice = previousValues[`backPrice${i}`];
-  //               if (
-  //                 currentBackPrice !== previousBackPrice &&
-  //                 currentBackPrice !== undefined
-  //               ) {
-  //                 highlightMarket(marketId, "back", i);
-  //               }
-  //             }
+            if (previousValues) {
+              for (let i = 0; i < 3; i++) {
+                const currentBackPrice = runner.ex?.availableToBack?.[i]?.price;
+                const previousBackPrice = previousValues[`backPrice${i}`];
+                if (
+                  currentBackPrice !== previousBackPrice &&
+                  currentBackPrice !== undefined
+                ) {
+                  highlightMarket(marketId, "back", i);
+                }
+              }
 
-  //             for (let i = 0; i < 3; i++) {
-  //               const currentLayPrice = runner.ex?.availableToLay?.[i]?.price;
-  //               const previousLayPrice = previousValues[`layPrice${i}`];
-  //               if (
-  //                 currentLayPrice !== previousLayPrice &&
-  //                 currentLayPrice !== undefined
-  //               ) {
-  //                 highlightMarket(marketId, "lay", i);
-  //               }
-  //             }
-  //           }
+              for (let i = 0; i < 3; i++) {
+                const currentLayPrice = runner.ex?.availableToLay?.[i]?.price;
+                const previousLayPrice = previousValues[`layPrice${i}`];
+                if (
+                  currentLayPrice !== previousLayPrice &&
+                  currentLayPrice !== undefined
+                ) {
+                  highlightMarket(marketId, "lay", i);
+                }
+              }
+            }
 
-  //           previousMatchValues.current[marketId] = currentValues;
+            previousMatchValues.current[marketId] = currentValues;
 
-  //           return {
-  //             id: runner.selectionId,
-  //             team_name: teamName,
-  //             status: runner.status,
-  //             lastPriceTraded: runner.lastPriceTraded,
-  //             backOdds: runner.ex?.availableToBack?.[0]?.price || 0,
-  //             layOdds: runner.ex?.availableToLay?.[0]?.price || 0,
-  //             backSize: runner.ex?.availableToBack?.[0]?.size || 0,
-  //             laySize: runner.ex?.availableToLay?.[0]?.size || 0,
-  //             totalMatched: runner.totalMatched,
-  //             runner: runner,
-  //             availableToBack: runner.ex?.availableToBack || [],
-  //             availableToLay: runner.ex?.availableToLay || [],
-  //           };
-  //         });
-  //         setMatches(transformedMatches);
-  //         setError("");
-  //       } else {
-  //         setError("Invalid match data format - no runners found");
-  //         setMatches([]);
-  //       }
-  //     } else {
-  //       setError(response.data?.message || "Failed to fetch matches");
-  //       setMatches([]);
-  //     }
-  //   } catch (err) {
-  //     console.error("Error fetching matches:", err);
-  //     setError(err.message || "Something went wrong");
-  //     setMatches([]);
-  //   } finally {
-  //     setMatchLoading(false);
-  //   }
-  // }, [series_idd, highlightMarket, matchesName]);
+            return {
+              id: runner.selectionId,
+              team_name: teamName,
+              status: runner.status,
+              lastPriceTraded: runner.lastPriceTraded,
+              backOdds: runner.ex?.availableToBack?.[0]?.price || 0,
+              layOdds: runner.ex?.availableToLay?.[0]?.price || 0,
+              backSize: runner.ex?.availableToBack?.[0]?.size || 0,
+              laySize: runner.ex?.availableToLay?.[0]?.size || 0,
+              totalMatched: runner.totalMatched,
+              runner: runner,
+              availableToBack: runner.ex?.availableToBack || [],
+              availableToLay: runner.ex?.availableToLay || [],
+            };
+          });
+          setMatches(transformedMatches);
+          setError("");
+        } else {
+          setError("Invalid match data format - no runners found");
+          setMatches([]);
+        }
+      } else {
+        setError(response.data?.message || "Failed to fetch matches");
+        setMatches([]);
+      }
+    } catch (err) {
+      console.error("Error fetching matches:", err);
+      setError(err.message || "Something went wrong");
+      setMatches([]);
+    } finally {
+      setMatchLoading(false);
+    }
+  }, [series_idd, highlightMarket, matchesName]);
 
   const toggleMyBets = useCallback(() => {
     setShowMyBets(!showMyBets);
@@ -2282,8 +2907,8 @@ function Cricket() {
     matchesName,
   ]);
 
-  const handleOddsClick = useCallback(
-    (oddsValue, type, market, oddType, rowId) => {
+  const handleMatchOddsClick = useCallback(
+    (oddsValue, type, market, teamName, rowId) => {
       if (!checkAuthentication()) return;
 
       if (market.status === "SUSPENDED") {
@@ -2297,11 +2922,11 @@ function Cricket() {
       const teamInfo = matchesName.find(
         (team) => team.team_id === rowId.toString(),
       );
-      const teamName = teamInfo
+      const finalTeamName = teamInfo
         ? teamInfo.team_name
-        : market.team_name || `Team ${rowId}`;
+        : market.team_name || teamName || `Team ${rowId}`;
 
-      setSelectednameteam(teamName);
+      setSelectednameteam(finalTeamName);
       setMatchType("match_odds");
       setBgColor(type === "back" ? "#72bbef" : "#ff6b6b");
       setStackValueteam(oddsValue);
@@ -2315,10 +2940,10 @@ function Cricket() {
         value: oddsValue,
         price: oddsValue,
         size: size,
-        eventName: teamName,
+        eventName: finalTeamName,
         type: type,
-        marketName: teamName,
-        oddType: oddType,
+        marketName: finalTeamName,
+        oddType: type === "back" ? "Back" : "Lay",
         rowId: rowId,
         market: market,
       });
@@ -2342,6 +2967,49 @@ function Cricket() {
       valuebettingteam,
       matchesName,
     ],
+  );
+
+  const handleBookmakerClick = useCallback(
+    (oddsValue, type, runner, teamName, rowId) => {
+      if (!checkAuthentication()) return;
+
+      const finalTeamName = teamName || `Team ${rowId}`;
+
+      setSelectednameteam(finalTeamName);
+      setMatchType("bookmaker");
+      setBgColor(type === "back" ? "#72bbef" : "#ff6b6b");
+      setStackValueteam(oddsValue);
+
+      const size = type === "back" 
+        ? runner.ex?.availableToBack?.[0]?.size || 0 
+        : runner.ex?.availableToLay?.[0]?.size || 0;
+
+      setSelectedOdds({
+        value: oddsValue,
+        price: oddsValue,
+        size: size,
+        eventName: finalTeamName,
+        type: type,
+        marketName: finalTeamName,
+        oddType: type === "back" ? "Back" : "Lay",
+        rowId: rowId,
+        market: runner,
+        marketType: "bookmaker",
+      });
+      setBetType(type);
+      setPlacebet(true);
+      setSelectedRow(rowId);
+      setError("");
+      setSuccessMessage("");
+      setStake("");
+
+      if (stake) {
+        valuebettingteam(stake);
+      }
+
+      setShowBetSlipModal(true);
+    },
+    [checkAuthentication, showNotification, stake, valuebettingteam],
   );
 
   const handleFancyOddsClick = useCallback(
@@ -2396,58 +3064,6 @@ function Cricket() {
       setShowBetSlipModal(true);
     },
     [checkAuthentication, showNotification, stake, valuebettingteam],
-  );
-
-  const handleBookmakerOddsClick = useCallback(
-    (market, type, value, runner) => {
-      if (!checkAuthentication()) return;
-
-      if (runner.status === "SUSPENDED") {
-        showNotification(
-          "This market is currently suspended. Betting is not allowed.",
-          "warning",
-        );
-        return;
-      }
-
-      const rowId = `${market.marketId}_${runner.selectionId}`;
-
-      setSelectednameteam(runner.runnerName);
-      setMatchType("bookmaker");
-      setBgColor(type === "back" ? "#72bbef" : "#ff6b6b");
-      setStackValueteam(value);
-
-      let size = 0;
-      if (type === "back") {
-        size = runner.ex?.availableToBack?.[0]?.size || 0;
-      } else {
-        size = runner.ex?.availableToLay?.[0]?.size || 0;
-      }
-
-      setSelectedOdds({
-        eventName: runner.runnerName,
-        oddType: market.marketName,
-        type,
-        value: value,
-        price: value,
-        size: size,
-        rowId: rowId,
-        market: { ...market, ...runner },
-      });
-      setBetType(type);
-      setPlacebet(true);
-      setSelectedRow(rowId);
-      setError("");
-      setSuccessMessage("");
-      setStake("");
-
-      if (stake) {
-        valuebettingteam(stake);
-      }
-
-      setShowBetSlipModal(true);
-    },
-    [checkAuthentication, stake, valuebettingteam, showNotification],
   );
 
   const closeBetSlip = useCallback(() => {
@@ -2542,7 +3158,7 @@ function Cricket() {
       }
 
       const response = await axios.get(
-        `https://cricketfancylive.shyammatka.co.in/get-fancy-list?id=${event_id}`,
+        `https://cricketapinew.shyammatka.co.in/get-fancy-list?id=${event_id}&sport_id=${sportId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -2616,7 +3232,7 @@ function Cricket() {
     try {
       const token = localStorage.getItem("accessToken");
       const response = await axios.get(
-        `https://cricketfancylive.shyammatka.co.in/get-book-maker-list?id=${eventId}`,
+        `https://cricketapinew.shyammatka.co.in/get-book-maker-list?id=${eventId}&sport_id=${sportId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -2695,22 +3311,35 @@ function Cricket() {
         setTiedList([]);
       }
     } catch (error) {
+      console.error("Error fetching bookmaker list:", error);
       setBookmakerList([]);
       setTiedList([]);
     }
-  }, [event_id, highlightMarket]);
+  }, [event_id, highlightMarket, sportId]);
 
   const token = localStorage.getItem("accessToken");
+
+  // Check if sport_id is for cricket (4) or other sports (1, 2, 7, 8)
+  const isCricketSport = sportId === "4";
+  const isOtherSport = ["1", "2", "7", "8"].includes(sportId);
 
   useEffect(() => {
     if (isInitialLoad && series_idd && event_id) {
       const fetchAllData = async () => {
         try {
-          await Promise.all([
-            getfancylist(),
-            getBookmakerList(),
-            fetchMatchTotalExposure(),
-          ]);
+          // For cricket (sport_id = 4) - fetch all data
+          if (isCricketSport) {
+            await Promise.all([
+              getfancylist(),
+              getBookmakerList(),
+              fetchMatchTotalExposure(),
+            ]);
+          } 
+          // For other sports (1, 2, 7, 8) - only fetch match odds
+          else if (isOtherSport) {
+            // Only fetch match odds, no fancy or bookmaker
+            console.log("Other sport detected, only fetching match odds");
+          }
         } catch (error) {
         } finally {
           setIsInitialLoad(false);
@@ -2723,40 +3352,44 @@ function Cricket() {
     isInitialLoad,
     series_idd,
     event_id,
-    // matchlist,
+    matchlist,
     getfancylist,
     getBookmakerList,
     fetchMatchTotalExposure,
+    isCricketSport,
+    isOtherSport,
   ]);
 
   useEffect(() => {
     const intervals = [];
 
-    const intervalTime = showLoginModal || isLadderOpen ? 600000 : 2000000;
+    const intervalTime = showLoginModal || isLadderOpen ? 600000 : 2000;
 
+    // Always fetch match odds for all sports
     if (series_idd) {
       const matchInterval = setInterval(() => {
-        // matchlist();
+        matchlist();
       }, intervalTime);
       intervals.push(matchInterval);
     }
 
-    if (event_id) {
+    // Only fetch fancy and bookmaker for cricket (sport_id = 4)
+    if (event_id && isCricketSport) {
       const fancyInterval = setInterval(() => {
         getfancylist();
       }, intervalTime);
       intervals.push(fancyInterval);
+
+      const bookmakerInterval = setInterval(() => {
+        getBookmakerList();
+      }, intervalTime);
+      intervals.push(bookmakerInterval);
+
+      const exposureInterval = setInterval(() => {
+        fetchMatchTotalExposure();
+      }, 30000);
+      intervals.push(exposureInterval);
     }
-
-    const bookmakerInterval = setInterval(() => {
-      getBookmakerList();
-    }, intervalTime);
-    intervals.push(bookmakerInterval);
-
-    const exposureInterval = setInterval(() => {
-      fetchMatchTotalExposure();
-    }, 30000);
-    intervals.push(exposureInterval);
 
     return () => {
       intervals.forEach(clearInterval);
@@ -2766,46 +3399,13 @@ function Cricket() {
     isLadderOpen,
     series_idd,
     event_id,
-    // matchlist,
+    matchlist,
     getfancylist,
     getBookmakerList,
     fetchMatchTotalExposure,
+    isCricketSport,
   ]);
 
-  //   useEffect(() => {
-  //   const intervals = [];
-
-  //   const intervalTime =
-  //    showLoginModal || isLadderOpen ? 600000 : 2000000;
-
-  //   if (series_idd) {
-  //     const matchInterval = setInterval(() => {
-  //       // matchlist();
-  //     }, intervalTime);
-  //     intervals.push(matchInterval);
-  //   }
-
-  //   if (event_id) {
-  //     const fancyInterval = setInterval(() => {
-  //       getfancylist();
-  //     }, intervalTime);
-  //     intervals.push(fancyInterval);
-  //   }
-
-  //   const bookmakerInterval = setInterval(() => {
-  //     getBookmakerList();
-  //   }, intervalTime);
-  //   intervals.push(bookmakerInterval);
-
-  //   const exposureInterval = setInterval(() => {
-  //     fetchMatchTotalExposure();
-  //   }, 30000);
-  //   intervals.push(exposureInterval);
-
-  //   return () => {
-  //     intervals.forEach(clearInterval);
-  //   };
-  // }, []);
   useEffect(() => {
     if (series_idd && event_id) {
       setIsInitialLoad(true);
@@ -2837,651 +3437,16 @@ function Cricket() {
     localStorage.removeItem("fancyId");
   }, []);
 
-  // const MatchOddsSection = memo(() => {
-  //   const getExposureAmount = (teamId) => {
-  //     if (!matchOddsExposureData || typeof matchOddsExposureData !== 'object') {
-  //       return 0;
-  //     }
-
-  //     if (matchOddsExposureData[teamId] !== undefined) {
-  //       return matchOddsExposureData[teamId];
-  //     }
-
-  //     if (matchOddsExposureData[teamId?.toString()] !== undefined) {
-  //       return matchOddsExposureData[teamId.toString()];
-  //     }
-
-  //     return 0;
-  //   };
-
-  //   const getExposureColor = (amount) => {
-  //     if (!amount && amount !== 0) return "#666";
-
-  //     const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-
-  //     if (numAmount > 0) return "#108f10ff";
-  //     if (numAmount < 0) return "#ff0000";
-  //     return "#666";
-  //   };
-
-  //   useEffect(() => {
-  //     console.log("📊 MatchOddsSection - Exposure Data:", matchOddsExposureData);
-  //     console.log("📋 MatchOddsSection - Matches:", Matches);
-  //   }, [matchOddsExposureData, Matches]);
-
-  //   return (
-  //     <div className="winner_bet newdesignjan">
-  //       {matchLoading && isInitialLoad ? (
-  //         <div className="text-center p-4">
-  //           <div className="spinner-border text-primary" role="status">
-  //             <span className="visually-hidden">Loading matches...</span>
-  //           </div>
-  //           <p className="mt-2">Loading matches...</p>
-  //         </div>
-  //       ) : (
-  //         <>
-  //           <table
-  //             className="table position-relative"
-  //             width="100%"
-  //           >
-  //             <thead >
-  //               <tr>
-  //                 <th align="left" className="market-name-th" valign="middle">
-  //                   <div className="d-flex justify-content-between align-items-center">
-  //                     <p className="text_blink"> matvvvvvvvvvvvvvvvvch odds</p>
-  //                     {/* <p className="stack-info">
-  //                       <span className="text_blink">Max:</span> <span className="text_blink">25000</span>
-  //                     </p> */}
-  //                   </div>
-  //                 </th>
-  //                 <th align="center" className="back-h" valign="middle">
-  //                   <span>Lagai</span>
-  //                 </th>
-  //                 <th align="center" className="lay-h" valign="middle">
-  //                   <span>Khai</span>
-  //                 </th>
-  //               </tr>
-  //             </thead>
-  //             <tbody>
-  //               {Array.isArray(Matches) && Matches.length > 0 ? (
-  //                 Matches.map((market) => {
-  //                   const teamName = market.team_name;
-  //                   const teamExposure = getExposureAmount(market.id);
-  //                   const exposureColor = getExposureColor(teamExposure);
-
-  //                   return (
-  //                     <React.Fragment key={market.id}>
-  //                       <tr className="game_status_new white-bg skyDetailsRow">
-  //                         <td
-  //                           align="left"
-  //                           className="selaction_name"
-  //                           valign="middle"
-  //                         >
-  //                           <div className="d-flex height_60 justify-content-between align-items-center">
-  //                             <div className="d-flex gap-2">
-  //                               <a href="#">{teamName}</a>
-
-  //                               <span className="forstrongchang">
-  //                                 <strong className="red d-flex gap-1 align-items-center">
-  //                                   {teamExposure !== 0 && (
-  //                                     <div
-  //                                       style={{
-  //                                         color: exposureColor,
-  //                                         display: "inline-block",
-  //                                         fontSize: "12px",
-  //                                         fontWeight: "bold",
-  //                                         minWidth: "60px",
-  //                                         textAlign: "start",
-  //                                       }}
-  //                                     >
-  //                                       ({teamExposure > 0 ? "+" : ""}{formatNumber(teamExposure)})
-  //                                     </div>
-  //                                   )}
-  //                                 </strong>{" "}
-  //                                 {matchOddsShowCurrentExp ? (
-  //                                   teamexposercurrent1Name === teamName ? (
-  //                                     <div
-  //                                       style={{
-  //                                         color: currentExpbgColor1,
-  //                                         display: "inline-block",
-  //                                         marginLeft: "10px",
-  //                                         fontSize: "12px",
-  //                                         fontWeight: "bold",
-  //                                       }}
-  //                                     >
-  //                                       {teamexposercurrent1 === 0 ? (
-  //                                         <></>
-  //                                       ) : (
-  //                                         "(" +
-  //                                         formatNumber(teamexposercurrent1) +
-  //                                         ")"
-  //                                       )}
-  //                                     </div>
-  //                                   ) : (
-  //                                     <div
-  //                                       style={{
-  //                                         color: currentExpbgColor2,
-  //                                         display: "inline-block",
-  //                                         marginLeft: "10px",
-  //                                         fontSize: "12px",
-  //                                         fontWeight: "bold",
-  //                                       }}
-  //                                     >
-  //                                       {teamexposercurrent2 === 0 ? (
-  //                                         <></>
-  //                                       ) : (
-  //                                         "(" +
-  //                                         formatNumber(teamexposercurrent2) +
-  //                                         ")"
-  //                                       )}
-  //                                     </div>
-  //                                   )
-  //                                 ) : (
-  //                                   <></>
-  //                                 )}
-  //                               </span>
-  //                             </div>
-  //                             {/* <span className="ladderimage" role="button" onClick={() => openLadder()}>
-  //                               <img src={ladder} alt="ladder" />
-  //                             </span> */}
-  //                           </div>
-  //                         </td>
-  //                         {window.innerWidth <= 768 && (
-  //                           <td
-  //                             className="suspend-col d-mobile"
-  //                             colSpan={2}
-  //                             style={{ position: "relative" }}
-  //                           >
-  //                             <div className="d-flex justify-content-start">
-  //                               {market.availableToBack
-  //                                 .slice(0, 1)
-  //                                 .map((back, index) => (
-  //                                   <div
-  //                                     key={index}
-  //                                     className="back1 back-1 bettinggrid"
-  //                                     onClick={() =>
-  //                                       handleOddsClick(
-  //                                         back.price,
-  //                                         "back",
-  //                                         market,
-  //                                         teamName,
-  //                                         market.id
-  //                                       )
-  //                                     }
-  //                                     style={{
-  //                                       cursor:
-  //                                         market.status === "SUSPENDED"
-  //                                           ? "not-allowed"
-  //                                           : "pointer",
-  //                                       color: "#000",
-  //                                       background: highlightedMarkets[
-  //                                         `${market.id}-back-${index}`
-  //                                       ]
-  //                                         ? "#f8e71c"
-  //                                         : "",
-  //                                       transition: "background-color 0.5s ease",
-  //                                       padding: "2px 5px",
-  //                                       fontWeight: highlightedMarkets[
-  //                                         `${market.id}-back-${index}`
-  //                                       ]
-  //                                         ? "bold"
-  //                                         : "700",
-  //                                     }}
-  //                                   >
-  //                                     <span className="backvalue">
-  //                                       {back.price}
-  //                                     </span>
-  //                                     <small>{formatVolume(back.size)}</small>
-  //                                   </div>
-  //                                 ))}
-  //                               {market.availableToLay
-  //                                 .slice(0, 1)
-  //                                 .map((lay, index) => (
-  //                                   <div
-  //                                     key={index}
-  //                                     className="lay3 lay-1 bettinggrid"
-  //                                     onClick={() =>
-  //                                       handleOddsClick(
-  //                                         lay.price,
-  //                                         "lay",
-  //                                         market,
-  //                                         teamName,
-  //                                         market.id
-  //                                       )
-  //                                     }
-  //                                   >
-  //                                     <span className="backvalue" style={{}}>
-  //                                       {lay.price}
-  //                                     </span>
-  //                                     <small>{formatVolume(lay.size)}</small>
-  //                                   </div>
-  //                                 ))}
-  //                             </div>
-  //                             {market.status === "SUSPENDED" && (
-  //                               <span className="suspend-text">SUSPENDED</span>
-  //                             )}
-  //                           </td>
-  //                         )}
-
-  //                         {window.innerWidth > 768 && (
-  //                           <td
-  //                             className="suspend-col d-desk count"
-  //                             colSpan={6}
-  //                             style={{ position: "relative" }}
-  //                           >
-  //                             <div className="d-flex justify-content-start">
-  //                               {market.availableToBack
-  //                                 .slice(0, 3)
-  //                                 .reverse()
-  //                                 .map((back, index) => (
-  //                                   <div
-  //                                     key={index}
-  //                                     className={`back1 back-${3 - index
-  //                                       } bettinggrid ${index === 0
-  //                                         ? "boxhide"
-  //                                         : index === 1
-  //                                           ? "boxhide"
-  //                                           : ""
-  //                                       }`}
-  //                                     onClick={() =>
-  //                                       handleOddsClick(
-  //                                         back.price,
-  //                                         "back",
-  //                                         market,
-  //                                         teamName,
-  //                                         market.id
-  //                                       )
-  //                                     }
-  //                                   >
-  //                                     <span className="backvalue" style={{}}>
-  //                                       {back.price}
-  //                                     </span>
-  //                                     <small>{formatVolume(back.size)}</small>
-  //                                   </div>
-  //                                 ))}
-
-  //                               {market.availableToLay
-  //                                 .slice(0, 3)
-  //                                 .map((lay, index) => (
-  //                                   <div
-  //                                     key={index}
-  //                                     className={`lay3 lay-${index + 1
-  //                                       } bettinggrid ${index === 1
-  //                                         ? "boxhide"
-  //                                         : index === 2
-  //                                           ? "boxhide"
-  //                                           : ""
-  //                                       }`}
-  //                                     onClick={() =>
-  //                                       handleOddsClick(
-  //                                         lay.price,
-  //                                         "lay",
-  //                                         market,
-  //                                         teamName,
-  //                                         market.id
-  //                                       )
-  //                                     }
-  //                                   >
-  //                                     <span className="backvalue" style={{}}>
-  //                                       {lay.price}
-  //                                     </span>
-  //                                     <small>{formatVolume(lay.size)}</small>
-  //                                   </div>
-  //                                 ))}
-  //                             </div>
-  //                             {market.status === "SUSPENDED" && (
-  //                               <span className="suspend-text">SUSPENDED</span>
-  //                             )}
-  //                           </td>
-  //                         )}
-  //                       </tr>
-  //                     </React.Fragment>
-  //                   );
-  //                 })
-  //               ) : (
-  //                 <Fakedata />
-  //               )}
-  //             </tbody>
-  //           </table>
-  //         </>
-  //       )}
-  //     </div>
-  //   );
-  // });
-
-  const FancyBetsSection = memo(() => (
-    <div className="fancybetcontent">
-      <div>
-        <div className="tab-content-fancy">
-          {selectedTab === "ALL" && (
-            <>
-              {fancyLoading && isInitialLoad ? (
-                <div className="text-center p-4">
-                  <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">
-                      Loading fancy bets...
-                    </span>
-                  </div>
-                  <p className="mt-2">Loading fancy bets...</p>
-                </div>
-              ) : (
-                <div className="fancybetsportsbook mt-2">
-                  <div className="tabsfancycontent">
-                    <div className="fancybetcontent">
-                      <div>
-                        <div className="tab-content-fancy">
-                          <div className="indian-fancy-part skyDetailsRow">
-                            <div className="table-part position-relative">
-                              <table
-                                border={0}
-                                cellPadding={0}
-                                cellSpacing={0}
-                                className="table"
-                                width="100%"
-                                style={{ margin: 0 }}
-                              >
-                                <thead>
-                                  <tr>
-                                    <th
-                                      align="left"
-                                      className="market-name-th"
-                                      valign="middle"
-                                    >
-                                      <div className="d-flex justify-content-between align-items-center">
-                                        <p className="text_blink"> Fancy Bet</p>
-                                      </div>
-                                    </th>
-                                    <th
-                                      align="center"
-                                      className="back-h"
-                                      valign="middle"
-                                    >
-                                      <span>NO</span>
-                                    </th>
-                                    <th
-                                      align="center"
-                                      className="lay-h"
-                                      valign="middle"
-                                    >
-                                      <span>YES</span>
-                                    </th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {Array.isArray(fancylist) &&
-                                  fancylist.length > 0 ? (
-                                    fancylist.map((market) => {
-                                      const rowId =
-                                        market.SelectionId || market.id;
-                                      const fancyExposureKey = `${event_id}-${market.SelectionId}`;
-                                      const exposureData =
-                                        fancyExposureData[fancyExposureKey];
-                                      const totalExposer =
-                                        exposureData?.total_exposer || 0;
-                                      const usersCount =
-                                        exposureData?.users_count || 0;
-
-                                      return (
-                                        <tr
-                                          key={rowId}
-                                          className="white-bg skyDetailsRow"
-                                        >
-                                          <td
-                                            align="left"
-                                            className="selaction_name"
-                                            valign="middle"
-                                          >
-                                            <div className="d-flex height_60 justify-content-between align-items-center">
-                                              <div className="d-flex gap-2">
-                                                <span>
-                                                  <a>{market.RunnerName}</a>
-                                                  <small className="max_amt">
-                                                    Max:{market.max || 1000}
-                                                  </small>
-                                                </span>
-                                                {(totalExposer !== 0 ||
-                                                  usersCount !== 0) && (
-                                                  <small className="exposerall">
-                                                    <span className="totalnewall">
-                                                      (
-                                                      {formatNumber(
-                                                        totalExposer,
-                                                      )}
-                                                      )
-                                                    </span>
-                                                  </small>
-                                                )}
-                                              </div>
-
-                                              <div className="d-flex justify-content-end align-items-center">
-                                                {exposureData &&
-                                                  totalExposer > 0 && (
-                                                    <div className="exposure-info">
-                                                      <span
-                                                        className="ladderimage"
-                                                        role="button"
-                                                        onClick={() =>
-                                                          openLadder(
-                                                            `${event_id}-${market.SelectionId}`,
-                                                          )
-                                                        }
-                                                      >
-                                                        <img
-                                                          src={ladder}
-                                                          alt="ladder"
-                                                        />
-                                                      </span>
-
-                                                      {/* <span className="exposure-value">
-                                                      {totalExposer}
-                                                    </span> */}
-                                                    </div>
-                                                  )}
-                                              </div>
-                                            </div>
-                                          </td>
-                                          <td
-                                            align="center"
-                                            className="padding_0"
-                                            colSpan={2}
-                                            valign="middle"
-                                            style={{ position: "relative" }}
-                                          >
-                                            <div className="betbox">
-                                              <a
-                                                className={`td_btn pink_bg ${
-                                                  market.GameStatus ===
-                                                    "SUSPENDED" ||
-                                                  market.GameStatus ===
-                                                    "BALL RUNNING"
-                                                    ? "suspended-odds"
-                                                    : ""
-                                                }`}
-                                                onClick={() =>
-                                                  market.GameStatus !==
-                                                    "SUSPENDED" &&
-                                                  market.GameStatus !==
-                                                    "BALL RUNNING" &&
-                                                  handleFancyOddsClick(
-                                                    market.LayPrice1,
-                                                    "lay",
-                                                    market,
-                                                    "no",
-                                                  )
-                                                }
-                                              >
-                                                <span className="novalue">
-                                                  {market.LayPrice1 || 0}
-                                                </span>
-                                                <span className="novalue1">
-                                                  {formatVolume(
-                                                    market.LaySize1 || 0,
-                                                  )}
-                                                </span>
-                                              </a>
-                                            </div>
-                                            <div
-                                              className="betbox"
-                                              style={{ right: 0 }}
-                                            >
-                                              <a
-                                                className={`td_btn blue_bg ${
-                                                  market.GameStatus ===
-                                                    "SUSPENDED" ||
-                                                  market.GameStatus ===
-                                                    "BALL RUNNING"
-                                                    ? "suspended-odds"
-                                                    : ""
-                                                }`}
-                                                onClick={() =>
-                                                  market.GameStatus !==
-                                                    "SUSPENDED" &&
-                                                  market.GameStatus !==
-                                                    "BALL RUNNING" &&
-                                                  handleFancyOddsClick(
-                                                    market.BackPrice1,
-                                                    "back",
-                                                    market,
-                                                    "yes",
-                                                  )
-                                                }
-                                              >
-                                                <span className="novalue">
-                                                  {market.BackPrice1 || 0}
-                                                </span>
-                                                <span className="novalue1">
-                                                  {formatVolume(
-                                                    market.BackSize1 || 0,
-                                                  )}
-                                                </span>
-                                              </a>
-                                            </div>
-                                            {(market.GameStatus ===
-                                              "SUSPENDED" ||
-                                              market.GameStatus ===
-                                                "BALL RUNNING") && (
-                                              <div className="suspend-text">
-                                                {market.GameStatus ===
-                                                "SUSPENDED"
-                                                  ? "SUSPENDED"
-                                                  : "BALL RUNNING"}
-                                              </div>
-                                            )}
-                                          </td>
-                                        </tr>
-                                      );
-                                    })
-                                  ) : (
-                                    <tr className="white-bg skyDetailsRow">
-                                      <td
-                                        align="left"
-                                        className="selaction_name"
-                                        valign="middle"
-                                      >
-                                        <div className="d-flex height_60 justify-content-between align-items-center">
-                                          <span>
-                                            <a>----</a>
-                                            <small className="max_amt">
-                                              Max:---
-                                            </small>
-                                          </span>
-                                          <span
-                                            className="ladderimage"
-                                            role="button"
-                                            onClick={() => openLadder()}
-                                          >
-                                            <img alt="ladder" src={ladder} />
-                                          </span>
-                                        </div>
-                                      </td>
-                                      <td
-                                        align="center"
-                                        className="padding_0"
-                                        colSpan={2}
-                                        valign="middle"
-                                        style={{ position: "relative" }}
-                                      >
-                                        <div className="betbox">
-                                          <a className="td_btn pink_bg ">
-                                            <span className="novalue">--</span>
-                                            <span className="novalue1">--</span>
-                                          </a>
-                                        </div>
-                                        <div
-                                          className="betbox"
-                                          style={{ right: 0 }}
-                                        >
-                                          <a className="td_btn blue_bg ">
-                                            <span className="novalue">--</span>
-                                            <span className="novalue1">--</span>
-                                          </a>
-                                        </div>
-                                      </td>
-                                    </tr>
-                                  )}
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-
-          {selectedTab === "Fancy" && (
-            <div className="text-center p-4">
-              <p className="text-muted">
-                Fancy bets content will be displayed here
-              </p>
-            </div>
-          )}
-          {selectedTab === "Line Markets" && (
-            <div className="text-center p-4">
-              <p className="text-muted">
-                Line Markets content will be displayed here
-              </p>
-            </div>
-          )}
-          {selectedTab === "Ball by Ball" && (
-            <div className="text-center p-4">
-              <p className="text-muted">
-                Ball by Ball content will be displayed here
-              </p>
-            </div>
-          )}
-          {selectedTab === "Meter Markets" && (
-            <div className="text-center p-4">
-              <p className="text-muted">
-                Meter Markets content will be displayed here
-              </p>
-            </div>
-          )}
-          {selectedTab === "Khado Markets" && (
-            <div className="text-center p-4">
-              <p className="text-muted">
-                Khado Markets content will be displayed here
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  ));
-
   const [showCompleted, setShowCompleted] = useState(false);
   const [isBetHistoryOpen, setIsBetHistoryOpen] = useState(false);
 
   useEffect(() => {
-    console.log("🔍 Bookmaker exposure data updated:", bookmakerExposureData);
+    console.log("🔍 Match Odds exposure data updated:", matchOddsExposureData);
     console.log(
-      "📋 Bookmaker exposure keys:",
-      Object.keys(bookmakerExposureData),
+      "📋 Match Odds exposure keys:",
+      Object.keys(matchOddsExposureData),
     );
-  }, [bookmakerExposureData]);
+  }, [matchOddsExposureData]);
 
   return (
     <>
@@ -3519,7 +3484,6 @@ function Cricket() {
           onClick={() => setActiveTab(activeTab === "tv" ? null : "tv")}
           style={{ cursor: "pointer", zIndex: 5 }}
         >
-          {/* <FaTv /> */}
           <span>TV</span>
         </div>
         {activeTab === "tv" && (
@@ -3531,7 +3495,6 @@ function Cricket() {
                   style={{ cursor: "pointer", zIndex: 5 }}
                   onClick={() => setActiveTab(!activeTab)}
                 >
-                  {/* <IoIosCloseCircleOutline size={25} color="#ff4d4f" /> */}
                   <iframe
                     src={`https://e765432.diamondcricketid.com/dtv.php?id=${event_id}&sportid=4`}
                     frameBorder="0"
@@ -3549,7 +3512,6 @@ function Cricket() {
                   style={{ cursor: "pointer", zIndex: 5 }}
                   onClick={() => setActiveTab(!activeTab)}
                 >
-                  {/* <IoIosCloseCircleOutline size={25} color="#ff4d4f" /> */}
                   <iframe
                     src={`https://e765432.diamondcricketid.com/dtv.php?id=${event_id}&sportid=4`}
                     frameBorder="0"
@@ -3566,320 +3528,284 @@ function Cricket() {
           <iframe
             width="100%"
             height="200"
-            // src={`https://e765432.diamondcricketid.com/sr.php?id=${event_id}&sportid=4`}
             src={`https://tv.tresting.com/lnt.php?eventid=${event_id}`}
             allowFullScreen
           />
         </div>
 
         <section className="cricket_design new_game_design_myxbet">
-          <div className="row">
-          <div className="col-md-6">
-            {/* {showToggle && (
-          <div className="d-flex justify-content-between align-items-center buttondesignalltab">
-            <div
-              className={`text-white w-100 d-flex align-items-center justify-content-center gap-2 buttonall_new
-              ${activeTab === "tv" ? "active" : ""}`}
-              onClick={() => setActiveTab("tv")}
-            >
-              <FaTv />
-              <span>Watch Live</span>
-            </div>
-
-            <div
-              className={`w-100 d-flex justify-content-center align-items-center gap-2 buttonall_new
-              ${activeTab === "score" ? "active" : ""}`}
-              onClick={() => setActiveTab("score")}
-            >
-              <MdOutlineScoreboard />
-              <span>Live Score</span>
-            </div>
-          </div>
-        )} */}
-
-            {/* {activeTab === "tv" && (
-          <div className="matchtv mt-2 position-relative">
-            <div
-              className="position-absolute top-0 end-0 p-2"
-              style={{ cursor: "pointer", zIndex: 5 }}
-              onClick={() => setActiveTab(null)}
-            >
-              <IoIosCloseCircleOutline size={25} color="#ff4d4f" />
-            </div>
-
-            <div
-              className="position-absolute top-0 start-0 p-2"
-              style={{ cursor: "pointer", zIndex: 5 }}
-              onClick={toggleFullScreen}
-            >
-              {isFullScreen ? (
-                <FaCompress size={22} color="#fff" />
-              ) : (
-                <FaExpand size={22} color="#fff" />
+          <div className="row gy-2">
+            <div className="col-md-6">
+              {successMessage && (
+                <div
+                  className="alert alert-success alert-dismissible fade show"
+                  role="alert"
+                >
+                  {successMessage}
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setSuccessMessage("")}
+                  ></button>
+                </div>
               )}
-            </div>
 
-            <iframe
-              ref={iframeRef}
-              src={`https://dtv.diamondapi.uk/ctv/index.html?eventId=${event_id}`}
-              title="Live Match"
-              width="100%"
-              height="200"
-              style={{
-                borderRadius: "10px",
-                border: "none",
-                backgroundColor: "#000",
-              }}
-              allowFullScreen
-            />
-          </div>
-        )} */}
-
-            {successMessage && (
-              <div
-                className="alert alert-success alert-dismissible fade show"
-                role="alert"
-              >
-                {successMessage}
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setSuccessMessage("")}
-                ></button>
-              </div>
-            )}
-
-            {activeTab === "mybet" && (
-              <div className="betting betting_bet">
-                <table className="table position-relative text-start table-sm table-bordered">
-                  <thead>
-                    <tr>
-                      <th className="text-start">Team</th>
-                      <th className="text-start">Odds</th>
-                      <th className="text-start">Total (₹)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentBets.map((bet) => (
-                      <tr
-                        key={bet._id}
-                        className={`placebetdesignall ${
-                          bet.bet_on === "back" ? "backsuccess" : "laydesign"
-                        }`}
-                      >
-                        <td className="text-start">{bet.team}</td>
-                        <td className="text-start">{bet.odd}</td>
-                        <td className="text-start">
-                          {bet.total} {bet.bet_on}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                {totalPages > 1 && (
-                  <div className="pagination d-flex justify-content-between align-items-center mt-3 p-2">
-                    <button
-                      className="page-btn"
-                      disabled={currentPage === 1}
-                      onClick={() => setCurrentPage((p) => p - 1)}
-                    >
-                      ◀ Prev
-                    </button>
-
-                    <div className="page-info">
-                      Page {currentPage} of {totalPages}
-                    </div>
-
-                    <button
-                      className="page-btn"
-                      disabled={currentPage === totalPages}
-                      onClick={() => setCurrentPage((p) => p + 1)}
-                    >
-                      Next ▶
-                    </button>
-                  </div>
-                )}
-
-                {currentBets.length === 0 && (
-                  <div className="text-center p-3">
-                    <p className="text-muted">No bets found</p>
-                  </div>
-                )}
-              </div>
-            )}
-            <div>
-              <MyBetsComponent
-                showMyBets={showMyBets}
-                betsLoading={betsLoading}
-              />
-            </div>
-
-            <div className="cricketbettingalldesign eventsallbetshow">
-              {/* <MatchOddsSection /> */}
-
-              <BookmakerTable
-                markets={bookmakerList}
-                title="Bookmaker"
-                selectedRow={selectedRow}
-                placebet={placebet}
-                selectedOdds={selectedOdds}
-                handleBookmakerOddsClick={handleBookmakerOddsClick}
-                closeBetSlip={closeBetSlip}
-                handlePlaceBet={handlePlaceBet}
-                handleStakeChange={handleStakeChange}
-                decreaseStake={decreaseStake}
-                increaseStake={increaseStake}
-                handleQuickStake={handleQuickStake}
-                isPlacingBet={isPlacingBet}
-                stake={stake}
-                fancyQuickStakes={fancyQuickStakes}
-                formatNumber={formatNumber}
-                showNotification={showNotification}
-                highlightedMarkets={highlightedMarkets}
-                formatVolume={formatVolume}
-                bookMakerShowCurrentExp={bookMakerShowCurrentExp}
-                teamexposercurrent1={teamexposercurrent1}
-                teamexposercurrent2={teamexposercurrent2}
-                teamexposercurrent1Name={teamexposercurrent1Name}
-                currentExpbgColor1={currentExpbgColor1}
-                currentExpbgColor2={currentExpbgColor2}
-                selectednameteam={selectednameteam}
-                betType={betType}
-                bookmakerExposureData={bookmakerExposureData}
-                matchesName={matchesName}
-                onMyBookClicktotel={handleMyBookClicktolet}
-                onMyBookClick={handleMyBookClick}
-              />
-
-              <FancyBetsSection />
-            </div>
-
-            {showBetSlipModal && (
-              <div
-                className="modal fade show"
-                style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
-              >
-                <div className="modal-dialog modal-dialog-centered">
-                  <div className="modal-content">
-                    <BetSlipModalContent
-                      selectedOdds={selectedOdds}
-                      stake={stake}
-                      handleStakeChange={handleStakeChange}
-                      decreaseStake={decreaseStake}
-                      increaseStake={increaseStake}
-                      handleQuickStake={handleQuickStake}
-                      handlePlaceBet={handlePlaceBet}
-                      closeBetSlip={closeBetSlipModal}
-                      isPlacingBet={isPlacingBet}
-                      fancyQuickStakes={fancyQuickStakes}
-                      formatNumber={formatNumber}
-                      matchOddsShowCurrentExp={matchOddsShowCurrentExp}
-                      bookMakerShowCurrentExp={bookMakerShowCurrentExp}
-                      teamexposercurrent1={teamexposercurrent1}
-                      teamexposercurrent2={teamexposercurrent2}
-                      teamexposercurrent1Name={teamexposercurrent1Name}
-                      currentExpbgColor1={currentExpbgColor1}
-                      currentExpbgColor2={currentExpbgColor2}
-                      selectednameteam={selectednameteam}
-                      MatchType={MatchType}
-                      betType={betType}
-                      isModal={true}
-                      onAutoClose={handleAutoCloseModal}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {showBetHistoryModal && (
-              <div
-                className="bet-history-overlay"
-                onClick={() => setShowBetHistoryModal(false)}
-              >
-                <div
-                  className="bet-history-modal"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className="modal-header">
-                    <h4>Bet History</h4>
-                    <button
-                      className="close-btn"
-                      onClick={() => setShowBetHistoryModal(false)}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {showInfoModal && (
-              <div
-                className="info-modal-overlay"
-                onClick={() => setShowInfoModal(false)}
-              >
-                <div
-                  className="info-modal"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className="modal-header">
-                    <h5 className="mb-0">Cricket Rules & Information</h5>
-                    <FaTimes
-                      className="close-icon"
-                      onClick={() => setShowInfoModal(false)}
-                    />
-                  </div>
-
-                  <div className="modal-footer fixed-footer">
-                    <button
-                      className="ok-btn"
-                      onClick={() => setShowInfoModal(false)}
-                    >
-                      OK
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {showOpenBook && (
-              <div className="book-backdrop">
-                <div className="book-modal">
-                  <div className="book-header">
-                    <span>Book</span>
-                    <button
-                      className="close-btn position-relative top-0"
-                      onClick={() => setShowOpenBook(false)}
-                    >
-                      ✕
-                    </button>
-                  </div>
-
-                  <table className="book-table">
+              {activeTab === "mybet" && (
+                <div className="betting betting_bet">
+                  <table className="table position-relative text-start table-sm table-bordered">
                     <thead>
                       <tr>
-                        <th>Runs</th>
-                        <th>Position</th>
+                        <th className="text-start">Team</th>
+                        <th className="text-start">Odds</th>
+                        <th className="text-start">Total (₹)</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td colSpan="2" className="no-data">
-                          No data!
-                        </td>
-                      </tr>
+                      {currentBets.map((bet) => (
+                        <tr
+                          key={bet._id}
+                          className={`placebetdesignall ${bet.bet_on === "back" ? "backsuccess" : "laydesign"
+                            }`}
+                        >
+                          <td className="text-start">{bet.team}</td>
+                          <td className="text-start">{bet.odd}</td>
+                          <td className="text-start">
+                            {bet.total} {bet.bet_on}
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
-                </div>
-              </div>
-            )}
-          </div>
 
-          <div className="col-md-6">
-            {" "}
-            <MatchStats />
-          </div>
+                  {totalPages > 1 && (
+                    <div className="pagination d-flex justify-content-between align-items-center mt-3 p-2">
+                      <button
+                        className="page-btn"
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage((p) => p - 1)}
+                      >
+                        ◀ Prev
+                      </button>
+
+                      <div className="page-info">
+                        Page {currentPage} of {totalPages}
+                      </div>
+
+                      <button
+                        className="page-btn"
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage((p) => p + 1)}
+                      >
+                        Next ▶
+                      </button>
+                    </div>
+                  )}
+
+                  {currentBets.length === 0 && (
+                    <div className="text-center p-3">
+                      <p className="text-muted">No bets found</p>
+                    </div>
+                  )}
+                </div>
+              )}
+              <div>
+                <MyBetsComponent
+                  showMyBets={showMyBets}
+                  betsLoading={betsLoading}
+                />
+              </div>
+
+              <div className="cricketbettingalldesign eventsallbetshow">
+                {/* MATCH ODDS SECTION - Always visible for all sports */}
+                <MatchOddsTable
+                  matches={Matches}
+                  title="Match Odds"
+                  selectedRow={selectedRow}
+                  placebet={placebet}
+                  selectedOdds={selectedOdds}
+                  handleMatchOddsClick={handleMatchOddsClick}
+                  closeBetSlip={closeBetSlip}
+                  handlePlaceBet={handlePlaceBet}
+                  handleStakeChange={handleStakeChange}
+                  decreaseStake={decreaseStake}
+                  increaseStake={increaseStake}
+                  handleQuickStake={handleQuickStake}
+                  isPlacingBet={isPlacingBet}
+                  stake={stake}
+                  fancyQuickStakes={fancyQuickStakes}
+                  formatNumber={formatNumber}
+                  showNotification={showNotification}
+                  highlightedMarkets={highlightedMarkets}
+                  formatVolume={formatVolume}
+                  matchOddsShowCurrentExp={matchOddsShowCurrentExp}
+                  teamexposercurrent1={teamexposercurrent1}
+                  teamexposercurrent2={teamexposercurrent2}
+                  teamexposercurrent1Name={teamexposercurrent1Name}
+                  currentExpbgColor1={currentExpbgColor1}
+                  currentExpbgColor2={currentExpbgColor2}
+                  selectednameteam={selectednameteam}
+                  betType={betType}
+                  matchOddsExposureData={matchOddsExposureData}
+                  matchesName={matchesName}
+                  onMyBookClicktotel={handleMyBookClicktolet}
+                  onMyBookClick={handleMyBookClick}
+                />
+
+                {/* BOOKMAKER SECTION - Only show for cricket (sport_id = 4) */}
+                {isCricketSport && (
+                  <BookmakerSection
+                    bookmakerList={bookmakerList}
+                    formatNumber={formatNumber}
+                    formatVolume={formatVolume}
+                    highlightedMarkets={highlightedMarkets}
+                    handleBookmakerClick={handleBookmakerClick}
+                    showNotification={showNotification}
+                    matchesName={matchesName}
+                    bookmakerExposureData={bookmakerExposureData}
+                  />
+                )}
+
+                {/* FANCY BETS SECTION - Only show for cricket (sport_id = 4) */}
+                {isCricketSport && (
+                  <FancyBetsSection 
+                    fancylist={fancylist}
+                    fancyLoading={fancyLoading}
+                    isInitialLoad={isInitialLoad}
+                    selectedTab={selectedTab}
+                    formatNumber={formatNumber}
+                    formatVolume={formatVolume}
+                    openLadder={openLadder}
+                    handleFancyOddsClick={handleFancyOddsClick}
+                    fancyExposureData={fancyExposureData}
+                    event_id={event_id}
+                  />
+                )}
+              </div>
+
+              {showBetSlipModal && (
+                <div
+                  className="modal fade show"
+                  style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
+                >
+                  <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content">
+                      <BetSlipModalContent
+                        selectedOdds={selectedOdds}
+                        stake={stake}
+                        handleStakeChange={handleStakeChange}
+                        decreaseStake={decreaseStake}
+                        increaseStake={increaseStake}
+                        handleQuickStake={handleQuickStake}
+                        handlePlaceBet={handlePlaceBet}
+                        closeBetSlip={closeBetSlipModal}
+                        isPlacingBet={isPlacingBet}
+                        fancyQuickStakes={fancyQuickStakes}
+                        formatNumber={formatNumber}
+                        matchOddsShowCurrentExp={matchOddsShowCurrentExp}
+                        bookMakerShowCurrentExp={bookMakerShowCurrentExp}
+                        teamexposercurrent1={teamexposercurrent1}
+                        teamexposercurrent2={teamexposercurrent2}
+                        teamexposercurrent1Name={teamexposercurrent1Name}
+                        currentExpbgColor1={currentExpbgColor1}
+                        currentExpbgColor2={currentExpbgColor2}
+                        selectednameteam={selectednameteam}
+                        MatchType={MatchType}
+                        betType={betType}
+                        isModal={true}
+                        onAutoClose={handleAutoCloseModal}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {showBetHistoryModal && (
+                <div
+                  className="bet-history-overlay"
+                  onClick={() => setShowBetHistoryModal(false)}
+                >
+                  <div
+                    className="bet-history-modal"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="modal-header">
+                      <h4>Bet History</h4>
+                      <button
+                        className="close-btn"
+                        onClick={() => setShowBetHistoryModal(false)}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {showInfoModal && (
+                <div
+                  className="info-modal-overlay"
+                  onClick={() => setShowInfoModal(false)}
+                >
+                  <div
+                    className="info-modal"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="modal-header">
+                      <h5 className="mb-0">Cricket Rules & Information</h5>
+                      <FaTimes
+                        className="close-icon"
+                        onClick={() => setShowInfoModal(false)}
+                      />
+                    </div>
+
+                    <div className="modal-footer fixed-footer">
+                      <button
+                        className="ok-btn"
+                        onClick={() => setShowInfoModal(false)}
+                      >
+                        OK
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {showOpenBook && (
+                <div className="book-backdrop">
+                  <div className="book-modal">
+                    <div className="book-header">
+                      <span>Book</span>
+                      <button
+                        className="close-btn position-relative top-0"
+                        onClick={() => setShowOpenBook(false)}
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    <table className="book-table">
+                      <thead>
+                        <tr>
+                          <th>Runs</th>
+                          <th>Position</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td colSpan="2" className="no-data">
+                            No data!
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="col-md-6">
+              <MatchStats />
+            </div>
           </div>
         </section>
         {isOn && (
@@ -3931,9 +3857,7 @@ function Cricket() {
           </div>
         )}
 
-        <Clients_SessionPL />
-
-        {/* <CompletedSessions /> */}
+        {/* <Clients_SessionPL /> */}
       </div>
     </>
   );

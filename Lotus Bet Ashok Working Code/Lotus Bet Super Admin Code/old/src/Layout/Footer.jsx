@@ -9,7 +9,7 @@ const Footer = () => {
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-12">
-            <div className="text-center">2026 © Lotus </div>
+            <div className="text-center">Copyright © 2026 </div>
           </div>
         </div>
       </div>

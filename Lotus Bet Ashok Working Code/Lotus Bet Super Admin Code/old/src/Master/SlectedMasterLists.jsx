@@ -70,7 +70,7 @@ function SuperAgentList() {
   return (
     <>
       <div className="card agentmaster">
-        <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+        <div className="card-header d-flex bg-primary-yellow justify-content-between align-items-center">
         <h5 className="card-title mb-0">Super Agent List</h5>
           <button className="backbutton" onClick={handleBack}>
             Back

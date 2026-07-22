@@ -669,7 +669,7 @@ function BetList() {
       )}
 
       <div className="card shadow-lg border-0 rounded-4">
-     <div className="card-header bg-primary-yellow p-2 text-white d-flex justify-content-between align-items-center">
+     <div className="card-header d-flex bg-primary-yellow justify-content-between align-items-center">
         <h5 className="card-title mb-0">All Bets List</h5>
           <div className="d-flex gap-2">
             <button
