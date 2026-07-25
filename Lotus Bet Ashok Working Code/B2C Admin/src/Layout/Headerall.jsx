@@ -6,22 +6,28 @@ import Swal from "sweetalert2";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import logo from "../asset/image/logo.png"
+import { IoMdArrowDropdown } from "react-icons/io";
+import {
+  changeMasterPassword,
+} from "../Server/api";
+
 
 export default function Header() {
     const navigate = useNavigate();
     const [mobileMenu, setMobileMenu] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState(null);
-    const [isOpen, setIsOpen] = useState(false);
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const token = localStorage.getItem("token");
-    const adminId = localStorage.getItem("adminId");
+
     const [isLoading, setIsLoading] = useState(false);
+    const token = localStorage.getItem("token");
+    const adminId = localStorage.getItem("admin_id");
     const location = useLocation();
     const [open, setOpen] = useState(false);
     const dropdownRef = useRef(null);
-
+   const [isOpen, setIsOpen] = useState(false);
+ 
     // Toggle dropdown - closes others when opening a new one
     const toggleDropdownall = (name) => {
         setActiveDropdown(activeDropdown === name ? null : name);
@@ -124,50 +130,167 @@ export default function Header() {
         });
     };
 
-    const handleSubmit = async () => {
-        try {
-            console.log("Submit Clicked");
+    const [oldPasswordError, setOldPasswordError] = useState("");
+    const [newPasswordError, setNewPasswordError] = useState("");
+    const [confirmPasswordError, setConfirmPasswordError] = useState("");
+    const [submitted, setSubmitted] = useState(false);
 
-            const response = await fetch(
-                `${process.env.REACT_APP_API_URL}/change-user-password-admin`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                    body: JSON.stringify({
-                        admin_id: adminId,
-                        oldPassword,
-                        newPassword,
-                        confirmPassword,
-                    }),
-                }
-            );
-            const data = await response.json();
-            if (data.success) {
-                setIsOpen(false);
+    // Validation functions
+    const validateOldPasswordField = (password) => {
+        if (!password || password.trim() === "") {
+            return "Please enter Old Password";
+        }
+        return "";
+    };
+
+    const validateNewPasswordField = (password) => {
+        if (!password || password.trim() === "") {
+            return "Please enter new password";
+        }
+        if (password.length < 6) {
+            return "Password must be at least 6 characters long";
+        }
+        if (!/\d/.test(password)) {
+            return "Password must contain at least one number";
+        }
+        return "";
+    };
+
+    const validateConfirmPasswordField = (password, newPass) => {
+        if (!password || password.trim() === "") {
+            return "Please enter confirm password";
+        }
+        if (password !== newPass) {
+            return "Passwords do not match";
+        }
+        return "";
+    };
+
+    const validateAllFields = () => {
+        const oldPassError = validateOldPasswordField(oldPassword);
+        const newPassError = validateNewPasswordField(newPassword);
+        const confirmPassError = validateConfirmPasswordField(confirmPassword, newPassword);
+        
+        setOldPasswordError(oldPassError);
+        setNewPasswordError(newPassError);
+        setConfirmPasswordError(confirmPassError);
+        
+        // Check if old and new passwords are same
+        if (oldPassword === newPassword && oldPassword !== "") {
+            Swal.fire({
+                icon: "error",
+                title: "Validation Error",
+                text: "New password cannot be same as old password",
+                confirmButtonText: "OK",
+            });
+            return false;
+        }
+        
+        return !oldPassError && !newPassError && !confirmPassError;
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setSubmitted(true);
+        
+        // Validate all fields
+        if (!validateAllFields()) {
+            return;
+        }
+
+        // Get fresh adminId from localStorage
+        const adminIdFromStorage = localStorage.getItem("admin_id");
+        
+        // Check if adminId exists
+        if (!adminIdFromStorage) {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Admin ID not found. Please login again.",
+                confirmButtonText: "OK",
+            });
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            // Prepare payload
+            const payload = {
+                admin_id: adminIdFromStorage,
+                oldPassword: oldPassword,
+                newPassword: newPassword,
+                confirmPassword: confirmPassword,
+            };
+
+            console.log("Sending payload:", payload); // Debug log
+
+            // Using the imported changeMasterPassword API function
+            const response = await changeMasterPassword(payload);
+
+            console.log("Full Response:", response);
+
+            // Check if response is successful - handling both response structures
+            const isSuccess = response?.success || response?.data?.success || false;
+            const message = response?.message || response?.data?.message || "Password changed successfully";
+
+            if (isSuccess) {
+                setIsOpen(false); // Modal Close
                 Swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: data.message,
+                    text: message,
                     confirmButtonText: "OK",
                 });
+                // Reset form
                 setOldPassword("");
                 setNewPassword("");
                 setConfirmPassword("");
+                setOldPasswordError("");
+                setNewPasswordError("");
+                setConfirmPasswordError("");
+                setSubmitted(false);
             } else {
                 Swal.fire({
                     icon: "error",
                     title: "Error",
-                    text: data.message,
+                    text: message || "Failed to change password",
                 });
             }
         } catch (err) {
-            console.error(err);
+            console.error("Error changing password:", err);
+            
+            // Handle specific error cases
+            let errorMessage = "An error occurred while changing password";
+            
+            if (err.response && err.response.data && err.response.data.message) {
+                errorMessage = err.response.data.message;
+            } else if (err.message) {
+                errorMessage = err.message;
+            }
+            
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: errorMessage,
+                confirmButtonText: "OK",
+            });
+        } finally {
+            setIsLoading(false);
         }
     };
 
+    const handleOpenModal = () => {
+        setIsOpen(true);
+        // Reset password fields and errors when opening modal
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        setOldPasswordError("");
+        setNewPasswordError("");
+        setConfirmPasswordError("");
+        setSubmitted(false);
+    };
+    
     return (
         <>
             <header className="top-header">
@@ -221,7 +344,6 @@ export default function Header() {
                             <ul className={activeDropdown === "report" ? "show" : ""}>
                                 <li><Link to="/my-account-statement">Account Statement</Link></li>
                                 <li><Link to="/comming-soon">Profit/Loss by Downline</Link></li>
-                                {/* <li><Link to="/aprofitDownline">Profit/Loss by Downline</Link></li> */}
                                 <li><Link to="/adownlinesportspl">Match Profit Loss</Link></li>
                                 <li><Link to="/comming-soon">Profit/Loss Report by Market</Link></li>
                                 <li><Link to="/comming-soon">Profit/Loss Sports Wise</Link></li>
@@ -230,15 +352,6 @@ export default function Header() {
                                 <li><Link to="/comming-soon">Profit/Loss Aura Casino Bets</Link></li>
                                 <li><Link to="/comming-soon">Profit/Loss International Casino Bets</Link></li>
                                 <li><Link to="/comming-soon">Profit/Loss Gap Casino Bets</Link></li>
-
-                                {/* <li><Link to="/aprofitMarket">Profit/Loss Report by Market</Link></li>
-                                <li><Link to="/profit-loss-sports">Profit/Loss Sports Wise</Link></li>
-                                <li><Link to="/aprofitplayer">Profit/Loss Report by Player</Link></li>
-                                <li><Link to="/aprofitCasino">Casino Profit/Loss Report by Date</Link></li>
-                                <li><Link to="/report/aura">Profit/Loss Aura Casino Bets</Link></li>
-                                <li><Link to="/report/international">Profit/Loss International Casino Bets</Link></li>
-                                <li><Link to="/report/gap">Profit/Loss Gap Casino Bets</Link></li> */}
-
                             </ul>
                         </li>
 
@@ -250,10 +363,7 @@ export default function Header() {
                             <Link to="/bet-live-list">BetListLive</Link>
                         </li>
 
-                        {/* <li className={location.pathname === "/comming-soon" ? "active" : ""}>
-                            <Link to="/comming-soon">Risk Management</Link>
-                        </li> */}
-                          <li className={location.pathname === "/riskmangement" ? "active" : ""}>
+                        <li className={location.pathname === "/riskmangement" ? "active" : ""}>
                             <Link to="/riskmangement">Risk Management</Link>
                         </li> 
 
@@ -261,8 +371,6 @@ export default function Header() {
                             ? "active"
                             : ""
                             }`}>
-
-
                             <div
                                 className="mobile-title"
                                 onClick={() => toggleDropdownall("deposit")}
@@ -324,45 +432,6 @@ export default function Header() {
                             </ul>
                         </li>
 
-                        {/* <li>
-                            <Link to="/general-setting">Setting</Link>
-                        </li>
-
-                            <li className={`dropdown ${["/comming-soon", "/slider_lists","/offer"].includes(location.pathname)
-                            ? "active"
-                            : ""
-                            }`}>
-                            <div
-                                className="mobile-title"
-                                onClick={() => toggleDropdownall("other")}
-                            >
-                                <Link to="/banks">Other</Link>
-                                <span className={`arrow ${activeDropdown === "other" ? "rotate" : ""}`}></span>
-                            </div>
-                             <ul className={activeDropdown === "other" ? "show" : ""}>
-                                <li><Link to="/comming-soon">Sport Control</Link></li>
-                                <li><Link to="/comming-soon">Casino Control</Link></li>
-                                <li><Link to="/slider_lists">Banner Manager</Link></li>
-                                <li><Link to="/offer">Offer</Link></li>
-                            </ul>
-                        </li>
-                   
-
-                        <li className={location.pathname === "/sport" ? "active" : ""}>
-                            <div
-                                className="mobile-title"
-                                onClick={() => toggleDropdownall("Sport Management")}
-                            >
-                                <a href="/">Sport Management</a>
-                                <span className={`arrow ${activeDropdown === "Sport Management" ? "rotate" : ""}`}></span>
-                            </div>
-                            <ul className={activeDropdown === "Sport Management" ? "show" : ""}>
-                                <li><a href="/sports">Sports</a></li>
-                                <li><a href="/cricket">cricket</a></li>
-                                <li><a href="/view_match">View Match</a></li>
-                                <li><a href="/declare_result">Declare Result</a></li>
-                            </ul>
-                        </li> */}
                         <li>
                             <Link to="/general-setting">Setting</Link>
                         </li>
@@ -430,8 +499,10 @@ export default function Header() {
                             </Link>
                         </div>
                     </div>
-
                     <div className="custom-dropdown" ref={dropdownRef}>
+                        <button className="dropdown-btn" onClick={toggleDropdown}>
+                            MALotus77VIP <span className="arrow"><IoMdArrowDropdown/></span>
+                        </button>
                         {open && (
                             <div className="dropdown-menu-custom">
                                 <div className="dropdown-item balance-item">
@@ -449,14 +520,14 @@ export default function Header() {
                                         <ArrowLong />Profile
                                     </Link>
                                 </div>
-                                <div className="dropdown-item" onClick={() => {
-                                    setIsOpen(true);
-                                    setOpen(false);
+                                <div className="dropdown-item" onClick={(e) => {
+                                    e.preventDefault();
+                                    handleOpenModal();
                                 }}>
                                     <ArrowLong />Change Password
                                 </div>
                                 <div className="dropdown-item">
-                                    <Link to="/set-limit-setting" onClick={() => setOpen(false)}>
+                                    <Link to="/my-profile" onClick={() => setOpen(false)}>
                                         <ArrowLong />Set Deposit / Withdraw Limit Setting
                                     </Link>
                                 </div>
@@ -476,13 +547,13 @@ export default function Header() {
             <Modal
                 show={isOpen}
                 onHide={() => setIsOpen(false)}
-                backdrop="static">
+                backdrop="static"
+            >
                 <div className="allcommon">
                     <div className="modal-header">
                         <div className="modal-title-status h4 modal-title">
                             Change Password
                         </div>
-
                         <button
                             type="button"
                             className="btn-close"
@@ -494,22 +565,30 @@ export default function Header() {
                         <div className="test-status border-0">
                             <form
                                 className="change-password-sec"
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    handleSubmit();
-                                }}
+                                onSubmit={handleSubmit}
+                                noValidate
                             >
                                 <div className="d-flex mb-2">
                                     <label className="form-label">Old Password</label>
                                     <input
                                         type="password"
                                         name="oldPassword"
-                                        className="form-control"
+                                        className={`form-control ${submitted && oldPasswordError ? 'is-invalid' : ''}`}
                                         placeholder="Enter Old Password"
                                         value={oldPassword}
-                                        onChange={(e) => setOldPassword(e.target.value)}
+                                        onChange={(e) => {
+                                            setOldPassword(e.target.value);
+                                            if (submitted) {
+                                                setOldPasswordError(validateOldPasswordField(e.target.value));
+                                            }
+                                        }}
                                         disabled={isLoading}
                                     />
+                                    {submitted && oldPasswordError && (
+                                        <div className="invalid-feedback" style={{ display: 'block' }}>
+                                            {oldPasswordError}
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="d-flex mb-2">
@@ -517,12 +596,25 @@ export default function Header() {
                                     <input
                                         type="password"
                                         name="newPassword"
-                                        className="form-control"
+                                        className={`form-control ${submitted && newPasswordError ? 'is-invalid' : ''}`}
                                         placeholder="Enter New Password"
                                         value={newPassword}
-                                        onChange={(e) => setNewPassword(e.target.value)}
+                                        onChange={(e) => {
+                                            setNewPassword(e.target.value);
+                                            if (submitted) {
+                                                setNewPasswordError(validateNewPasswordField(e.target.value));
+                                                if (confirmPassword) {
+                                                    setConfirmPasswordError(validateConfirmPasswordField(confirmPassword, e.target.value));
+                                                }
+                                            }
+                                        }}
                                         disabled={isLoading}
                                     />
+                                    {submitted && newPasswordError && (
+                                        <div className="invalid-feedback" style={{ display: 'block' }}>
+                                            {newPasswordError}
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="d-flex mb-2">
@@ -530,12 +622,22 @@ export default function Header() {
                                     <input
                                         type="password"
                                         name="confirmPassword"
-                                        className="form-control"
+                                        className={`form-control ${submitted && confirmPasswordError ? 'is-invalid' : ''}`}
                                         placeholder="Confirm Password"
                                         value={confirmPassword}
-                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        onChange={(e) => {
+                                            setConfirmPassword(e.target.value);
+                                            if (submitted) {
+                                                setConfirmPasswordError(validateConfirmPasswordField(e.target.value, newPassword));
+                                            }
+                                        }}
                                         disabled={isLoading}
                                     />
+                                    {submitted && confirmPasswordError && (
+                                        <div className="invalid-feedback" style={{ display: 'block' }}>
+                                            {confirmPasswordError}
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="text-center mt-4">
@@ -545,6 +647,14 @@ export default function Header() {
                                         disabled={isLoading}
                                     >
                                         {isLoading ? "Saving..." : "Change"}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary ms-2"
+                                        onClick={() => setIsOpen(false)}
+                                        disabled={isLoading}
+                                    >
+                                        Cancel
                                     </button>
                                 </div>
                             </form>

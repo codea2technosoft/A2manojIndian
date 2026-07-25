@@ -57,7 +57,8 @@ const CurrentBets = () => {
 
     try {
       const params = {
-        agent_id: adminId,
+        // agent_id: adminId,
+        admin_id: adminId,
          sport: sport,
         market_type: market_type,
         bet_status: bet_status,
@@ -197,11 +198,9 @@ const CurrentBets = () => {
             </td>
             <td>{bet.selection || '-'}</td>
             <td>
-              {bet.bet_type === "fancy"
-                ? (bet.type === "back" ? "Yes" : "No")
-                : (bet.type === "back" ? "Back" : "Lay")}
+              {bet.bet_type || "-"}
             </td>
-            <td>{bet.odds_req || '-'}</td>
+            <td>{bet.bet_on || '-'}</td>
             <td>{bet.stake || 0}</td>
             <td
               className={`${Number(bet.profit_loss ?? bet.pl ?? 0) >= 0 ? "text-success" : "text-danger"

@@ -48,7 +48,7 @@ function Settlement() {
 
       if (apiData && apiData.success === true) {
         const data = apiData.data || {};
-        
+
         // Store total
         if (data.total) {
           setTotalData(data.total);
@@ -262,138 +262,131 @@ function Settlement() {
 
   return (
     <div className='allcommon'>
-      <section className="main-inner-outer py-4">
-        <div className="container-fluid">
+      <section className="main-inner-outer">
           <div className="find-member-sec search_banking_detail">
             <div className="db-sec">
               <h2 className="common-heading page-title">Settlement List</h2>
             </div>
-            <div className="inner-wrapper">
-              <div
-                className="common-container"
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  justifyContent: "space-between"
-                }}
-              >
-                {/* Creditors Account - dena (positive) */}
-                <div className="table-responsive" style={{ width: "48%" }}>
-                  <div className='headinggreen'>
-                    Creditors Account (dena hai)
-                  </div>
-                  <table className="banking_detail_table table-color table">
-                    <thead>
-                      <tr>
-                        <th scope="col" style={{ background: "lightgrey" }}>
-                          Account
-                        </th>
-                        <th
-                          scope="col"
-                          style={{ textAlign: "right", background: "lightgrey" }}
-                        >
-                          Client (P/L)
-                        </th>
-                        <th
-                          scope="col"
-                          style={{ textAlign: "right", background: "lightgrey" }}
-                        >
-                          Short Balance
-                        </th>
-                        <th
-                          scope="col"
-                          style={{ textAlign: "right", background: "lightgrey" }}
-                        >
-                          Settle Amount
-                        </th>
-                        <th
-                          scope="col"
-                          style={{ textAlign: "right", background: "lightgrey" }}
-                        >
-                          Remark
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {creditors && creditors.length > 0 ? (
-                        creditors.map((item) => {
-                          const adminId = item.admin_id;
-                          const amount = parseFloat(item.total_amount) || 0;
-                          return (
-                            <tr key={adminId}>
-                              <td>{item.username || '-'}</td>
-                              <td style={{ color: "green", textAlign: "right" }}>
-                                {formatAmount(amount)}
-                              </td>
-                              <td style={{ textAlign: "right", color: "black" }}>
-                                {formatAmount(0)}
-                              </td>
-                              <td style={{ textAlign: "right" }}>
-                                <div>
-                                  <input
-                                    type="number"
-                                    placeholder="Amount"
-                                    value={settleAmounts[adminId] || ''}
-                                    onChange={(e) => handleSettleAmountChange(adminId, e.target.value)}
-                                  />
-                                  <button
-                                    className='fullsettle'
-                                    onClick={() => handleFullSettle(adminId)}
-                                  >
-                                    Full Settle
-                                  </button>
-                                </div>
-                              </td>
-                              <td style={{ textAlign: "right" }}>
-                                <div>
-                                  <input
-                                    type="text"
-                                    placeholder="Remarks"
-                                    value={remarks[adminId] || ''}
-                                    onChange={(e) => handleRemarkChange(adminId, e.target.value)}
-                                  />
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })
-                      ) : (
-                        <tr>
-                          <td colSpan="5" className="text-center py-4">
-                            No creditors found
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
+            <div className="row">
+              <div className="col-md-6 col-12">
+                <div className='headinggreen'>
+                  Creditors Account (dena hai)
                 </div>
-
-                {/* Debtors Account - lena (negative) */}
-                <div className="table-responsive" style={{ width: "48%" }}>
-                  <div className='headingred'>
-                    Debtors Account (lena hai)
+                <div className="table-responsive">
+                  <div className="table-responsive">
+                    <table className="banking_detail_table table-color table">
+                      <thead>
+                        <tr>
+                          <th scope="col" style={{ background: "lightgrey" ,whiteSpace:"normal",color:"#000",fontSize:"11px"}}>
+                            Account
+                          </th>
+                          <th
+                            scope="col"
+                            style={{ textAlign: "right", background: "lightgrey" ,whiteSpace:"normal",color:"#000",fontSize:"11px"}}
+                          >
+                            Client (P/L)
+                          </th>
+                          <th
+                            scope="col"
+                            style={{ textAlign: "right", background: "lightgrey" ,whiteSpace:"normal",color:"#000",fontSize:"11px"}}
+                          >
+                            Short Balance
+                          </th>
+                          <th
+                            scope="col"
+                            style={{ textAlign: "right", background: "lightgrey" ,whiteSpace:"normal",color:"#000",fontSize:"11px"}}
+                          >
+                            Settle Amount
+                          </th>
+                          <th
+                            scope="col"
+                            style={{ textAlign: "right", background: "lightgrey" ,whiteSpace:"normal",color:"#000",fontSize:"11px"}}
+                          >
+                            Remark
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {creditors && creditors.length > 0 ? (
+                          creditors.map((item) => {
+                            const adminId = item.admin_id;
+                            const amount = parseFloat(item.total_amount) || 0;
+                            return (
+                              <tr key={adminId}>
+                                <td>{item.username || '-'}</td>
+                                <td style={{ color: "green", textAlign: "right" }}>
+                                  {formatAmount(amount)}
+                                </td>
+                                <td style={{ textAlign: "right", color: "black" }}>
+                                  {formatAmount(0)}
+                                </td>
+                                <td style={{ textAlign: "right" }}>
+                                  <div>
+                                    <input
+                                      type="number"
+                                      placeholder="Amount"
+                                      value={settleAmounts[adminId] || ''}
+                                      onChange={(e) => handleSettleAmountChange(adminId, e.target.value)}
+                                    />
+                                    <button
+                                      className='fullsettle'
+                                      onClick={() => handleFullSettle(adminId)}
+                                    >
+                                      Full Settle
+                                    </button>
+                                  </div>
+                                </td>
+                                <td style={{ textAlign: "right" }}>
+                                  <div>
+                                    <input
+                                      type="text"
+                                      placeholder="Remarks"
+                                      value={remarks[adminId] || ''}
+                                      onChange={(e) => handleRemarkChange(adminId, e.target.value)}
+                                    />
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })
+                        ) : (
+                          <tr>
+                            <td colSpan="5" className="text-center py-4">
+                              No creditors found
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
                   </div>
+                </div>
+              </div>
+              <div className="col-md-6 col-12">
+                <div className='headingred'>
+                  Debtors Account (lena hai)
+                </div>
+                <div className="table-responsive">
                   <table className="banking_detail_table table-color table">
                     <thead>
                       <tr>
-                        <th scope="col" style={{ background: "lightgrey" }}>
+                        <th scope="col" style={{ background: "lightgrey",color:"#000",fontSize:"11px" }}>
                           Account
                         </th>
                         <th
                           scope="col"
-                          style={{ textAlign: "right", background: "lightgrey" }}
+                          style={{ textAlign: "right", background: "lightgrey",color:"#000",fontSize:"11px" }}
                         >
                           Client (P/L)
                         </th>
                         <th
                           scope="col"
-                          style={{ textAlign: "right", background: "lightgrey" }}
+                          style={{ textAlign: "right", background: "lightgrey",color:"#000",fontSize:"11px" }}
                         >
                           Settle Amount
                         </th>
                         <th
                           scope="col"
-                          style={{ textAlign: "right", background: "lightgrey" }}
+                          style={{ textAlign: "right", background: "lightgrey",color:"#000",fontSize:"11px" }}
                         >
                           Remark
                         </th>
@@ -448,9 +441,23 @@ function Settlement() {
                       )}
                     </tbody>
                   </table>
-                </div>
-              </div>
+                </div>                  </div>
             </div>
+            {/* <div className="inner-wrapper">
+              <div
+                className="common-container"
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  justifyContent: "space-between"
+                }}
+              >
+            
+             
+
+             
+              </div>
+            </div> */}
             <div
               className="paymoney d-flex justify-content-center align-items-center"
               style={{ paddingTop: 0 }}
@@ -473,8 +480,8 @@ function Settlement() {
                 >
                   {submitLoading ? 'Processing...' : 'Submit Payment'}
                 </button>
-                <button 
-                  className="clear_btn btn" 
+                <button
+                  className="clear_btn btn"
                   type="button"
                   onClick={handleClearAll}
                 >
@@ -484,7 +491,8 @@ function Settlement() {
             </div>
             <div />
           </div>
-        </div>
+        {/* <div className="container-fluid">
+        </div> */}
       </section>
     </div>
   );

@@ -14,7 +14,7 @@ function Betlist() {
     bet_on: 'all',
     team: 'all',
     page: 1,
-    limit: 50,
+    limit: 35,
     search: ''
   });
 
@@ -31,7 +31,7 @@ function Betlist() {
     setLoading(true);
     try {
       const queryParams = new URLSearchParams();
-      
+
       if (filters.user_id) queryParams.append('user_id', filters.user_id);
       if (filters.sport && filters.sport !== 'all') queryParams.append('sport', filters.sport);
       if (filters.market_type && filters.market_type !== 'all') queryParams.append('market_type', filters.market_type);
@@ -41,58 +41,56 @@ function Betlist() {
       if (filters.bet_on && filters.bet_on !== 'all') queryParams.append('bet_on', filters.bet_on);
       if (filters.team && filters.team !== 'all') queryParams.append('team', filters.team);
       if (filters.search) queryParams.append('search', filters.search);
-      
+
       queryParams.append('page', page);
       queryParams.append('limit', filters.limit);
-      
+
       const queryString = queryParams.toString();
       const response = await getAllBetList(queryString, 'GET');
-      
-      console.log('API Response:', response);
-      
-      // Directly handle response - ignore success flag
-      if (response) {
-        // Try to get data from response
-        let dataArray = [];
+
+      console.log('Full API Response:', response);
+
+      // ✅ FIXED: Directly access response.data since that's where your data is
+      if (response && response.data) {
+        const responseData = response.data;
         
-        // Check all possible places where data might be
-        if (Array.isArray(response)) {
-          dataArray = response;
-        } else if (response.data && Array.isArray(response.data)) {
-          dataArray = response.data;
-        } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
-          dataArray = response.data.data;
-        } else if (response.data && typeof response.data === 'object' && !Array.isArray(response.data)) {
-          // If data is object, try to find array
-          for (let key in response.data) {
-            if (Array.isArray(response.data[key])) {
-              dataArray = response.data[key];
-              break;
-            }
-          }
+        console.log('Response Data:', responseData);
+        
+        // ✅ Get bets data - it's directly in response.data
+        if (Array.isArray(responseData)) {
+          setBetData(responseData);
+        } else if (responseData.data && Array.isArray(responseData.data)) {
+          setBetData(responseData.data);
+        } else {
+          setBetData([]);
         }
-        
-        console.log('Extracted data array:', dataArray);
-        setBetData(dataArray);
-        
-        // Get pagination
-        const paginationData = response.pagination || response.data?.pagination || null;
-        if (paginationData) {
+
+        // ✅ Get pagination - it's at response.data.pagination
+        if (responseData.pagination) {
           setPagination({
-            currentPage: paginationData.page || page,
-            totalPages: paginationData.totalPages || 1,
-            total: paginationData.total || 0
+            currentPage: responseData.pagination.page || page,
+            totalPages: responseData.pagination.totalPages || 1,
+            total: responseData.pagination.total || 0
+          });
+          console.log('Pagination set:', {
+            currentPage: responseData.pagination.page,
+            totalPages: responseData.pagination.totalPages,
+            total: responseData.pagination.total
           });
         }
-        
-        // Get summary
-        const summaryData = response.summary || response.data?.summary || null;
-        if (summaryData) {
-          setSummary(summaryData);
+
+        // ✅ Get summary - it's at response.data.summary
+        if (responseData.summary) {
+          setSummary(responseData.summary);
+          console.log('Summary set:', responseData.summary);
         }
+      } else {
+        console.warn('No data in response:', response);
+        setBetData([]);
       }
     } catch (error) {
       console.error('Error fetching bet list:', error);
+      setBetData([]);
     } finally {
       setLoading(false);
     }
@@ -136,6 +134,7 @@ function Betlist() {
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= pagination.totalPages) {
+      setFilters(prev => ({ ...prev, page: page }));
       fetchBetList(page);
     }
   };
@@ -163,7 +162,7 @@ function Betlist() {
 
     items.push(
       <li key="prev" className={`previous ${current === 1 ? 'disabled' : ''}`}>
-        <a 
+        <a
           onClick={() => current > 1 && handlePageChange(current - 1)}
           className={current === 1 ? '' : 'cursor-pointer'}
           tabIndex={current === 1 ? -1 : 0}
@@ -274,10 +273,11 @@ function Betlist() {
                       aria-label="Default select example"
                       className="small_select form-select"
                     >
-                      <option value="all">All Markets</option>
-                      <option value="betfair">Bet Fair</option>
+                      <option value="all">All</option>
+                      <option value="match_odds">Match Odds</option>
                       <option value="bookmaker">Bookmaker</option>
                       <option value="fancy">Fancy</option>
+                      <option value="betfair">Bet Fair</option>
                       <option value="toss">Toss</option>
                       <option value="lottery">Lottery</option>
                     </select>
@@ -292,11 +292,9 @@ function Betlist() {
                       className="small_select form-select"
                     >
                       <option value="all">All Status</option>
-                      <option value="unmatched">Unmatched</option>
-                      <option value="matched">Matched</option>
-                      <option value="completed">Settled</option>
-                      <option value="suspend">Cancelled</option>
-                      <option value="voided">Voided</option>
+                      <option value="settled">Settled</option>
+                      <option value="active">Active</option>
+                      <option value="unsettled">Unsettled</option>
                     </select>
                   </div>
                   <div className="bet-sec bet-period">
@@ -345,6 +343,7 @@ function Betlist() {
                 </div>
               </form>
 
+              {/* Summary Section */}
               {/* {summary && (
                 <div className="summary-section mb-3 p-2" style={{ background: '#f8f9fa', borderRadius: '5px', border: '1px solid #ddd' }}>
                   <div className="row">

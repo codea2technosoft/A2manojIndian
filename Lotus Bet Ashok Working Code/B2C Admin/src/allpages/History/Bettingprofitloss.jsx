@@ -27,6 +27,7 @@ function Bettingprofitloss() {
 
     // Get agent_id from URL
     const agentId = searchParams.get('admin_id') || localStorage.getItem("admin_id");
+    const role = searchParams.get('role'); // ✅ ROLE EXTRACT KIYA
 
     // Tab configuration
     const tabs = [
@@ -89,9 +90,8 @@ function Bettingprofitloss() {
         setSelectedMarket(null);
         setExpandedRow(null);
         try {
+            // ✅ BASE PARAMS
             const params = {
-                agent_id: agentId,
-                admin_id: '',
                 user_id: '',
                 sport_id: sport_id,
                 bet_type: bet_type,
@@ -103,6 +103,18 @@ function Bettingprofitloss() {
                 page: page,
                 limit: 50,
             };
+
+            // ✅ CONDITION: Role ke hisaab se parameter bhejo
+            if (role === '2') {
+                params.agent_id = agentId;  // role=2 → agent_id
+                console.log("✅ Role=2: Sending agent_id");
+            } else if (role === '3') {
+                params.admin_id = agentId;  // role=3 → admin_id
+                console.log("✅ Role=3: Sending admin_id");
+            } else {
+                params.agent_id = agentId;  // default
+                console.log("✅ Default: Sending agent_id");
+            }
 
             console.log(`📡 Fetching Profit/Loss for ${activeTab} with params:`, params);
 
@@ -215,15 +227,26 @@ function Bettingprofitloss() {
         setDetailLoading(true);
         setShowDetail(true);
         try {
+            // ✅ BASE PARAMS
             const params = {
                 market_name: marketName,
                 event_id: eventId || '',
-                agent_id: agentId,
-                admin_id: '',
                 user_id: '',
                 page: 1,
                 limit: 100,
             };
+
+            // ✅ CONDITION: Role ke hisaab se parameter bhejo
+            if (role === '2') {
+                params.agent_id = agentId;  // role=2 → agent_id
+                console.log("✅ Detail: Role=2 Sending agent_id");
+            } else if (role === '3') {
+                params.admin_id = agentId;  // role=3 → admin_id
+                console.log("✅ Detail: Role=3 Sending admin_id");
+            } else {
+                params.agent_id = agentId;  // default
+                console.log("✅ Detail: Default Sending agent_id");
+            }
 
             console.log("📡 Fetching Detail with params:", params);
 
@@ -257,9 +280,9 @@ function Bettingprofitloss() {
                 user_name: item.user_name || item.pl_id || item.user?.username || 'N/A',
                 bet_id: item.bet_id || item._id || 'N/A',
                 selection: item.selection || item.team || 'N/A',
-                odds: item.odds || item.odd || 0,
+                odds: item.bet_on || 0,
                 stake: item.stake || 0,
-                type: item.type || item.bet_on || 'N/A',
+                type:  item.bet_on || '-',
                 placed: item.bet_placed || item.created_at ?
                     new Date(item.bet_placed || item.created_at).toLocaleString() :
                     'N/A',
@@ -303,9 +326,9 @@ function Bettingprofitloss() {
                 user_name: bet.user_name || bet.pl_id || 'N/A',
                 bet_id: bet.bet_id || bet._id || 'N/A',
                 selection: bet.selection || bet.team || 'N/A',
-                odds: bet.odds || bet.odd || 0,
+                odds: bet.bet_on  || 0,
                 stake: bet.stake || 0,
-                type: bet.type || bet.bet_on || 'N/A',
+                type: bet.bet_type|| '-',
                 placed: bet.placed || bet.bet_placed || bet.created_at ?
                     new Date(bet.placed || bet.bet_placed || bet.created_at).toLocaleString() :
                     'N/A',
@@ -371,7 +394,7 @@ function Bettingprofitloss() {
         }));
     };
 
-    // ✅ ✅ ✅ IMPORTANT: useEffect for initial load
+    // ✅ useEffect for initial load
     useEffect(() => {
         if (agentId && isInitialLoad) {
             console.log("🚀 Initial load - fetching data for", activeTab);
@@ -403,23 +426,6 @@ function Bettingprofitloss() {
 
         return (
             <div className="detail-view ">
-                {/* <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h5 className="mb-0">
-                        Market: {selectedMarket?.market || selectedMarket?.match || 'N/A'}
-                    </h5>
-                    <button 
-                        className="btn btn-sm btn-secondary"
-                        onClick={() => {
-                            setShowDetail(false);
-                            setSelectedMarket(null);
-                            setDetailData(null);
-                            setExpandedRow(null);
-                        }}
-                    >
-                        Close ✕
-                    </button>
-                </div> */}
-
                 {detailLoading ? (
                     <div className="text-center py-3">
                         <div className="spinner-border text-primary" role="status">
@@ -519,10 +525,10 @@ function Bettingprofitloss() {
                                                             )}
                                                         </dd>
 
-                                                        <dt className="me-2">Commission</dt>
+                                                        {/* <dt className="me-2">Commission</dt>
                                                         <dd className="mb-0">
                                                             {summary.commission || 0}
-                                                        </dd>
+                                                        </dd> */}
 
                                                         <dt className="fw-bold me-2">Net Market Total</dt>
                                                         <dd
@@ -551,13 +557,11 @@ function Bettingprofitloss() {
     };
 
     // ✅ Render Table
-    // ✅ Render Table - Sirf displayable fields show karo
     const renderTable = () => {
         const currentData = profitLossData[activeTab] || [];
         const headers = tabHeaders[activeTab] || ['Market', 'Profit / Loss', ''];
         const isEmpty = currentData.length === 0;
 
-        // ✅ Define which fields to display for each tab
         const getDisplayFields = (tab) => {
             const fieldMap = {
                 'Exchange': ['market', 'settled_date', 'profit_loss'],
@@ -611,7 +615,6 @@ function Bettingprofitloss() {
                                     return (
                                         <React.Fragment key={index}>
                                             <tr style={rowStyle}>
-                                                {/* ✅ Sirf display fields render karo */}
                                                 {displayFields.map((field, idx) => (
                                                     <td key={idx}>
                                                         {field === 'profit_loss' || field === 'pl' ?

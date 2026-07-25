@@ -9516,12 +9516,12 @@
   }
 
   .blue_bg {
-    background: #CCEAF8;
+    background: #72bbef;
     color: #000 !important;
   }
 
   .pink_bg {
-    background: #FFD8D9;
+    background: #faa9ba;
     color: #000 !important;
   }
 
@@ -10017,12 +10017,12 @@
   .table td,
   .table th {
     vertical-align: top;
-    border-bottom: 1px solid #f3f3f8;
+    border-bottom: 1px solid #7e97a7;
     border-top: none;
   }
 
   .table th {
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #7e97a7;
   }
 
   a.td_btn.gray {
@@ -10879,7 +10879,7 @@
     font-size: 11px;
     overflow: hidden;
         background: #fff;
-    border: 1px solid #eee;
+    border: 5px solid #eee;
   }
 
   .white-bg tr td {
@@ -10953,9 +10953,10 @@
   }
 
   .skyDetailsRow td.selaction_name a {
-   display: block;
-    font-size: 13px;
+        display: block;
+    font-size: 14px;
     color: #23282c;
+    font-weight: 600;
     text-transform: uppercase;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -11154,6 +11155,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    border-bottom: 0.5px solid #7e97a7;
   }
 
   .skyDetailsRow .lay3 {
@@ -11170,12 +11172,13 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    border-bottom: 0.5px solid #7e97a7;
   }
 
   .skyDetailsRow .back1 span,
   .skyDetailsRow .lay3 span {
     font-weight: 600;
-    font-size: 13px;
+    font-size: 16px;
   }
 
   .skyDetailsRow .back1 small,
@@ -11236,8 +11239,8 @@
 
   .indian-fancy-part .betbox a span {
    display: block;
-    font-weight: 500;
-    font-size: 13px;
+    font-weight: 600;
+    font-size: 16px;
   }
 
   .indian-fancy-part .betbox a span.novalue1 {
@@ -11264,6 +11267,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    border: 0.5px solid #7e97a7;
   }
 
   td.team_name button {
@@ -13359,7 +13363,7 @@
   .game_status_new,
   .skyDetailsRow {
     .back-1 {
-      background-color: #CCEAF8;
+      background-color: #72bbef;
     }
 
     .back-2 {
@@ -13371,7 +13375,7 @@
     }
 
     .lay-1 {
-      background-color: #FFD8D9;
+      background-color: #faa9ba;
     }
 
     .lay-2 {

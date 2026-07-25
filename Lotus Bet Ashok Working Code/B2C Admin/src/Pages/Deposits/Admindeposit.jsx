@@ -382,7 +382,9 @@ const AdminDepositList = () => {
                       <thead>
                         <tr>
                           <th scope="col">Sr no.</th>
+                         
                           <th scope="col">UserName</th>
+                           <th scope="col">UTR</th>
                           <th scope="col">Transaction ID</th>
                           <th scope="col">Account Name</th>
                           <th scope="col">Bank Name</th>
@@ -411,6 +413,7 @@ const AdminDepositList = () => {
                               <tr key={deposit._id}>
                                 <td>{(currentPage - 1) * limit + idx + 1}</td>
                                 <td>{deposit.user.username || "-"}</td>
+                                <td>{deposit.utr || "-"}</td>
                                 <td>{deposit.transaction_id || "-"}</td>
                                 <td>{deposit.accountHolderName || "-"}</td>
                                 <td>{deposit.bankName || "-"}</td>

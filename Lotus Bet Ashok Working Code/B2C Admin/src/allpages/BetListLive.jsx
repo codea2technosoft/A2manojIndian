@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Heading from '../Layout/Heading';
 import moment from 'moment';
 import {
-    getBetListlive,  // ✅ API import
+    getBetListlive,
 } from "../Server/api";
 
 function BetListLive() {
@@ -19,17 +19,12 @@ function BetListLive() {
     const [totalPages, setTotalPages] = useState(1);
     const [totalBets, setTotalBets] = useState(0);
     const [summary, setSummary] = useState(null);
-    const limit = 50;
+    const limit = 35; // ✅ Changed to 10 for better pagination
 
-    // Fetch bets on component mount and when filters change
-    useEffect(() => {
-        fetchBetList();
-    }, [currentPage, searchParams]);
-
-    const fetchBetList = async () => {
+    // ✅ Memoize fetchBetList to prevent unnecessary re-renders
+    const fetchBetList = useCallback(async () => {
         setLoading(true);
         try {
-            // ✅ WITHOUT user_id - Sirf filters bhejo
             const params = {
                 sport: searchParams.sport !== 'all' ? searchParams.sport : '',
                 market_type: searchParams.marketType !== 'all' ? searchParams.marketType : '',
@@ -43,35 +38,33 @@ function BetListLive() {
                 order_direction: searchParams.orderDirection || 'desc',
                 page: currentPage,
                 limit: limit,
+                // ✅ Add user_id if needed
+                // user_id: localStorage.getItem("user_id") || '',
             };
 
             console.log("📡 Fetching bets with params:", params);
 
-            // ✅ Call the API
             const response = await getBetListlive(params);
             console.log("✅ API Response:", response);
 
-            // ✅ Handle response from your API structure
             let bets = [];
             let total = 0;
             let totalPagesCount = 1;
             let summaryData = null;
 
+            // ✅ Handle all possible response structures
             if (response?.success) {
-                // ✅ Direct success response
                 bets = response.data || [];
                 total = response.pagination?.total || 0;
                 totalPagesCount = response.pagination?.totalPages || 1;
                 summaryData = response.summary || null;
             } else if (response?.data?.success) {
-                // ✅ Nested success response
                 const result = response.data;
                 bets = result.data || [];
                 total = result.pagination?.total || 0;
                 totalPagesCount = result.pagination?.totalPages || 1;
                 summaryData = result.summary || null;
             } else if (response?.data) {
-                // ✅ Direct data response
                 const result = response.data;
                 bets = result.data || result.bets || result.results || [];
                 total = result.pagination?.total || result.total || bets.length;
@@ -85,7 +78,9 @@ function BetListLive() {
                 bets = [];
             }
 
-            // ✅ Map data to match table structure - Using correct field names from response
+            console.log("📊 Extracted data:", { betsCount: bets.length, total, totalPagesCount });
+
+            // ✅ Map data to match table structure
             const mappedData = bets.map((item) => ({
                 user: item.pl_id || item.user?.username || item.user_id || 'N/A',
                 id: item.bet_id || item._id || 'N/A',
@@ -93,7 +88,7 @@ function BetListLive() {
                     moment(item.bet_placed || item.created_at).local().format('M/D/YYYY, h:mm:ss A') :
                     'N/A',
                 ip: item.ip_address || item.ip || 'N/A',
-                match: item.market || item.game_name || item.team || 'N/A',
+                match: item.market || item.game_name || 'N/A',
                 selection: item.selection || item.team || 'N/A',
                 type: item.type || item.bet_on || 'N/A',
                 odds: item.odds_req || item.odd || 0,
@@ -116,7 +111,12 @@ function BetListLive() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [currentPage, searchParams, limit]);
+
+    // ✅ Fetch bets when dependencies change
+    useEffect(() => {
+        fetchBetList();
+    }, [fetchBetList]);
 
     // Handle filter changes
     const handleFilterChange = (e) => {
@@ -127,13 +127,13 @@ function BetListLive() {
         }));
     };
 
-    // Handle search
+    // ✅ Handle search - Reset to page 1
     const handleSearch = () => {
         setCurrentPage(1);
-        fetchBetList();
+        // fetchBetList will be called automatically due to useEffect
     };
 
-    // Handle reset
+    // ✅ Handle reset - Reset all filters and page
     const handleReset = () => {
         setSearchParams({
             sport: 'all',
@@ -143,15 +143,30 @@ function BetListLive() {
             betStatus: 'active'
         });
         setCurrentPage(1);
+        // fetchBetList will be called automatically due to useEffect
     };
 
     // Pagination handlers
     const handlePrev = () => {
-        if (currentPage > 1) setCurrentPage(currentPage - 1);
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     };
 
     const handleNext = () => {
-        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
+    // ✅ Go to specific page
+    const goToPage = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     };
 
     return (
@@ -191,9 +206,10 @@ function BetListLive() {
                                             onChange={handleFilterChange}
                                         >
                                             <option value="all">All</option>
-                                            <option value="betfair">Bet Fair</option>
+                                            <option value="match_odds">Match Odds</option>
                                             <option value="bookmaker">Bookmaker</option>
                                             <option value="fancy">Fancy</option>
+                                            <option value="betfair">Bet Fair</option>
                                             <option value="toss">Toss</option>
                                             <option value="lottery">Lottery</option>
                                         </select>
@@ -233,8 +249,10 @@ function BetListLive() {
                                             value={searchParams.betStatus}
                                             onChange={handleFilterChange}
                                         >
+                                            <option value="all">All</option>
+                                            <option value="settled">Settled</option>
                                             <option value="active">Active</option>
-                                            <option value="suspend">Suspend</option>
+                                            <option value="unsettled">Unsettled</option>
                                         </select>
                                     </div>
                                 </div>
@@ -267,7 +285,7 @@ function BetListLive() {
                                 </div>
                             ) : (
                                 <>
-                                    {/* ✅ Summary Section */}
+                                    {/* ✅ Summary Section - Uncommented */}
                                     {summary && (
                                         <div className="summary-section mb-3 p-3 bg-light rounded">
                                             <div className="row">
@@ -350,13 +368,13 @@ function BetListLive() {
                                         </table>
                                     </div>
 
-                                    {/* Pagination */}
-                                    {betData.length > 0 && (
+                                    {/* ✅ Pagination - Enhanced */}
+                                    {betData.length > 0 && totalPages > 1 && (
                                         <div className="card-footer d-flex justify-content-between align-items-center">
                                             <span className="text-muted small">
                                                 Showing {(currentPage - 1) * limit + 1} to{" "}
                                                 {Math.min(currentPage * limit, totalBets)} of{" "}
-                                                {totalBets}
+                                                {totalBets} bets
                                             </span>
 
                                             <ul className="custom-pagination pagination mb-0">
@@ -366,15 +384,31 @@ function BetListLive() {
                                                     </button>
                                                 </li>
 
-                                                {[currentPage - 1, currentPage, currentPage + 1]
-                                                    .filter((p) => p > 0 && p <= totalPages)
-                                                    .map((p) => (
-                                                        <li key={p} className={`page-item ${currentPage === p ? "active" : ""}`}>
-                                                            <button className="page-link" onClick={() => setCurrentPage(p)}>
-                                                                {p}
-                                                            </button>
-                                                        </li>
-                                                    ))}
+                                                {/* Show page numbers with ellipsis */}
+                                                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                                    .filter(p => {
+                                                        if (totalPages <= 7) return true;
+                                                        if (p === 1 || p === totalPages) return true;
+                                                        if (p >= currentPage - 1 && p <= currentPage + 1) return true;
+                                                        return false;
+                                                    })
+                                                    .map((p, index, array) => {
+                                                        // Add ellipsis
+                                                        if (index > 0 && p - array[index - 1] > 1) {
+                                                            return (
+                                                                <li key={`ellipsis-${p}`} className="page-item disabled">
+                                                                    <span className="page-link">…</span>
+                                                                </li>
+                                                            );
+                                                        }
+                                                        return (
+                                                            <li key={p} className={`page-item ${currentPage === p ? "active" : ""}`}>
+                                                                <button className="page-link" onClick={() => goToPage(p)}>
+                                                                    {p}
+                                                                </button>
+                                                            </li>
+                                                        );
+                                                    })}
 
                                                 <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
                                                     <button className="page-link" onClick={handleNext}>
@@ -382,6 +416,13 @@ function BetListLive() {
                                                     </button>
                                                 </li>
                                             </ul>
+                                        </div>
+                                    )}
+
+                                    {/* ✅ Show total count even with 1 page */}
+                                    {betData.length > 0 && (
+                                        <div className="text-muted mt-2 text-center" style={{ fontSize: '14px' }}>
+                                            Showing {betData.length} bets | Page {currentPage} of {totalPages}
                                         </div>
                                     )}
                                 </>

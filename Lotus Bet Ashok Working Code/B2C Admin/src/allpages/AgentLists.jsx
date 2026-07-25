@@ -15,6 +15,8 @@ import {
   FaEdit,
   FaWallet,
   FaGamepad,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
 import {
   getAllUsersList,
@@ -27,6 +29,7 @@ import {
   CreateAgentAdmin,
   getAgentList,
   BetBlockUnblock,
+  changeMasterPasswordAgentStatus,
   changeMasterPasswordAgent,
   GetAgentMarketList,
   AgentMarketStatusUpdate,
@@ -142,8 +145,11 @@ function AgentLists() {
   };
   const [agentList, setAgentList] = useState([]);
   const [agentLoading, setAgentLoading] = useState(false);
-  // Filters state
+
+  // ===== SERVER SIDE FILTER STATES =====
   const [filters, setFilters] = useState({
+    username: "",      // Search by username
+    status: "",        // Filter by status
     active: "",
     userId: "",
     mobile: "",
@@ -162,7 +168,6 @@ function AgentLists() {
     page = pagination.page,
     limit = pagination.limit,
   ) => {
-    // setLoading(true);
     setTableLoading(true);
     try {
       const params = {
@@ -193,44 +198,40 @@ function AgentLists() {
       console.error("API Error:", error);
       Swal.fire("Error", "Failed to fetch users", "error");
     } finally {
-      // setLoading(false);
       setTableLoading(false);
     }
   };
 
-  // Fetch Agent List
-  // const fetchAgentList = async () => {
-  //   try {
-  //     setAgentLoading(true);
-  //     const payload = {
-  //       admin_id: admin_id || "admin"
-  //     };
-  //     const response = await getAgentList(payload);
-  //     if (response.data && response.data.success) {
-  //       setAgentList(response.data.data || []);
-  //     } else if (Array.isArray(response.data)) {
-  //       setAgentList(response.data);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching agents:", error);
-  //   } finally {
-  //     setAgentLoading(false);
-  //   }
-  // };
-
-  // Jab aap API se response le rahe hain, wahan par summary set karein:
-
-  const fetchAgentList = async () => {
+  // ===== SERVER SIDE FETCH AGENT LIST WITH FILTERS =====
+  const fetchAgentList = async (
+    page = pagination.page,
+    limit = pagination.limit
+  ) => {
     try {
       setAgentLoading(true);
       const payload = {
         admin_id: admin_id || "admin",
+        page: page,
+        limit: limit,
+        // Server side filters - these will be sent to backend
+        username: filters.username || "",   // Search by username
+        status: filters.status || "",       // Filter by status (Active/Cheater)
       };
       const response = await getAgentList(payload);
       if (response.data && response.data.success) {
         setAgentList(response.data.data || []);
 
-        // ✅ YAHAN PAR SUMMARY SET KAREIN
+        // Update pagination from server response
+        if (response.data.pagination) {
+          setPagination({
+            page: response.data.pagination.current_page || 1,
+            limit: response.data.pagination.limit || 50,
+            total: response.data.pagination.total_records || 0,
+            totalPages: response.data.pagination.total_pages || 1,
+          });
+        }
+
+        // Set summary
         if (response.data.summary) {
           setSummary({
             total_balance: response.data.summary.total_balance || "0.00",
@@ -254,8 +255,29 @@ function AgentLists() {
     }
   };
 
-  // Sabse pehle, ek function banayein jo saare agents ke values ka sum kare:
+  // ===== APPLY SERVER SIDE FILTERS =====
+  const applyServerFilters = () => {
+    setPagination((prev) => ({ ...prev, page: 1 }));
+    fetchAgentList(1, pagination.limit);
+    setFilter(false);
+  };
 
+  // ===== RESET SERVER SIDE FILTERS =====
+  const resetServerFilters = () => {
+    setFilters({
+      username: "",
+      status: "",
+      active: "",
+      userId: "",
+      mobile: "",
+      fromDate: "",
+      toDate: "",
+    });
+    setPagination((prev) => ({ ...prev, page: 1 }));
+    fetchAgentList(1, pagination.limit);
+  };
+
+  // Calculate Grand Totals
   const calculateGrandTotals = () => {
     if (!agentList || agentList.length === 0) {
       return {
@@ -295,7 +317,6 @@ function AgentLists() {
     );
   };
 
-  // Ab apne component mein totals calculate karein:
   const grandTotals = calculateGrandTotals();
 
   // Handle Create Agent
@@ -348,52 +369,6 @@ function AgentLists() {
   };
 
   // Handle Bet Block/Unblock
-  // const handleBetBlockToggle = async (agent, index) => {
-  //   const currentBlockStatus = agent.bet_block || 0;
-  //   const newBlockStatus = currentBlockStatus === 0 ? 1 : 0;
-
-  //   const confirm = await Swal.fire({
-  //     title: newBlockStatus === 1 ? "Block Bet?" : "Unblock Bet?",
-  //     text: newBlockStatus === 1
-  //       ? "Do you really want to block betting for this agent?"
-  //       : "Do you really want to unblock betting for this agent?",
-  //     icon: "warning",
-  //     showCancelButton: true,
-  //     confirmButtonText: newBlockStatus === 1 ? "Yes, Block" : "Yes, Unblock",
-  //     cancelButtonText: "Cancel",
-  //   });
-
-  //   if (!confirm.isConfirmed) return;
-
-  //   try {
-  //     setAgentLoading(true);
-  //     const payload = {
-  //       admin_id: agent.admin_id || agent._id,
-  //       bet_block: newBlockStatus
-  //     };
-  //     const response = await BetBlockUnblock(payload);
-  //     if (response.data && response.data.success) {
-  //       Swal.fire(
-  //         newBlockStatus === 1 ? "Blocked!" : "Unblocked!",
-  //         response.data.message || `Bet ${newBlockStatus === 1 ? 'blocked' : 'unblocked'} successfully!`,
-  //         "success"
-  //       );
-  //       // Update local state
-  //       const updatedList = [...agentList];
-  //       updatedList[index] = { ...updatedList[index], bet_block: newBlockStatus };
-  //       setAgentList(updatedList);
-  //       fetchAgentList(); // Refresh list
-  //     } else {
-  //       Swal.fire("Error", response.data?.message || "Failed to update bet block status", "error");
-  //     }
-  //   } catch (error) {
-  //     Swal.fire("Error", error.response?.data?.message || "Something went wrong", "error");
-  //   } finally {
-  //     setAgentLoading(false);
-  //   }
-  // };
-
-  // Handle Bet Block/Unblock
   const handleBetBlockToggle = async (agent, index) => {
     const currentBlockStatus = agent.bet_block || 0;
     const newBlockStatus = currentBlockStatus === 0 ? 1 : 0;
@@ -423,20 +398,19 @@ function AgentLists() {
         Swal.fire(
           newBlockStatus === 1 ? "Blocked!" : "Unblocked!",
           response.data.message ||
-            `Bet ${newBlockStatus === 1 ? "blocked" : "unblocked"} successfully!`,
+          `Bet ${newBlockStatus === 1 ? "blocked" : "unblocked"} successfully!`,
           "success",
         );
 
-        // 🔥 SIRF local state update karo, fetchAgentList() mat karo
+        // Update local state
         const updatedList = [...agentList];
         updatedList[index] = {
           ...updatedList[index],
           bet_block: newBlockStatus,
-          status: newBlockStatus === 1 ? "Cheater" : "Active", // Status force update
+          status: newBlockStatus === 1 ? "Cheater" : "Active",
         };
         setAgentList(updatedList);
 
-        // ❌ YEH LINE HATAO - fetchAgentList();
       } else {
         Swal.fire(
           "Error",
@@ -456,10 +430,58 @@ function AgentLists() {
   };
 
   // Handle Change Password
+  // const handleChangePassword = async (e) => {
+  //   e.preventDefault();
+
+  //   if (!newPassword) {
+  //     Swal.fire("Error", "Please enter new password", "error");
+  //     return;
+  //   }
+  //   if (newPassword.length < 6) {
+  //     Swal.fire("Error", "Password must be at least 6 characters", "error");
+  //     return;
+  //   }
+
+  //   try {
+  //     setPasswordLoading(true);
+  //     const payload = {
+  //       admin_id:
+  //         selectedAgentForPassword?.admin_id ||
+  //         selectedAgentForPassword?._id ||
+  //         admin_id,
+  //       newPassword: newPassword,
+  //     };
+  //     const response = await changeMasterPasswordAgent(payload);
+  //     if (response.data && response.data.success) {
+  //       Swal.fire("Success!", "Password changed successfully!", "success");
+  //       setChangestatus(false);
+  //       setNewPassword("");
+  //       setSelectedAgentForPassword(null);
+  //     } else {
+  //       Swal.fire(
+  //         "Error",
+  //         response.data?.message || "Failed to change password",
+  //         "error",
+  //       );
+  //     }
+  //   } catch (error) {
+  //     Swal.fire(
+  //       "Error",
+  //       error.response?.data?.message || "Something went wrong",
+  //       "error",
+  //     );
+  //   } finally {
+  //     setPasswordLoading(false);
+  //   }
+  // };
+
+
+  // Handle Change Password
+  // Handle Change Password - AgentLists.jsx
+  // Handle Change Password - AgentLists.jsx
   const handleChangePassword = async (e) => {
     e.preventDefault();
 
-    // Validation
     if (!newPassword) {
       Swal.fire("Error", "Please enter new password", "error");
       return;
@@ -472,35 +494,28 @@ function AgentLists() {
     try {
       setPasswordLoading(true);
       const payload = {
-        admin_id:
-          selectedAgentForPassword?.admin_id ||
-          selectedAgentForPassword?._id ||
-          admin_id,
+        admin_id: selectedAgentForPassword?.admin_id || selectedAgentForPassword?._id || admin_id,
         newPassword: newPassword,
+        status: status  // ✅ YEH LINE ADD KARO - status payload mein bhejo
       };
-      const response = await changeMasterPasswordAgent(payload);
+      console.log("Payload:", payload); // Debug ke liye
+      const response = await changeMasterPasswordAgentStatus(payload);
       if (response.data && response.data.success) {
-        Swal.fire("Success!", "Password changed successfully!", "success");
+        Swal.fire("Success!", "Status changed successfully!", "success");
         setChangestatus(false);
         setNewPassword("");
         setSelectedAgentForPassword(null);
+        fetchAgentList(); // Refresh list
       } else {
-        Swal.fire(
-          "Error",
-          response.data?.message || "Failed to change password",
-          "error",
-        );
+        Swal.fire("Error", response.data?.message || "Failed to change Status", "error");
       }
     } catch (error) {
-      Swal.fire(
-        "Error",
-        error.response?.data?.message || "Something went wrong",
-        "error",
-      );
+      Swal.fire("Error", error.response?.data?.message || "Something went wrong", "error");
     } finally {
       setPasswordLoading(false);
     }
   };
+
 
   // Open Change Status Modal with agent data
   const openChangeStatusModal = (agent) => {
@@ -571,13 +586,12 @@ function AgentLists() {
         Swal.fire(
           actionType === "active" ? "Activated!" : "Inactivated!",
           response.data.message ||
-            `Market ${actionType === "active" ? "activated" : "inactivated"} successfully!`,
+          `Market ${actionType === "active" ? "activated" : "inactivated"} successfully!`,
           "success",
         );
         setConfirmModal(false);
         setRemark("");
         setSelectedMarket(null);
-        // Refresh market list
         await fetchMarketList(selectedAgentForMarket);
       } else {
         Swal.fire(
@@ -627,6 +641,7 @@ function AgentLists() {
       }
     }
   };
+
   const handleDeleteExposure = async (userId) => {
     const confirmation = await Swal.fire({
       title: "Are you sure?",
@@ -655,28 +670,10 @@ function AgentLists() {
       }
     }
   };
-  const applyFilters = () => {
-    setPagination((prev) => ({ ...prev, page: 1 }));
-    fetchUsers(1, pagination.limit);
-    setFilter(false);
-  };
-  const resetFilters = () => {
-    setFilters({
-      active: "",
-      search: "",
-      userId: "",
-      mobile: "",
-      name: "",
-      fromDate: "",
-      toDate: "",
-    });
-    setPagination((prev) => ({ ...prev, page: 1 }));
-    fetchUsers(1, pagination.limit);
-  };
 
   const handlePageChange = (newPage) => {
     setPagination((prev) => ({ ...prev, page: newPage }));
-    fetchUsers(newPage, pagination.limit);
+    fetchAgentList(newPage, pagination.limit);
   };
 
   const handleOpenModal = (type, user) => {
@@ -704,6 +701,7 @@ function AgentLists() {
       setLoading(false);
     }
   };
+
   const handleTransaction = async () => {
     if (!amount || amount <= 0) {
       Swal.fire("Error", "Please enter a valid amount", "error");
@@ -733,15 +731,12 @@ function AgentLists() {
           html: `
         <p>${response.data.message}</p>
         <div class="mt-3">
-          <p><strong>User:</strong> ${
-            selectedUser?.username || selectedUser?.mobile
-          }</p>
-          <p><strong>Previous Balance:</strong> ₹ ${
-            response.data.data.previousBalance || selectedUser?.credit || 0
-          }</p>
-          <p><strong>${
-            modalType === "add" ? "Added" : "Withdrawn"
-          }:</strong> ₹ ${amount}</p>
+          <p><strong>User:</strong> ${selectedUser?.username || selectedUser?.mobile
+            }</p>
+          <p><strong>Previous Balance:</strong> ₹ ${response.data.data.previousBalance || selectedUser?.credit || 0
+            }</p>
+          <p><strong>${modalType === "add" ? "Added" : "Withdrawn"
+            }:</strong> ₹ ${amount}</p>
         </div>
         `,
           icon: "success",
@@ -803,7 +798,7 @@ function AgentLists() {
     }
   };
 
-   const handleExposureClick = async (agentId, agentName, adminId) => {
+  const handleExposureClick = async (agentId, agentName, adminId) => {
     try {
       setExposureLoading(true);
       setSelectedAgentName(agentName || 'Agent');
@@ -815,12 +810,10 @@ function AgentLists() {
       const response = await getUserExposure(payload);
       console.log("Exposure Response:", response.data);
 
-      // ✅ Response mein status_code check karo
       if (response?.data?.status_code === 1) {
-        // data array mein pehla object hai, usme bets array hai
         const userData = response.data.data[0];
         if (userData && userData.bets) {
-          setExposureData(userData.bets);  // <-- bets array set karo
+          setExposureData(userData.bets);
         } else {
           setExposureData([]);
         }
@@ -842,14 +835,6 @@ function AgentLists() {
       state: { userId: userId },
     });
   };
-  // const [summary, setSummary] = useState({
-  //   totalBalance: '0.00',
-  //   totalExposure: '0.00',
-  //   totalAvailableBalance: '0.00',
-  //   balance: '0.00',
-  //   availableBalance: '0.00',
-  //   totalPlayerBalance: '0.00'
-  // });
 
   const [summary, setSummary] = useState({
     total_balance: "0.00",
@@ -887,36 +872,58 @@ function AgentLists() {
                 <div className="row">
                   <div className="d-flex flex-wrap col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                     <form id="searchForm" className="">
-                      <div className="position-relative">
+
+                      <div className="position-relative d-flex align-items-center gap-2" >
                         <input
                           placeholder="Find member..."
                           type="text"
                           className="form-control"
+                          value={filters.username}
+                          onChange={(e) => setFilters({ ...filters, username: e.target.value })}
                         />
-                        <button
-                          type="submit"
-                          className="search-btn s-btn btn btn-primary"
-                        >
-                          Search
-                        </button>
+
                       </div>
-                      <div className="d-flex align-items-center ps-2">
+
+                      <div className="d-flex align-items-center ps-2 gap-2">
                         <label className="pe-3 mb-0 form-label">Status</label>
                         <select
                           aria-label="Default select example"
-                          className="form-select"
+                          className="form-select h-auto"
+                          value={filters.status}
+                          onChange={(e) => setFilters({ ...filters, status: e.target.value })}
                         >
                           <option value="">All</option>
                           <option value="active">Active</option>
+                          {/* <option value="cheater">Cheater</option> */}
                           <option value="suspend">Suspend</option>
                           <option value="locked">Locked</option>
                         </select>
+
+                        <button
+                          type="button"
+                          className="btn btn-primary py-2"
+                          // className="search-btn s-btn btn btn-primary"
+                          onClick={applyServerFilters}
+                        >
+                          Search
+                        </button>
+                        <button
+                          className="btn btn-secondary me-2 align-items-center d-flex"
+                          onClick={resetServerFilters}
+                        >
+                          <i className="fas fa-undo me-1"></i> Reset
+                        </button>
                       </div>
+
+
+
                     </form>
                     <div className="agent-path mb-3" />
                   </div>
                   <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                     <div className="d-flex flex-wrap justify-content-end">
+                      {/* ===== RESET FILTER BUTTON ===== */}
+
                       <div className="find-member-director text-xl-end ">
                         <button className="btn" onClick={AdduserOpenModalall}>
                           <i className="fas fa-user-plus pe-1" /> Add Agent
@@ -933,7 +940,7 @@ function AgentLists() {
         <section className="total-balance-sec d-flex justify-content-center align-items-center">
           <ul
             className="list-unstyled detail-header mb-2"
-            style={{ width: "98.5%" }}
+            style={{ width: "100%" }}
           >
             <li>
               <dt>Total Balance</dt>
@@ -957,499 +964,293 @@ function AgentLists() {
             </li>
             <li>
               <dt>Total Player Balance</dt>
-              <strong>INR {summary.total_player_balance}</strong>{" "}
-              {/* ✅ Correct */}
+              <strong>INR {summary.total_player_balance}</strong>
             </li>
           </ul>
         </section>
 
-        <div className="card account-table home-table">
-          <div className="card-body home-table table-responsive">
-            <table
-              id="export-table"
-              className="client-tabel table table-striped"
-            >
-              <thead>
-                <tr>
-                  <th scope="col" className="text-center">
-                    Account
-                  </th>
-                  <th scope="col" className="text-center">
-                    Credit Ref.
-                  </th>{" "}
-                  <th scope="col" className="text-center">
-                    Withdraw Limit
-                  </th>
-                  <th scope="col" className="text-center">
-                    Balance
-                  </th>
-                  <th scope="col" className="text-center">
-                    Player Exposure
-                  </th>
-                  <th scope="col" className="text-center">
-                    Avail. bal.{" "}
-                  </th>
-                  <th scope="col" className="text-center">
-                    Player Balance{" "}
-                  </th>
-                  <th scope="col" className="text-center">
-                    Reference P/L
-                  </th>
-                  <th scope="col" className="text-center">
-                    Current P/L
-                  </th>
-                  <th scope="col" className="text-center">
-                    B Lock
-                  </th>
-                  <th scope="col" className="text-center">
-                    Status
-                  </th>
-                  <th scope="col" className="text-center">
-                    Action
-                  </th>
-                </tr>
-              </thead>
+        <div className="account-table home-table">
+          <table
+            id="export-table"
+            className="client-tabel table table-striped"
+          >
+            <thead>
+              <tr>
+                <th scope="col" className="text-center">
+                  Account
+                </th>
+                <th scope="col" className="text-center">
+                  Credit Ref.
+                </th>
+                <th scope="col" className="text-center">
+                  Withdraw Limit
+                </th>
+                <th scope="col" className="text-center">
+                  Balance
+                </th>
+                <th scope="col" className="text-center">
+                  Player Exposure
+                </th>
+                <th scope="col" className="text-center">
+                  Avail. bal.
+                </th>
+                <th scope="col" className="text-center">
+                  Player Balance
+                </th>
+                <th scope="col" className="text-center">
+                  Reference P/L
+                </th>
+                <th scope="col" className="text-center">
+                  Current P/L
+                </th>
+                <th scope="col" className="text-center">
+                  B Lock
+                </th>
+                <th scope="col" className="text-center">
+                  Status
+                </th>
+                <th scope="col" className="text-center">
+                  Action
+                </th>
+              </tr>
+            </thead>
 
-              <thead>
-                <tr className="table-secondary">
-                  <td scope="col" className="text-center">
-                    <strong>Total</strong>
-                  </td>
-                  <td scope="col" className="text-center">
-                    <strong>{grandTotals.credit_ref.toFixed(2)}</strong>
-                  </td>
-                  <td scope="col" className="text-center">
-                    <strong>{grandTotals.withdraw_limit.toFixed(2)}</strong>
-                  </td>
-                  <td scope="col" className="text-center">
-                    <strong>{grandTotals.balance.toFixed(2)}</strong>
-                  </td>
-                  <td scope="col" className="text-center">
-                    <strong>{grandTotals.player_exposure.toFixed(2)}</strong>
-                  </td>
-                  <td scope="col" className="text-center">
-                    <strong>{grandTotals.available_balance.toFixed(2)}</strong>
-                  </td>
-                  <td scope="col" className="text-center">
-                    <strong>
-                      {grandTotals.total_player_balance.toFixed(2)}
-                    </strong>
-                  </td>
-                  <td scope="col" className="text-center">
-                    <strong>{grandTotals.reference_pl.toFixed(2)}</strong>
-                  </td>
-                  <td scope="col" className="text-center">
-                    <strong>{grandTotals.current_pl.toFixed(2)}</strong>
-                  </td>
-                  <td scope="col" className="text-center">
-                    {/* B Lock column - checkbox count ya total nahi */}
-                  </td>
-                  <td scope="col" className="text-center">
-                    {/* Status column - kuch nahi */}
-                  </td>
-                  <td scope="col" className="text-center">
-                    {/* Action column - kuch nahi */}
-                  </td>
-                </tr>
-              </thead>
+            <tbody>
+              <tr>
+                <td scope="col" className="text-center">
+                  {/* <strong>Total</strong> */}
+                </td>
+                <td scope="col" className="text-center">
+                  <strong>
+                    {(grandTotals.credit_ref - grandTotals.player_exposure).toFixed(2)}
+                  </strong>
+                </td>
+                <td scope="col" className="text-center">
+                  <strong>{grandTotals.withdraw_limit.toFixed(2)}</strong>
+                </td>
+                <td scope="col" className="text-center">
+                  <strong>{grandTotals.balance.toFixed(2)}</strong>
+                </td>
+                <td scope="col" className="text-center">
+                  <strong>{grandTotals.player_exposure.toFixed(2)}</strong>
+                </td>
+                <td scope="col" className="text-center">
+                  <strong>{grandTotals.available_balance.toFixed(2)}</strong>
+                </td>
+                <td scope="col" className="text-center">
+                  <strong>
+                    {grandTotals.total_player_balance.toFixed(2)}
+                  </strong>
+                </td>
+                <td scope="col" className="text-center">
+                  {/* <strong>{grandTotals.total_amount}</strong> */}
+                </td>
+                <td scope="col" className="text-center">
+                  {/* <strong>{grandTotals.current_pl.toFixed(2)}</strong> */}
+                </td>
+                <td scope="col" className="text-center"></td>
+                <td scope="col" className="text-center"></td>
+                <td scope="col" className="text-center"></td>
+              </tr>
+              {agentList.length > 0 ? (
+                agentList.map((agent, index) => (
+                  <tr key={index}>
+                    <td className="text-start">
+                      <Link to={`/users-list?agent_id=${agent.admin_id}`}>
+                        <span>AG</span>
+                        {agent.name || agent.username}
+                      </Link>
+                    </td>
 
-              <tbody>
-                {/* Agent List Mapping */}
-                {agentList.length > 0 ? (
-                  agentList.map((agent, index) => (
-                    <tr key={index}>
-                      <td className="text-start">
-                        <Link to={`/users-list?agent_id=${agent.admin_id}`}>
-                          <span>AG</span>
-                          {agent.name || agent.username}
-                        </Link>
-                      </td>
-
-                      <td className="text-end">
-                        <Link
-                          to="#"
-                          className="text-primary"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setSelectedAgent(agent);
-                            setEditType("credit");
-                            setShowWithdrawModal(true);
-                          }}
-                        >
-                          {agent.credit_ref || "0.00"}{" "}
-                          <i className="fas fa-pen ps-1" />
-                        </Link>
-                      </td>
-                      <td className="text-end">
-                        <Link
-                          to="#"
-                          className="text-primary"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setSelectedAgent(agent);
-                            setEditType("withdraw");
-                            setShowWithdrawModal(true);
-                          }}
-                        >
-                          {agent.withdraw_limit || "0.00"}{" "}
-                          <i className="fas fa-pen ps-1" />
-                        </Link>
-                      </td>
-                      <td className="text-primary text-end">
-                        {agent.balance || "0.00"}
-                      </td>
-
-                      {/* ===== PLAYER EXPOSURE - CLICK HERE ===== */}
-                      {/* <td className="text-end">
-                        <Link
-                          onClick={() =>
-                            handleExposureClick(
-                              agent._id,
-                              agent.name || agent.username,
-                            )
+                    <td className="text-end">
+                      <Link
+                        to="#"
+                        className="text-primary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setSelectedAgent(agent);
+                          setEditType("credit");
+                        }}
+                      >
+                        {/* {(agent.credit_ref - agent.player_exposure).toFixed(2)} */}
+                        {(agent.credit_ref).toFixed(2)}
+                        <i className="fas fa-pen ps-1" />
+                      </Link>
+                    </td>
+                    <td className="text-end">
+                      <Link
+                        to="#"
+                        className="text-primary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setSelectedAgent(agent);
+                          setEditType("withdraw");
+                        }}
+                      >
+                        {agent.withdraw_limit || "0.00"}{" "}
+                        <i className="fas fa-pen ps-1" />
+                      </Link>
+                    </td>
+                    <td className="text-primary text-end">
+                      {agent.balance || "0.00"}
+                    </td>
+                    <td className="text-end">
+                      <Link onClick={() => handleExposureClick(agent.admin_id)}>
+                        <span className="status-suspend1">{agent.player_exposure || '0.00'}</span>
+                      </Link>
+                    </td>
+                    <td className="text-end">
+                      {agent.available_balance || "0.00"}
+                    </td>
+                    <td className="text-end">
+                      {agent.total_player_balance || "0.00"}
+                    </td>
+                    <td className={`text-end  ${Number(agent.total_amount) <= 0 ? "ul-t" : "ul-t2"
+                      }`}>
+                      <span>
+                        {agent.total_amount || "0.00"}
+                      </span>
+                    </td>
+                    <td className="text-end">
+                      <span style={{ color: "green" }}>
+                        {agent.current_pl || "0.00"}
+                      </span>
+                    </td>
+                    <td className="text-end b-lock">
+                      <div className="">
+                        <input
+                          type="checkbox"
+                          id={`default-checkbox-${index}`}
+                          className="form-check-input"
+                          checked={
+                            agent.bet_block === 1 || agent.block || false
                           }
-                        >
-                          <span className="status-suspend1">
-                            {agent.player_exposure || "0.00"}
-                          </span>
-                        </Link>
-                      </td> */}
-                        <td className="text-end">
-                        <Link onClick={() => handleExposureClick(agent.admin_id)}>
-                          <span className="status-suspend1">{agent.player_exposure || '0.00'}</span>
-                        </Link>
-                      </td>
+                          onChange={() => handleBetBlockToggle(agent, index)}
+                        />
+                      </div>
+                    </td>
+                    <td className="text-end">
+                      <strong
+                        className={
+                          agent.bet_block === 1
+                            ? "status-cheater"
+                            : agent.status === "active"
+                              ? "status-active"
+                              : "status-active"
+                        }
+                      >
+                        {agent.bet_block === 1
+                          ? "Cheater"
+                          : agent.status || "active"}
+                      </strong>
+                    </td>
+                    <td className="action_link text-end">
+                      <Link
+                        to={`/betting-profit-loss?admin_id=${agent.admin_id || agent._id}&role=${agent.role || 2}`}
+                        className="btn"
+                        title="Betting Profit Loss"
+                      >
+                        <i className="fas fa-exchange-alt swap-icon" />
+                      </Link>
 
-                      {/* ======================================== */}
+                      <Link
+                        to={`/betting-history?admin_id=${agent.admin_id || agent._id}&role=${agent.role || 2}`}
+                        className="btn"
+                        title="Betting History"
+                      >
+                        <i className="fas fa-th-list" />
+                      </Link>
 
-                      <td className="text-end">
-                        {agent.available_balance || "0.00"}
-                      </td>
-                      <td className="text-end">
-                        {agent.total_player_balance || "0.00"}
-                      </td>
-                      <td className="text-end ul-t">
-                        <span style={{ color: "red" }}>
-                          {agent.reference_pl || "0.00"}
-                        </span>
-                      </td>
-                      <td className="text-end">
-                        <span style={{ color: "green" }}>
-                          {agent.current_pl || "0.00"}
-                        </span>
-                      </td>
-                      <td className="text-end b-lock">
-                        <div className="">
-                          <input
-                            type="checkbox"
-                            id={`default-checkbox-${index}`}
-                            className="form-check-input"
-                            checked={
-                              agent.bet_block === 1 || agent.block || false
-                            }
-                            onChange={() => handleBetBlockToggle(agent, index)}
-                          />
-                        </div>
-                      </td>
-                      {/* <td className="text-end">
-                        <strong className={agent.status === 'Active' ? 'status-active' : 'status-inactive'}>
-                          {agent.status || 'Active'}
-                        </strong>
-                      </td> */}
+                      <a
+                        title="Change Status"
+                        className="btn"
+                        onClick={() => openChangeStatusModal(agent)}
+                      >
+                        <i className="fas fa-cog" />
+                      </a>
 
-                      <td className="text-end">
-                        <strong
-                          className={
-                            agent.bet_block === 1
-                              ? "status-cheater"
-                              : agent.status === "Active"
-                                ? "status-active"
-                                : "status-active"
-                          }
-                        >
-                          {agent.bet_block === 1
-                            ? "Cheater"
-                            : agent.status || "Active"}
-                        </strong>
-                      </td>
+                      <Link
+                        to={`/account-summary?admin_id=${agent.admin_id || agent._id}&role=${agent.role || 2}`}
+                        className="btn"
+                        title="Account Summary"
+                      >
+                        <i className="fas fa-user" />
+                      </Link>
 
-                      <td className="action_link text-end">
-                        {/* <a
-                          title="Betting Profit Loss"
-                          className="btn"
-                          href={`/betting-profit-loss/${agent._id}/agent`}
-                        >
-                          <i className="fas fa-exchange-alt swap-icon" />
-                        </a> */}
-
-                        <Link
-                          // to={`/betting-profit-loss/${agent._id}/agent`}
-
-                          to={`/betting-profit-loss?admin_id=${agent.admin_id || agent._id}&role=${agent.role || 2}`}
-                          className="btn"
-                          title="Betting Profit Loss"
-                        >
-                          <i className="fas fa-exchange-alt swap-icon" />
-                        </Link>
-
-                        {/* <a
-                          title="Betting History"
-                          className="btn"
-                          href={`/betting-history/${agent._id}/agent`}
-                        >
-                          <i className="fas fa-th-list" />
-                        </a> */}
-
-                        <Link
-                          // to={`/betting-history/${agent._id}/agent`}
-                          to={`/betting-history?admin_id=${agent.admin_id || agent._id}&role=${agent.role || 2}`}
-                          className="btn"
-                          title="Betting History"
-                        >
-                          <i className="fas fa-th-list" />
-                        </Link>
-
-                        <a
-                          title="Change Status"
-                          className="btn"
-                          onClick={() => openChangeStatusModal(agent)}
-                        >
-                          <i className="fas fa-cog" />
-                        </a>
-                        {/* <a
-                          title="Account Summary"
-                          className="btn"
-                          href={`/account-summary?admin_id=${agent.admin_id || agent._id}&role=${agent.role || 2}`}
-                        >
-                          <i className="fas fa-user" />
-                        </a> */}
-
-                        <Link
-                          to={`/account-summary?admin_id=${agent.admin_id || agent._id}&role=${agent.role || 2}`}
-                          className="btn"
-                          title="Account Summary"
-                        >
-                          <i className="fas fa-user" />
-                        </Link>
-
-                        <a
-                          title="Block Market"
-                          className="btn"
-                          onClick={() => fetchMarketList(agent)}
-                          style={{ cursor: "pointer" }}
-                        >
-                          <i className="fas fa-lock" />
-                        </a>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="12" className="text-center py-4">
-                      {agentLoading ? (
-                        <div className="spinner-border text-primary"></div>
-                      ) : (
-                        "No agents found"
-                      )}
+                      <a
+                        title="Block Market"
+                        className="btn"
+                        onClick={() => fetchMarketList(agent)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <i className="fas fa-lock" />
+                      </a>
                     </td>
                   </tr>
-                )}
-
-                {/* Static rows - DO NOT MODIFY */}
-              </tbody>
-            </table>
-
-            {/* <table className="table table-bordered table-hover">
-              <thead>
+                ))
+              ) : (
                 <tr>
-                  <th scope="col" class="text-center">Account</th>
-                  <th scope="col" class="text-center">Credit Ref.</th>
-                  <th scope="col" class="text-center">Withdraw Limit</th>
-                  <th scope="col" class="text-center">Balance</th>
-                  <th scope="col" class="text-center">Player Exposure</th>
-                  <th scope="col" class="text-center">Avail. bal. </th>
-                  <th scope="col" class="text-center">Player Balance </th>
-                  <th scope="col" class="text-center">Reference P/L</th>
-                  <th scope="col" class="text-center">Current P/L</th>
-                  <th scope="col" class="text-center">B Lock</th>
-                  <th scope="col" class="text-center">Status</th>
-                  <th scope="col" class="text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tableLoading && (
-                  <tr>
-                    <td colSpan="8" className="text-center py-5">
+                  <td colSpan="12" className="text-center py-4">
+                    {agentLoading ? (
                       <div className="spinner-border text-primary"></div>
-                      <p className="mt-2">Loading users...</p>
-                    </td>
-                  </tr>
-                )}
-                {!tableLoading && users.length > 0 ? (
-                  users.map((user, i) => (
-                    <tr key={user._id}>
-                      <td>{(pagination.page - 1) * pagination.limit + i + 1}</td>
-                      <td>
-                        <small>
-                          {new Date(
-                            user.created_at || user.createdAt || user.updated_at,
-                          ).toLocaleString("en-IN", {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                          })}
-                        </small>
-                      </td>
-                      <td>{user.username}</td>
-                      <td>{user.mobile}</td>
-                      <td>{user?.credit?.toFixed(2)}</td>
-                      <td
-                        className="fw-bold text-danger"
-                        title="Click to view bet details"
-                      >
-                        <span
-                          style={{
-                            cursor: "pointer",
-                            textDecoration: "underline"
-                          }}
-                          onClick={() => handleExposureClick(user._id)}
-                        >
-                          ₹ {user.totalExposure || 0}
-                        </span>
-                        {user.totalExposure > 0 && (
-                          <MdDelete
-                            size={18}
-                            style={{
-                              marginLeft: "10px",
-                              cursor: "pointer",
-                              color: "#ff4d4f",
-                              verticalAlign: "middle"
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation(); 
-                              handleDeleteExposure(user._id);
-                            }}
-                            title="Delete Exposure"
-                          />
-                        )}
-                      </td>
-                      <td>
-                        <span
-                          className={`fw-bold ${user.active === 1 ? "text-success" : "text-danger"
-                            }`}
-                        >
-                          {user.active === 1 ? "Active" : "Inactive"}
-                        </span>
-                      </td>
-                      <td className="action_link text-end">
-
-                        <>
-                          <a
-                            title="Betting Profit Loss"
-                            className="btn"
-                            href="/betting-profit-loss/686b99e23b16954f6d69eccc/agent"
-                          >
-                            <i className="fas fa-exchange-alt swap-icon" />
-                          </a>
-                          <a
-                            title="Betting History"
-                            className="btn"
-                            href="/betting-history/686b99e23b16954f6d69eccc/agent"
-                          >
-                            <i className="fas fa-th-list" />
-                          </a>
-                          <a title="Change Status" className="btn">
-                            <i className="fas fa-cog" />
-                          </a>
-                          <a
-                            title="Account Summary"
-                            className="btn"
-                            href="/account-summary"
-                          >
-                            <i className="fas fa-user" />
-                          </a>
-                          <a title="Block Market" className="btn" href="/">
-                            <i className="fas fa-lock" />
-                          </a>
-                        </>
-
-                       
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="8" className="text-center py-4">
-                      No users found
-                      <br />
-                      <button
-                        className="btn btn-primary mt-2"
-                        onClick={fetchUsers}
-                      >
-                        Refresh
-                      </button>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table> */}
-          </div>
+                    ) : (
+                      "No agents found"
+                    )}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
 
           {/* Pagination */}
           {pagination.total > 0 && (
-            <div className="card-footer d-flex justify-content-between align-items-center">
-              <span className="text-muted small">
+            <div className="bottom-pagination d-flex justify-content-center align-items-center">
+              {/* <span className="text-muted small">
                 Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
                 {Math.min(pagination.page * pagination.limit, pagination.total)}{" "}
                 of {pagination.total} All users
-              </span>
+              </span> */}
 
-              <ul className="custom-pagination pagination mb-0">
-                {/* Prev */}
+              <ul className="pagination mb-0 gap-0">
                 <li
-                  className={`page-item ${
-                    pagination.page === 1 ? "disabled" : ""
-                  }`}
+                  className={`previous ${pagination.page === 1 ? "disabled" : ""
+                    }`}
                 >
-                  <button
-                    className="page-link"
+                  <Link
+                    className=""
                     onClick={() => handlePageChange(pagination.page - 1)}
                   >
-                    &laquo;
-                  </button>
+                    <FaChevronLeft />
+                  </Link>
                 </li>
 
-                {/* Pages */}
                 {[pagination.page - 1, pagination.page, pagination.page + 1]
                   .filter((p) => p > 0 && p <= pagination.totalPages)
                   .map((p) => (
                     <li
                       key={p}
-                      className={`page-item ${
-                        pagination.page === p ? "active" : ""
-                      }`}
+                      className={`p-0 ${pagination.page === p ? "active" : ""
+                        }`}
                     >
-                      <button
-                        className="page-link"
+                      <Link
+                        className="pagintion-li"
                         onClick={() => handlePageChange(p)}
                       >
                         {p}
-                      </button>
+                      </Link>
                     </li>
                   ))}
 
-                {/* Next */}
                 <li
-                  className={`page-item ${
-                    pagination.page === pagination.totalPages ? "disabled" : ""
-                  }`}
+                  className={`next ${pagination.page === pagination.totalPages ? "disabled" : ""
+                    }`}
                 >
-                  <button
-                    className="page-link"
+                  <Link
+                    className=""
                     onClick={() => handlePageChange(pagination.page + 1)}
                   >
-                    &raquo;
-                  </button>
+                    <FaChevronRight />
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -1457,6 +1258,7 @@ function AgentLists() {
         </div>
       </div>
 
+      {/* Modals - All existing modals remain unchanged */}
       <Modal show={showModal} onHide={handleCloseModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>
@@ -1558,22 +1360,6 @@ function AgentLists() {
               <Button variant="danger" onClick={handleCloseModal}>
                 Cancel
               </Button>
-              {/* <Button
-                variant={modalType === "add" ? "success" : "warning"}
-                onClick={handleTransaction}
-                disabled={
-                  modalType === "withdraw" &&
-                  Number(amount) > (selectedUser?.credit || 0)
-                }
-              >
-                {modalType === "add" ? (
-                  <>
-                    <FaPlus className="me-1" /> Add ₹ {amount || 0}
-                  </>
-                ) : (
-                  <>Withdraw ₹ {amount || 0}</>
-                )}
-              </Button> */}
               <Button
                 variant={modalType === "add" ? "success" : "warning"}
                 onClick={handleClick}
@@ -1611,7 +1397,7 @@ function AgentLists() {
             >
               <div className="modal-content">
                 <div className="modal-header">
-                  <h5 className="common-heading">Change Password</h5>
+                  <h5 className="common-heading">Change Sttaus</h5>
                   <button
                     type="button"
                     className="btn-close"
@@ -1788,12 +1574,6 @@ function AgentLists() {
                                       className="form-check-label"
                                     />
                                   </div>
-                                  {/* <button
-                                    className="btn btn-sm btn-outline-dark"
-                                    onClick={() => handleMarketStatusUpdate(item, item.status)}
-                                  >
-                                    {item.status === 1 ? '🟢' : '🔴'}
-                                  </button> */}
                                 </td>
                               </tr>
                             ))
@@ -1904,7 +1684,6 @@ function AgentLists() {
                     onSubmit={handleCreateAgent}
                   >
                     <div className="row">
-                      {/* Username */}
                       <div className="mb-3 col-sm-12">
                         <div className="row">
                           <div className="col-md-4">
@@ -1939,7 +1718,6 @@ function AgentLists() {
                         </div>
                       </div>
 
-                      {/* First Name */}
                       <div className="mb-3 col-sm-12">
                         <div className="row">
                           <div className="col-md-4">
@@ -1974,7 +1752,6 @@ function AgentLists() {
                         </div>
                       </div>
 
-                      {/* Last Name */}
                       <div className="mb-3 col-sm-12">
                         <div className="row">
                           <div className="col-md-4">
@@ -2009,7 +1786,6 @@ function AgentLists() {
                         </div>
                       </div>
 
-                      {/* Password */}
                       <div className="mb-3 col-sm-12">
                         <div className="row">
                           <div className="col-md-4">
@@ -2044,7 +1820,6 @@ function AgentLists() {
                         </div>
                       </div>
 
-                      {/* Confirm Password */}
                       <div className="mb-3 col-sm-12">
                         <div className="row">
                           <div className="col-md-4">
@@ -2082,43 +1857,39 @@ function AgentLists() {
                       </div>
                     </div>
 
-
-
-
-                     {/*Agent Comm */}
-                      <div className="mb-3 col-sm-12">
-                        <div className="row">
-                          <div className="col-md-4">
-                            <label className="form-label">Agent Comm (%)</label>
-                          </div>
-                          <div className="col-md-8">
-                            <input
-                              placeholder="Enter Agent Comm"
-                              name="agent_comm"
-                              type="text"
-                              className="form-control"
-                              value={agentFormData.agent_comm}
-                              onChange={(e) =>
-                                setAgentFormData({
-                                  ...agentFormData,
-                                  agent_comm: e.target.value,
-                                })
-                              }
-                            />
-                            {agentErrors.agent_comm && (
-                              <div
-                                style={{
-                                  color: "#dc3545",
-                                  fontSize: "14px",
-                                  marginTop: "5px",
-                                }}
-                              >
-                                {agentErrors.agent_comm}
-                              </div>
-                            )}
-                          </div>
+                    <div className="mb-3 col-sm-12">
+                      <div className="row">
+                        <div className="col-md-4">
+                          <label className="form-label">Agent Comm (%)</label>
+                        </div>
+                        <div className="col-md-8">
+                          <input
+                            placeholder="Enter Agent Comm"
+                            name="agent_comm"
+                            type="text"
+                            className="form-control"
+                            value={agentFormData.agent_comm}
+                            onChange={(e) =>
+                              setAgentFormData({
+                                ...agentFormData,
+                                agent_comm: e.target.value,
+                              })
+                            }
+                          />
+                          {agentErrors.agent_comm && (
+                            <div
+                              style={{
+                                color: "#dc3545",
+                                fontSize: "14px",
+                                marginTop: "5px",
+                              }}
+                            >
+                              {agentErrors.agent_comm}
+                            </div>
+                          )}
                         </div>
                       </div>
+                    </div>
 
                     <div className="mt-3 text-center">
                       <button
@@ -2137,7 +1908,7 @@ function AgentLists() {
         </div>
       )}
 
-      {/* ===== EXPOSURE POPUP MODAL ===== */}
+      {/* Exposure Popup Modal */}
       {showExposurePopup && (
         <div className="allcommon">
           <div
@@ -2151,11 +1922,6 @@ function AgentLists() {
                   <h2 className="common-heading">
                     Exposure Information - {selectedAgentName}
                   </h2>
-                  {/* <button
-                    type="button"
-                    className="btn-close"
-                    onClick={() => setShowExposurePopup(false)}
-                  ></button> */}
                 </div>
                 <div className="modal-body">
                   {exposureLoading ? (
@@ -2190,8 +1956,6 @@ function AgentLists() {
                                   </td>
                                 </tr>
                               ))}
-
-                              {/* ===== GRAND TOTAL ROW ===== */}
                               <tr className="table-secondary">
                                 <td colSpan="3" className="text-end fw-bold">
                                   <strong>Grand Total</strong>
@@ -2202,7 +1966,6 @@ function AgentLists() {
                                   </strong>
                                 </td>
                               </tr>
-                              {/* =========================== */}
                             </>
                           ) : (
                             <tr>
@@ -2229,7 +1992,6 @@ function AgentLists() {
           </div>
         </div>
       )}
-      {/* ================================ */}
 
       {showWithdrawModal && (
         <div className="allcommon">

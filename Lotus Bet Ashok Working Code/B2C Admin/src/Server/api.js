@@ -213,7 +213,9 @@ export const importEvent = (sport_id, series_id) =>
 
 // Settings APIs
 export const getSettings = () => API.get('/admin-setting-list');
+
 export const UpdateSettings = (formData) => API.post('/update-admin-setting', formData);
+
 export const getAllScanners = () =>
   API.get("/scanner-lists");
 
@@ -602,7 +604,8 @@ export const changeMasterPassword = (data) =>
 export const changeMasterPasswordAgent = (data) =>
   API.post("/change-user-password-agent", data);
 
-
+export const changeMasterPasswordAgentStatus = (data) =>
+  API.post("/change-status", data);
 
 export const verifySuperAdminPassword = (payload) => {
   return API.post(`/verify-super-admin-password`, payload);

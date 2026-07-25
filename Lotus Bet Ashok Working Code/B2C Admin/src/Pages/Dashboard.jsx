@@ -42,7 +42,7 @@ const cardConfig = [
   },
   {
     label: "COMMISSION",
-    key: "todayProfit",
+    key: "commission",
     icon: <FaMoneyBillWave size={36} className="text-white" />,
   },
   {
@@ -59,12 +59,12 @@ const cardConfig = [
   },
   {
     label: "TOTAL BETS",
-    key: "todayProfit",
+    key: "unsettledBet",
     icon: <FaMoneyBillWave size={36} className="text-white" />,
   },
   {
     label: "SPORTBOOK P&L",
-    key: "todayProfit",
+    key: "fake",
     color: "red",
 
     icon: <FaMoneyBillWave size={36} className="text-white" />,
@@ -806,6 +806,10 @@ export default function Dashboard() {
                     item.key === "totalProfit" ||
                     item.key === "monthlyProfit" ||
                     item.key === "todayProfit" ||
+                    item.key === "commission" ||
+                    item.key === "unsettledBet" ||
+                    item.key === "todayProfit" ||
+                    item.key === "fake" ||
                     item.key === "totalWithdraw") && (
 
                       <>
@@ -1130,7 +1134,7 @@ export default function Dashboard() {
                             <td>{item.sr_no}</td>
                             <td>
                               <div className="d-flex justify-content-between align-items-center bg-white">
-                                <span className="bg-white text-dark">{item.mobile_number}</span>
+                                <span className="bg-white text-dark">{item.mobile_number || "-"}</span>
                                 <FaRegCopy onClick={() => copyToClipboard(item.mobile_number)} title="Copy to clipboard" />
                               </div>{" "}
                             </td>

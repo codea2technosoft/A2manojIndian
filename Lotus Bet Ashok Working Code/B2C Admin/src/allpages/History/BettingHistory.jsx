@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Layout from './Layout';
 import {
-    getBetHistoryUserPlReport,  // ✅ API import
+    getBetHistoryUserPlReport,
 } from "../../Server/api";
 
 const BettingHistory = () => {
@@ -15,13 +15,12 @@ const BettingHistory = () => {
     const [totalBets, setTotalBets] = useState(0);
     const itemsPerPage = 5;
 
-    // Get agent_id from URL
-    const agentId = searchParams.get('admin_id') || localStorage.getItem("admin_id");
+    // Get params from URL
+    const adminId = searchParams.get('admin_id') || localStorage.getItem("admin_id");
+    const role = searchParams.get('role'); // ✅ Role le lo
 
-    // Define tabs
     const tabs = ['Exchange', 'FancyBet', 'BookMaker', 'casino', 'Toss', 'Tie', 'lottery'];
 
-    // ✅ Get tab specific params
     const getTabParams = (tabKey) => {
         const paramsMap = {
             'Exchange': { sport_id: '', bet_type: '' },
@@ -35,10 +34,9 @@ const BettingHistory = () => {
         return paramsMap[tabKey] || { sport_id: '', bet_type: 'all' };
     };
 
-    // ✅ Fetch bets data
     const fetchBets = async (tabKey, page = 1) => {
-        if (!agentId) {
-            console.error("No agent_id found");
+        if (!adminId) {
+            console.error("No admin_id found");
             return;
         }
 
@@ -46,9 +44,8 @@ const BettingHistory = () => {
 
         setLoading(true);
         try {
+            // ✅ CONDITION: Role ke hisaab se parameter bhejo
             const params = {
-                agent_id: agentId,
-                admin_id: '',
                 user_id: '',
                 sport_id: sport_id,
                 bet_type: bet_type,
@@ -60,12 +57,25 @@ const BettingHistory = () => {
                 limit: itemsPerPage,
             };
 
+            // ✅ Agar role=2 hai toh agent_id, agar role=3 hai toh admin_id
+            if (role === '2') {
+                params.agent_id = adminId;  // ✅ role=2 → agent_id
+                console.log("✅ Role=2: Sending agent_id");
+            } else if (role === '3') {
+                params.admin_id = adminId;  // ✅ role=3 → admin_id
+                console.log("✅ Role=3: Sending admin_id");
+            } else {
+                // Default: agent_id bhejo
+                params.agent_id = adminId;
+                console.log("✅ Default: Sending agent_id");
+            }
+
             console.log(`📡 Fetching bets for ${tabKey} with params:`, params);
 
             const response = await getBetHistoryUserPlReport(params);
             console.log("✅ API Response:", response);
 
-            // ✅ Handle response
+            // Handle response
             let bets = [];
             let total = 0;
             let totalPagesCount = 1;
@@ -92,24 +102,23 @@ const BettingHistory = () => {
                 bets = [];
             }
 
-            // ✅ Map data based on tab
+            // Map data based on tab
             const mappedData = bets.map((item) => {
                 const baseData = {
                     pl_id: item.pl_id || item.user?.username || '-',
                     bet_id: item.bet_id || '-',
                     bet_placed: item.bet_placed || item.created_at ?
                         new Date(item.bet_placed || item.created_at).toLocaleString() :
-                        'N/A',
+                        '-',
                     ip: item.ip_address || '-',
                     market: item.market || item.game_name || '-',
                     selection: item.selection || item.team || '-',
-                    type: item.type || item.bet_on || '-',
-                    odds: item.odds_req || item.odd || 0,
+                    type: item.bet_type || '-',
+                    odds: item.bet_on || "-",
                     stake: item.stake || 0,
                     profit_loss: item.profit_loss || 0,
                 };
 
-                // Tab specific fields
                 if (tabKey === 'casino') {
                     return {
                         ...baseData,
@@ -130,12 +139,24 @@ const BettingHistory = () => {
                     };
                 } else if (tabKey === 'FancyBet' || tabKey === 'BookMaker') {
                     return {
-                        bet_id: item.bet_id || item._id || '-',
+                        // bet_id: item.bet_id || item._id || '-',
+                        // pl_id: item.pl_id || item.user?.username || '-',
+                        // market: item.market || item.game_name || '-',
+                        // bet_placed: item.bet_placed || item.created_at ?
+                        //     new Date(item.bet_placed || item.created_at).toLocaleString() :
+                        //     '-',
+                        // stake: item.stake || 0,
+                        // profit_loss: item.profit_loss || 0,
                         pl_id: item.pl_id || item.user?.username || '-',
-                        market: item.market || item.game_name || '-',
+                        bet_id: item.bet_id || '-',
                         bet_placed: item.bet_placed || item.created_at ?
                             new Date(item.bet_placed || item.created_at).toLocaleString() :
                             '-',
+                        ip: item.ip_address || '-',
+                        market: item.market || item.game_name || '-',
+                        selection: item.selection || item.team || '-',
+                        type: item.bet_type || '-',
+                        odds: item.bet_on || "-",
                         stake: item.stake || 0,
                         profit_loss: item.profit_loss || 0,
                     };
@@ -144,7 +165,6 @@ const BettingHistory = () => {
                 return baseData;
             });
 
-            // ✅ Update state for current tab
             setBetData(prev => ({
                 ...prev,
                 [tabKey]: {
@@ -172,7 +192,6 @@ const BettingHistory = () => {
         }
     };
 
-    // ✅ Get headers based on tab
     const getHeadersForTab = (tabKey) => {
         const headerMap = {
             'Exchange': '',
@@ -183,21 +202,18 @@ const BettingHistory = () => {
             'Tie': '',
             'lottery': '',
         };
-        return headerMap[tabKey] ||  ['PL ID', 'Bet ID', 'Bet placed', 'IP Address', 'Market', 'Selection', 'Type', 'Odds req.', 'Stake', 'Profit/Loss'];
+        return headerMap[tabKey] || ['PL ID', 'Bet ID', 'Bet placed', 'IP Address', 'Market', 'Selection', 'Type', 'Odds req.', 'Stake', 'Profit/Loss'];
     };
 
-    // ✅ Fetch on tab change or page change
     useEffect(() => {
-        if (agentId) {
+        if (adminId) {
             fetchBets(activeTab, currentPage);
         }
-    }, [activeTab, currentPage, agentId]);
+    }, [activeTab, currentPage, adminId, role]);
 
-    // ✅ Render table
     const renderTable = (tabKey) => {
         const tabInfo = betData[tabKey];
 
-        // If no data yet, show loading or empty state
         if (!tabInfo) {
             return (
                 <div className="common-container">
@@ -227,9 +243,6 @@ const BettingHistory = () => {
 
         const headers = tabInfo.headers;
         const data = tabInfo.data;
-
-        // Pagination logic
-        const totalPagesCount = Math.ceil(data.length / itemsPerPage) || 1;
 
         return (
             <div className="common-container">

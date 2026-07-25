@@ -26,8 +26,7 @@ import {
   blockUser,
   CreateUserAdmin,
   BetBlockUnblock,
-  changeMasterPasswordAgentStatus,
-  // changeMasterPasswordAgent,
+  changeMasterPasswordAgent,
   getUserExposure
 } from "../../Server/api";
 import { FaPlus, FaMinus, FaEye } from "react-icons/fa";
@@ -141,61 +140,6 @@ function UsersList() {
     return Object.keys(errors).length === 0;
   };
 
-  const [grandTotals, setGrandTotals] = useState({
-    credit_ref: 0,
-    withdraw_limit: 0,
-    balance: 0,
-    player_exposure: 0,
-    available_balance: 0,
-    total_player_balance: 0,
-    reference_pl: 0,
-    current_pl: 0
-  });
-
-  // Calculate Grand Totals
-  const calculateGrandTotals = (usersList) => {
-    if (!usersList || usersList.length === 0) {
-      return {
-        credit_ref: 0,
-        withdraw_limit: 0,
-        balance: 0,
-        player_exposure: 0,
-        available_balance: 0,
-        total_player_balance: 0,
-        reference_pl: 0,
-        current_pl: 0
-      };
-    }
-
-    return usersList.reduce((acc, user) => {
-      const credit = Number(user.credit) || 0;
-      const exposure = Number(user.totalExposure) || Number(user.total_exposer) || 0;
-      const exposureLimit = Number(user.exposure_limit) || Number(user.max_withdraw) || 0;
-      const totalAmount = Number(user.total_amount) || 0;
-      const currentPl = Number(user.current_pl) || 0;
-
-      acc.credit_ref += credit;
-      acc.withdraw_limit += exposureLimit;
-      acc.balance += credit;
-      acc.player_exposure += exposure;
-      acc.available_balance += (credit - exposure);
-      acc.total_player_balance += totalAmount;
-      acc.reference_pl += currentPl;
-      acc.current_pl += currentPl;
-
-      return acc;
-    }, {
-      credit_ref: 0,
-      withdraw_limit: 0,
-      balance: 0,
-      player_exposure: 0,
-      available_balance: 0,
-      total_player_balance: 0,
-      reference_pl: 0,
-      current_pl: 0
-    });
-  };
-
   // Handle Create User
   const handleCreateUser = async (e) => {
     e.preventDefault();
@@ -213,7 +157,7 @@ function UsersList() {
         password: userFormData.password,
         email: userFormData.email.trim(),
         phoneNumber: userFormData.phoneNumber.trim(),
-        exposure_limit: userFormData.exposureLimit.trim()
+        exposure_limit: userFormData.exposureLimit.trim() // Add this lin
       };
       const response = await CreateUserAdmin(payload);
       if (response.data && response.data.success) {
@@ -306,7 +250,7 @@ function UsersList() {
         newPassword: newPassword,
         status: status
       };
-      const response = await changeMasterPasswordAgentStatus(payload);
+      const response = await changeMasterPasswordAgent(payload);
       if (response.data && response.data.success) {
         Swal.fire("Success!", "Status changed successfully!", "success");
         setChangestatus(false);
@@ -367,11 +311,6 @@ function UsersList() {
       const response = await getAllUsersList(params);
       if (response.data && response.data.success) {
         setUsers(response.data.data);
-
-        // ✅ Calculate grand totals from users data
-        const totals = calculateGrandTotals(response.data.data);
-        setGrandTotals(totals);
-
         setPagination({
           page: response.data.pagination.current_page || 1,
           limit: response.data.pagination.limit || 50,
@@ -627,7 +566,7 @@ function UsersList() {
       {/* MAIN PAGE CONTENT */}
       <div className="allcommon">
         {/* Search and Filter Section */}
-        <section className="find-member-sec py-3 pb-0 pt-0">
+        <section className="find-member-sec py-3 pb-0 pt-0" style={{ marginTop: 5 }}>
           <div className="p-0">
             <h4 className="page-title">Clients</h4>
             <div className="row">
@@ -654,6 +593,7 @@ function UsersList() {
                         >
                           <option value="">All</option>
                           <option value="active">Active</option>
+                          {/* <option value="cheater">Cheater</option> */}
                           <option value="suspend">Suspend</option>
                           <option value="locked">Locked</option>
                         </select>
@@ -690,7 +630,7 @@ function UsersList() {
         </section>
 
         <section className="total-balance-sec d-flex justify-content-center align-items-center">
-          <ul className="list-unstyled detail-header mb-2" style={{ width: "100%" }}>
+          <ul className="list-unstyled detail-header mb-2" style={{ width: "98.5%" }}>
             <li>
               <dt>Total Balance</dt>
               <strong>INR {summary.total_balance?.toFixed(2) || '0.00'}</strong>
@@ -718,10 +658,10 @@ function UsersList() {
           </ul>
         </section>
 
-        <section className="find-member-sec py-3 pb-0 pt-0 mt-0">
-          <div className="account-table home-table">
+        <section className="find-member-sec py-3 pb-0 pt-0">
+          <div className="card account-table home-table">
             <div className="home-table table-responsive">
-              <table id="export-table" className="client-tabel table table-striped">
+              <table id="export-table" className="client-tabel table">
                 <thead>
                   <tr>
                     <th scope="col" className="text-center">Account</th>
@@ -738,42 +678,8 @@ function UsersList() {
                   </tr>
                 </thead>
 
-
-
+                
                 <tbody>
-                  <tr>
-                    <td scope="col" className="text-center">
-                      {/* <strong>Total</strong> */}
-                    </td>
-                    <td scope="col" className="text-center">
-                      <strong>
-                        {(grandTotals.credit_ref || 0).toFixed(2)}
-                      </strong>
-                    </td>
-                    <td scope="col" className="text-center">
-                      <strong>{grandTotals.balance.toFixed(2)}</strong>
-                    </td>
-                    <td scope="col" className="text-center">
-                      <strong>{grandTotals.player_exposure.toFixed(2)}</strong>
-                    </td>
-                    <td scope="col" className="text-center">
-                      <strong>{grandTotals.available_balance.toFixed(2)}</strong>
-                    </td>
-                    <td scope="col" className="text-center">
-                      <strong>{grandTotals.withdraw_limit.toFixed(2)}</strong>
-                    </td>
-                    <td scope="col" className="text-center">
-                      <strong>{grandTotals.total_player_balance.toFixed(2)}</strong>
-                    </td>
-                    <td scope="col" className="text-center">
-                      {/* <strong>{grandTotals.reference_pl.toFixed(2)}</strong> */}
-                    </td>
-                    <td scope="col" className="text-center">
-                      {/* <strong>{grandTotals.current_pl.toFixed(2)}</strong> */}
-                    </td>
-                    <td scope="col" className="text-center"></td>
-                    <td scope="col" className="text-center"></td>
-                  </tr>
                   {tableLoading ? (
                     <tr>
                       <td colSpan="11" className="text-center py-4">
@@ -792,6 +698,7 @@ function UsersList() {
                           <a href="#" onClick={(e) => {
                             e.preventDefault();
                           }} className="text-primary">
+                            {/* {(user.credit - user.totalExposure).toFixed(2)} */}
                             {(user.credit).toFixed(2)}
                             <i className="fas fa-pen ps-1" />
                           </a>
@@ -810,16 +717,9 @@ function UsersList() {
                         </td>
                         <td className="text-end">{user.avail_bal || '0.00'}</td>
                         <td className="text-end">{user.exposure_limit || '0.00'}</td>
-                        {/* <td className={`text-end  ${Number(user.total_amount) <= 0 ? "ul-t" : "ul-t2"}`}>
+                        <td className={`text-end  ${Number(user.total_amount) <= 0 ? "ul-t" : "ul-t2"}`}>
                           <span>
-                            {user.pl_winning || "0.00"}
-                          </span>
-                        </td> */}
-
-                        <td className={`text-end  ${Number(user.pl_winning) <= 0 ? "ul-t" : "ul-t2"
-                          }`}>
-                          <span>
-                            {user.pl_winning || "0.00"}
+                            {user.total_amount || "0.00"}
                           </span>
                         </td>
                         <td className="text-end">
@@ -840,11 +740,11 @@ function UsersList() {
                           <strong className={
                             user.bet_block === 1
                               ? 'status-cheater'
-                              : user.status === 'active'
+                              : user.status === 'Active'
                                 ? 'status-active'
                                 : 'status-active'
                           }>
-                            {user.bet_block === 1 ? "Cheater" : (user.status || 'active')}
+                            {user.bet_block === 1 ? "Cheater" : (user.status || 'Active')}
                           </strong>
                         </td>
                         <td className="action_link text-end">
@@ -878,52 +778,52 @@ function UsersList() {
                   )}
                 </tbody>
               </table>
-              {/* Pagination */}
-              {pagination.total > -1 && (
-                <div className="bottom-pagination d-flex justify-content-center align-items-center">
-                  <ul className="pagination mb-0 gap-0">
-                    <li
-                      className={`previous ${pagination.page === 1 ? "disabled" : ""}`}
-                    >
-                      <a
-                        className=""
-                        onClick={() => handlePageChange(pagination.page - 1)}
-                      >
-                        <FaChevronLeft />
-                      </a>
-                    </li>
-
-                    {[pagination.page - 1, pagination.page, pagination.page + 1]
-                      .filter((p) => p > 0 && p <= pagination.totalPages)
-                      .map((p) => (
-                        <li
-                          key={p}
-                          className={`p-0 ${pagination.page === p ? "active" : ""}`}
-                        >
-                          <a
-                            className="pagintion-li"
-                            onClick={() => handlePageChange(p)}
-                          >
-                            {p}
-                          </a>
-                        </li>
-                      ))}
-
-                    <li
-                      className={`next ${pagination.page === pagination.totalPages ? "disabled" : ""}`}
-                    >
-                      <a
-                        className=""
-                        onClick={() => handlePageChange(pagination.page + 1)}
-                      >
-                        <FaChevronRight />
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              )}
             </div>
 
+            {/* Pagination */}
+            {pagination.total > 0 && (
+              <div className="bottom-pagination d-flex justify-content-center align-items-center">
+                <ul className="pagination mb-0 gap-0">
+                  <li
+                    className={`previous ${pagination.page === 1 ? "disabled" : ""}`}
+                  >
+                    <a
+                      className=""
+                      onClick={() => handlePageChange(pagination.page - 1)}
+                    >
+                      <FaChevronLeft />
+                    </a>
+                  </li>
+
+                  {[pagination.page - 1, pagination.page, pagination.page + 1]
+                    .filter((p) => p > 0 && p <= pagination.totalPages)
+                    .map((p) => (
+                      <li
+                        key={p}
+                        className={`p-0 ${pagination.page === p ? "active" : ""}`}
+                      >
+                        <a
+                          className="pagintion-li"
+                          onClick={() => handlePageChange(p)}
+                        >
+                          {p}
+                        </a>
+                      </li>
+                    ))}
+
+                  <li
+                    className={`next ${pagination.page === pagination.totalPages ? "disabled" : ""}`}
+                  >
+                    <a
+                      className=""
+                      onClick={() => handlePageChange(pagination.page + 1)}
+                    >
+                      <FaChevronRight />
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
         </section>
       </div>

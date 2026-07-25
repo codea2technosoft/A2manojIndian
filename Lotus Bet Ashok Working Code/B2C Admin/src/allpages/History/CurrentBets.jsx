@@ -14,8 +14,9 @@ const CurrentBets = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Get agent_id from URL
+  // Get params from URL
   const adminId = searchParams.get('admin_id') || localStorage.getItem("admin_id");
+  const role = searchParams.get('role'); // ✅ Role le lo
 
   // Define tabs configuration
   const tabs = [
@@ -57,8 +58,8 @@ const CurrentBets = () => {
     setError(null);
 
     try {
+      // ✅ Base params
       const params = {
-        agent_id: adminId,
         // sport: sport,
         market_type: market_type,
         bet_status: bet_status,
@@ -72,6 +73,19 @@ const CurrentBets = () => {
         page: 1,
         limit: 50,
       };
+
+      // ✅ CONDITION: Role ke hisaab se parameter bhejo
+      if (role === '2') {
+        params.agent_id = adminId;  // ✅ role=2 → agent_id
+        console.log("✅ Role=2: Sending agent_id");
+      } else if (role === '3') {
+        params.admin_id = adminId;  // ✅ role=3 → admin_id
+        console.log("✅ Role=3: Sending admin_id");
+      } else {
+        // Default: agent_id bhejo
+        params.agent_id = adminId;
+        console.log("✅ Default: Sending agent_id");
+      }
 
       console.log(`📡 Fetching bets for ${tabKey} with params:`, params);
 
@@ -117,7 +131,7 @@ const CurrentBets = () => {
     if (adminId) {
       fetchBets(activeTab);
     }
-  }, [activeTab, adminId]);
+  }, [activeTab, adminId, role]); // ✅ role bhi add karo dependency mein
 
   // ✅ Render table rows based on data
   const renderTableRows = () => {
@@ -198,11 +212,9 @@ const CurrentBets = () => {
             </td>
             <td>{bet.selection || '-'}</td>
             <td>
-              {bet.bet_type === "fancy"
-                ? (bet.type === "back" ? "Yes" : "No")
-                : (bet.type === "back" ? "Back" : "Lay")}
+              {bet.bet_type || "-"}
             </td>
-            <td>{bet.odds_req || '-'}</td>
+            <td>{bet.bet_on || '-'}</td>
             <td>{bet.stake || 0}</td>
             <td
               className={`${Number(bet.profit_loss ?? bet.pl ?? 0) >= 0 ? "text-success" : "text-danger"

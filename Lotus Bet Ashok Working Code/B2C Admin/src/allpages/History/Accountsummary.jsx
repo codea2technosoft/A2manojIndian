@@ -6,7 +6,8 @@ import Swal from "sweetalert2";
 
 import {
   getAdminProfile,//agent profild data
-  changeMasterPassword,
+  // changeMasterPassword,
+  changeMasterPasswordAgent,
   getUserProfileData,////user profil data 
   ChangeExposureLimit
 } from "../../Server/api";
@@ -227,7 +228,7 @@ const AccountSummary = () => {
 
       console.log("Change Password Payload:", payload);
 
-      const response = await changeMasterPassword(payload);
+      const response = await changeMasterPasswordAgent(payload);
       console.log("Change Password Response:", response);
 
       const isSuccess = response?.success || response?.data?.success || false;

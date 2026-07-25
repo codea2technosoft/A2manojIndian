@@ -319,7 +319,7 @@ const App = () => {
 
 
 
-  //   useEffect(() => {
+  // useEffect(() => {
   //   const verify = async () => {
   //     console.log("🔍 Verification Started...");
   //     console.log("Token:", token);
@@ -578,10 +578,16 @@ const App = () => {
           path="/Dashboard"
           element={<ProtectedRoute element={SubAdminDashboard} path="/Dashboard" />}
         />
-        <Route
+        {/* <Route
           path="/viewmatch-fancy/series_idd/:series_idd/event_id/:event_id"
           element={<ProtectedRoute element={ViewmatchAndfancy} path="/dashboard" />}
+        /> */}
+
+        <Route
+          path="/viewmatch-fancy/series_idd/:series_idd/event_id/:event_id/sport_id/:sport_id"
+          element={<ProtectedRoute element={ViewmatchAndfancy} path="/dashboard" />}
         />
+
         <Route
           path="/Mastermyuser/:adminId?"
           element={<ProtectedRoute element={Mastermyuser} path="/Mastermyuser" />}
