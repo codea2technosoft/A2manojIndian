@@ -28,7 +28,11 @@ tr {
   border-color: inherit;
   border: 1px solid #dee2e6 !important;
 }
-
+.newwidthallsames.allcommon{
+.modal-dialog{
+ max-width:800px
+}
+}
 .allbluebutton.btn.btn-primary {
   background: #0d6efd;
   border: 0px solid #0d6efd;

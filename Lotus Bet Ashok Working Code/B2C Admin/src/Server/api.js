@@ -140,8 +140,12 @@ export const getExternalEvents = (sport_id, series_id) => {
 
 
 //without pagination mtch list
-export const getmatchEvents = () => {
-  return API.get(`/event-match`);
+// export const getmatchEvents = () => {
+//   return API.get(`/event-match`);
+// };
+
+export const getmatchEvents = (payload) => {
+  return API.post(`/event-match`, payload);
 };
 
 

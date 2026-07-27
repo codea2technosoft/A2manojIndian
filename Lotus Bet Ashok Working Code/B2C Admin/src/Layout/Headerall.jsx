@@ -12,7 +12,7 @@ import {
 } from "../Server/api";
 
 
-export default function Header() {
+export default function Header({ depositPending = 0, withdrawPending = 0 }) {
     const navigate = useNavigate();
     const [mobileMenu, setMobileMenu] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState(null);
@@ -477,7 +477,7 @@ export default function Header() {
                                 <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 512 512" color="white" height="14" width="14" xmlns="http://www.w3.org/2000/svg" style={{ color: 'white' }}>
                                     <path d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"></path>
                                 </svg>
-                                <span>0</span>
+                                <span>{depositPending}</span>
                             </div>
                         </Link>
 
@@ -486,7 +486,7 @@ export default function Header() {
                                 <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 512 512" color="white" height="14" width="14" xmlns="http://www.w3.org/2000/svg" style={{ color: 'white' }}>
                                     <path d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"></path>
                                 </svg>
-                                <span>0</span>
+                                <span>{withdrawPending}</span>
                             </div>
                         </Link>
 
@@ -495,7 +495,7 @@ export default function Header() {
                                 <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" color="white" height="14" width="14" xmlns="http://www.w3.org/2000/svg" style={{ color: 'white' }}>
                                     <path d="M12 2C6.486 2 2 6.486 2 12v4.143C2 17.167 2.897 18 4 18h1a1 1 0 0 0 1-1v-5.143a1 1 0 0 0-1-1h-.908C4.648 6.987 7.978 4 12 4s7.352 2.987 7.908 6.857H19a1 1 0 0 0-1 1V18c0 1.103-.897 2-2 2h-2v-1h-4v3h6c2.206 0 4-1.794 4-4 1.103 0 2-.833 2-1.857V12c0-5.514-4.486-10-10-10z"></path>
                                 </svg>
-                                <span>0</span>
+                               <span>0</span>
                             </Link>
                         </div>
                     </div>

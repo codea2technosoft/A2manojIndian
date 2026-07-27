@@ -39,53 +39,53 @@ const FancyResult = () => {
 
 
 
-const handleDelete = async (id) => {
-  try {
-    const confirm = await Swal.fire({
-      title: "Are you sure?",
-      text: "You want to delete this record!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, Delete",
-      cancelButtonText: "Cancel",
-    });
-
-    if (!confirm.isConfirmed) return;
-
-    const res = await deleteFancy({ _id: id });
-
-    if (res?.data?.status_code === 1) {
-      Swal.fire({
-        title: "Deleted!",
-        text: "Record deleted successfully",
-        icon: "success",
-        timer: 1500,
-        showConfirmButton: false,
+  const handleDelete = async (id) => {
+    try {
+      const confirm = await Swal.fire({
+        title: "Are you sure?",
+        text: "You want to delete this record!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Delete",
+        cancelButtonText: "Cancel",
       });
-      // UI से remove
-      setViewData((prev) =>
-        prev.filter((item) => item._id !== id)
-      );
 
-    } else {
+      if (!confirm.isConfirmed) return;
+
+      const res = await deleteFancy({ _id: id });
+
+      if (res?.data?.status_code === 1) {
+        Swal.fire({
+          title: "Deleted!",
+          text: "Record deleted successfully",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+        // UI से remove
+        setViewData((prev) =>
+          prev.filter((item) => item._id !== id)
+        );
+
+      } else {
+        Swal.fire({
+          title: "success",
+          text: res?.data?.message || "Delete failed",
+          icon: "success",
+        });
+      }
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);    // setViewData()
+    } catch (err) {
+      console.error("Delete Error:", err);
       Swal.fire({
         title: "success",
-        text: res?.data?.message || "Delete failed",
+        text: "Something went wrong",
         icon: "success",
       });
     }
-setTimeout(() => {
-  window.location.reload();
-}, 1500);    // setViewData()
-  } catch (err) {
-    console.error("Delete Error:", err);
-    Swal.fire({
-      title: "success",
-      text: "Something went wrong",
-      icon: "success",
-    });
-  }
-};
+  };
 
   const fetchFancyList = async (search = "") => {
     try {
@@ -244,56 +244,206 @@ setTimeout(() => {
   };
 
   // // SETTLE
+  // const handleSettle = async (f) => {
+  //   // const value = inputValues[f.fancy_id];
+  //   const value = inputValues[f._id];
+
+  //   if (!value) return toast.warning("Enter value before settling!");
+
+  //   const ok = await confirmAction(
+  //     `${f.name}`,
+  //     `<b>Result Value:</b> ${value}`,
+  //   );
+  //   if (!ok.isConfirmed) return;
+
+  //   try {
+  //     setBtnLoader("settle_" + f.fancy_id, true);
+  //     const res = await settledFancyNow({
+  //       id: f.fancy_id,
+  //       fancy_id: f.fancy_id,
+  //       event_id: f.event_id,
+  //       value,
+  //     });
+  //     if (res.data.status_code === 1) {
+  //       Swal.fire({
+  //         icon: "success",
+  //         title: "Result Declared ✅",
+  //         html: `
+  //     <b>Fancy:</b> ${f.team || f.name}<br/>
+  //     <b>Result Value:</b> ${value}
+  //   `,
+  //         confirmButtonText: "OK",
+  //       });
+
+  //       fetchFancyList();
+  //       return;
+  //     }
+
+  //     if (res.data.status_code === 0) {
+  //       Swal.fire({
+  //         title: "Oops!",
+  //         text: res.data.message,
+  //       });
+  //       fetchFancyList(); // 👈 Refresh Fancy List (Fail)
+
+  //       return;
+  //     }
+  //   } catch (err) {
+  //     toast.error(err.res.data.message);
+  //   } finally {
+  //     setBtnLoader("settle_" + f.fancy_id, false);
+  //   }
+  // };
+
   const handleSettle = async (f) => {
-    // const value = inputValues[f.fancy_id];
     const value = inputValues[f._id];
 
-    if (!value) return toast.warning("Enter value before settling!");
+    if (!value || value.trim() === "") {
+      toast.warning("⚠️ Please enter a result value first!");
+      return;
+    }
 
     const ok = await confirmAction(
       `${f.name}`,
-      `<b>Result Value:</b> ${value}`,
+      `<b>Result Value:</b> ${value}`
     );
     if (!ok.isConfirmed) return;
 
     try {
       setBtnLoader("settle_" + f.fancy_id, true);
+
       const res = await settledFancyNow({
         id: f.fancy_id,
         fancy_id: f.fancy_id,
         event_id: f.event_id,
-        value,
+        value: value.trim(),
       });
+
+      // Safety checks
+      if (!res) {
+        toast.error("❌ No response from server");
+        return;
+      }
+
+      if (!res.data) {
+        toast.error("❌ Invalid response from server");
+        return;
+      }
+
+      // Success
       if (res.data.status_code === 1) {
         Swal.fire({
           icon: "success",
-          title: "Result Declared ✅",
+          title: "✅ Result Declared Successfully!",
           html: `
-      <b>Fancy:</b> ${f.team || f.name}<br/>
-      <b>Result Value:</b> ${value}
-    `,
+          <b>Fancy:</b> ${f.team || f.name}<br/>
+          <b>Result Value:</b> <span style="color: #28a745; font-weight: bold;">${value}</span>
+        `,
           confirmButtonText: "OK",
+        });
+        setInputValues((prev) => {
+          const copy = { ...prev };
+          delete copy[f._id];
+          return copy;
+        });
+        fetchFancyList();
+        return;
+      }
+
+      // ✅ EXACT RESPONSE DIKHAO - Status code 0
+      if (res.data.status_code === 0) {
+        Swal.fire({
+          icon: "error",
+          title: "❌ Settlement Failed",
+          html: `
+          <div style="text-align: left; padding: 10px;">
+            <p style="color: #dc3545; font-weight: bold;">${res.data.message || "Error"}</p>
+            
+            <!-- ✅ EXACT JSON RESPONSE -->
+            <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; margin: 10px 0; overflow-x: auto;">
+              <pre style="color: #d4d4d4; margin: 0; font-size: 13px; font-family: 'Courier New', monospace;">
+            {
+              status_code: ${res.data.status_code},
+              message: "${res.data.message}",
+              error: "${res.data.error || 'N/A'}"
+            }
+              </pre>
+            </div>
+            
+            <hr/>
+            <p style="font-size: 14px; color: #6c757d;">
+              <b>Fancy:</b> ${f.team || f.name}<br/>
+              <b>Value:</b> ${value}
+            </p>
+            
+            <p style="font-size: 12px; color: #6c757d; margin-top: 10px; background: #fff3cd; padding: 8px; border-radius: 4px;">
+              💡 <b>Admin ko bhejein:</b><br/>
+              <code style="font-size: 12px; word-break: break-all;">
+                Error: ${res.data.error || 'N/A'}
+              </code>
+            </p>
+          </div>
+        `,
+          confirmButtonText: "OK",
+          confirmButtonColor: "#dc3545",
         });
 
         fetchFancyList();
         return;
       }
 
-      if (res.data.status_code === 0) {
-        Swal.fire({
-          title: "Oops!",
-          text: res.data.message,
-        });
-        fetchFancyList(); // 👈 Refresh Fancy List (Fail)
-
-        return;
-      }
     } catch (err) {
-      toast.error(err.res.data.message);
+      // ✅ CATCH ERROR - Exact response dikhao
+      console.error("🔥 Error:", err);
+
+      let errorMessage = "Something went wrong!";
+      let statusCode = 0;
+      let errorDetail = "";
+
+      if (err.response?.data) {
+        statusCode = err.response.data.status_code || 0;
+        errorMessage = err.response.data.message || "Server error";
+        errorDetail = err.response.data.error || "";
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      Swal.fire({
+        icon: "error",
+        title: `❌ Error ${statusCode ? `(${statusCode})` : ''}`,
+        html: `
+        <div style="text-align: left; padding: 10px;">
+          <p style="color: #dc3545; font-weight: bold;">${errorMessage}</p>
+          
+          ${errorDetail ? `
+            <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; margin: 10px 0; overflow-x: auto;">
+              <pre style="color: #d4d4d4; margin: 0; font-size: 13px; font-family: 'Courier New', monospace;">
+            {
+              status_code: ${statusCode},
+              message: "${errorMessage}",
+              error: "${errorDetail}"
+            }
+              </pre>
+            </div>
+          ` : ''}
+          
+          <hr/>
+          <p style="font-size: 14px; color: #6c757d;">
+            <b>Fancy:</b> ${f.team || f.name}<br/>
+            <b>Value:</b> ${value}
+          </p>
+        </div>
+      `,
+        confirmButtonText: "OK",
+      });
+
+      toast.error(`❌ ${errorMessage}${errorDetail ? `: ${errorDetail}` : ''}`);
+
     } finally {
       setBtnLoader("settle_" + f.fancy_id, false);
     }
   };
+
   const handleClearAllFilters = () => {
     if (filters.name !== "") {
       setFilters({ name: "" });
@@ -570,9 +720,8 @@ setTimeout(() => {
                           <td>{x.mobile}</td>
                           <td>
                             <span
-                              className={`badge ${
-                                x.bet_on === "lay" ? "bg-danger" : "bg-success"
-                              }`}
+                              className={`badge ${x.bet_on === "lay" ? "bg-danger" : "bg-success"
+                                }`}
                             >
                               {x.bet_on === "lay" ? "NO" : "YES"}
                             </span>
@@ -581,14 +730,14 @@ setTimeout(() => {
                           <td>
                             {x.odd}/{x.total}
                           </td>
-<td>
-  <button
-    className="btn btn-sm btn-danger"
-    onClick={() => handleDelete(x._id)}
-  >
-    Delete
-  </button>
-</td>                        </tr>
+                          <td>
+                            <button
+                              className="btn btn-sm btn-danger"
+                              onClick={() => handleDelete(x._id)}
+                            >
+                              Delete
+                            </button>
+                          </td>                        </tr>
                       ))}
                     </tbody>
                   </table>

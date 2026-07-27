@@ -198,18 +198,13 @@ import MatchMarketBets from "./allpages/MatchMarketBets.jsx";
 import Agentbankingdebitcreditlog from "./allpages/Agentbankingdebitcreditlog";
 import Agentbankingtransctionhistory from "./allpages/Agentbankingtransctionhistory";
 
+
 const App = () => {
+
   const [depositPending, setDepositPending] = useState(0);
   const [withdrawPending, setWithdrawPending] = useState(0);
   const [profileData, setProfileData] = useState(null);
-  const [isVerifying, setIsVerifying] = useState(true);
-  const [isValid, setIsValid] = useState(false);
 
-  const token = localStorage.getItem("token");
-  const isLoggedIn = localStorage.getItem("isLoggedIn");
-  const admin_id = localStorage.getItem("admin_id");
-
-  // ✅ Profile API Call
   const getAdminProfile = async () => {
     const token = localStorage.getItem("token");
     const data = {
@@ -232,48 +227,62 @@ const App = () => {
 
       const profile = await response.json();
 
+      ///new
+
+      // ✅ Profile data store karo
       if (profile.success === true) {
         const adminProfile = profile.data.admin_profile;
         setProfileData(adminProfile);
 
+        // ✅ Pending counts extract karo
         const depositPendingCount = adminProfile?.transaction_summary?.deposit?.pending || 0;
         const withdrawPendingCount = adminProfile?.transaction_summary?.withdraw?.pending || 0;
 
         setDepositPending(depositPendingCount);
         setWithdrawPending(withdrawPendingCount);
       }
+      //end
+
 
       return profile;
+
     } catch (error) {
       console.error("❌ Profile API Error:", error);
       throw error;
     }
   };
 
-  // ✅ TOKEN EXPIRY CHECK (Sirf expiry ke liye, multiple login allow)
   useEffect(() => {
     const checkExpiry = () => {
       const expiryTime = localStorage.getItem("expiryTime");
       if (expiryTime && new Date().getTime() > expiryTime) {
         localStorage.clear();
+
         window.location.href = "/login";
       }
     };
     checkExpiry();
 
     const interval = setInterval(checkExpiry, 1000);
+
     return () => clearInterval(interval);
   }, []);
 
-  // ✅ VERIFICATION - Multiple login allowed (No token matching)
+  const token = localStorage.getItem("token");
+  const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+  const admin_id = localStorage.getItem("admin_id");
+
+  const [isVerifying, setIsVerifying] = useState(true);
+  const [isValid, setIsValid] = useState(false);
+
+  //temporary removed
   useEffect(() => {
     const verify = async () => {
       console.log("🔍 Verification Started...");
       console.log("Token:", token);
       console.log("Admin ID:", admin_id);
       console.log("isLoggedIn:", isLoggedIn);
-
-      // ✅ Sirf token exist karta hai ya nahi check karo
       if (!token || !isLoggedIn || !admin_id) {
         console.log("❌ Token/Admin ID missing - Redirect to Login");
         setIsValid(false);
@@ -282,23 +291,32 @@ const App = () => {
       }
 
       try {
-        // ✅ Profile fetch karo (Token valid hai ya nahi check karne ke liye)
-        const profileData = await getAdminProfile();
-
+        const profileData = await getAdminProfile(); // ✅ AB RETURN KAREGA
         if (profileData.success === true) {
-          console.log("✅ Profile Fetched Successfully");
-          console.log("🔑 Token exists - Multiple Login Allowed");
-          setIsValid(true);
+          const profileToken = profileData.data.admin_profile.token;
+          console.log("🔑 Profile Token:", profileToken);
+          console.log("🔑 Local Token:", token);
+
+          if (profileToken === token) {
+            console.log("✅ Token Matched! Valid Login");
+            setIsValid(true);
+            //  window.location.href = "/dashboard";
+          } else {
+            console.log("❌ Token Mismatch! Invalid Login");
+            localStorage.clear();
+
+            window.location.href = "/login";
+            setIsValid(false);
+          }
         } else {
-          console.log("❌ Profile API Failed - Invalid Token");
+          console.log("❌ Profile API Failed");
           localStorage.clear();
+
           window.location.href = "/login";
           setIsValid(false);
         }
       } catch (error) {
         console.log("❌ Profile API Error:", error);
-        // ⚠️ Agar API fail ho toh bhi logout mat karo (network issue ho sakta hai)
-        setIsValid(true); // ✅ Temporary fix - allow access
       } finally {
         setIsVerifying(false);
         console.log("🏁 Verification Complete");
@@ -306,9 +324,8 @@ const App = () => {
     };
 
     verify();
-  }, []); // ✅ Sirf ek baar run hoga
+  }, []);
 
-  // ⏳ Loading State
   if (isVerifying) {
     return (
       <div style={{
@@ -324,8 +341,58 @@ const App = () => {
     );
   }
 
-  // ❌ Invalid Token / No Token
-  if (!isValid || !token || !isLoggedIn) {
+
+
+  // useEffect(() => {
+  //   const verify = async () => {
+  //     console.log("🔍 Verification Started...");
+  //     console.log("Token:", token);
+  //     console.log("Admin ID:", admin_id);
+  //     console.log("isLoggedIn:", isLoggedIn);
+  //     if (!token || !isLoggedIn || !admin_id) {
+  //       console.log("❌ Token/Admin ID missing - Redirect to Login");
+  //       setIsValid(false);
+  //       setIsVerifying(false);
+  //       return;
+  //     }
+
+  //     try {
+  //       const profileData = await getAdminProfile();
+  //       if (profileData.success === true) {
+  //         const profileToken = profileData.data.admin_profile.token;
+  //         console.log("🔑 Profile Token:", profileToken);
+  //         console.log("🔑 Local Token:", token);
+
+  //         // ✅ TEMPORARY FIX: Multiple login allow
+  //         if (true) { // profileToken === token ki jagah
+  //           console.log("✅ Multiple Login Allowed (Temporary)");
+  //           setIsValid(true);
+  //         } else {
+  //           console.log("❌ Token Mismatch! Invalid Login");
+  //           // localStorage.clear();
+  //           // window.location.href = "/login";
+  //           setIsValid(false);
+  //         }
+  //       } else {
+  //         console.log("❌ Profile API Failed");
+  //         // Don't logout - temporary fix
+  //         setIsValid(true);
+  //       }
+  //     } catch (error) {
+  //       console.log("❌ Profile API Error:", error);
+  //       // Don't logout - temporary fix
+  //       setIsValid(true);
+  //     } finally {
+  //       setIsVerifying(false);
+  //       console.log("🏁 Verification Complete");
+  //     }
+  //   };
+
+  //   verify();
+  // }, []);
+
+  // ✅ INVALID TOKEN
+  if (!isValid) {
     return (
       <Router>
         <Routes>
@@ -336,17 +403,49 @@ const App = () => {
     );
   }
 
-  // ✅ MAIN APP - Sabhi routes chalenge
+  // ✅ NO TOKEN
+  if (!token || !isLoggedIn) {
+    return (
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </Router>
+    );
+  }
+
+
   return (
     <Router>
-      <Header
-        depositPending={depositPending}
+
+      <Header 
+        depositPending={depositPending} 
         withdrawPending={withdrawPending}
         profileData={profileData}
       />
-
       <Routes>
-        {/* ✅ Login Route - Agar already logged in hai toh dashboard pe bhejo */}
+
+
+
+
+
+        {/* ✅ Layout ko props pass karo */}
+        {/* <Route
+          path="/*"
+          element={
+            <Layout
+             userType={{ type: "admin" }} 
+              depositPending={depositPending}
+              withdrawPending={withdrawPending}
+              profileData={profileData}
+            />
+          }
+        /> */}
+      </Routes>
+      <Routes>
+        {/* <Route path="/login" element={<Login />} /> */}
+
         <Route
           path="/login"
           element={
@@ -355,8 +454,6 @@ const App = () => {
               : <Login />
           }
         />
-
-
 
         <Route path="/userchat" element={<Userchat />} />
         <Route path="/Chatclose" element={<Chatclose />} />

@@ -9,8 +9,11 @@ import Headerall from "./Headerall";
 import Myprofile from "../allpages/Myprofile";
 // import { useNavigate } from "react-router-dom";
 // const Layout = ({ children, userType, permissions }) => {
-const Layout = ({ children, userType }) => {
-  
+// import Header from "./Layout/Headerall.jsx"
+// const Layout = ({ children, userType , depositPending = 0, withdrawPending = 0, profileData = null }) => {
+
+const Layout = ({ children, userType, depositPending = 0, withdrawPending = 0, profileData = null }) => {
+
   console.warn(userType.type);
   // const navigate = useNavigate();
   const location = useLocation();
@@ -18,7 +21,7 @@ const Layout = ({ children, userType }) => {
   const path = "/" + location.pathname.split("/")[1];
   console.warn("permissionspermissionspermissions", path);
   // if (permissions != undefined) {
-const isAdminChat = location.pathname === "/adminchat";
+  const isAdminChat = location.pathname === "/adminchat";
   // this is permission code
   // if (permissions.length == 0) {
   //   navigate("/homedashboard");
@@ -90,8 +93,21 @@ const isAdminChat = location.pathname === "/adminchat";
   const shouldHideBreadcrumb = hideBreadcrumbPaths.includes(location.pathname);
   return (
     <>
-      <Headerall  onToggleSidebar={toggleSidebar} />
-    
+      {/* <Headerall  
+        onToggleSidebar={toggleSidebar}
+        depositPending={depositPending}
+        withdrawPending={withdrawPending}
+        profileData={profileData}
+      /> */}
+
+
+      {/* <Headerall
+        onToggleSidebar={toggleSidebar}
+        depositPending={depositPending}
+        withdrawPending={withdrawPending}
+        profileData={profileData}
+      /> */}
+
       <div className="layout-wrapper active">
 
         <div className="app-layout">
@@ -108,13 +124,13 @@ const isAdminChat = location.pathname === "/adminchat";
           /> */}
             <div className="page-content">
               <div className="minheight">
-                  {!shouldHideBreadcrumb && (
-                    <Breadcrumb title={title} items={breadcrumbItems} />
-                  )}
-                 <div className={`container-fluid ${isAdminChat ? "p-0" : ""}`}>
-                    {children}
-                  </div>
+                {!shouldHideBreadcrumb && (
+                  <Breadcrumb title={title} items={breadcrumbItems} />
+                )}
+                <div className={`container-fluid ${isAdminChat ? "p-0" : ""}`}>
+                  {children}
                 </div>
+              </div>
               {/* {!shouldHideBreadcrumb && <Footer />} */}
             </div>
           </div>

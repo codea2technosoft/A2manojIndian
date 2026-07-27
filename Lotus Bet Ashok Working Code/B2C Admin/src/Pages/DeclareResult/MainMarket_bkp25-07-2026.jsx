@@ -3,20 +3,23 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import Select from "react-select";
 import Swal from "sweetalert2";
 import moment from "moment";
-import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from "react-icons/md";
 import {
-
+  MdOutlineKeyboardArrowLeft,
+  MdOutlineKeyboardArrowRight,
+} from "react-icons/md";
+import {
+  getAllGames,
   getmatchEvents,
   getSelectionsByMarket,
   declareMatchResult,
   getAllMatchResultList,
   rollbackFancyNow,
-  lenadenasettled
+  lenadenasettled,
 } from "../../Server/api";
-import { getAllGames } from "../../Server/game.service";
+import { useLocation } from "react-router-dom";
 
 function MainMarket() {
-
+  const location = useLocation();
   const [marketId, setMarketId] = useState("");
   const [selectedMatch, setSelectedMatch] = useState("");
   const [teamList, setTeamList] = useState([]);
@@ -25,90 +28,114 @@ function MainMarket() {
   const [events, setEvents] = useState([]);
   const [selectedEventId, setSelectedEventId] = useState("");
   const [loading, setLoading] = useState(true);
-  const [loadingGames, setLoadingGames] = useState(false);
-  const [loadingTable, setLoadingTable] = useState(false);
   const [marketData, setMarketData] = useState([]);
   const [marketList, setMarketList] = useState([]);
   const [selectedMarket, setSelectedMarket] = useState("");
   const [selectedTeam, setSelectedTeam] = useState("");
   const [selectedSportId, setSelectedSportId] = useState("");
-  const [error, setError] = useState("")
+  const [error, setError] = useState("");
   const [btnLoading, setBtnLoading] = useState({});
-
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(100);
+  const searchParams = new URLSearchParams(location.search);
+  const sportId = searchParams.get("sportId");
+  const [page, setPage] = useState(2);
+  const [limit] = useState(50);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const admin_id = localStorage.getItem("admin_id")
+  const admin_id = localStorage.getItem("admin_id");
   const [loadingSelections, setLoadingSelections] = useState(false);
   const [declareLoading, setDeclareLoading] = useState(false);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+
   const [filters, setFilters] = useState({
     search: "",
     status: "",
     sport_id: "",
   });
   const [showFilter, setShowFilter] = useState(false);
-  const fetchGames = async () => {
-    try {
-      setLoadingGames(true);
-      const response = await getAllGames();
-      if (response.data.success) {
-        setGames(response.data.data || []);
-      }
-    } catch (err) {
-      console.error("Error fetching games:", err);
-    } finally {
-      setLoadingGames(false);
-    }
-  };
+
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 50,
+    total: 0,
+    totalPages: 0,
+  });
 
   useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        setLoading(true);
+        const response = await getAllGames();
+        if (response.data.success) {
+          setGames(response.data.data || []);
+        }
+      } catch (err) {
+        console.error("Error fetching games:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchGames();
   }, []);
 
-  // useEffect(() => {
-  //   if (games.length > 0) {
+  useEffect(() => {
+    if (games.length > 0) {
+      const firstSportId = games[0].id;
 
-  //     // const selectedId = sportId;
-
-  //     setSelectedSportId(selectedId);
-  //     fetchEvents(selectedId);
-  //   }
-  // }, [games, sportId]);
+      setSelectedSportId(firstSportId);
+      fetchEvents(firstSportId);
+    }
+  }, [games]);
 
   useEffect(() => {
     fetchMatchResultList(page);
-  }, [page, limit]);
-
+  }, [page]);
   const setBtnLoader = (id, val) => {
     setBtnLoading((prev) => ({ ...prev, [id]: val }));
   };
 
+  // ✅ Fetch events
   const fetchEvents = async (sportId) => {
     try {
       setLoading(true);
+      const response = await getmatchEvents();
 
-      const payload = {
-        sport_id: sportId,
-      };
+      if (response.data.success && Array.isArray(response.data.data)) {
+        let filteredEvents = response.data.data;
+        if (sportId) {
+          filteredEvents = filteredEvents.filter(
+            (event) =>
+              event.sport_id === sportId ||
+              event.sport_id?.toString() === sportId.toString(),
+          );
+        }
 
-      console.log("Payload =>", payload);
-
-      const response = await getmatchEvents(payload);
-
-      if (response.data.success) {
-        setEvents(response.data.data || []);
+        setEvents(filteredEvents);
         setError("");
+
+        if (filteredEvents.length === 0) {
+          Swal.fire({
+            icon: "info",
+            title: "No Matches Found",
+            text: sportId
+              ? "No matches found for the selected sport"
+              : "No matches available",
+          });
+        }
       } else {
         setEvents([]);
+        Swal.fire({ icon: "info", title: "No Active Matches" });
       }
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching matches:", err);
+      Swal.fire({ icon: "error", title: "Error fetching matches" });
       setEvents([]);
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     if (selectedSportId) {
       fetchEvents(selectedSportId);
@@ -127,8 +154,11 @@ function MainMarket() {
 
       if (res.data.success && Array.isArray(res.data.teams)) {
         const formattedTeams = [
-          ...res.data.teams.map((t) => ({ value: t.team_id, label: t.team_name })),
-          { value: "abundent", label: "Abundent" }
+          ...res.data.teams.map((t) => ({
+            value: t.team_id,
+            label: t.team_name,
+          })),
+          { value: "abundent", label: "Abundent" },
         ];
         if (res.data.teams.length > 0) {
           setSelectedTeam(res.data.teams[0].team_id);
@@ -150,10 +180,7 @@ function MainMarket() {
   };
 
   const handleDeclareResult = async () => {
-
-
-
-
+    // Validation
     if (!selectedEventId || !selectedMatch?.market_id || !selectedTeam) {
       Swal.fire({ icon: "warning", title: "Please select all fields" });
       return;
@@ -167,9 +194,7 @@ function MainMarket() {
       cancelButtonText: "Cancel",
     });
 
-
-
-    if (!confirm.isConfirmed) return
+    if (!confirm.isConfirmed) return;
     const payload = {
       match: `${selectedMatch.market_id},${selectedEventId}`,
       market: selectedEventId,
@@ -186,7 +211,6 @@ function MainMarket() {
           title: res.data.message,
           confirmButtonText: "OK",
         });
-        fetchGames(); 
         if (alertRes.isConfirmed) {
           fetchMatchResultList(page);
         }
@@ -195,8 +219,7 @@ function MainMarket() {
         setSelectedMarket("");
         setSelectedTeam("");
         setTeamList([]);
-      }
-      else {
+      } else {
         Swal.fire({
           icon: "error",
           title: res.data?.message,
@@ -210,26 +233,28 @@ function MainMarket() {
     }
   };
 
-  const fetchMatchResultList = async (pageNo) => {
+  const fetchMatchResultList = async (pageNo = page) => {
     try {
-      setLoadingTable(true);
+      setLoading(true);
 
       const payload = {
         admin_id: admin_id,
         page: pageNo,
         limit: limit,
       };
+
       const res = await getAllMatchResultList(payload);
 
       if (res.data.success) {
         setMarketData(res.data.results || []);
-        setTotal(res.data.pagination.total);
-        setTotalPages(res.data.pagination.totalPages);
+        setTotal(res.data.total);
+        setTotalPages(res.data.pages);
+        setPage(res.data.page);
       }
     } catch (err) {
       console.error("Match result list error", err);
     } finally {
-      setLoadingTable(false);
+      setLoading(false);
     }
   };
 
@@ -264,7 +289,6 @@ function MainMarket() {
   //     setBtnLoader(item._id, false);
   //   }
   // };
-
   const handleRollbacklenadenasettled = async (item) => {
     const confirm = await Swal.fire({
       title: " Settled Result?",
@@ -283,9 +307,10 @@ function MainMarket() {
         result_id: item._id,
         event_id: item.event_id,
       });
+
       if (res.data?.success) {
-        Swal.fire("Success", res.data.message, "success");
-        fetchMatchResultList(page);
+        Swal.fire("Success", "Result rolled back", "success");
+        fetchMatchResultList(page); // ✅ correct refresh
       } else {
         Swal.fire("Error", res.data?.message || "Rollback failed", "error");
       }
@@ -295,6 +320,7 @@ function MainMarket() {
       setBtnLoader(item._id, false);
     }
   };
+
   const confirmAction = async (title, text) => {
     return await Swal.fire({
       title,
@@ -306,51 +332,45 @@ function MainMarket() {
       confirmButtonText: "Yes, Proceed",
     });
   };
+
   const getPageNumbers = () => {
     let pages = [];
-
-    let start = Math.max(1, page - 1);
-    let end = Math.min(totalPages, start + 1);
-
-    // adjust start if end reached last
-    if (end === totalPages) {
-      start = Math.max(1, totalPages - 1);
-    }
-    for (let i = start; i <= end; i++) {
+    for (let i = 1; i <= totalPages; i++) {
       pages.push(i);
     }
-
     return pages;
   };
+
   const handlePrev = () => {
     if (page > 1) setPage(page - 1);
-  };             
+  };
+
   const handleNext = () => {
     if (page < totalPages) setPage(page + 1);
   };
+
   const handlePageClick = (pageNo) => {
     setPage(pageNo);
   };
 
-  const matchOptions = events.map(event => ({
+  const matchOptions = events.map((event) => ({
     value: event.id || event.event_id,
-    // label: event.name,
-     label: `${event.name} (${event.time || ''})`, // ✅ Time add karo
-    market_id: event.market_id
+    label: event.name,
+    market_id: event.market_id,
   }));
+
   return (
     <div className="marketname">
       <div className="card">
-        <div className="card-header bg-primary-yellow">
-          <div className="d-flex justify-content-between align-items-center">
-            <h3 className="card-title mb-0">Declared Main Result</h3>
+        <div className="card-header">
+          <div className="d-flex justify-content-between align-items-md-center">
+            <h3 className="card-title">Declared Main Result</h3>
           </div>
         </div>
+
         <div className="card-body">
           <form noValidate className="needs-validation">
-            <div className="form-design-fillter gap-2 d-flex justify-content-between align-items-end flex-md-nowrap flex-wrap">
-
-              {/* 🔹 Select Sport */}
+            <div className="form-design-fillter gap-2 d-flex justify-content-between align-items-end flex-wrap-mobile">
               <div className="form_latest_design w-100">
                 <label className="form-label">
                   Select Sport <span style={{ color: "red" }}>*</span>
@@ -361,22 +381,12 @@ function MainMarket() {
                     label: game.name,
                   }))}
                   value={games
-                    .map(game => ({ value: game.id, label: game.name }))
-                    .find(opt => opt.value === selectedSportId)
-                  }
+                    .map((game) => ({ value: game.id, label: game.name }))
+                    .find((opt) => opt.value === selectedSportId)}
                   onChange={(selectedOption) => {
-                    const sportId = selectedOption?.value;
-
-                    setSelectedSportId(sportId);
-
-                    setSelectedMatch(null);
-                    setSelectedEventId(null);
-                    setSelectedMarket("");
-                    setSelectedTeam("");
-                    setTeamList([]);
-                    setEvents([]);
-
-                    fetchEvents(sportId); // ✅ direct new sport id
+                    const selectedSportId = selectedOption?.value || "";
+                    setSelectedSportId(selectedSportId);
+                    fetchEvents(selectedSportId);
                   }}
                   placeholder="Select Sport"
                 />
@@ -387,32 +397,66 @@ function MainMarket() {
                 <label className="form-label">
                   Select Match <span style={{ color: "red" }}>*</span>
                 </label>
-                <Select
-                  options={matchOptions}
-                  value={selectedEventId ? matchOptions.find(opt => opt.value === selectedEventId) : null}
+                {/* <Select
+                  options={events.map((event) => ({
+                    value: event.id || event.event_id,
+                    label: `${event.name}`,
+                      market_id: event.market_id 
+                  }))}
+                  value={events
+                    .map((event) => ({
+                      value: event.id || event.event_id,
+                      label: `${event.name}`,
+                    }))
+                    .find((opt) => opt.value === selectedEventId)}
                   onChange={(selected) => {
                     setSelectedMatch(selected);
                     setSelectedEventId(selected?.value);
+                    // fetchMarketsByEvent(selected?.value);
                     setSelectedMarket("");
                     setSelectedTeam("");
                     setTeamList([]);
+                     fetchSelectionsByMarket(selected?.value);
+                  }}
+                  placeholder="Select Match"
+                  isDisabled={loading}
+                  isLoading={loading}
+                /> */}
+                <Select
+                  options={matchOptions}
+                  value={matchOptions.find(
+                    (opt) => opt.value === selectedEventId,
+                  )}
+                  onChange={(selected) => {
+                    setSelectedMatch(selected);
+                    setSelectedEventId(selected?.value);
+
+                    // 🔥 RESET dependent states
+                    setSelectedMarket("");
+                    setSelectedTeam("");
+                    setTeamList([]);
+
                     if (selected?.market_id) {
                       fetchSelectionsByMarket(selected.market_id);
                     } else {
                       Swal.fire({
                         icon: "info",
-                        title: "Market not available for this match"
+                        title: "Market not available for this match",
                       });
                     }
                   }}
                   placeholder="Select Match"
-                  isDisabled={loadingGames}
-                  isLoading={loadingGames}
+                  isDisabled={loading}
+                  isLoading={loading}
                 />
-        
+
+                {loading && (
+                  <small className="text-muted">Loading matches...</small>
+                )}
               </div>
+
               {/* 🔹 Select Market
-              <div className="form_latest_design">
+              <div className="form_latest_design w-100">
                 <label className="form-label">
                   Select Market<span style={{ color: "red" }}>*</span>
                 </label>
@@ -428,6 +472,8 @@ function MainMarket() {
                   isDisabled={!selectedEventId}
                 />
               </div> */}
+
+              {/* 🔹 Select Selection */}
               {/* 🔹 Select Selection */}
               <div className="form_latest_design w-100">
                 <label className="form-label">
@@ -435,48 +481,50 @@ function MainMarket() {
                 </label>
                 <Select
                   options={teamList}
-                  value={teamList.find(team => team.value === selectedTeam)}
+                  value={teamList.find((team) => team.value === selectedTeam)}
                   onChange={(selected) => {
                     setSelectedTeam(selected?.value);
                   }}
-                  placeholder={loadingSelections ? "Loading selections..." : "Select Selection"}
+                  placeholder={
+                    loadingSelections
+                      ? "Loading selections..."
+                      : "Select Selection"
+                  }
                   isSearchable
                   isDisabled={!selectedEventId || loadingSelections}
                   isLoading={loadingSelections}
                 />
               </div>
               {/* 🔹 Declare Button */}
-              <div className="buttonsubmit">
-                <button
-                  className={`btn btn-success w-auto h-auto ${isButtonDisabled ? "disabled-button" : ""}`}
-                  type="button"
-                  // disabled={isButtonDisabled}
-                  disabled={declareLoading}
-                  onClick={handleDeclareResult}
-                >
-                  {/* {isButtonDisabled ? "Declared" : "Declare"} */}
-                  {declareLoading ? "Processing..." : "Declare"}
-                </button>
+              <div className="form_latest_design w-100">
+                <div className="d-flex gap-2 justify-content-end">
+                  <button
+                    className={`btn btn-primary ${isButtonDisabled ? "disabled-button" : ""}`}
+                    type="button"
+                    // disabled={isButtonDisabled}
+                    disabled={declareLoading}
+                    onClick={handleDeclareResult}
+                  >
+                    {/* {isButtonDisabled ? "Declared" : "Declare"} */}
+                    {declareLoading ? "Processing..." : "Declare"}
+                  </button>
+                </div>
               </div>
-
             </div>
           </form>
 
-        </div>
-        <div className="card-body">
-          <div className="card">
-            <div className="card-header bg-primary-yellow">
-              <h5 className="card-title  mb-0">
+          <div className="card mt-3">
+            <div className="card-header">
+              <h5 className="card-title text-white mb-0">
                 Declared Match Result List
               </h5>
             </div>
             <div className="card-body table-responsive">
               <table className="table table-bordered">
-                <thead className="table-dark">
+                <thead>
                   <tr>
                     <th>Sr.No.</th>
                     <th>Date&Time</th>
-                    <th>Game Name</th>
                     <th>Match Name</th>
                     <th>Market Name</th>
                     <th>Status</th>
@@ -485,20 +533,27 @@ function MainMarket() {
                   </tr>
                 </thead>
                 <tbody>
-                  {loadingTable ? (
+                  {loading ? (
                     <tr>
-                      <td colSpan="8" className="text-center">Loading...</td>
+                      <td colSpan="8" className="text-center">
+                        Loading...
+                      </td>
                     </tr>
                   ) : marketData.length > 0 ? (
                     marketData.map((item, index) => (
                       <tr key={item._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>{moment(item.created_at).format("DD-MM-YYYY HH:mm")}</td>
-                        <td>{item.game_name || "-"}</td>
+                        <td>
+                          {moment(item.created_at).format("DD-MM-YYYY HH:mm")}
+                        </td>
                         <td>{item.team_name || "-"}</td>
                         <td>{item.full_team_name}</td>
                         <td>
-                          <span className={item.status === 1 ? "text-success" : "text-danger"}>
+                          <span
+                            className={
+                              item.status === 1 ? "text-success" : "text-danger"
+                            }
+                          >
                             {item.status === 1 ? "Active" : "Inactive"}
                           </span>
                         </td>
@@ -540,12 +595,13 @@ function MainMarket() {
                             </button>
                           ) : "Lena Dena Ho Chuka H"}
                         </td> */}
-
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="8" className="text-center">No Data Found</td>
+                      <td colSpan="8" className="text-center">
+                        No Data Found
+                      </td>
                     </tr>
                   )}
                 </tbody>
@@ -571,53 +627,49 @@ function MainMarket() {
               <MdOutlineKeyboardArrowRight />
             </button>
           </div> */}
-          {total > limit && (
-            <div className="d-flex justify-content-between align-items-center mt-4">
 
-              <div className="sohwingallentries">
-                {/* Showing {(page - 1) * limit + 1} to{" "}
-                {Math.min(page * limit, total)} of {total} */}
+          {totalPages > 1 && (
+            <div className="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
+              <div className="showingallentries">
+                Showing {(currentPage - 1) * limit + 1} to{" "}
+                {Math.min(currentPage * limit, totalRecords)} of {totalRecords}{" "}
+                entries
               </div>
+
               <div className="paginationall d-flex align-items-center gap-1">
                 <button
-                  type="button"
-                  disabled={page === 1}
+                  className="btn btn-sm btn-outline-primary"
+                  disabled={currentPage === 1}
                   onClick={handlePrev}
-                  className="d-flex justify-content-center align-items-center"
                 >
                   <MdOutlineKeyboardArrowLeft />
                 </button>
+
                 <div className="d-flex gap-1">
-                  {getPageNumbers().map((pageNo) => (
-                    <div
-                      key={pageNo}
-                      className={`paginationnumber ${pageNo === page ? "active" : ""
-                        }`}
-                      onClick={() => handlePageClick(pageNo)}
+                  {getPageNumbers().map((page) => (
+                    <button
+                      key={page}
+                      className={`btn btn-sm ${currentPage === page ? "btn-primary" : "btn-outline-primary"}`}
+                      onClick={() => handlePageClick(page)}
                     >
-                      {pageNo}
-                    </div>
+                      {page}
+                    </button>
                   ))}
                 </div>
+
                 <button
-                  type="button"
-                  disabled={page === totalPages}
+                  className="btn btn-sm btn-outline-primary"
+                  disabled={currentPage === totalPages}
                   onClick={handleNext}
-                  className="d-flex justify-content-center align-items-center"
                 >
                   <MdOutlineKeyboardArrowRight />
                 </button>
               </div>
             </div>
           )}
-
-
         </div>
       </div>
-
-
     </div>
-
   );
 }
 

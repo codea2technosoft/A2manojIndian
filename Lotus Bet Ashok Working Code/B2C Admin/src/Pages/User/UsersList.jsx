@@ -1310,7 +1310,7 @@ function UsersList() {
 
       {/* Exposure Popup Modal */}
       {showExposurePopup && (
-        <div className="allcommon">
+        <div className="allcommon newwidthallsames">
           <div
             className="modal show d-block"
             style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
