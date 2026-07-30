@@ -45,7 +45,6 @@ function AgentLists() {
   const [filter, setFilter] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [depositmodal, setDepositmodal] = useState(false);
-  const [blockmodal, setBlockmodal] = useState(false);
   const [modalType, setModalType] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [amount, setAmount] = useState("");
@@ -59,7 +58,19 @@ function AgentLists() {
   const AdduserCloseModalall = () => setAdduser(false);
   const AmountEditOpenModalall = () => setAmountEdit(true);
   const AmountEditCloseModalall = () => setAmountEdit(false);
-   // Password change states
+  const [status, setStatus] = useState("active");
+  const [agentErrors, setAgentErrors] = useState({});
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState(null);
+  const [editType, setEditType] = useState("");
+  const handleOpenModalall = () => setShowModal(true);
+  const handleCloseModalall = () => setShowModal(false);
+  const handleOpensetDepositmodal = () => setDepositmodal(true);
+  const handleClosesetDepositmodal = () => setDepositmodal(false);
+  // Get admin_id from localStorage
+  const admin_id = localStorage.getItem("admin_id");
+
+  // Password change states
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [passwordLoading, setPasswordLoading] = useState(false);
@@ -83,48 +94,6 @@ function AgentLists() {
   const [exposureData, setExposureData] = useState([]);
   const [exposureLoading, setExposureLoading] = useState(false);
   const [selectedAgentName, setSelectedAgentName] = useState("");
-
-
-  const [withdrawAmount, setWithdrawAmount] = useState('');
-const [withdrawPassword, setWithdrawPassword] = useState('');
-const [withdrawAmountError, setWithdrawAmountError] = useState('');
-const [withdrawPasswordError, setWithdrawPasswordError] = useState('');
-
-// Deposit states
-const [depositAmount, setDepositAmount] = useState('');
-const [depositPassword, setDepositPassword] = useState('');
-const [depositAmountError, setDepositAmountError] = useState('');
-const [depositPasswordError, setDepositPasswordError] = useState('');
-  const [status, setStatus] = useState("active");
-  const [agentErrors, setAgentErrors] = useState({});
-  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
-  const [selectedAgent, setSelectedAgent] = useState(null);
-  const [editType, setEditType] = useState("");
-  // const handleOpenModalall = () => setShowModal(true);
-  const handleCloseModalall = () => setShowModal(false);
-  // const handleOpensetDepositmodal = () => setDepositmodal(true);
-
-
-  const handleOpensetDepositmodal = () => {
-  setDepositmodal(true);
-  setDepositAmount('');
-  setDepositPassword('');
-  setDepositAmountError('');
-  setDepositPasswordError('');
-};
-const handleOpenModalall = () => {
-  setShowModal(true);
-  setWithdrawAmount('');
-  setWithdrawPassword('');
-  setWithdrawAmountError('');
-  setWithdrawPasswordError('');
-};
-  const handleClosesetDepositmodal = () => setDepositmodal(false);
-  const handleClosesetDepositmodalmarket = () => setBlockMarketModal(false);
-  // Get admin_id from localStorage
-  const admin_id = localStorage.getItem("admin_id");
-
- 
   // ======================================
 
   // Agent form states
@@ -139,6 +108,8 @@ const handleOpenModalall = () => {
   });
 
   // Validate Agent Form - Pure JavaScript validation
+  // Validate Agent Form - Sirf Alert ke saath
+  // Validate Agent Form
   const validateAgentForm = () => {
     const errors = {};
 
@@ -146,6 +117,95 @@ const handleOpenModalall = () => {
     if (!agentFormData.name || agentFormData.name.trim() === "") {
       errors.name = "Please enter username";
     }
+
+
+    // ✅ Deposit Amount Edit Submit Handler
+const handleDepositSubmit = async (e) => {
+  e.preventDefault();
+  
+  const newAmount = document.querySelector('[name="reference_amount"]')?.value;
+  const password = document.querySelector('[name="mypassword"]')?.value;
+  
+  if (!newAmount || !password) {
+    Swal.fire("Error", "Please fill all fields", "error");
+    return;
+  }
+  
+  try {
+    setLoading(true);
+    const payload = {
+      admin_id: selectedAgent?.admin_id || selectedAgent?._id,
+      exposure_limit: Number(newAmount),
+      password: password
+    };
+    
+    const response = await changeExposerDlimitAgent(payload);
+    
+    if (response.data && response.data.success) {
+      Swal.fire("Success!", "Exposure limit updated successfully!", "success");
+      handleClosesetDepositmodal();
+      fetchAgentList(); // Refresh list
+    } else {
+      Swal.fire("Error", response.data?.message || "Failed to update", "error");
+    }
+  } catch (error) {
+    Swal.fire("Error", error.response?.data?.message || "Something went wrong", "error");
+  } finally {
+    setLoading(false);
+  }
+};
+
+// ✅ Withdraw Amount Edit Submit Handler
+const handleWithdrawSubmit = async (e) => {
+  e.preventDefault();
+  
+  const newAmount = document.querySelector('[name="reference_amount"]')?.value;
+  const password = document.querySelector('[name="mypassword"]')?.value;
+  
+  if (!newAmount || !password) {
+    Swal.fire("Error", "Please fill all fields", "error");
+    return;
+  }
+  
+  try {
+    setLoading(true);
+    const payload = {
+      admin_id: selectedAgent?.admin_id || selectedAgent?._id,
+      withdraw_limit: Number(newAmount),
+      password: password
+    };
+    
+    const response = await changeExposerWithdrawlimitAgent(payload);
+    
+    if (response.data && response.data.success) {
+      Swal.fire("Success!", "Withdraw limit updated successfully!", "success");
+      handleCloseModalall();
+      fetchAgentList(); // Refresh list
+    } else {
+      Swal.fire("Error", response.data?.message || "Failed to update", "error");
+    }
+  } catch (error) {
+    Swal.fire("Error", error.response?.data?.message || "Something went wrong", "error");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+    //  if (!agentFormData.agent_comm || agentFormData.agent_comm.trim() === "") {
+    //   errors.agent_comm = "Please agent comm";
+    // }
+
+
+    // First Name validation (optional - agar required hai toh)
+    // if (!agentFormData.firstName || agentFormData.firstName.trim() === "") {
+    //   errors.firstName = "Please enter firstName";
+    // }
+
+    // Last Name validation (optional - agar required hai toh)
+    // if (!agentFormData.lastName || agentFormData.lastName.trim() === "") {
+    //   errors.lastName = "Please enter lastName";
+    // }
 
     // Password validation
     if (!agentFormData.password) {
@@ -162,138 +222,6 @@ const handleOpenModalall = () => {
     setAgentErrors(errors);
     return Object.keys(errors).length === 0;
   };
-
-  // =============================================
-  // ✅ DEPOSIT SUBMIT HANDLER (ADD KARO)
-  // =============================================
-  // const handleDepositSubmit = async (e) => {
-  //   e.preventDefault();
-    
-  //   const form = e.target;
-  //   const newAmount = form.querySelector('[name="deposit_amount"]')?.value;
-  //   const password = form.querySelector('[name="deposit_password"]')?.value;
-    
-  //   if (!newAmount || !password) {
-  //     Swal.fire("Error", "Please fill all fields", "error");
-  //     return;
-  //   }
-    
-  //   if (!selectedAgent) {
-  //     Swal.fire("Error", "No agent selected", "error");
-  //     return;
-  //   }
-    
-  //   try {
-  //     setLoading(true);
-  //     const payload = {
-  //       admin_id: selectedAgent?.admin_id || selectedAgent?._id,
-  //       exposure_limit: Number(newAmount),
-  //       password: password
-  //     };
-      
-  //     console.log("📤 Deposit Payload:", payload);
-      
-  //     const response = await changeExposerDlimitAgent(payload);
-      
-  //     if (response.data && response.data.success) {
-  //       Swal.fire("Success!", "Exposure limit updated successfully!", "success");
-  //       handleClosesetDepositmodal();
-  //       fetchAgentList();
-  //     } else {
-  //       Swal.fire("Error", response.data?.message || "Failed to update exposure limit", "error");
-  //     }
-  //   } catch (error) {
-  //     console.error("❌ Deposit Error:", error);
-  //     Swal.fire("Error", error.response?.data?.message || "Something went wrong", "error");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
- const handleDepositSubmit = async (e) => {
-  e.preventDefault();
-  
-  // ✅ Final validation check
-  if (!depositAmount || Number(depositAmount) <= 0) {
-    setDepositAmountError('Please enter a valid amount');
-    return;
-  }
-  
-  if (!depositPassword || depositPassword.length < 4) {
-    setDepositPasswordError('Password must be at least 4 characters');
-    return;
-  }
-  
-  if (!selectedAgent) {
-    Swal.fire("Error", "No agent selected", "error");
-    return;
-  }
-  
-  try {
-    setLoading(true);
-    const payload = {
-      admin_id: selectedAgent?.admin_id || selectedAgent?._id,
-      exposure_limit: Number(depositAmount),
-      password: depositPassword
-    };
-    
-    const response = await changeExposerDlimitAgent(payload);
-    
-    if (response.data && response.data.success) {
-      Swal.fire("Success!", "Exposure limit updated successfully!", "success");
-      handleClosesetDepositmodal();
-      fetchAgentList();
-    } else {
-      Swal.fire("Error", response.data?.message || "Failed to update", "error");
-    }
-  } catch (error) {
-    Swal.fire("Error", error.response?.data?.message || "Something went wrong", "error");
-  } finally {
-    setLoading(false);
-  }
-};
-
-const handleWithdrawSubmit = async (e) => {
-  e.preventDefault();
-  
-  // ✅ Final validation check
-  if (!withdrawAmount || Number(withdrawAmount) <= 0) {
-    setWithdrawAmountError('Please enter a valid amount');
-    return;
-  }
-  
-  if (!withdrawPassword || withdrawPassword.length < 4) {
-    setWithdrawPasswordError('Password must be at least 4 characters');
-    return;
-  }
-  
-  if (!selectedAgent) {
-    Swal.fire("Error", "No agent selected", "error");
-    return;
-  }
-  
-  try {
-    setLoading(true);
-    const payload = {
-      admin_id: selectedAgent?.admin_id || selectedAgent?._id,
-      withdraw_limit: Number(withdrawAmount),
-      password: withdrawPassword
-    };
-    
-    const response = await changeExposerWithdrawlimitAgent(payload);
-    
-    if (response.data && response.data.success) {
-      Swal.fire("Success!", "Withdraw limit updated successfully!", "success");
-      handleCloseModalall();
-      fetchAgentList();
-    } else {
-      Swal.fire("Error", response.data?.message || "Failed to update", "error");
-    }
-  } catch (error) {
-    Swal.fire("Error", error.response?.data?.message || "Something went wrong", "error");
-  } finally {
-    setLoading(false);
-  }
-};
   const [agentList, setAgentList] = useState([]);
   const [agentLoading, setAgentLoading] = useState(false);
 
@@ -364,13 +292,15 @@ const handleWithdrawSubmit = async (e) => {
         admin_id: admin_id || "admin",
         page: page,
         limit: limit,
-        username: filters.username || "",
-        status: filters.status || "",
+        // Server side filters - these will be sent to backend
+        username: filters.username || "",   // Search by username
+        status: filters.status || "",       // Filter by status (Active/Cheater)
       };
       const response = await getAgentList(payload);
       if (response.data && response.data.success) {
         setAgentList(response.data.data || []);
 
+        // Update pagination from server response
         if (response.data.pagination) {
           setPagination({
             page: response.data.pagination.current_page || 1,
@@ -380,6 +310,7 @@ const handleWithdrawSubmit = async (e) => {
           });
         }
 
+        // Set summary
         if (response.data.summary) {
           setSummary({
             total_balance: response.data.summary.total_balance || "0.00",
@@ -550,6 +481,7 @@ const handleWithdrawSubmit = async (e) => {
           "success",
         );
 
+        // Update local state
         const updatedList = [...agentList];
         updatedList[index] = {
           ...updatedList[index],
@@ -577,6 +509,55 @@ const handleWithdrawSubmit = async (e) => {
   };
 
   // Handle Change Password
+  // const handleChangePassword = async (e) => {
+  //   e.preventDefault();
+
+  //   if (!newPassword) {
+  //     Swal.fire("Error", "Please enter new password", "error");
+  //     return;
+  //   }
+  //   if (newPassword.length < 6) {
+  //     Swal.fire("Error", "Password must be at least 6 characters", "error");
+  //     return;
+  //   }
+
+  //   try {
+  //     setPasswordLoading(true);
+  //     const payload = {
+  //       admin_id:
+  //         selectedAgentForPassword?.admin_id ||
+  //         selectedAgentForPassword?._id ||
+  //         admin_id,
+  //       newPassword: newPassword,
+  //     };
+  //     const response = await changeMasterPasswordAgent(payload);
+  //     if (response.data && response.data.success) {
+  //       Swal.fire("Success!", "Password changed successfully!", "success");
+  //       setChangestatus(false);
+  //       setNewPassword("");
+  //       setSelectedAgentForPassword(null);
+  //     } else {
+  //       Swal.fire(
+  //         "Error",
+  //         response.data?.message || "Failed to change password",
+  //         "error",
+  //       );
+  //     }
+  //   } catch (error) {
+  //     Swal.fire(
+  //       "Error",
+  //       error.response?.data?.message || "Something went wrong",
+  //       "error",
+  //     );
+  //   } finally {
+  //     setPasswordLoading(false);
+  //   }
+  // };
+
+
+  // Handle Change Password
+  // Handle Change Password - AgentLists.jsx
+  // Handle Change Password - AgentLists.jsx
   const handleChangePassword = async (e) => {
     e.preventDefault();
 
@@ -594,16 +575,16 @@ const handleWithdrawSubmit = async (e) => {
       const payload = {
         admin_id: selectedAgentForPassword?.admin_id || selectedAgentForPassword?._id || admin_id,
         newPassword: newPassword,
-        status: status
+        status: status  // ✅ YEH LINE ADD KARO - status payload mein bhejo
       };
-      console.log("Payload:", payload);
+      console.log("Payload:", payload); // Debug ke liye
       const response = await changeMasterPasswordAgentStatus(payload);
       if (response.data && response.data.success) {
         Swal.fire("Success!", "Status changed successfully!", "success");
         setChangestatus(false);
         setNewPassword("");
         setSelectedAgentForPassword(null);
-        fetchAgentList();
+        fetchAgentList(); // Refresh list
       } else {
         Swal.fire("Error", response.data?.message || "Failed to change Status", "error");
       }
@@ -613,6 +594,7 @@ const handleWithdrawSubmit = async (e) => {
       setPasswordLoading(false);
     }
   };
+
 
   // Open Change Status Modal with agent data
   const openChangeStatusModal = (agent) => {
@@ -991,6 +973,7 @@ const handleWithdrawSubmit = async (e) => {
                         >
                           <option value="">All</option>
                           <option value="active">Active</option>
+                          {/* <option value="cheater">Cheater</option> */}
                           <option value="suspend">Suspend</option>
                           <option value="locked">Locked</option>
                         </select>
@@ -998,6 +981,7 @@ const handleWithdrawSubmit = async (e) => {
                         <button
                           type="button"
                           className="btn btn-primary py-2"
+                          // className="search-btn s-btn btn btn-primary"
                           onClick={applyServerFilters}
                         >
                           Search
@@ -1017,6 +1001,8 @@ const handleWithdrawSubmit = async (e) => {
                   </div>
                   <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                     <div className="d-flex flex-wrap justify-content-end">
+                      {/* ===== RESET FILTER BUTTON ===== */}
+
                       <div className="find-member-director text-xl-end ">
                         <button className="btn" onClick={AdduserOpenModalall}>
                           <i className="fas fa-user-plus pe-1" /> Add Agent
@@ -1069,32 +1055,79 @@ const handleWithdrawSubmit = async (e) => {
           >
             <thead>
               <tr>
-                <th scope="col" className="text-center">Account</th>
-                <th scope="col" className="text-center">Credit Ref.</th>
-                <th scope="col" className="text-center">Withdraw Limit</th>
-                <th scope="col" className="text-center">Balance</th>
-                <th scope="col" className="text-center">Player Exposure</th>
-                <th scope="col" className="text-center">Avail. bal.</th>
-                <th scope="col" className="text-center">Player Balance</th>
-                <th scope="col" className="text-center">Reference P/L</th>
-                <th scope="col" className="text-center">Current P/L</th>
-                <th scope="col" className="text-center">B Lock</th>
-                <th scope="col" className="text-center">Status</th>
-                <th scope="col" className="text-center">Action</th>
+                <th scope="col" className="text-center">
+                  Account
+                </th>
+                <th scope="col" className="text-center">
+                  Credit Ref.
+                </th>
+                <th scope="col" className="text-center">
+                  Withdraw Limit
+                </th>
+                <th scope="col" className="text-center">
+                  Balance
+                </th>
+                <th scope="col" className="text-center">
+                  Player Exposure
+                </th>
+                <th scope="col" className="text-center">
+                  Avail. bal.
+                </th>
+                <th scope="col" className="text-center">
+                  Player Balance
+                </th>
+                <th scope="col" className="text-center">
+                  Reference P/L
+                </th>
+                <th scope="col" className="text-center">
+                  Current P/L
+                </th>
+                <th scope="col" className="text-center">
+                  B Lock
+                </th>
+                <th scope="col" className="text-center">
+                  Status
+                </th>
+                <th scope="col" className="text-center">
+                  Action
+                </th>
               </tr>
             </thead>
 
             <tbody>
               <tr>
-                <td scope="col" className="text-center"></td>
-                <td scope="col" className="text-center">{(grandTotals.credit_ref).toFixed(2)}</td>
-                <td scope="col" className="text-center"><strong>{grandTotals.withdraw_limit.toFixed(2)}</strong></td>
-                <td scope="col" className="text-center"><strong>{grandTotals.balance.toFixed(2)}</strong></td>
-                <td scope="col" className="text-center"><strong>{grandTotals.player_exposure.toFixed(2)}</strong></td>
-                <td scope="col" className="text-center"><strong>{grandTotals.available_balance.toFixed(2)}</strong></td>
-                <td scope="col" className="text-center"><strong>{grandTotals.total_player_balance.toFixed(2)}</strong></td>
-                <td scope="col" className="text-center"></td>
-                <td scope="col" className="text-center"></td>
+                <td scope="col" className="text-center">
+                  {/* <strong>Total</strong> */}
+                </td>
+                <td scope="col" className="text-center">
+                  {/* <strong>
+                    {(grandTotals.credit_ref - grandTotals.player_exposure).toFixed(2)}
+                  </strong> */}
+                  {(grandTotals.credit_ref).toFixed(2)}
+                </td>
+                <td scope="col" className="text-center">
+                  <strong>{grandTotals.withdraw_limit.toFixed(2)}</strong>
+                </td>
+                <td scope="col" className="text-center">
+                  <strong>{grandTotals.balance.toFixed(2)}</strong>
+                </td>
+                <td scope="col" className="text-center">
+                  <strong>{grandTotals.player_exposure.toFixed(2)}</strong>
+                </td>
+                <td scope="col" className="text-center">
+                  <strong>{grandTotals.available_balance.toFixed(2)}</strong>
+                </td>
+                <td scope="col" className="text-center">
+                  <strong>
+                    {grandTotals.total_player_balance.toFixed(2)}
+                  </strong>
+                </td>
+                <td scope="col" className="text-center">
+                  {/* <strong>{grandTotals.total_amount}</strong> */}
+                </td>
+                <td scope="col" className="text-center">
+                  {/* <strong>{grandTotals.current_pl.toFixed(2)}</strong> */}
+                </td>
                 <td scope="col" className="text-center"></td>
                 <td scope="col" className="text-center"></td>
                 <td scope="col" className="text-center"></td>
@@ -1108,6 +1141,7 @@ const handleWithdrawSubmit = async (e) => {
                         {agent.name || agent.username}
                       </Link>
                     </td>
+
                     <td className="text-end">
                       <Link
                         to="#"
@@ -1119,6 +1153,7 @@ const handleWithdrawSubmit = async (e) => {
                           handleOpensetDepositmodal();
                         }}
                       >
+                        {/* {(agent.credit_ref - agent.player_exposure).toFixed(2)} */}
                         {(agent.credit_ref).toFixed(2)}
                         <i className="fas fa-pen ps-1" />
                       </Link>
@@ -1129,28 +1164,39 @@ const handleWithdrawSubmit = async (e) => {
                         className="text-primary"
                         onClick={(e) => {
                           e.preventDefault();
-                          setSelectedAgent(agent);
+                          // setSelectedAgent(agent);
                           setEditType("withdraw");
                           handleOpenModalall();
                         }}
                       >
-                        {agent.withdraw_limit || "0.00"}
+                        {agent.withdraw_limit || "0.00"}{" "}
                         <i className="fas fa-pen ps-1" />
                       </Link>
                     </td>
-                    <td className="text-primary text-end">{agent.balance || "0.00"}</td>
+                    <td className="text-primary text-end">
+                      {agent.balance || "0.00"}
+                    </td>
                     <td className="text-end">
                       <Link onClick={() => handleExposureClick(agent.admin_id)}>
                         <span className="status-suspend1">{agent.player_exposure || '0.00'}</span>
                       </Link>
                     </td>
-                    <td className="text-end">{agent.available_balance || "0.00"}</td>
-                    <td className="text-end">{agent.total_player_balance || "0.00"}</td>
-                    <td className={`text-end  ${Number(agent.total_amount) <= 0 ? "ul-t" : "ul-t2"}`}>
-                      <span>{agent.total_amount || "0.00"}</span>
+                    <td className="text-end">
+                      {agent.available_balance || "0.00"}
                     </td>
                     <td className="text-end">
-                      <span style={{ color: "green" }}>{(agent.current_pl.toFixed(2)) || "0.00"}</span>
+                      {agent.total_player_balance || "0.00"}
+                    </td>
+                    <td className={`text-end  ${Number(agent.total_amount) <= 0 ? "ul-t" : "ul-t2"
+                      }`}>
+                      <span>
+                        {agent.total_amount || "0.00"}
+                      </span>
+                    </td>
+                    <td className="text-end">
+                      <span style={{ color: "green" }}>
+                        {agent.current_pl || "0.00"}
+                      </span>
                     </td>
                     <td className="text-end b-lock">
                       <div className="">
@@ -1158,7 +1204,9 @@ const handleWithdrawSubmit = async (e) => {
                           type="checkbox"
                           id={`default-checkbox-${index}`}
                           className="form-check-input"
-                          checked={agent.bet_block === 1 || agent.block || false}
+                          checked={
+                            agent.bet_block === 1 || agent.block || false
+                          }
                           onChange={() => handleBetBlockToggle(agent, index)}
                         />
                       </div>
@@ -1173,7 +1221,9 @@ const handleWithdrawSubmit = async (e) => {
                               : "status-active"
                         }
                       >
-                        {agent.bet_block === 1 ? "Cheater" : agent.status || "active"}
+                        {agent.bet_block === 1
+                          ? "Cheater"
+                          : agent.status || "active"}
                       </strong>
                     </td>
                     <td className="action_link text-end">
@@ -1184,6 +1234,7 @@ const handleWithdrawSubmit = async (e) => {
                       >
                         <i className="fas fa-exchange-alt swap-icon" />
                       </Link>
+
                       <Link
                         to={`/betting-history?admin_id=${agent.admin_id || agent._id}&role=${agent.role || 2}`}
                         className="btn"
@@ -1191,6 +1242,7 @@ const handleWithdrawSubmit = async (e) => {
                       >
                         <i className="fas fa-th-list" />
                       </Link>
+
                       <a
                         title="Change Status"
                         className="btn"
@@ -1198,6 +1250,7 @@ const handleWithdrawSubmit = async (e) => {
                       >
                         <i className="fas fa-cog" />
                       </a>
+
                       <Link
                         to={`/account-summary?admin_id=${agent.admin_id || agent._id}&role=${agent.role || 2}`}
                         className="btn"
@@ -1205,6 +1258,7 @@ const handleWithdrawSubmit = async (e) => {
                       >
                         <i className="fas fa-user" />
                       </Link>
+
                       <a
                         title="Block Market"
                         className="btn"
@@ -1233,23 +1287,50 @@ const handleWithdrawSubmit = async (e) => {
           {/* Pagination */}
           {pagination.total > 0 && (
             <div className="bottom-pagination d-flex justify-content-center align-items-center">
+              {/* <span className="text-muted small">
+                Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
+                {Math.min(pagination.page * pagination.limit, pagination.total)}{" "}
+                of {pagination.total} All users
+              </span> */}
+
               <ul className="pagination mb-0 gap-0">
-                <li className={`previous ${pagination.page === 1 ? "disabled" : ""}`}>
-                  <Link className="" onClick={() => handlePageChange(pagination.page - 1)}>
+                <li
+                  className={`previous ${pagination.page === 1 ? "disabled" : ""
+                    }`}
+                >
+                  <Link
+                    className=""
+                    onClick={() => handlePageChange(pagination.page - 1)}
+                  >
                     <FaChevronLeft />
                   </Link>
                 </li>
+
                 {[pagination.page - 1, pagination.page, pagination.page + 1]
                   .filter((p) => p > 0 && p <= pagination.totalPages)
                   .map((p) => (
-                    <li key={p} className={`p-0 ${pagination.page === p ? "active" : ""}`}>
-                      <Link className="pagintion-li" onClick={() => handlePageChange(p)}>
+                    <li
+                      key={p}
+                      className={`p-0 ${pagination.page === p ? "active" : ""
+                        }`}
+                    >
+                      <Link
+                        className="pagintion-li"
+                        onClick={() => handlePageChange(p)}
+                      >
                         {p}
                       </Link>
                     </li>
                   ))}
-                <li className={`next ${pagination.page === pagination.totalPages ? "disabled" : ""}`}>
-                  <Link className="" onClick={() => handlePageChange(pagination.page + 1)}>
+
+                <li
+                  className={`next ${pagination.page === pagination.totalPages ? "disabled" : ""
+                    }`}
+                >
+                  <Link
+                    className=""
+                    onClick={() => handlePageChange(pagination.page + 1)}
+                  >
                     <FaChevronRight />
                   </Link>
                 </li>
@@ -1258,9 +1339,7 @@ const handleWithdrawSubmit = async (e) => {
           )}
         </div>
       </div>
-
-      {/* ===== WITHDRAW MODAL WITH onSubmit ===== */}
-      {/* {showModal && (
+      {showModal && (
         <div className="allcommon">
           <div
             className="modal show d-block"
@@ -1281,157 +1360,43 @@ const handleWithdrawSubmit = async (e) => {
                   ></button>
                 </div>
                 <div className="modal-body">
-                  <form className="change-password-sec" onSubmit={handleWithdrawSubmit}>
+                  <form className="change-password-sec">
                     <h4 className="h4 mb-3 curent-value">
-                      <label>Current :</label>
-                      <strong>{selectedAgent?.withdraw_limit || "0.00"}</strong>
+                      <label>Current :</label> <strong>1,050.00</strong>
                     </h4>
                     <div className="mb-2 d-flex align-items-center">
                       <label className="me-2">New</label>
                       <input
                         placeholder="Enter Withdraw Amount"
-                        name="withdraw_amount"
+                        name="reference_amount"
                         type="number"
-                        className="w-sm-50 form-control"
-                        required
+                        className="w-sm-50  form-control"
                       />
                     </div>
                     <div className="mb-2 d-flex align-items-center">
                       <label className="me-2">Password</label>
                       <input
                         placeholder="Enter Password"
-                        name="withdraw_password"
+                        name="mypassword"
                         type="password"
-                        className="w-sm-50 form-control"
-                        required
+                        className="w-sm-50  form-control"
                       />
                     </div>
                     <div className="text-center mt-4">
-                      <button type="submit" className="theme_dark_btn btn btn-primary" disabled={loading}>
-                        {loading ? "Submitting..." : "Submit"}
+                      <button type="submit" className="theme_dark_btn btn btn-primary">
+                        Submit
                       </button>
                     </div>
                   </form>
+
                 </div>
+
               </div>
             </div>
           </div>
         </div>
-      )} */}
-
-    {showModal && (
-  <div className="allcommon">
-    <div
-      className="modal show d-block"
-      style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-      onClick={handleCloseModalall}
-    >
-      <div
-        className="modal-dialog modal-md"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="common-heading">Withdraw Amount Edit</h5>
-            <button
-              type="button"
-              className="btn-close"
-              onClick={handleCloseModalall}
-            ></button>
-          </div>
-          <div className="modal-body">
-            <form className="change-password-sec" onSubmit={handleWithdrawSubmit}>
-              <h4 className="h4 mb-3 curent-value">
-                <label>Current :</label>
-                <strong>{selectedAgent?.withdraw_limit || "0.00"}</strong>
-              </h4>
-              
-              <div className="mb-2 d-flex align-items-center">
-                <label className="me-2">New</label>
-                <div className="w-sm-50">
-                  <input
-                    placeholder="Enter Withdraw Amount"
-                    name="withdraw_amount"
-                    type="number"
-                    className={`form-control ${withdrawAmountError ? 'is-invalid' : ''}`}
-                    value={withdrawAmount}
-                    onChange={(e) => {
-                      setWithdrawAmount(e.target.value);
-                      if (e.target.value && Number(e.target.value) > 0) {
-                        setWithdrawAmountError('');
-                      } else {
-                        setWithdrawAmountError('Please enter Withdraw Amount');
-                      }
-                    }}
-                    onBlur={(e) => {
-                      if (!e.target.value) {
-                        setWithdrawAmountError('Please enter Withdraw Amount');
-                      } else if (Number(e.target.value) <= 0) {
-                        setWithdrawAmountError('Amount must be greater than 0');
-                      } else {
-                        setWithdrawAmountError('');
-                      }
-                    }}
-                    required
-                  />
-                  {withdrawAmountError && (
-                    <div className="text-danger small mt-1">{withdrawAmountError}</div>
-                  )}
-                </div>
-              </div>
-
-              <div className="mb-2 d-flex align-items-center">
-                <label className="me-2">Password</label>
-                <div className="w-sm-50">
-                  <input
-                    placeholder="Enter Password"
-                    name="withdraw_password"
-                    type="password"
-                    className={`form-control ${withdrawPasswordError ? 'is-invalid' : ''}`}
-                    value={withdrawPassword}
-                    onChange={(e) => {
-                      setWithdrawPassword(e.target.value);
-                      if (e.target.value && e.target.value.length >= 4) {
-                        setWithdrawPasswordError('');
-                      } else {
-                        setWithdrawPasswordError('Please enter password');
-                      }
-                    }}
-                    onBlur={(e) => {
-                      if (!e.target.value) {
-                        setWithdrawPasswordError('Please enter password');
-                      } else if (e.target.value.length < 4) {
-                        setWithdrawPasswordError('Password must be at least 4 characters');
-                      } else {
-                        setWithdrawPasswordError('');
-                      }
-                    }}
-                    required
-                  />
-                  {withdrawPasswordError && (
-                    <div className="text-danger small mt-1">{withdrawPasswordError}</div>
-                  )}
-                </div>
-              </div>
-
-              <div className="text-center mt-4">
-                <button 
-                  type="submit" 
-                  className="theme_dark_btn btn btn-primary" 
-                  disabled={loading || withdrawAmountError || withdrawPasswordError}
-                >
-                  {loading ? "Submitting..." : "Submit"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
-      {/* ===== DEPOSIT MODAL WITH onSubmit ===== */}
-      {/* {depositmodal && (
+      )}
+      {depositmodal && (
         <div className="allcommon">
           <div
             className="modal show d-block"
@@ -1452,157 +1417,169 @@ const handleWithdrawSubmit = async (e) => {
                   ></button>
                 </div>
                 <div className="modal-body">
-                  <form className="change-password-sec" onSubmit={handleDepositSubmit}>
+                  <form className="change-password-sec">
                     <h4 className="h4 mb-3 curent-value">
-                      <label>Current :</label>
-                      <strong>{selectedAgent?.credit_ref || "0.00"}</strong>
+                      <label>Current :</label> <strong>1,050.00</strong>
                     </h4>
                     <div className="mb-2 d-flex align-items-center">
                       <label className="me-2">New</label>
                       <input
-                        placeholder="Enter Exposure Limit"
-                        name="deposit_amount"
+                        placeholder="Enter Withdraw Amount"
+                        name="reference_amount"
                         type="number"
-                        className="w-sm-50 form-control"
-                        required
+                        className="w-sm-50  form-control"
                       />
                     </div>
                     <div className="mb-2 d-flex align-items-center">
                       <label className="me-2">Password</label>
                       <input
                         placeholder="Enter Password"
-                        name="deposit_password"
+                        name="mypassword"
                         type="password"
-                        className="w-sm-50 form-control"
-                        required
+                        className="w-sm-50  form-control"
                       />
                     </div>
                     <div className="text-center mt-4">
-                      <button type="submit" className="theme_dark_btn btn btn-primary" disabled={loading}>
-                        {loading ? "Submitting..." : "Submit"}
+                      <button type="submit" className="theme_dark_btn btn btn-primary">
+                        Submit
                       </button>
                     </div>
                   </form>
+
                 </div>
+
               </div>
             </div>
           </div>
         </div>
-      )} */}
+      )}
 
-      {depositmodal && (
-  <div className="allcommon">
-    <div
-      className="modal show d-block"
-      style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-      onClick={handleClosesetDepositmodal}
-    >
-      <div
-        className="modal-dialog modal-md"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="common-heading">Deposit Amount Edit</h5>
-            <button
-              type="button"
-              className="btn-close"
-              onClick={handleClosesetDepositmodal}
-            ></button>
+      {/* Modals - All existing modals remain unchanged */}
+      {/* <Modal show={showModal} onHide={handleCloseModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {modalType === "add" ? "Add Balance" : "Withdraw Balance"} -{" "}
+            {selectedUser?.username}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="mb-3">
+            <div className="alert alert-info">
+              <div className="d-flex justify-content-between align-items-center">
+                <span className="fw-bold">Current Balance:</span>
+                <span className="h5 mb-0">₹ {selectedUser?.credit || 0}</span>
+              </div>
+              {modalType === "withdraw" && (
+                <div className="mt-2 small text-muted">
+                  Available to withdraw: ₹ {selectedUser?.credit || 0}
+                </div>
+              )}
+            </div>
           </div>
-          <div className="modal-body">
-            <form className="change-password-sec" onSubmit={handleDepositSubmit}>
-              <h4 className="h4 mb-3 curent-value">
-                <label>Current :</label>
-                <strong>{selectedAgent?.credit_ref || "0.00"}</strong>
-              </h4>
 
-              <div className="mb-2 d-flex align-items-center">
-                <label className="me-2">New</label>
-                <div className="w-sm-50">
-                  <input
-                    placeholder="Enter Deposit Amount"
-                    name="deposit_amount"
-                    type="number"
-                    className={`form-control ${depositAmountError ? 'is-invalid' : ''}`}
-                    value={depositAmount}
-                    onChange={(e) => {
-                      setDepositAmount(e.target.value);
-                      if (e.target.value && Number(e.target.value) > 0) {
-                        setDepositAmountError('');
-                      } else {
-                        setDepositAmountError('Please enter Deposit Amount');
-                      }
-                    }}
-                    onBlur={(e) => {
-                      if (!e.target.value) {
-                        setDepositAmountError('Please enter Deposit Amount');
-                      } else if (Number(e.target.value) <= 0) {
-                        setDepositAmountError('Amount must be greater than 0');
-                      } else {
-                        setDepositAmountError('');
-                      }
-                    }}
-                    required
-                  />
-                  {depositAmountError && (
-                    <div className="text-danger small mt-1">{depositAmountError}</div>
-                  )}
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>
+                Amount{" "}
+                {modalType === "withdraw" &&
+                  `(Max: ₹ ${selectedUser?.credit || 0})`}
+              </Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Enter amount"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                max={
+                  modalType === "withdraw" ? selectedUser?.credit : undefined
+                }
+                min="0"
+                step="0.01"
+              />
+              {modalType === "withdraw" && selectedUser?.credit > 0 && (
+                <div className="mt-1">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-secondary"
+                    onClick={() => setAmount(selectedUser.credit)}
+                  >
+                    Use Max Balance
+                  </button>
+                </div>
+              )}
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Remarks</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={2}
+                placeholder="Enter remarks (optional)"
+                value={remarks}
+                onChange={(e) => setRemarks(e.target.value)}
+              />
+            </Form.Group>
+
+            {amount > 0 && (
+              <div className="alert alert-warning">
+                <div className="d-flex justify-content-between">
+                  <span>Current Balance:</span>
+                  <span>₹ {selectedUser?.credit || 0}</span>
+                </div>
+                <div className="d-flex justify-content-between mt-1">
+                  <span>
+                    {modalType === "add"
+                      ? "Amount to Add:"
+                      : "Amount to Withdraw:"}
+                  </span>
+                  <span>₹ {amount}</span>
+                </div>
+                <hr className="my-2" />
+                <div className="d-flex justify-content-between fw-bold">
+                  <span>New Balance:</span>
+                  <span>
+                    ₹{" "}
+                    {modalType === "add"
+                      ? (selectedUser?.credit || 0) + Number(amount)
+                      : (selectedUser?.credit || 0) - Number(amount)}
+                  </span>
                 </div>
               </div>
-
-              <div className="mb-2 d-flex align-items-center">
-                <label className="me-2">Password</label>
-                <div className="w-sm-50">
-                  <input
-                    placeholder="Enter Password"
-                    name="deposit_password"
-                    type="password"
-                    className={`form-control ${depositPasswordError ? 'is-invalid' : ''}`}
-                    value={depositPassword}
-                    onChange={(e) => {
-                      setDepositPassword(e.target.value);
-                      if (e.target.value && e.target.value.length >= 4) {
-                        setDepositPasswordError('');
-                      } else {
-                        setDepositPasswordError('Please enter password');
-                      }
-                    }}
-                    onBlur={(e) => {
-                      if (!e.target.value) {
-                        setDepositPasswordError('Please enter password');
-                      } else if (e.target.value.length < 4) {
-                        setDepositPasswordError('Password must be at least 4 characters');
-                      } else {
-                        setDepositPasswordError('');
-                      }
-                    }}
-                    required
-                  />
-                  {depositPasswordError && (
-                    <div className="text-danger small mt-1">{depositPasswordError}</div>
-                  )}
-                </div>
-              </div>
-
-              <div className="text-center mt-4">
-                <button 
-                  type="submit" 
-                  className="theme_dark_btn btn btn-primary" 
-                  disabled={loading || depositAmountError || depositPasswordError}
-                >
-                  {loading ? "Submitting..." : "Submit"}
-                </button>
-              </div>
-            </form>
+            )}
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <div className="d-flex justify-content-between w-100 align-items-center">
+            <div className="text-muted small">
+              User ID: {selectedUser?.user_id}
+            </div>
+            <div className="d-flex gap-2">
+              <Button variant="danger" onClick={handleCloseModal}>
+                Cancel
+              </Button>
+              <Button
+                variant={modalType === "add" ? "success" : "warning"}
+                onClick={handleClick}
+                disabled={
+                  loading ||
+                  (modalType === "withdraw" &&
+                    Number(amount) > (selectedUser?.credit || 0))
+                }
+              >
+                {loading ? (
+                  "Processing..."
+                ) : modalType === "add" ? (
+                  <>
+                    <FaPlus className="me-1" /> Add ₹ {amount || 0}
+                  </>
+                ) : (
+                  <>Withdraw ₹ {amount || 0}</>
+                )}
+              </Button>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+        </Modal.Footer>
+      </Modal> */}
 
-      {/* ===== REST ALL MODALS ===== */}
       {changestatus && (
         <div className="allcommon">
           <div
@@ -1616,7 +1593,7 @@ const handleWithdrawSubmit = async (e) => {
             >
               <div className="modal-content">
                 <div className="modal-header">
-                  <h5 className="common-heading">Change Status</h5>
+                  <h5 className="common-heading">Change Sttaus</h5>
                   <button
                     type="button"
                     className="btn-close"
@@ -1627,13 +1604,14 @@ const handleWithdrawSubmit = async (e) => {
                   <div className="test-status">
                     <div className="status-row d-flex justify-content-between align-items-center">
                       <h6 className="mb-0">
-                        <span className="me-1">Agent </span>
+                        <span className="me-1">Agent </span>{" "}
                         {selectedAgentForPassword?.name ||
                           selectedAgentForPassword?.username ||
                           "Agent"}
                       </h6>
                       <small className="text-capitalize">{status}</small>
                     </div>
+
                     <div className="changestatus-option">
                       <ul className="list-unstyled mb-0 d-flex justify-content-around">
                         <li className={status === "active" ? "active" : ""}>
@@ -1646,6 +1624,7 @@ const handleWithdrawSubmit = async (e) => {
                             <span>Active</span>
                           </button>
                         </li>
+
                         <li className={status === "suspend" ? "active" : ""}>
                           <button
                             type="button"
@@ -1656,6 +1635,7 @@ const handleWithdrawSubmit = async (e) => {
                             <span>Suspend</span>
                           </button>
                         </li>
+
                         <li className={status === "locked" ? "active" : ""}>
                           <button
                             type="button"
@@ -1669,6 +1649,7 @@ const handleWithdrawSubmit = async (e) => {
                       </ul>
                     </div>
                   </div>
+
                   <div className="py-3 px-3 change-status-form">
                     <form
                       className="d-flex align-items-center"
@@ -1710,7 +1691,7 @@ const handleWithdrawSubmit = async (e) => {
           <div
             className="modal show d-block"
             style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-            onClick={() => handleClosesetDepositmodalmarket(false)}
+            onClick={() => handleClosesetDepositmodal(false)}
           >
             <div
               className="modal-dialog modal-lg"
@@ -1727,7 +1708,7 @@ const handleWithdrawSubmit = async (e) => {
                   <button
                     type="button"
                     className="btn-close"
-                    onClick={() => handleClosesetDepositmodalmarket(false)}
+                    onClick={() => handleClosesetDepositmodal(false)}
                   ></button>
                 </div>
                 <div className="modal-body">
@@ -2148,8 +2129,12 @@ const handleWithdrawSubmit = async (e) => {
                       <table className="table table-bordered table-hover">
                         <thead>
                           <tr>
-                            <th className="text-center text-dark">Match Name</th>
-                            <th className="text-center text-dark">Market/FancyName</th>
+                            <th className="text-center text-dark">
+                              Match Name
+                            </th>
+                            <th className="text-center text-dark">
+                              Market/FancyName
+                            </th>
                             <th className="text-center text-dark">Type</th>
                             <th className="text-center text-dark">Exposure</th>
                           </tr>
@@ -2226,6 +2211,7 @@ const handleWithdrawSubmit = async (e) => {
                       ? "Credit Reference Edit"
                       : "Withdraw Amount Edit"}
                   </div>
+
                   <button
                     type="button"
                     className="btn-close"
@@ -2233,6 +2219,7 @@ const handleWithdrawSubmit = async (e) => {
                     onClick={() => setShowWithdrawModal(false)}
                   ></button>
                 </div>
+
                 <div className="modal-body">
                   <div className="test-status border-0 text-start">
                     <form className="change-password-sec">
@@ -2244,8 +2231,10 @@ const handleWithdrawSubmit = async (e) => {
                             : selectedAgent?.withdraw_limit || "0.00"}
                         </strong>
                       </h4>
+
                       <div className="mb-2 d-flex align-items-center">
                         <label className="me-2">New</label>
+
                         <input
                           placeholder={editType === "credit" ? "Enter Credit Reference" : "Enter Withdraw Amount"}
                           name="reference_amount"
@@ -2253,8 +2242,10 @@ const handleWithdrawSubmit = async (e) => {
                           className="w-sm-50 form-control"
                         />
                       </div>
+
                       <div className="mb-2 d-flex align-items-center">
                         <label className="me-2">Password</label>
+
                         <input
                           placeholder="Enter Password"
                           name="mypassword"
@@ -2262,6 +2253,7 @@ const handleWithdrawSubmit = async (e) => {
                           className="w-sm-50 form-control"
                         />
                       </div>
+
                       <div className="text-center mt-4">
                         <button
                           type="submit"

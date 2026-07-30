@@ -19,6 +19,44 @@ export default function Registeruserdashboard() {
     to_date: ""
   });
 
+  // const fetchPendingRegistrations = async (page = 1) => {
+  //   setLoading(true);
+  //   try {
+  //     const params = {
+  //       page: page,
+  //       limit: pagination.limit
+  //     };
+
+  //     if (filters.search) params.search = filters.search;
+  //     if (filters.from_date) params.from_date = filters.from_date;
+  //     if (filters.to_date) params.to_date = filters.to_date;
+
+  //     const response = await getRegistrationStats(params);
+
+  //     if (response?.data?.success) {
+  //       const data = response.data;
+
+  //       if (data.pending_registrations) {
+  //         setPendingData(data.pending_registrations.data || []);
+
+  //         if (data.pending_registrations.pagination) {
+  //           setPagination({
+  //             page: data.pending_registrations.pagination.page || 1,
+  //             limit: data.pending_registrations.pagination.limit || 50,
+  //             total: data.pending_registrations.pagination.total || 0,
+  //             totalPages: data.pending_registrations.pagination.totalPages || 1
+  //           });
+  //         }
+  //       }
+  //     }
+  //   } catch (err) {
+  //     console.error("Error fetching pending registrations:", err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // Export to CSV
   const fetchPendingRegistrations = async (page = 1) => {
     setLoading(true);
     try {
@@ -28,27 +66,17 @@ export default function Registeruserdashboard() {
       };
 
       if (filters.search) params.search = filters.search;
-      if (filters.from_date) params.from_date = filters.from_date;
-      if (filters.to_date) params.to_date = filters.to_date;
+
+      // ✅ Sirf tab bhejo jab dates ho
+      if (filters.from_date && filters.from_date.trim() !== "") {
+        params.from_date = filters.from_date;
+      }
+      if (filters.to_date && filters.to_date.trim() !== "") {
+        params.to_date = filters.to_date;
+      }
 
       const response = await getRegistrationStats(params);
-
-      if (response?.data?.success) {
-        const data = response.data;
-
-        if (data.pending_registrations) {
-          setPendingData(data.pending_registrations.data || []);
-
-          if (data.pending_registrations.pagination) {
-            setPagination({
-              page: data.pending_registrations.pagination.page || 1,
-              limit: data.pending_registrations.pagination.limit || 50,
-              total: data.pending_registrations.pagination.total || 0,
-              totalPages: data.pending_registrations.pagination.totalPages || 1
-            });
-          }
-        }
-      }
+      // ... rest of your code
     } catch (err) {
       console.error("Error fetching pending registrations:", err);
     } finally {
@@ -56,7 +84,6 @@ export default function Registeruserdashboard() {
     }
   };
 
-  // Export to CSV
   const exportToCSV = async () => {
     setExportLoading(true);
     try {
@@ -128,11 +155,18 @@ export default function Registeruserdashboard() {
     fetchPendingRegistrations(1);
   };
 
+  // const handleReset = () => {
+  //   setFilters({ search: "", from_date: "", to_date: "" });
+  //   fetchPendingRegistrations(1);
+  // };
   const handleReset = () => {
-    setFilters({ search: "", from_date: "", to_date: "" });
+    setFilters({
+      search: "",
+      from_date: "",  // ✅ Empty
+      to_date: ""     // ✅ Empty
+    });
     fetchPendingRegistrations(1);
   };
-
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.totalPages) {
       fetchPendingRegistrations(newPage);
@@ -190,13 +224,13 @@ export default function Registeruserdashboard() {
               From
             </label>
             <input
-              max="2026-07-16"
               type="date"
               className="form-control"
               value={filters.from_date}
               onChange={(e) => setFilters(prev => ({ ...prev, from_date: e.target.value }))}
             />
           </div>
+
           <div
             className="bet-sec bet-period d-flex align-items-center"
             style={{ marginRight: 15, marginLeft: 15 }}
@@ -205,8 +239,6 @@ export default function Registeruserdashboard() {
               To
             </label>
             <input
-              min="2026-06-16"
-              max="2026-07-16"
               type="date"
               className="form-control"
               value={filters.to_date}
@@ -228,7 +260,7 @@ export default function Registeruserdashboard() {
           >
             Reset
           </button> */}
-          
+
           <button
             type="button"
             className="theme_light_btn btn btn-primary ms-2 d-flex align-items-center"

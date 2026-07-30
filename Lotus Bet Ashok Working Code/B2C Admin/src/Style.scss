@@ -28,6 +28,16 @@ tr {
   border-color: inherit;
   border: 1px solid #dee2e6 !important;
 }
+.bg_design_new_all_all{
+  &.card-body{
+    padding: 0px;
+  }
+  tr{
+    th{
+      background:#303030!important;
+    }
+   }
+ }
 .newwidthallsames.allcommon{
 .modal-dialog{
  max-width:800px
@@ -2174,8 +2184,14 @@ input.form-control {
 }
 
 .card-header.bg-color-black {
-  background: $darklinear;
+  &.bg_new_paeg_all{
+    background:#303030;
+    input.form-control, select.form-control, textarea.form-control, select.form-select {
+      height: 30px;
+    }
+  }
 }
+
 
 .margin-top-50 {
   margin-top: 30px;
@@ -2310,13 +2326,14 @@ input.form-control {
 .paginationbutton {
   list-style: none;
   text-align: center;
-  background: $secondary;
+  // background: $secondary;
   border: 0px;
   outline: none;
   box-shadow: none;
   padding: 5px 14px;
   border-radius: 3px;
-  color: #fff;
+  color: #000;
+  white-space: nowrap;
   max-width: 100px;
   width: 100%;
 }

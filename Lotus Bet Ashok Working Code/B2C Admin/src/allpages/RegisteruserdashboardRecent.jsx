@@ -57,6 +57,7 @@ export default function RegisteruserdashboardRecent() {
       setLoading(false);
     }
   };
+
   const exportToCSV = async () => {
     setExportLoading(true);
     try {
@@ -198,7 +199,7 @@ export default function RegisteruserdashboardRecent() {
               From
             </label>
             <input
-              max="2026-07-16"
+              // ✅ max attribute HATAO - All months active
               type="date"
               className="form-control"
               value={filters.from_date}
@@ -213,8 +214,7 @@ export default function RegisteruserdashboardRecent() {
               To
             </label>
             <input
-              min="2026-07-15"
-              max="2026-07-16"
+              // ✅ min aur max attributes HATAO - All months active
               type="date"
               className="form-control"
               value={filters.to_date}
@@ -229,13 +229,13 @@ export default function RegisteruserdashboardRecent() {
           >
             {loading ? 'Loading...' : 'Search'}
           </button>
-          {/* <button
+          <button
             type="button"
             className="theme_light_btn btn btn-primary ms-2"
             onClick={handleReset}
           >
             Reset
-          </button> */}
+          </button>
           <button
             type="button"
             className="theme_light_btn btn btn-primary ms-2 d-flex align-items-center"
@@ -274,7 +274,6 @@ export default function RegisteruserdashboardRecent() {
                           <th scope="col" style={{ width: "5%" }}>Sr No.</th>
                           <th scope="col">User Name</th>
                           <th scope="col">Mobile Number</th>
-
                           <th scope="col">Status</th>
                           <th scope="col">Registered Date</th>
                         </tr>
@@ -286,12 +285,7 @@ export default function RegisteruserdashboardRecent() {
                               <td>{item.sr_no || ((pagination.page - 1) * pagination.limit) + index + 1}</td>
                               <td>{item.username || '-'}</td>
                               <td>{item.mobile_number}</td>
-
-                              <td>
-
-                                {item.status || '-'}
-
-                              </td>
+                              <td>{item.status || '-'}</td>
                               <td>{formatDate(item.created_at)}</td>
                             </tr>
                           ))

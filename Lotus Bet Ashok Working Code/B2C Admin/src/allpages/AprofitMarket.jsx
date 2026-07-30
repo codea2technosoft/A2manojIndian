@@ -1,202 +1,203 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
-
 
 import {
     getProfitLossByMarket,
     showBetsLossByMarket
 } from "../Server/api";
 
-
 function AprofitMarket() {
     const [activeTab, setActiveTab] = useState('Cricket');
     const [expandedRows, setExpandedRows] = useState({});
+    const [tableData, setTableData] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [grandTotal, setGrandTotal] = useState(null);
 
-    // Tab buttons configuration
+    const [fromDate, setFromDate] = useState('');
+    const [fromTime, setFromTime] = useState('');
+    const [toDate, setToDate] = useState('');
+    const [toTime, setToTime] = useState('');
+    
     const tabs = ['Cricket', 'Soccer', 'Tenis', 'Indian Casino', 'International Casino'];
+    const sportIdMap = {
+        'Cricket': '4',
+        'Soccer': '1',
+        'Tenis': '2',
+        'Indian Casino': '5',
+        'International Casino': '6'
+    };
 
-    // Fake table data for different tabs
-    const tableData = {
-        Cricket: [
-            {
-                id: 35779542,
-                matchName: 'Anurag Nalgonda Knights v Medak Falcons',
-                date: '7/3/2026, 5:10:05 PM',
-                downlinePL: '400.00',
-                playerPL: '-400.00',
-                comm: '0.00',
-                uplinePL: '400.00',
-                isPositive: true
-            },
-            {
-                id: 35781652,
-                matchName: 'Gulbarga Mystics v Mysore Warriors',
-                date: '7/3/2026, 6:29:14 PM',
-                downlinePL: '-5,660.00',
-                playerPL: '5,660.00',
-                comm: '0.00',
-                uplinePL: '-5,660.00',
-                isPositive: false
-            },
-            {
-                id: 35772071,
-                matchName: 'Seattle Orcas v MI New York',
-                date: '7/3/2026, 6:46:16 AM',
-                downlinePL: '102,922.80',
-                playerPL: '-102,922.80',
-                comm: '0.00',
-                uplinePL: '102,922.80',
-                isPositive: true
-            },
-            {
-                id: 35769217,
-                matchName: 'Worcestershire v Kent',
-                date: '7/3/2026, 9:42:27 PM',
-                downlinePL: '13,192.00',
-                playerPL: '-13,192.00',
-                comm: '0.00',
-                uplinePL: '13,192.00',
-                isPositive: true
-            },
-            {
-                id: 35774934,
-                matchName: 'India U19 W v Sri Lanka U19 W',
-                date: '7/3/2026, 2:19:02 PM',
-                downlinePL: '-1,764.70',
-                playerPL: '1,764.70',
-                comm: '0.00',
-                uplinePL: '-1,764.70',
-                isPositive: false
-            },
-            {
-                id: 35782525,
-                matchName: 'Boost Defenders v Speen Ghar Tigers',
-                date: '7/4/2026, 10:17:45 AM',
-                downlinePL: '79,379.00',
-                playerPL: '-79,379.00',
-                comm: '0.00',
-                uplinePL: '79,379.00',
-                isPositive: true
-            },
-            {
-                id: 35770762,
-                matchName: 'England W v South Africa W',
-                date: '7/3/2026, 12:01:24 AM',
-                downlinePL: '61,724.00',
-                playerPL: '-61,724.00',
-                comm: '0.00',
-                uplinePL: '61,724.00',
-                isPositive: true
-            },
-            {
-                id: 35772102,
-                matchName: 'West Indies v Sri Lanka',
-                date: '7/3/2026, 7:40:40 PM',
-                downlinePL: '-13,272.90',
-                playerPL: '13,272.90',
-                comm: '0.00',
-                uplinePL: '-13,272.90',
-                isPositive: false
+    const fetchProfitLossData = async (market = activeTab, applyDateFilter = false) => {
+        setLoading(true);
+        setError(null);
+
+        const adminId = localStorage.getItem("admin_id");
+        const sportId = sportIdMap[market] || '';
+
+        try {
+            const params = {
+                sport_id: sportId,
+            };
+            
+            // ✅ SIRF TAB DATES BHEJO JAB APPLY DATE FILTER TRUE HO
+            if (applyDateFilter) {
+                if (fromDate) {
+                    params.from_date = fromDate;
+                }
+                if (toDate) {
+                    params.to_date = toDate;
+                }
             }
-        ],
-        Soccer: [
-            {
-                id: 35780001,
-                matchName: 'Manchester United v Liverpool',
-                date: '7/4/2026, 8:00:00 PM',
-                downlinePL: '25,000.00',
-                playerPL: '-25,000.00',
-                comm: '500.00',
-                uplinePL: '25,500.00',
-                isPositive: true
-            },
-            {
-                id: 35780002,
-                matchName: 'Barcelona v Real Madrid',
-                date: '7/4/2026, 9:00:00 PM',
-                downlinePL: '-15,000.00',
-                playerPL: '15,000.00',
-                comm: '0.00',
-                uplinePL: '-15,000.00',
-                isPositive: false
-            },
-            {
-                id: 35780003,
-                matchName: 'Bayern Munich v Dortmund',
-                date: '7/3/2026, 7:30:00 PM',
-                downlinePL: '10,500.00',
-                playerPL: '-10,500.00',
-                comm: '200.00',
-                uplinePL: '10,700.00',
-                isPositive: true
+
+            console.log("📤 Sending params:", params);
+            const response = await getProfitLossByMarket(params);
+
+            console.log("Full Response:", response);
+
+            const result = response?.data;
+
+            if (result?.success) {
+                console.log("API Result:", result);
+                setGrandTotal(result.grandTotal || null);
+
+                const apiData = result.data || [];
+                console.log("API Data:", apiData);
+
+                const transformedData = apiData.map(item => ({
+                    id: item.event_id || Math.random(),
+                    matchName: item.market_name || "Unknown Match",
+                    date: item.created_at || "",
+                    downlinePL: formatNumber(item.downlinePL || 0),
+                    playerPL: formatNumber(item.playerPL || 0),
+                    comm: formatNumber(item.commission || 0),
+                    uplinePL: formatNumber(item.uplinePL || 0),
+                    isPositive: Number(item.uplinePL) >= 0,
+                    bets: item.bets || [],
+                    betType: item.bet_type || "",
+                    sport_id: item.sport_id || "",
+                    totalBets: item.totalBets || 0,
+                    totalStake: item.totalStake || 0,
+                    showBets: item.showBets || false,
+                    totalBackBets: item.totalBackBets || 0,
+                    totalLayBets: item.totalLayBets || 0,
+                }));
+
+                console.log("Transformed:", transformedData);
+
+                setTableData(prev => ({
+                    ...prev,
+                    [market]: transformedData,
+                }));
+
+            } else {
+                setError(result?.message || "Failed to fetch data");
+                setTableData(prev => ({
+                    ...prev,
+                    [market]: [],
+                }));
             }
-        ],
-        Tenis: [
-            {
-                id: 35781001,
-                matchName: 'Nadal v Djokovic',
-                date: '7/4/2026, 6:00:00 PM',
-                downlinePL: '30,000.00',
-                playerPL: '-30,000.00',
-                comm: '1,000.00',
-                uplinePL: '31,000.00',
-                isPositive: true
-            },
-            {
-                id: 35781002,
-                matchName: 'Williams v Osaka',
-                date: '7/3/2026, 4:00:00 PM',
-                downlinePL: '-8,500.00',
-                playerPL: '8,500.00',
-                comm: '0.00',
-                uplinePL: '-8,500.00',
-                isPositive: false
+
+        } catch (err) {
+            console.error(err);
+            setError("Failed to fetch data.");
+            setTableData(prev => ({
+                ...prev,
+                [market]: [],
+            }));
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Helper function to format numbers with commas
+    const formatNumber = (num) => {
+        if (num === null || num === undefined || isNaN(num)) return '0.00';
+        const formatted = parseFloat(num).toFixed(2);
+        const parts = formatted.split('.');
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        return parts.join('.');
+    };
+
+    // ✅ Initial data load - Auto fetch with NO dates (All data)
+    useEffect(() => {
+        if (!tableData[activeTab]) {
+            fetchProfitLossData(activeTab, false);
+        }
+    }, [activeTab]);
+
+    // ✅ Handle tab change
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
+        setExpandedRows({});
+        if (!tableData[tab]) {
+            if (fromDate && toDate) {
+                fetchProfitLossData(tab, true);
+            } else {
+                fetchProfitLossData(tab, false);
             }
-        ],
-        'Indian Casino': [
-            {
-                id: 35782001,
-                matchName: 'Andar Bahar - Table 1',
-                date: '7/4/2026, 10:00:00 PM',
-                downlinePL: '50,000.00',
-                playerPL: '-50,000.00',
-                comm: '2,500.00',
-                uplinePL: '52,500.00',
-                isPositive: true
-            },
-            {
-                id: 35782002,
-                matchName: 'Teen Patti - Table 2',
-                date: '7/3/2026, 8:00:00 PM',
-                downlinePL: '-20,000.00',
-                playerPL: '20,000.00',
-                comm: '0.00',
-                uplinePL: '-20,000.00',
-                isPositive: false
-            }
-        ],
-        'International Casino': [
-            {
-                id: 35783001,
-                matchName: 'Roulette - VIP Room',
-                date: '7/4/2026, 11:00:00 PM',
-                downlinePL: '75,000.00',
-                playerPL: '-75,000.00',
-                comm: '3,000.00',
-                uplinePL: '78,000.00',
-                isPositive: true
-            },
-            {
-                id: 35783002,
-                matchName: 'Blackjack - Table 5',
-                date: '7/3/2026, 9:00:00 PM',
-                downlinePL: '-12,000.00',
-                playerPL: '12,000.00',
-                comm: '0.00',
-                uplinePL: '-12,000.00',
-                isPositive: false
-            }
-        ]
+        }
+    };
+
+    // ✅ Handle search - WITH DATE FILTERS
+    const handleSearch = () => {
+        if (!fromDate || !toDate) {
+            setError("Please select From and To dates");
+            return;
+        }
+        setError(null);
+        fetchProfitLossData(activeTab, true);
+    };
+
+    // ✅ Handle Reset
+    const handleReset = () => {
+        setFromDate('');
+        setFromTime('');
+        setToDate('');
+        setToTime('');
+        setError(null);
+        setTableData(prev => ({
+            ...prev,
+            [activeTab]: []
+        }));
+        setGrandTotal(null);
+        // ✅ Auto fetch without dates
+        setTimeout(() => {
+            fetchProfitLossData(activeTab, false);
+        }, 100);
+    };
+
+    // ✅ Handle Just For Today - Aaj ki date
+    const handleJustForToday = () => {
+        const today = new Date();
+        const formatDate = (date) => date.toISOString().split('T')[0];
+
+        setFromDate(formatDate(today));
+        setFromTime('00:00');
+        setToDate(formatDate(today));
+        setToTime('23:59');
+
+        setTimeout(() => {
+            fetchProfitLossData(activeTab, true);
+        }, 100);
+    };
+
+    // ✅ Handle From Yesterday - Kal ki date
+    const handleFromYesterday = () => {
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        const formatDate = (date) => date.toISOString().split('T')[0];
+
+        setFromDate(formatDate(yesterday));
+        setFromTime('00:00');
+        setToDate(formatDate(yesterday));
+        setToTime('23:59');
+
+        setTimeout(() => {
+            fetchProfitLossData(activeTab, true);
+        }, 100);
     };
 
     // Toggle row expansion
@@ -209,8 +210,9 @@ function AprofitMarket() {
 
     // Get current data based on active tab
     const currentData = tableData[activeTab] || [];
-
-    // Calculate totals
+    console.warn("currentData", currentData);
+    
+    // Calculate totals from current data
     const calculateTotals = () => {
         let totalDownlinePL = 0;
         let totalPlayerPL = 0;
@@ -233,16 +235,73 @@ function AprofitMarket() {
     };
 
     const totals = calculateTotals();
+    const displayGrandTotal = grandTotal || totals;
 
-    // Handle date/time changes
-    const handleJustForToday = () => {
-        const today = new Date().toISOString().split('T')[0];
-        console.log('Set to today:', today);
-    };
+    // Handle input changes for date/time
+    const handleFromDateChange = (e) => setFromDate(e.target.value);
+    const handleFromTimeChange = (e) => setFromTime(e.target.value);
+    const handleToDateChange = (e) => setToDate(e.target.value);
+    const handleToTimeChange = (e) => setToTime(e.target.value);
 
-    const handleFromYesterday = () => {
-        const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-        console.log('Set to yesterday:', yesterday);
+    // ✅ Render sub-table for expanded row
+    const renderSubTable = (item) => {
+        if (!item.bets || item.bets.length === 0) {
+            return (
+                <tr>
+                    <td colSpan="7" className="text-center">No bets available</td>
+                </tr>
+            );
+        }
+
+        const groupedBets = item.bets.reduce((acc, bet) => {
+            const key = bet.bet_type || bet.type || 'unknown';
+            if (!acc[key]) acc[key] = [];
+            acc[key].push(bet);
+            return acc;
+        }, {});
+
+        return Object.keys(groupedBets).map((betType, index) => {
+            const bets = groupedBets[betType];
+            const totalProfitLoss = bets.reduce((sum, bet) => sum + (parseFloat(bet.profit_loss) || 0), 0);
+            
+            const userIds = bets.map(bet => bet.user_id).filter(id => id);
+            const uniqueUserIds = [...new Set(userIds)];
+            const userIdParam = uniqueUserIds.length > 0 ? `?user_id=${uniqueUserIds[0]}` : '';
+
+            return (
+                <tr key={index}>
+                    <td>{betType.charAt(0).toUpperCase() + betType.slice(1)}</td>
+                    <td>{bets.length}</td>
+                    <td>
+                        <span className={totalProfitLoss >= 0 ? 'text-success' : 'text-danger'}>
+                            {formatNumber(totalProfitLoss)}
+                        </span>
+                    </td>
+                    <td>
+                        <span className={totalProfitLoss >= 0 ? 'text-danger' : 'text-success'}>
+                            {formatNumber(-totalProfitLoss)}
+                        </span>
+                    </td>
+                    <td>0.00</td>
+                    <td>
+                        <span className={totalProfitLoss >= 0 ? 'text-success' : 'text-danger'}>
+                            {formatNumber(totalProfitLoss)}
+                        </span>
+                    </td>
+                    <td style={{ minWidth: "120px" }}>
+                        <Link
+                            style={{ padding: "5px", textDecoration: "none" }}
+                            className="me-0 theme_light_btn theme_dark_btn"
+                            to={`/match-market-bets/${item.id}${userIdParam}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Show Bets
+                        </Link>
+                    </td>
+                </tr>
+            );
+        });
     };
 
     return (
@@ -262,18 +321,19 @@ function AprofitMarket() {
                                                 <div className="mb-lg-0 mb-2 flex-grow-0 pe-2 col-lg-3 col-sm-6">
                                                     <div className="bet-sec bet-period">
                                                         <label className="px-2 form-label">From</label>
-                                                        <div className="form-group">
+                                                        <div className="form-group d-flex">
                                                             <input
-                                                                max="2026-07-04"
                                                                 type="date"
                                                                 className="small_form_control form-control"
-                                                                defaultValue="2026-07-03"
-                                                            />{" "}
+                                                                value={fromDate}
+                                                                onChange={handleFromDateChange}
+                                                            />
                                                             <input
                                                                 placeholder="00:00"
                                                                 type="time"
-                                                                className="small_form_control form-control"
-                                                                defaultValue="10:00"
+                                                                className="small_form_control form-control ms-2"
+                                                                value={fromTime}
+                                                                onChange={handleFromTimeChange}
                                                                 style={{ width: 80 }}
                                                             />
                                                         </div>
@@ -282,19 +342,19 @@ function AprofitMarket() {
                                                 <div className="mb-lg-0 mb-2 flex-grow-0 ps-2 col-lg-3 col-sm-6">
                                                     <div className="bet-sec bet-period">
                                                         <label className="px-2 form-label">To</label>
-                                                        <div className="form-group">
+                                                        <div className="form-group d-flex">
                                                             <input
-                                                                min="2026-07-03"
-                                                                max="2026-07-04"
                                                                 type="date"
                                                                 className="small_form_control form-control"
-                                                                defaultValue="2026-07-04"
-                                                            />{" "}
+                                                                value={toDate}
+                                                                onChange={handleToDateChange}
+                                                            />
                                                             <input
                                                                 placeholder="00:00"
                                                                 type="time"
-                                                                className="small_form_control form-control"
-                                                                defaultValue="09:59"
+                                                                className="small_form_control form-control ms-2"
+                                                                value={toTime}
+                                                                onChange={handleToTimeChange}
                                                                 style={{ width: 80 }}
                                                             />
                                                         </div>
@@ -304,11 +364,11 @@ function AprofitMarket() {
                                         </div>
                                     </div>
                                     <div className="history-btn mt-2">
-                                        <ul className="list-unstyled mb-0">
+                                        <ul className="list-unstyled mb-0 d-flex flex-wrap">
                                             <li>
                                                 <button
                                                     type="button"
-                                                    className="me-0 theme_light_btn btn btn-primary"
+                                                    className="me-2 theme_light_btn btn btn-primary"
                                                     onClick={handleJustForToday}
                                                 >
                                                     Just For Today
@@ -317,7 +377,7 @@ function AprofitMarket() {
                                             <li>
                                                 <button
                                                     type="button"
-                                                    className="me-0 theme_light_btn btn btn-primary"
+                                                    className="me-2 theme_light_btn btn btn-primary"
                                                     onClick={handleFromYesterday}
                                                 >
                                                     From Yesterday
@@ -326,8 +386,8 @@ function AprofitMarket() {
                                             <li>
                                                 <button
                                                     type="button"
-                                                    className="theme_dark_btn btn btn-primary"
-                                                    onClick={() => console.log('Search clicked')}
+                                                    className="me-2 theme_dark_btn btn btn-primary"
+                                                    onClick={handleSearch}
                                                 >
                                                     Search
                                                 </button>
@@ -336,10 +396,7 @@ function AprofitMarket() {
                                                 <button
                                                     type="button"
                                                     className="me-0 theme_light_btn btn btn-primary"
-                                                    onClick={() => {
-                                                        console.log('Reset clicked');
-                                                        // Reset all filters
-                                                    }}
+                                                    onClick={handleReset}
                                                 >
                                                     Reset
                                                 </button>
@@ -355,12 +412,8 @@ function AprofitMarket() {
                                     <button
                                         key={tab}
                                         type="button"
-                                        className={`mb-2 mx-1 btn btn-primary ${activeTab === tab ? 'green-btn' : 'theme_light_btn'
-                                            }`}
-                                        onClick={() => {
-                                            setActiveTab(tab);
-                                            setExpandedRows({}); // Reset expanded rows when changing tabs
-                                        }}
+                                        className={`mb-2 mx-1 btn btn-primary ${activeTab === tab ? 'green-btn' : 'theme_light_btn'}`}
+                                        onClick={() => handleTabChange(tab)}
                                     >
                                         {tab}
                                     </button>
@@ -368,176 +421,170 @@ function AprofitMarket() {
                             </div>
                         </div>
                         <div className="mt-2 col-lg-12 col-md-12 col-sm-12">
-                            <section className="account-table aprofit-downline aprofit-market w-100">
-                                <div className="responsive transaction-history table-color">
-                                    <table className="table">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">UID</th>
-                                                <th scope="col">Downline P/L</th>
-                                                <th scope="col">Player P/L</th>
-                                                <th scope="col">Comm.</th>
-                                                <th scope="col" colSpan={2}>
-                                                    Upline P/L
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {currentData.map((item) => (
-                                                <React.Fragment key={item.id}>
+    <section className="account-table aprofit-downline aprofit-market w-100">
+        <div className="responsive transaction-history table-color">
+            {loading ? (
+                <div className="text-center py-4">
+                    <div className="spinner-border" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                    <p>Loading data...</p>
+                </div>
+            ) : error ? (
+                <div className="alert alert-danger m-3">{error}</div>
+            ) : currentData.length === 0 ? (
+                // ✅ Empty table with headers
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">UID</th>
+                            <th scope="col">Downline P/L</th>
+                            <th scope="col">Player P/L</th>
+                            <th scope="col">Comm.</th>
+                            <th scope="col" colSpan={2}>
+                                Upline P/L
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colSpan="6" className="text-center py-4">
+                                No data available for {activeTab}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            ) : (
+                // ✅ Data table
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">UID</th>
+                            <th scope="col">Downline P/L</th>
+                            <th scope="col">Player P/L</th>
+                            <th scope="col">Comm.</th>
+                            <th scope="col" colSpan={2}>
+                                Upline P/L
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {currentData.map((item) => (
+                            <React.Fragment key={item.id}>
+                                <tr>
+                                    <td>
+                                        <i
+                                            className={`fas fa-${expandedRows[item.id] ? 'minus' : 'plus'}-square pe-2`}
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={() => toggleRow(item.id)}
+                                        />
+                                        <Link to={`/profit-loss-report-sports-wise-downline/${item.id}`}>
+                                            {item.matchName} ▸ {item.id} ▸ {item.date}
+                                        </Link>
+                                    </td>
+                                    <td>
+                                        <span className={item.isPositive ? 'text-success' : 'text-danger'}>
+                                            {item.isPositive ? item.downlinePL : `(${item.downlinePL})`}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span className={!item.isPositive ? 'text-success' : 'text-danger'}>
+                                            {!item.isPositive ? item.playerPL : `(${item.playerPL})`}
+                                        </span>
+                                    </td>
+                                    <td>{item.comm}</td>
+                                    <td>
+                                        <span className={item.isPositive ? 'text-success' : 'text-danger'}>
+                                            {item.isPositive ? item.uplinePL : `(${item.uplinePL})`}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {expandedRows[item.id] && (
+                                    <tr>
+                                        <td colSpan="7" className="abc">
+                                            <table width="100%" className="sub-table">
+                                                <thead>
                                                     <tr>
-                                                        <td>
-                                                            <i
-                                                                className={`fas fa-${expandedRows[item.id] ? 'minus' : 'plus'
-                                                                    }-square pe-2`}
-                                                                style={{ cursor: 'pointer' }}
-                                                                onClick={() => toggleRow(item.id)}
-                                                            />
-                                                            {/* <Link to={`/AprofitDownline/${item.id}`}>
-                                                                {item.matchName} ▸ {item.id} ▸ {item.date}
-                                                            </Link> */}
-                                                            <Link to={`/comming-soon`}>
-                                                                {item.matchName} ▸ {item.id} ▸ {item.date}
-                                                            </Link>
-                                                        </td>
-                                                        <td>
-                                                            <span className={item.isPositive ? 'text-success' : 'text-danger'}>
-                                                                {item.isPositive ? item.downlinePL : `(${item.downlinePL})`}
-                                                            </span>
-                                                        </td>
-                                                        <td>
-                                                            <span className={!item.isPositive ? 'text-success' : 'text-danger'}>
-                                                                {!item.isPositive ? item.playerPL : `(${item.playerPL})`}
-                                                            </span>
-                                                        </td>
-                                                        <td>{item.comm}</td>
-                                                        <td>
-                                                            <span className={item.isPositive ? 'text-success' : 'text-danger'}>
-                                                                {item.isPositive ? item.uplinePL : `(${item.uplinePL})`}
-                                                            </span>
-                                                        </td>
+                                                        <th>Bet Type</th>
+                                                        <th>Total Bets</th>
+                                                        <th>P/L</th>
+                                                        <th>Player P/L</th>
+                                                        <th>Comm.</th>
+                                                        <th>Upline P/L</th>
+                                                        <th>Action</th>
                                                     </tr>
-                                                    {expandedRows[item.id] && (
-                                                        <td colSpan="7" className="abc">
-                                                            <table width="100%" className="sub-table">
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td>Fancy</td>
-                                                                        <td>0</td>
-                                                                        <td>
-                                                                            <span className="text-success">25,126.00</span>
-                                                                        </td>
-                                                                        <td>
-                                                                            <span className="text-danger">(-25,126.00)</span>
-                                                                        </td>
-                                                                        <td>0.00</td>
-                                                                        <td>
-                                                                            <span className="text-success">25,126.00</span>
-                                                                        </td>
-                                                                        <td style={{ minWidth: "120px" }}>
-                                                                            <Link
-                                                                                style={{ padding: "5px", textDecoration: "none" }}
-                                                                                className="me-0 theme_light_btn theme_dark_btn"
-                                                                                to={"/match-market-bets"}
-                                                                                target="_blank"
-                                                                                rel="noopener noreferrer"
-                                                                            >
-                                                                                Show Bets
-                                                                            </Link>
-                                                                        </td>
-                                                                    </tr>
-
-                                                                    <tr>
-                                                                        <td>Toss</td>
-                                                                        <td>0</td>
-                                                                        <td>
-                                                                            <span className="text-danger">(-4,720.00)</span>
-                                                                        </td>
-                                                                        <td>
-                                                                            <span className="text-success">4,720.00</span>
-                                                                        </td>
-                                                                        <td>0.00</td>
-                                                                        <td>
-                                                                            <span className="text-danger">(-4,720.00)</span>
-                                                                        </td>
-                                                                        <td style={{ minWidth: "120px" }}>
-                                                                            <Link
-                                                                                style={{ padding: "5px", textDecoration: "none" }}
-                                                                                className="me-0 theme_light_btn theme_dark_btn"
-                                                                                to={"/match-market-bets"}
-                                                                                target="_blank"
-                                                                                rel="noopener noreferrer"
-                                                                            >
-                                                                                Show Bets
-                                                                            </Link>
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </td>
-                                                    )}
-                                                </React.Fragment>
-                                            ))}
-                                            <tr style={{ fontWeight: 'bold', backgroundColor: '#e9ecef' }}>
-                                                <th scope="col">Total</th>
-                                                <th>
-                                                    <span className={parseFloat(totals.downlinePL) >= 0 ? 'text-success' : 'text-danger'}>
-                                                        {parseFloat(totals.downlinePL) >= 0
-                                                            ? totals.downlinePL
-                                                            : `(${totals.downlinePL})`}
-                                                    </span>
-                                                </th>
-                                                <th>
-                                                    <span className={parseFloat(totals.playerPL) >= 0 ? 'text-success' : 'text-danger'}>
-                                                        {parseFloat(totals.playerPL) >= 0
-                                                            ? totals.playerPL
-                                                            : `(${totals.playerPL})`}
-                                                    </span>
-                                                </th>
-                                                <th>{totals.comm}</th>
-                                                <th>
-                                                    <span className={parseFloat(totals.uplinePL) >= 0 ? 'text-success' : 'text-danger'}>
-                                                        {parseFloat(totals.uplinePL) >= 0
-                                                            ? totals.uplinePL
-                                                            : `(${totals.uplinePL})`}
-                                                    </span>
-                                                </th>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <div className="bottom-pagination">
-                                        <ul role="navigation" aria-label="Pagination">
-                                            <li className="previous disabled">
-                                                <a
-                                                    className=" "
-                                                    tabIndex={-1}
-                                                    role="button"
-                                                    aria-disabled="true"
-                                                    aria-label="Previous page"
-                                                    rel="prev"
-                                                >
-                                                    &lt;{" "}
-                                                </a>
-                                            </li>
-                                            <li className="next">
-                                                <a
-                                                    className=""
-                                                    tabIndex={0}
-                                                    role="button"
-                                                    aria-disabled="false"
-                                                    aria-label="Next page"
-                                                    rel="next"
-                                                    onClick={() => console.log('Next page clicked')}
-                                                >
-                                                    {" "}
-                                                    &gt;
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
+                                                </thead>
+                                                <tbody>
+                                                    {renderSubTable(item)}
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                )}
+                            </React.Fragment>
+                        ))}
+                        {/* Grand Total Row */}
+                        <tr style={{ fontWeight: 'bold', backgroundColor: '#e9ecef' }}>
+                            <th scope="col">Total</th>
+                            <th>
+                                <span className={parseFloat(displayGrandTotal.downlinePL) >= 0 ? 'text-success' : 'text-danger'}>
+                                    {parseFloat(displayGrandTotal.downlinePL) >= 0
+                                        ? formatNumber(displayGrandTotal.downlinePL)
+                                        : `(${formatNumber(displayGrandTotal.downlinePL)})`}
+                                </span>
+                            </th>
+                            <th>
+                                <span className={parseFloat(displayGrandTotal.playerPL) >= 0 ? 'text-success' : 'text-danger'}>
+                                    {parseFloat(displayGrandTotal.playerPL) >= 0
+                                        ? formatNumber(displayGrandTotal.playerPL)
+                                        : `(${formatNumber(displayGrandTotal.playerPL)})`}
+                                </span>
+                            </th>
+                            <th>{formatNumber(displayGrandTotal.commission || 0)}</th>
+                            <th>
+                                <span className={parseFloat(displayGrandTotal.uplinePL) >= 0 ? 'text-success' : 'text-danger'}>
+                                    {parseFloat(displayGrandTotal.uplinePL) >= 0
+                                        ? formatNumber(displayGrandTotal.uplinePL)
+                                        : `(${formatNumber(displayGrandTotal.uplinePL)})`}
+                                </span>
+                            </th>
+                        </tr>
+                    </tbody>
+                </table>
+            )}
+            <div className="bottom-pagination">
+                <ul role="navigation" aria-label="Pagination">
+                    <li className="previous disabled">
+                        <a
+                            className=" "
+                            tabIndex={-1}
+                            role="button"
+                            aria-disabled="true"
+                            aria-label="Previous page"
+                            rel="prev"
+                        >
+                            &lt;{" "}
+                        </a>
+                    </li>
+                    <li className="next">
+                        <a
+                            className=""
+                            tabIndex={0}
+                            role="button"
+                            aria-disabled="false"
+                            aria-label="Next page"
+                            rel="next"
+                            onClick={() => console.log('Next page clicked')}
+                        >
+                            {" "}
+                            &gt;
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</div>
                     </div>
                 </div>
             </section>

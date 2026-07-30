@@ -11,8 +11,8 @@ function Riskmangement() {
     const [activeFancyIndex, setActiveFancyIndex] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [bookmarkettable, setBookmarkettable] = useState(false);
-    const [showBetsModal, setShowBetsModal] = useState(false);
-    const [showEventBetsModal, setShowEventBetsModal] = useState(false);
+    const [showBetsModal, setShowBetsModal] = useState(false); // ADD THIS LINE
+    const [showEventBetsModal, setShowEventBetsModal] = useState(false); // ADD THIS LINE
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [apiData, setApiData] = useState({ match_odds: [], book_maker: [], fancy_bet: [] });
@@ -62,15 +62,20 @@ function Riskmangement() {
         agentId: ''
     });
 
-    // ============= POPUP STATES =============
+    // ============= POPUP STATES (Fancy & Book both use same) =============
     const [showPopups, setShowPopups] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [RunnerName, setRunnerName] = useState(null);
-    const [fancyListData, setFancyListData] = useState([]);
-    // =========================================
+    // ====================================================================
 
-    // Sample bets data
-    const [bets, setBets] = useState([]);
+    // Sample bets data (replace with your actual bets data)
+    const [bets, setBets] = useState([
+        // Fancy bets
+        // { team: 'Team A', bet_type: 'fancy', odd: 2.5, fancy_deposit: 100, fancy_withdraw: 50, bet_on: 'back' },
+        // { team: 'Team B', bet_type: 'fancy', odd: 3.0, fancy_deposit: 200, fancy_withdraw: 75, bet_on: 'lay' },
+        // Book bets
+        // { team: 'Team A', bet_type: 'book', odd: 2.5, fancy_deposit: 100, fancy_withdraw: 50, bet_on: 'back' },
+    ]);
 
     // ============= CLOSE ALL MODALS FUNCTION =============
     const closeAllModals = () => {
@@ -183,142 +188,44 @@ function Riskmangement() {
         }, 0);
     };
 
-    // ============= HANDLE VIEW FANCY DATA =============
-    const handleViewfancydata = async (fancyItem) => {
+    // ============= HANDLE VIEW FANCY DATA (Also used for Book) =============
+    const handleViewfancydata = (user) => {
+        // Close any open modals first
         closeAllModals();
-        
-        try {
-            // Fetch fancy list data from the API
-            const token = localStorage.getItem("accessToken");
-            const response = await axios.get(
-                `https://cricketfancylive.shyammatka.co.in/get-fancy-list-guruji?id=${fancyItem.event_id || fancyItem.eventId}&sport_id=4`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
 
-            if (response.data && Array.isArray(response.data)) {
-                setFancyListData(response.data);
-                
-                // FILTER: Only keep the item that matches the SelectionId
-                let matchedData = [];
-                if (fancyItem.SelectionId) {
-                    matchedData = response.data.filter(item => 
-                        String(item.SelectionId) === String(fancyItem.SelectionId)
-                    );
-                }
+        const myCurrentBets = bets.filter((item) => item.team === user.RunnerName);
+        console.warn("myCurrentBets", myCurrentBets);
+        console.warn("user", user);
 
-                // Only proceed if we found a match
-                if (matchedData.length > 0) {
-                    // Transform ONLY the matched data for display
-                    const transformedData = matchedData.map(item => ({
-                        SelectionId: item.SelectionId,
-                        RunnerName: item.RunnerName,
-                        BackPrice1: item.BackPrice1 || 0,
-                        BackPrice2: item.BackPrice2 || 0,
-                        BackPrice3: item.BackPrice3 || 0,
-                        BackSize1: item.BackSize1 || 0,
-                        BackSize2: item.BackSize2 || 0,
-                        BackSize3: item.BackSize3 || 0,
-                        LayPrice1: item.LayPrice1 || 0,
-                        LayPrice2: item.LayPrice2 || 0,
-                        LayPrice3: item.LayPrice3 || 0,
-                        LaySize1: item.LaySize1 || 0,
-                        LaySize2: item.LaySize2 || 0,
-                        LaySize3: item.LaySize3 || 0,
-                        min: item.min || 0,
-                        max: item.max || 0
-                    }));
+        const relevantBets = myCurrentBets?.filter(
+            (b) => (b.bet_type === "fancy" || b.bet_type === "book" || b.bet_type === "bookmaker") &&
+                b.team === user.RunnerName,
+        ) || [];
+        console.warn("relevantBets", relevantBets);
 
-                    // Create runs for display using LayPrice1 or BackPrice1
-                    const runs = [];
-                    transformedData.forEach((item) => {
-                        // Use LayPrice1 as the primary odd, fallback to BackPrice1
-                        const odd = Number(item.LayPrice1) || Number(item.BackPrice1) || 0;
-                        if (odd > 0) {
-                            [-1, 0, 1].forEach((offset) => {
-                                const run = odd + offset;
-                                const existing = runs.find((r) => r.run === run);
-                                const pl = (Math.random() * 10 - 5).toFixed(2);
+        const runs = [];
 
-                                if (existing) {
-                                    existing.profitLoss = parseFloat(existing.profitLoss) + parseFloat(pl);
-                                } else {
-                                    runs.push({ run, profitLoss: parseFloat(pl) });
-                                }
-                            });
-                        }
-                    });
+        if (relevantBets.length > 0) {
+            relevantBets.forEach((bet) => {
+                const odd = Number(bet.odd);
+                [-1, 0, 1].forEach((offset) => {
+                    const run = odd + offset;
+                    const existing = runs.find((r) => r.run === run);
+                    const pl = calculateProfitLoss(relevantBets, run);
 
-                    // If no runs generated from odds, use min/max
-                    if (runs.length === 0) {
-                        const min = Number(fancyItem.min) || 0;
-                        const max = Number(fancyItem.max) || 0;
-                        const mid = (min + max) / 2;
-                        
-                        for (let i = -3; i <= 3; i++) {
-                            const run = Math.round((mid + i * 2) * 100) / 100;
-                            runs.push({
-                                run: run,
-                                profitLoss: (Math.random() * 10 - 5).toFixed(2)
-                            });
-                        }
+                    if (existing) {
+                        existing.profitLoss = pl;
+                    } else {
+                        runs.push({ run, profitLoss: pl });
                     }
-
-                    runs.sort((a, b) => a.run - b.run);
-
-                    // Set the display name with SelectionId and RunnerName from matched data
-                    let displayName = fancyItem.fancy_name || fancyItem.RunnerName || fancyItem.event_name || 'Fancy Bet';
-                    if (fancyItem.SelectionId) {
-                        displayName = `${displayName} (Selection ID: ${fancyItem.SelectionId})`;
-                    }
-                    if (fancyItem.event_name) {
-                        displayName = `${fancyItem.event_name} - ${displayName}`;
-                    }
-
-                    setSelectedUser(runs);
-                    setRunnerName(displayName);
-                    setShowPopups(true);
-                } else {
-                    // No match found - show message
-                    setSelectedUser([{ run: 'No Data', profitLoss: 'No match found for Selection ID: ' + fancyItem.SelectionId }]);
-                    setRunnerName('No Data Found');
-                    setShowPopups(true);
-                }
-            } else {
-                // Fallback if no data
-                const runs = [];
-                const min = Number(fancyItem.min) || 0;
-                const max = Number(fancyItem.max) || 0;
-                const mid = (min + max) / 2;
-                
-                for (let i = -3; i <= 3; i++) {
-                    const run = Math.round((mid + i * 2) * 100) / 100;
-                    runs.push({
-                        run: run,
-                        profitLoss: (Math.random() * 10 - 5).toFixed(2)
-                    });
-                }
-                runs.sort((a, b) => a.run - b.run);
-
-                let displayName = fancyItem.fancy_name || fancyItem.RunnerName || fancyItem.event_name || 'Fancy Bet';
-                if (fancyItem.SelectionId) {
-                    displayName = `${displayName} (Selection ID: ${fancyItem.SelectionId})`;
-                }
-                if (fancyItem.event_name) {
-                    displayName = `${fancyItem.event_name} - ${displayName}`;
-                }
-
-                setSelectedUser(runs);
-                setRunnerName(displayName);
-                setShowPopups(true);
-            }
-        } catch (err) {
-            console.error("Error fetching fancy list:", err);
-            // Fallback
-            const runs = [];
-            const min = Number(fancyItem.min) || 0;
-            const max = Number(fancyItem.max) || 0;
+                });
+            });
+        } else {
+            // Fallback: अगर कोई bets नहीं मिलीं तो min/max से runs generate करें
+            const min = Number(user.min) || 0;
+            const max = Number(user.max) || 0;
             const mid = (min + max) / 2;
-            
+
             for (let i = -3; i <= 3; i++) {
                 const run = Math.round((mid + i * 2) * 100) / 100;
                 runs.push({
@@ -326,21 +233,21 @@ function Riskmangement() {
                     profitLoss: (Math.random() * 10 - 5).toFixed(2)
                 });
             }
-            runs.sort((a, b) => a.run - b.run);
-
-            let displayName = fancyItem.fancy_name || fancyItem.RunnerName || fancyItem.event_name || 'Fancy Bet';
-            if (fancyItem.SelectionId) {
-                displayName = `${displayName} (Selection ID: ${fancyItem.SelectionId})`;
-            }
-            if (fancyItem.event_name) {
-                displayName = `${fancyItem.event_name} - ${displayName}`;
-            }
-
-            setSelectedUser(runs);
-            setRunnerName(displayName);
-            setShowPopups(true);
         }
+
+        runs.sort((a, b) => a.run - b.run);
+
+        // Set title - if it's book, use custom format
+        let displayName = user.RunnerName;
+        if (user.isBook && user.eventName) {
+            displayName = `${user.eventName} - ${user.RunnerName}`;
+        }
+
+        setSelectedUser(runs);
+        setRunnerName(displayName);
+        setShowPopups(true);
     };
+    // ======================================================================
 
     // Fetch agent-wise downline PL data
     const fetchAgentWiseDownlinePL = async (eventId, type, agentId = '') => {
@@ -582,34 +489,144 @@ function Riskmangement() {
     };
 
     // Fetch event bets data
-// Update the function signature to accept fancy_id
-const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
+    // const fetchEventBets = async (eventId, type, agentId = '') => {
+    //     try {
+    //         setLoadingEventBets(true);
+    //         const token = localStorage.getItem("accessToken");
+
+    //         let apiType = "match_odds";
+    //         if (type === 'match_odds') apiType = "match_odds";
+    //         else if (type === 'book_maker' || type === 'bookmaker') apiType = "bookmaker";
+    //         else if (type === 'fancy_bet' || type === 'fancy') apiType = "fancy";
+    //         else if (type) apiType = type;
+
+    //         const requestBody = {
+    //             admin_id: "admin",
+    //             event_id: eventId || '',
+    //             limit: 15,
+    //             page: 1,
+    //             type: apiType
+    //         };
+
+    //         const response = await axios.post(
+    //             `${process.env.REACT_APP_API_URL}/get-event-bets`,
+    //             requestBody,
+    //             { headers: { Authorization: `Bearer ${token}` } }
+    //         );
+
+    //         if (response.data && response.data.status_code === 1) {
+    //             const bets = response.data.data || [];
+    //             const pagination = response.data.pagination || {};
+
+    //             if (bets.length > 0) {
+    //                 const clientMap = new Map();
+
+    //                 bets.forEach(bet => {
+    //                     const userId = bet.user_id || bet.agent_id || 'Unknown';
+
+    //                     if (!clientMap.has(userId)) {
+    //                         clientMap.set(userId, {
+    //                             user_id: userId,
+    //                             agent_id: bet.agent_id || '',
+    //                             client_name: bet.client_name || bet.username || userId,
+    //                             totalStake: 0,
+    //                             totalLiability: 0,
+    //                             totalBetWin: 0,
+    //                             total: 0,
+    //                             betCount: 0,
+    //                             bet_types: new Set()
+    //                         });
+    //                     }
+
+    //                     const client = clientMap.get(userId);
+    //                     client.totalStake += parseFloat(bet.stake || 0);
+    //                     client.totalLiability += parseFloat(bet.liability || 0);
+    //                     client.totalBetWin += parseFloat(bet.bet_win_amount || 0);
+    //                     client.total += parseFloat(bet.total || 0);
+    //                     client.betCount += 1;
+    //                     if (bet.bet_type) client.bet_types.add(bet.bet_type);
+    //                 });
+
+    //                 const rows = Array.from(clientMap.values()).map(client => ({
+    //                     'Client': client.client_name,
+    //                     'User ID': client.user_id,
+    //                     'Agent ID': client.agent_id,
+    //                     'Total Stake': client.totalStake.toFixed(2),
+    //                     'Total Liability': client.totalLiability.toFixed(2),
+    //                     'Total Bet Win': client.totalBetWin.toFixed(2),
+    //                     'Total': client.total.toFixed(2),
+    //                     'Bet Count': client.betCount,
+    //                     'Bet Types': Array.from(client.bet_types).join(', ')
+    //                 }));
+
+    //                 const headers = ['Client', 'User ID', 'Agent ID', 'Total Stake', 'Total Liability', 'Total Bet Win', 'Total', 'Bet Count', 'Bet Types'];
+
+    //                 const totalStake = rows.reduce((sum, r) => sum + parseFloat(r['Total Stake'] || 0), 0);
+    //                 const totalLiability = rows.reduce((sum, r) => sum + parseFloat(r['Total Liability'] || 0), 0);
+    //                 const totalBetWin = rows.reduce((sum, r) => sum + parseFloat(r['Total Bet Win'] || 0), 0);
+    //                 const total = rows.reduce((sum, r) => sum + parseFloat(r['Total'] || 0), 0);
+    //                 const totalBetCount = rows.reduce((sum, r) => sum + parseInt(r['Bet Count'] || 0), 0);
+
+    //                 const totalValues = [
+    //                     totalStake.toFixed(2),
+    //                     totalLiability.toFixed(2),
+    //                     totalBetWin.toFixed(2),
+    //                     total.toFixed(2),
+    //                     totalBetCount,
+    //                     ''
+    //                 ];
+
+    //                 setEventBetsData({
+    //                     headers: headers,
+    //                     rows: rows,
+    //                     totalValues: totalValues,
+    //                     title: `Event Bets (${apiType}) - ${pagination.totalRecords || bets.length} Bets`
+    //                 });
+    //             } else {
+    //                 setEventBetsData({
+    //                     headers: ['Client', 'Total'],
+    //                     rows: [{ 'Client': 'No bets found', 'Total': 0 }],
+    //                     totalValues: [0],
+    //                     title: 'Event Bets - No Data'
+    //                 });
+    //             }
+    //         } else {
+    //             setEventBetsData({
+    //                 headers: ['Client', 'Total'],
+    //                 rows: [{ 'Client': response.data?.message || 'No data available', 'Total': 0 }],
+    //                 totalValues: [0],
+    //                 title: 'Event Bets'
+    //             });
+    //         }
+    //     } catch (err) {
+    //         console.error("Error fetching event bets:", err);
+    //         setEventBetsData({
+    //             headers: ['Client', 'Total'],
+    //             rows: [{ 'Client': 'Error loading data', 'Total': 0 }],
+    //             totalValues: [0],
+    //             title: 'Event Bets - Error'
+    //         });
+    //     } finally {
+    //         setLoadingEventBets(false);
+    //     }
+    // };
+
+     const fetchEventBets = async (eventId, type) => {
     try {
         setLoadingEventBets(true);
-
+ 
         const token = localStorage.getItem("accessToken");
-
-        // Create request body with fancy_id when type is "fancy"
+ 
         const requestBody = {
+            admin_id: "admin",
             event_id: eventId,
             type,
             page: 1,
             limit: 15
         };
-
-        // Add fancy_id only if it's provided and type is "fancy"
-        if (type === "fancy" && fancy_id) {
-            requestBody.fancy_id = fancy_id;
-        }
-
-        // API change based on type
-        const apiUrl =
-            type === "fancy"
-                ? `${process.env.REACT_APP_API_URL}/get-event-bets-fancy-risk`
-                : `${process.env.REACT_APP_API_URL}/get-event-bets`;
-
+ 
         const response = await axios.post(
-            apiUrl,
+            `${process.env.REACT_APP_API_URL}/get-event-bets`,
             requestBody,
             {
                 headers: {
@@ -617,10 +634,11 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                 }
             }
         );
-
+ 
         if (response.data.status_code === 1) {
+ 
             const bets = response.data.data || [];
-
+ 
             setEventBetsData({
                 headers: [
                     "User ID",
@@ -649,8 +667,9 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                     "Created At": new Date(item.created_at).toLocaleString()
                 })),
                 totalValues: [],
-                title: `Event Bets (${response.data.pagination?.totalRecords || bets.length})`
+                title: `Event Bets (${response.data.pagination.totalRecords})`
             });
+ 
         } else {
             setEventBetsData({
                 headers: [],
@@ -659,6 +678,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                 title: "No Data Found"
             });
         }
+ 
     } catch (err) {
         console.log(err);
     } finally {
@@ -666,29 +686,15 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
     }
 };
 
-    // const handleEventBetsClick = (eventId, type, agentId ,fancy_id= '', e) => {
-        
-    //     e.preventDefault();
-    //     closeAllModals();
-    //     if (eventId) {
-    //         setSelectedEventBetsParams({ eventId, type, agentId,fancy_id });
-    //         fetchEventBets(eventId, type, agentId);
-    //         handleOpenEventBetsModal();
-    //     }
-    // };
-
-    const handleEventBetsClick = (eventId, type, agentId, fancy_id = '', e) => {
-    // Check if e exists before calling preventDefault
-    if (e && e.preventDefault) {
+    const handleEventBetsClick = (eventId, type, agentId = '', e) => {
         e.preventDefault();
-    }
-    closeAllModals();
-    if (eventId) {
-        setSelectedEventBetsParams({ eventId, type, agentId, fancy_id });
-        fetchEventBets(eventId, type, agentId, fancy_id);
-        handleOpenEventBetsModal();
-    }
-};
+        closeAllModals();
+        if (eventId) {
+            setSelectedEventBetsParams({ eventId, type, agentId });
+            fetchEventBets(eventId, type, agentId);
+            handleOpenEventBetsModal();
+        }
+    };
 
     const handleViewBetsClick = (eventId, type, agentId, e) => {
         e.preventDefault();
@@ -903,97 +909,95 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
         }
     };
 
-    // ============= UPDATED: Fetch fancy odds data - Only matched SelectionId =============
-    const fetchFancyOddsData = async (eventId, selectionId, index) => {
+    // Fetch fancy bet odds data
+    const fetchFancyOddsData = async (eventId, type, index) => {
         try {
             setLoadingOdds(prev => ({ ...prev, [`fancy-${index}`]: true }));
             const token = localStorage.getItem("accessToken");
 
             const response = await axios.get(
-                `https://cricketfancylive.shyammatka.co.in/get-fancy-list-guruji?id=${eventId}&sport_id=4`,
-                {
-                    headers: { Authorization: `Bearer ${token}` }
-                }
+                `https://cricketfancylive.shyammatka.co.in/get-fancy-bet-list?id=${eventId}&sport_id=4`,
+                { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            if (Array.isArray(response.data)) {
-                // ✅ Only matched SelectionId
-                const matched = response.data.find(
-                    item => String(item.SelectionId) === String(selectionId)
-                );
+            if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+                const fancyData = response.data[0];
+                let runners = [];
+                if (fancyData.runners && Array.isArray(fancyData.runners) && fancyData.runners.length > 0) {
+                    runners = fancyData.runners;
+                } else if (fancyData.selections && Array.isArray(fancyData.selections) && fancyData.selections.length > 0) {
+                    runners = fancyData.selections;
+                }
 
-                if (matched) {
-                    setOddsData(prev => ({
-                        ...prev,
-                        [`fancy-${index}`]: [{
-                            id: matched.SelectionId,
-                            name: matched.RunnerName || `Selection ${matched.SelectionId}`,
+                if (runners.length > 0) {
+                    const transformedFancy = runners.map((runner, idx) => {
+                        let runnerName = runner.runnerName || runner.name || runner.selectionName || `Selection ${idx + 1}`;
 
-                            back1: {
-                                odds: matched.BackPrice1 || 0,
-                                amount: matched.BackSize1 || 0
+                        const backPrices = [];
+                        const layPrices = [];
+                        const backSizes = [];
+                        const laySizes = [];
+
+                        if (runner.ex) {
+                            if (runner.ex.availableToBack && Array.isArray(runner.ex.availableToBack)) {
+                                runner.ex.availableToBack.forEach(item => {
+                                    if (item.price) backPrices.push(item.price);
+                                    if (item.size) backSizes.push(item.size);
+                                });
+                            }
+                            if (runner.ex.availableToLay && Array.isArray(runner.ex.availableToLay)) {
+                                runner.ex.availableToLay.forEach(item => {
+                                    if (item.price) layPrices.push(item.price);
+                                    if (item.size) laySizes.push(item.size);
+                                });
+                            }
+                        }
+
+                        while (backPrices.length < 3) backPrices.push(0);
+                        while (backSizes.length < 3) backSizes.push(0);
+                        while (layPrices.length < 2) layPrices.push(0);
+                        while (laySizes.length < 2) laySizes.push(0);
+
+                        return {
+                            id: runner.selectionId || runner.id || idx + 1,
+                            name: runnerName,
+                            back3: {
+                                odds: backPrices[2] > 0 ? backPrices[2].toFixed(2) : "--",
+                                amount: backSizes[2] > 0 ? backSizes[2].toString() : "--"
                             },
                             back2: {
-                                odds: matched.BackPrice2 || 0,
-                                amount: matched.BackSize2 || 0
+                                odds: backPrices[1] > 0 ? backPrices[1].toFixed(2) : "--",
+                                amount: backSizes[1] > 0 ? backSizes[1].toString() : "--"
                             },
-                            back3: {
-                                odds: matched.BackPrice3 || 0,
-                                amount: matched.BackSize3 || 0
+                            back1: {
+                                odds: backPrices[0] > 0 ? backPrices[0].toFixed(2) : "--",
+                                amount: backSizes[0] > 0 ? backSizes[0].toString() : "--"
                             },
-
                             lay1: {
-                                odds: matched.LayPrice1 || 0,
-                                amount: matched.LaySize1 || 0
+                                odds: layPrices[0] > 0 ? layPrices[0].toFixed(2) : "--",
+                                amount: laySizes[0] > 0 ? laySizes[0].toString() : "--"
                             },
                             lay2: {
-                                odds: matched.LayPrice2 || 0,
-                                amount: matched.LaySize2 || 0
-                            },
-                            lay3: {
-                                odds: matched.LayPrice3 || 0,
-                                amount: matched.LaySize3 || 0
-                            },
+                                odds: layPrices[1] > 0 ? layPrices[1].toFixed(2) : "--",
+                                amount: laySizes[1] > 0 ? laySizes[1].toString() : "--"
+                            }
+                        };
+                    });
 
-                            min: matched.min || 0,
-                            max: matched.max || 0
-                        }]
-                    }));
-                } else {
-                    // No match found - set empty array
                     setOddsData(prev => ({
                         ...prev,
-                        [`fancy-${index}`]: []
+                        [`fancy-${index}`]: transformedFancy
                     }));
                 }
             }
         } catch (err) {
             console.error("Error fetching fancy odds:", err);
-            setOddsData(prev => ({
-                ...prev,
-                [`fancy-${index}`]: []
-            }));
         } finally {
             setLoadingOdds(prev => ({ ...prev, [`fancy-${index}`]: false }));
         }
     };
 
-    // ============= UPDATED: Toggle fancy with SelectionId =============
-    const toggleFancy = (index, eventId, selectionId) => {
-        const isExpanded = activeFancyIndex === index;
-        
-        setActiveFancyIndex(prev => prev === index ? null : index);
-        
-        if (!isExpanded && eventId && selectionId) {
-            const oddsKey = `fancy-${index}`;
-            // Only fetch if data doesn't exist yet
-            if (!oddsData[oddsKey]) {
-                fetchFancyOddsData(eventId, selectionId, index);
-            }
-        }
-    };
-
-    // Toggle functions for match and bookmaker
+    // Toggle functions
     const toggleMatchOdds = (index, marketId) => {
         const isExpanded = activeMatchIndex === index;
         setActiveMatchIndex(prev => prev === index ? null : index);
@@ -1012,6 +1016,17 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
             const oddsKey = `bookmaker-${index}`;
             if (!oddsData[oddsKey]) {
                 fetchBookMakerOddsData(eventId, index);
+            }
+        }
+    };
+
+    const toggleFancy = (index, eventId, type) => {
+        const isExpanded = activeFancyIndex === index;
+        setActiveFancyIndex(prev => prev === index ? null : index);
+        if (!isExpanded && eventId) {
+            const oddsKey = `fancy-${index}`;
+            if (!oddsData[oddsKey]) {
+                fetchFancyOddsData(eventId, type, index);
             }
         }
     };
@@ -1063,7 +1078,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
             if (type === 'match_odds' && item.book_pl?.formatted && item.book_pl.formatted.length > 0) {
                 const firstTeam = item.book_pl.formatted[0];
                 if (firstTeam && firstTeam.market_id) {
-                    marketIdDisplay = firstTeam.market_id;
+                    marketIdDisplay = `(${firstTeam.market_id})`;
                 }
             }
 
@@ -1086,16 +1101,9 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                 rawData: item,
                 apiType: apiType,
                 agentId: item.agent_id || '',
-                fancy_id: item.fancy_id || '',
                 marketIdDisplay: marketIdDisplay,
                 fancyName: item.fancy_name || '',
-                teams: teams,
-                fancyId: item.fancy_id || '',
-                SelectionId: item.SelectionId || '',
-                fancy_name: item.fancy_name || '',
-                event_name: item.event_name || '',
-                min: item.min || 0,
-                max: item.max || 0
+                teams: teams
             };
         });
     };
@@ -1229,7 +1237,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                                                     <strong>
                                                                         <a
                                                                             className='text-dark text-decoration-underline'
-                                                                            href={`/viewmatch-fancy/series_idd/${item.marketIdDisplay || item.marketIdDisplay || '111111111111111'}/event_id/${item.eventId}/sport_id/4`}>
+                                                                             href={`/viewmatch-fancy/series_idd/${item.marketId}/event_id/${item.eventId}/sport_id/4`}>
                                                                             {item.eventName}
                                                                         </a>
                                                                     </strong>
@@ -1450,7 +1458,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                                                     <strong>
                                                                         <a
                                                                             className='text-dark'
-                                                                            href={`/viewmatch-fancy/series_idd/${item.marketIdDisplay || item.marketIdDisplay || '111111111111111'}/event_id/${item.eventId}/sport_id/4`}>
+                                                                            href={`/viewmatch-fancy/series_idd/${item.marketId}/event_id/${item.eventId}/sport_id/4`}>
                                                                             {item.eventName}
                                                                         </a>
                                                                     </strong>
@@ -1581,7 +1589,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                                                 <td width="80" className="border-l text-center">
                                                                     <a
                                                                         className="green-btn"
-                                                                        onClick={(e) => handleEventBetsClick(item.eventId, item.apiType, item.agentId,item.fancy_id, e)}
+                                                                        onClick={(e) => handleEventBetsClick(item.eventId, item.apiType, item.agentId, e)}
                                                                         href="#"
                                                                     >
                                                                         Event Bets
@@ -1597,7 +1605,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                 </div>
                             </div>
 
-                            {/* Fancy Bet Section - UPDATED with SelectionId filtering */}
+                            {/* Fancy Bet Section */}
                             <div className="risk-management-table">
                                 <div className="risk-management-table-header">
                                     <h2 className="common-heading">{sectionTitles.fancyBet}</h2>
@@ -1645,7 +1653,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                                             <td className="bg-yellow border-0">
                                                                 <a className="d-flex align-items-center flex-wrap">
                                                                     <button
-                                                                        onClick={() => toggleFancy(index, item.eventId, item.SelectionId)}
+                                                                        onClick={() => toggleFancy(index, item.eventId, item.apiType)}
                                                                         type="button"
                                                                         className="angle-up down-up btn btn-primary me-1"
                                                                     >
@@ -1668,18 +1676,13 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                                                     <strong>
                                                                         <a
                                                                             className='text-dark'
-                                                                            href={`/viewmatch-fancy/series_idd/${item.seriesId || item.series_id || '111111111111111'}/event_id/${item.eventId}/sport_id/4`}>
+                                                                             href={`/viewmatch-fancy/series_idd/${item.marketId}/event_id/${item.eventId}/sport_id/4`}>
                                                                             {item.eventName}
                                                                         </a>
                                                                     </strong>
                                                                     <span className="ms-2" style={{ fontSize: '12px', color: '#666' }}>
                                                                         {item.marketType}
                                                                     </span>
-                                                                    {item.SelectionId && (
-                                                                        <span className="ms-2" style={{ fontSize: '11px', color: '#999' }}>
-                                                                            (ID: {item.SelectionId})
-                                                                        </span>
-                                                                    )}
                                                                 </a>
                                                             </td>
                                                             <td className="border-0 bg-yellow text-center">
@@ -1715,16 +1718,30 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                                                 <a
                                                                     onClick={(e) => {
                                                                         e.preventDefault();
-                                                                        const fancyData = {
-                                                                            event_id: item.eventId,
-                                                                            event_name: item.eventName,
-                                                                            fancy_name: item.fancy_name || item.marketType,
-                                                                            SelectionId: item.SelectionId || "1",
+                                                                        closeAllModals();
+
+                                                                        // Get team name
+                                                                        let teamName = '';
+                                                                        if (item.bookPL1) teamName = item.bookPL1.team;
+                                                                        else if (item.bookPL2) teamName = item.bookPL2.team;
+                                                                        else teamName = 'Book';
+
+                                                                        // Create display title
+                                                                        const displayTitle = `${item.eventName || 'Book'} - ${teamName}`;
+
+                                                                        // Create user data object
+                                                                        const bookUserData = {
+                                                                            RunnerName: teamName,
                                                                             min: item.min,
                                                                             max: item.max,
-                                                                            fancy_id: item.fancy_id
+                                                                            eventId: item.eventId,
+                                                                            apiType: item.apiType,
+                                                                            isBook: true,
+                                                                            eventName: item.eventName
                                                                         };
-                                                                        handleViewfancydata(fancyData);
+
+                                                                        // Call the fancy handler
+                                                                        handleViewfancydata(bookUserData);
                                                                     }}
                                                                     type='button'
                                                                     className="green-btn"
@@ -1749,7 +1766,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                                                             <tbody>
                                                                                 <tr>
                                                                                     <td width="30%" className="text-start border-0">
-                                                                                        <strong>{currentOdds.length} selection</strong>
+                                                                                        <strong>{currentOdds.length} selections</strong>
                                                                                     </td>
                                                                                     <td className="refer-bet border-0" colSpan={2} width="30%">
                                                                                         100.8%
@@ -1812,14 +1829,14 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                                                         </table>
                                                                     ) : (
                                                                         <div className="text-center py-3">
-                                                                            <span className="text-muted">No fancy odds data available for this selection</span>
+                                                                            <span className="text-muted">No fancy odds data available</span>
                                                                         </div>
                                                                     )}
                                                                 </td>
                                                                 <td width="80" className="border-l text-center">
                                                                     <a
                                                                         className="green-btn"
-                                                                        onClick={(e) => handleEventBetsClick(item.eventId, item.apiType, item.agentId,item.fancy_id, e)}
+                                                                        onClick={(e) => handleEventBetsClick(item.eventId, item.apiType, item.agentId, e)}
                                                                         href="#"
                                                                     >
                                                                         Event Bets
@@ -1888,7 +1905,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                                                 {downlineData.headers.map((header, colIndex) => (
                                                                     <td key={colIndex}>
                                                                         {colIndex === 0 ? (
-                                                                            <a
+                                                                            <a className='text-decoration-underline'
                                                                                 href="#"
                                                                                 onClick={(e) => {
                                                                                     e.preventDefault();
@@ -2073,7 +2090,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                         <thead>
                                             <tr>
                                                 {clientDownlineData.headers && clientDownlineData.headers.map((header, index) => (
-                                                    <th key={index} scope="col">
+                                                    <th key={index} scope="col" className='text-capitalize'>
                                                         {header === 'Client' ? 'Client Name' : header}
                                                     </th>
                                                 ))}
@@ -2083,7 +2100,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                             {clientDownlineData.rows.map((row, rowIndex) => (
                                                 <tr key={rowIndex}>
                                                     {clientDownlineData.headers && clientDownlineData.headers.map((header, colIndex) => (
-                                                        <td key={colIndex}>
+                                                        <td key={colIndex} >
                                                             {header === 'Client' ? (
                                                                 <strong>
                                                                     {row[header] || 'N/A'}
@@ -2156,7 +2173,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                         <thead>
                                             <tr>
                                                 {eventBetsData.headers && eventBetsData.headers.map((header, index) => (
-                                                    <th key={index} scope="col">
+                                                    <th key={index} scope="col" className='text-capitalize'>
                                                         {header}
                                                     </th>
                                                 ))}
@@ -2182,7 +2199,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                             ))}
                                             {eventBetsData.totalValues && eventBetsData.totalValues.length > 0 && (
                                                 <tr style={{ fontWeight: 600, backgroundColor: '#f8f9fa' }}>
-                                                    <td className="text-start"><strong>Total</strong></td>
+                                                    {/* <td className="text-start"><strong>Total</strong></td> */}
                                                     {eventBetsData.totalValues.map((value, idx) => (
                                                         <td key={idx}>
                                                             <span className={parseFloat(value || 0) < 0 ? 'text-danger' : 'text-success'}>
@@ -2205,17 +2222,17 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                 </Modal.Body>
             </Modal>
 
-            {/* ============= POPUP ============= */}
+            {/* ============= POPUP (Fancy & Book both use same) ============= */}
             {showPopups && (
                 <div className="popup-overlay">
                     <div className="popup-modal">
-                        <div className="popup-header">
-                            <h3>{RunnerName}</h3>
+                        <div className="db-sec d-flex justify-content-between align-items-center mb-2 p-3 pb-0">
+                            <h2 className='common-heading mb-0'>{RunnerName}</h2>
                             <button
-                                className="close-btn"
+                                className="green-btn btn btn-primary"
                                 onClick={() => setShowPopups(false)}
                             >
-                                ✕
+                                Close
                             </button>
                         </div>
 

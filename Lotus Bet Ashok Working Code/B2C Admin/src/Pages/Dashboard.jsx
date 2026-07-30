@@ -64,7 +64,7 @@ const cardConfig = [
   },
   {
     label: "SPORTBOOK P&L",
-    key: "fake",
+    key: "totalProfit",
     color: "red",
 
     icon: <FaMoneyBillWave size={36} className="text-white" />,
@@ -212,6 +212,10 @@ export default function Dashboard() {
     totalItems: 0,
     totalPages: 1
   });
+
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+
   const [pullLoading, setPullLoading] = useState(false);
   const [filters, setFilters] = useState({
     search: "",
@@ -353,18 +357,50 @@ export default function Dashboard() {
   };
 
 
+  // const fetchDashboardData = async () => {
+  //   try {
+  //     setLoading(true);
+
+  //     const response = await getDashboardSummary(admin_id);
+
+  //     if (response?.data?.success) {
+  //       // सीधे data ऑब्जेक्ट को counts में सेट करें
+  //       setCounts(response.data.data);
+
+  //       // अगर admin_profile और role_2_count अलग API से आते हैं तो
+  //       // उनके लिए अलग सेटअप रखें
+  //       if (response.data.data.admin_profile) {
+  //         setAdminProfile(response.data.data.admin_profile);
+  //       }
+  //       if (response.data.data.role_2_count) {
+  //         setRole2Count(response.data.data.role_2_count);
+  //       }
+  //     }
+  //   } catch (err) {
+  //     console.error("Dashboard error:", err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // ✅ fetchDashboardData - WITH DATE FILTERS
+  // ✅ fetchDashboardData - SIRF DATES BHEJO
+  // ✅ fetchDashboardData - SIRF DATES BHEJO
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
 
-      const response = await getDashboardSummary(admin_id);
+      const payload = {
+        from_date: fromDate || "",
+        to_date: toDate || ""
+      };
+
+      console.log("📤 Sending payload:", payload);
+      const response = await getDashboardSummary(payload);
+      console.log("📥 Server response:", response);
 
       if (response?.data?.success) {
-        // सीधे data ऑब्जेक्ट को counts में सेट करें
         setCounts(response.data.data);
-
-        // अगर admin_profile और role_2_count अलग API से आते हैं तो
-        // उनके लिए अलग सेटअप रखें
         if (response.data.data.admin_profile) {
           setAdminProfile(response.data.data.admin_profile);
         }
@@ -377,6 +413,63 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
+  };
+
+
+  const getTodayDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  };
+
+  const getLastMonthDate = () => {
+    const date = new Date();
+    date.setMonth(date.getMonth() - 1);
+    return date.toISOString().split('T')[0];
+  };
+
+
+  // ✅ Initial load par default dates ke saath fetch
+  useEffect(() => {
+    fetchDashboardData();  // ✅ Default dates ke saath
+    fetchDashboardPlayerStats();
+    fetchTopWinningLosingPlayers();
+    fetchRegistrationStats();
+  }, []);
+
+
+  // ✅ Submit handler - Server se filtered data
+  // ✅ Submit handler - Search button ki tarah
+  // ✅ Submit handler - Client side search (NO page reload)
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // ✅ Page reload rokega
+
+    try {
+      // ✅ Sirf dashboard data fetch karo (dates ke saath)
+      await fetchDashboardData();
+      await fetchDashboardPlayerStats();
+      await fetchTopWinningLosingPlayers();
+      await fetchRegistrationStats();
+
+      const fromMsg = fromDate || 'start';
+      const toMsg = toDate || 'today';
+
+   
+    } catch (error) {
+      console.error("Search error:", error);
+    }
+  };
+  // ✅ Reset handler
+  // ✅ Reset handler
+  const handleReset = (e) => {
+    e.preventDefault();
+
+    setFromDate('');
+    setToDate('');
+
+    fetchDashboardData();
+    fetchDashboardPlayerStats();
+    fetchTopWinningLosingPlayers();
+    fetchRegistrationStats();
   };
 
   // Fetch registration stats
@@ -731,7 +824,7 @@ export default function Dashboard() {
       )}
       <Heading title="Dashboard" />
 
-      <div className="dashboard-header mb-lg-3">
+      {/* <div className="dashboard-header mb-lg-3">
         <div className="mb-md-0  p-3 row">
           <div className="col-xl-2 col-lg-2 col-md-3 col-sm-6">
             <div className="">
@@ -774,7 +867,52 @@ export default function Dashboard() {
             </button>
           </div>
         </div>
+      </div> */}
+
+      <div className="dashboard-header mb-lg-3">
+  <div className="mb-md-0 p-3 row">
+    <div className="col-xl-2 col-lg-2 col-md-3 col-sm-6">
+      <div className="">
+        <span className="date_new_all">From Date :</span>
+        <input
+          type="date"
+          className="form-control"
+          value={fromDate}
+          onChange={(e) => setFromDate(e.target.value)}
+        />
       </div>
+    </div>
+    <div className="col-xl-2 col-lg-2 col-md-3 col-sm-6">
+      <div className="">
+        <span className="date_new_all">To Date :</span>
+        <input
+          type="date"
+          className="form-control"
+          value={toDate}
+          onChange={(e) => setToDate(e.target.value)}
+        />
+      </div>
+    </div>
+    <div className="d-flex justify-content-start align-items-end col-xl-2 col-lg-2 col-md-3">
+      <button
+        type="button"
+        className="btn theme_dark_btn"
+        onClick={handleSubmit}
+        style={{ marginRight: 10 }}
+      >
+        Search
+      </button>
+      <button
+        type="button"
+        className="btn theme_light_btn"
+        onClick={handleReset}
+      >
+        Reset
+      </button>
+    </div>
+  </div>
+</div>
+
 
       <div className="mb-lg-3 ">
         <div className="row">

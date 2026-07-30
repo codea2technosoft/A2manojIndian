@@ -27,7 +27,7 @@ import {
   CreateUserAdmin,
   BetBlockUnblock,
   changeMasterPasswordAgentStatus,
-  // changeMasterPasswordAgent,
+  changeCreditLimitUser,
   getUserExposure
 } from "../../Server/api";
 import { FaPlus, FaMinus, FaEye } from "react-icons/fa";
@@ -56,6 +56,10 @@ function UsersList() {
   const handleCloseModalall = () => {
     setShowModal(false);
     setSelectedUser(null);
+    setCreditAmount('');
+    setCreditPassword('');
+    setCreditAmountError('');
+    setCreditPasswordError('');
   };
   const [changestatus, setChangestatus] = useState(false);
   const [status, setStatus] = useState("active");
@@ -70,6 +74,31 @@ function UsersList() {
   const [exposureData, setExposureData] = useState([]);
   const [exposureLoading, setExposureLoading] = useState(false);
   const [selectedUserName, setSelectedUserName] = useState('');
+
+  // ===== CREDIT LIMIT EDIT STATES =====
+  const [creditModal, setCreditModal] = useState(false);
+  const [creditAmount, setCreditAmount] = useState('');
+  const [creditPassword, setCreditPassword] = useState('');
+  const [creditAmountError, setCreditAmountError] = useState('');
+  const [creditPasswordError, setCreditPasswordError] = useState('');
+
+  const handleOpenCreditModal = (user) => {
+    setSelectedUser(user);
+    setCreditModal(true);
+    setCreditAmount('');
+    setCreditPassword('');
+    setCreditAmountError('');
+    setCreditPasswordError('');
+  };
+
+  const handleCloseCreditModal = () => {
+    setCreditModal(false);
+    setSelectedUser(null);
+    setCreditAmount('');
+    setCreditPassword('');
+    setCreditAmountError('');
+    setCreditPasswordError('');
+  };
   // ==================================
 
   const [userFormData, setUserFormData] = useState({
@@ -80,7 +109,8 @@ function UsersList() {
     password: "",
     confirmPassword: "",
     phoneNumber: "",
-    exposureLimit: ""
+    //exposureLimit: ""
+    exposureLimit: 200000,
   });
   const [userErrors, setUserErrors] = useState({});
   const [userLoading, setUserLoading] = useState(false);
@@ -131,7 +161,13 @@ function UsersList() {
       errors.phoneNumber = "Please enter a valid 10-digit phone number";
     }
 
-    if (!userFormData.exposureLimit || userFormData.exposureLimit.trim() === "") {
+    // if (!userFormData.exposureLimit || userFormData.exposureLimit.trim() === "") {
+    //   errors.exposureLimit = "Please enter exposure limit";
+    // } else if (Number(userFormData.exposureLimit) <= 0) {
+    //   errors.exposureLimit = "Exposure limit must be greater than 0";
+    // }
+
+    if (String(userFormData.exposureLimit).trim() === "") {
       errors.exposureLimit = "Please enter exposure limit";
     } else if (Number(userFormData.exposureLimit) <= 0) {
       errors.exposureLimit = "Exposure limit must be greater than 0";
@@ -196,6 +232,56 @@ function UsersList() {
     });
   };
 
+  // =============================================
+  // ✅ CREDIT SUBMIT HANDLER
+  // =============================================
+  const handleCreditSubmit = async (e) => {
+    e.preventDefault();
+
+    // ✅ Final validation check
+    if (!creditAmount || Number(creditAmount) <= 0) {
+      setCreditAmountError('Please enter a valid amount');
+      return;
+    }
+
+    if (!creditPassword || creditPassword.length < 4) {
+      setCreditPasswordError('Password must be at least 4 characters');
+      return;
+    }
+
+    if (!selectedUser) {
+      Swal.fire("Error", "No user selected", "error");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const payload = {
+        admin_id: selectedUser?.user_id || selectedUser?.admin_id || selectedUser?._id,
+        credit_limit: Number(creditAmount),
+        password: creditPassword
+      };
+
+      console.log("📤 Credit Payload:", payload);
+
+      const response = await changeCreditLimitUser(payload);
+
+      if (response.data && response.data.success) {
+        Swal.fire("Success!", "Credit limit updated successfully!", "success");
+        handleCloseCreditModal();
+        fetchUsers();
+      } else {
+        Swal.fire("Error", response.data?.message || "Failed to update credit limit", "error");
+      }
+    } catch (error) {
+      console.error("❌ Credit Error:", error);
+      Swal.fire("Error", error.response?.data?.message || "Something went wrong", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   // Handle Create User
   const handleCreateUser = async (e) => {
     e.preventDefault();
@@ -213,7 +299,8 @@ function UsersList() {
         password: userFormData.password,
         email: userFormData.email.trim(),
         phoneNumber: userFormData.phoneNumber.trim(),
-        exposure_limit: userFormData.exposureLimit.trim()
+       // exposure_limit: userFormData.exposureLimit.trim()
+       exposure_limit: String(userFormData.exposureLimit).trim(),
       };
       const response = await CreateUserAdmin(payload);
       if (response.data && response.data.success) {
@@ -227,7 +314,8 @@ function UsersList() {
           password: "",
           confirmPassword: "",
           phoneNumber: "",
-          exposureLimit: ""
+          //exposureLimit: ""
+          exposureLimit: "200000",
         });
         setUserErrors({});
         fetchUsers();
@@ -789,10 +877,15 @@ function UsersList() {
                           </a>
                         </td>
                         <td className="text-end">
-                          <a href="#" onClick={(e) => {
-                            e.preventDefault();
-                          }} className="text-primary">
-                            {(user.credit).toFixed(2)}
+                          <a
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleOpenCreditModal(user);
+                            }}
+                            className="text-primary"
+                          >
+                            {(user.credit || 0).toFixed(2)}
                             <i className="fas fa-pen ps-1" />
                           </a>
                         </td>
@@ -810,14 +903,7 @@ function UsersList() {
                         </td>
                         <td className="text-end">{user.avail_bal || '0.00'}</td>
                         <td className="text-end">{user.exposure_limit || '0.00'}</td>
-                        {/* <td className={`text-end  ${Number(user.total_amount) <= 0 ? "ul-t" : "ul-t2"}`}>
-                          <span>
-                            {user.pl_winning || "0.00"}
-                          </span>
-                        </td> */}
-
-                        <td className={`text-end  ${Number(user.pl_winning) <= 0 ? "ul-t" : "ul-t2"
-                          }`}>
+                        <td className={`text-end  ${Number(user.pl_winning) <= 0 ? "ul-t" : "ul-t2"}`}>
                           <span>
                             {user.pl_winning || "0.00"}
                           </span>
@@ -1124,7 +1210,7 @@ function UsersList() {
                               name="exposureLimit"
                               type="number"
                               className="form-control"
-                              value={userFormData.exposureLimit}
+                              value={userFormData.exposureLimit || 200000}
                               onChange={(e) => setUserFormData({ ...userFormData, exposureLimit: e.target.value })}
                             />
                             {userErrors.exposureLimit && (
@@ -1196,6 +1282,119 @@ function UsersList() {
                     <div className="text-center mt-4">
                       <button type="submit" className="theme_dark_btn btn btn-primary">
                         Submit
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ✅ CREDIT LIMIT EDIT MODAL */}
+      {creditModal && (
+        <div className="allcommon">
+          <div
+            className="modal show d-block"
+            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+            onClick={handleCloseCreditModal}
+          >
+            <div
+              className="modal-dialog modal-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="common-heading">Withdraw Amount Edit</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={handleCloseCreditModal}
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <form className="change-password-sec" onSubmit={handleCreditSubmit}>
+                    <h4 className="h4 mb-3 curent-value">
+                      <label>Current :</label>
+                      <strong>{(selectedUser?.credit || 0).toFixed(2)}</strong>
+                    </h4>
+
+                    <div className="mb-2 d-flex align-items-center">
+                      <label className="me-2">New</label>
+                      <div className="w-sm-50">
+                        <input
+                          placeholder="Enter Credit Amount"
+                          name="credit_amount"
+                          type="number"
+                          className={`form-control ${creditAmountError ? 'is-invalid' : ''}`}
+                          value={creditAmount}
+                          onChange={(e) => {
+                            setCreditAmount(e.target.value);
+                            if (e.target.value && Number(e.target.value) > 0) {
+                              setCreditAmountError('');
+                            } else {
+                              setCreditAmountError('Please enter a valid amount');
+                            }
+                          }}
+                          onBlur={(e) => {
+                            if (!e.target.value) {
+                              setCreditAmountError('Please enter Credit Amount');
+                            } else if (Number(e.target.value) <= 0) {
+                              setCreditAmountError('Amount must be greater than 0');
+                            } else {
+                              setCreditAmountError('');
+                            }
+                          }}
+                          required
+                        />
+                        {creditAmountError && (
+                          <div className="text-danger small mt-1">{creditAmountError}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="mb-2 d-flex align-items-center">
+                      <label className="me-2">Password</label>
+                      <div className="w-sm-50">
+                        <input
+                          placeholder="Enter Password"
+                          name="credit_password"
+                          type="password"
+                          className={`form-control ${creditPasswordError ? 'is-invalid' : ''}`}
+                          value={creditPassword}
+                          onChange={(e) => {
+                            setCreditPassword(e.target.value);
+                            if (e.target.value && e.target.value.length >= 4) {
+                              setCreditPasswordError('');
+                            } else {
+                              setCreditPasswordError('Password must be at least 4 characters');
+                            }
+                          }}
+                          onBlur={(e) => {
+                            if (!e.target.value) {
+                              setCreditPasswordError('Please enter password');
+                            } else if (e.target.value.length < 4) {
+                              setCreditPasswordError('Password must be at least 4 characters');
+                            } else {
+                              setCreditPasswordError('');
+                            }
+                          }}
+                          required
+                        />
+                        {creditPasswordError && (
+                          <div className="text-danger small mt-1">{creditPasswordError}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-center mt-4">
+                      <button
+                        type="submit"
+                        className="theme_dark_btn btn btn-primary"
+                        disabled={loading || creditAmountError || creditPasswordError}
+                      >
+                        {loading ? "Submitting..." : "Submit"}
                       </button>
                     </div>
                   </form>

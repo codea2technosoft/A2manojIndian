@@ -197,6 +197,11 @@ import Commingsoon from "./allpages/Commingsoon.jsx";
 import MatchMarketBets from "./allpages/MatchMarketBets.jsx";
 import Agentbankingdebitcreditlog from "./allpages/Agentbankingdebitcreditlog";
 import Agentbankingtransctionhistory from "./allpages/Agentbankingtransctionhistory";
+import AprofitDownlineuser from "./allpages/AprofitDownlineuser";
+import Profitlosssportswise from "./allpages/Profitlosssportswise";
+import Downlinesportsplsportswise from "./allpages/Downlinesportsplsportswise";
+import MatchBetDetailssportswise from "./allpages/MatchBetDetailssportswise";
+import Profitlossreportsportswisedownline from "./allpages/Profitlossreportsportswisedownline";
 
 const App = () => {
   const [depositPending, setDepositPending] = useState(0);
@@ -357,7 +362,6 @@ const App = () => {
         />
 
 
-
         <Route path="/userchat" element={<Userchat />} />
         <Route path="/Chatclose" element={<Chatclose />} />
 
@@ -369,6 +373,10 @@ const App = () => {
         <Route
           path="/current-bets"
           element={<ProtectedRoute element={CurrentBets} path="/current-bets" />}
+        />
+        <Route
+          path="/aprofit-downline-user"
+          element={<ProtectedRoute element={AprofitDownlineuser} path="/aprofit-downline-user" />}
         />
         <Route
           path="/agentwisebanking-debit-credit-log"
@@ -459,12 +467,28 @@ const App = () => {
           element={<ProtectedRoute element={AprofitDownline} path="/aprofitDownline" />}
         />
         <Route
+          path="/profit-loss-report-sports-wise-downline/:id"
+          element={<ProtectedRoute element={Profitlossreportsportswisedownline} path="/profit-loss-report-sports-wise-downline/:id" />}
+        />
+        <Route
           path="/aprofitMarket"
           element={<ProtectedRoute element={AprofitMarket} path="/aprofitMarket" />}
         />
         <Route
           path="/adownlinesportspl"
           element={<ProtectedRoute element={Adownlinesportspl} path="/adownlinesportspl" />}
+        />
+        <Route
+          path="/downlinesportspl-sports-wise"
+          element={<ProtectedRoute element={Downlinesportsplsportswise} path="/downlinesportspl-sports-wise" />}
+        />
+        <Route
+          path="/matchBetDetailssports-wise"
+          element={<ProtectedRoute element={MatchBetDetailssportswise} path="/matchBetDetailssports-wise" />}
+        />
+        <Route
+          path="/profit-loss-sports-wise"
+          element={<ProtectedRoute element={Profitlosssportswise} path="/profit-loss-sports-wise" />}
         />
         <Route
           path="/MatchBetDetails/fancy"
@@ -1285,8 +1309,8 @@ const App = () => {
           element={<ProtectedRoute element={UserSettledBetsDetails} path="/user-settled-bets-details/:userId" />}
         />
         <Route
-          path="match-market-bets"
-          element={<ProtectedRoute element={MatchMarketBets} path="/match-market-bets" />}
+          path="/match-market-bets/:id"
+          element={<ProtectedRoute element={MatchMarketBets} path="/match-market-bets/:id" />}
         />
 
 

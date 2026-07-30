@@ -10,7 +10,7 @@ function Adownlinesportspl() {
   const navigate = useNavigate();
   const adminId = searchParams.get('admin_id') || localStorage.getItem("admin_id");
   const role = searchParams.get('role') || localStorage.getItem("role") || 3;
-  
+
   const [activeTab, setActiveTab] = useState('Cricket');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMatch, setSelectedMatch] = useState(null);
@@ -42,17 +42,33 @@ function Adownlinesportspl() {
     totalPages: 0
   });
 
+
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+  const [fromTime, setFromTime] = useState('');
+  const [toTime, setToTime] = useState('');
+
+  // ✅ Format date for API - ADD KARO
+  const formatDateTime = (date, time) => {
+    if (!date) return "";
+    if (time) {
+      return `${date}T${time}:00`;
+    }
+    return date;
+  };
+
+
   // Sport tabs data
   const sportTabs = ['Cricket', 'Soccer', 'Tennis', 'Greyhound', 'Horse'];
 
   // Get sport_id based on active tab
   const getSportId = (sportName) => {
     const sportMap = {
-      'Cricket': 4,
-      'Soccer': 1,
-      'Tennis': 2,
-      'Greyhound': 8,
-      'Horse': 7
+      'Cricket': '4',
+      'Soccer': '1',
+      'Tennis': '2',
+      'Greyhound': '8',
+      'Horse': '7'
     };
     return sportMap[sportName];
   };
@@ -64,9 +80,11 @@ function Adownlinesportspl() {
     setLoading(true);
     try {
       const payload = {
-        admin_id: adminId,
+       // admin_id: adminId,
         search: searchTerm,
         sport_id: getSportId(activeTab),
+        from_date: formatDateTime(fromDate, fromTime), // ✅ ADD THIS
+        to_date: formatDateTime(toDate, toTime),       // ✅ ADD THIS
         page: page,
         limit: pagination.limit
       };
@@ -101,6 +119,29 @@ function Adownlinesportspl() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // ✅ Just For Today handler - ADD KARO
+  const handleJustForToday = () => {
+    const today = new Date().toISOString().split('T')[0];
+    setFromDate(today);
+    setToDate(today);
+    setFromTime('');
+    setToTime('');
+    fetchMatchWiseReport(1);
+  };
+
+  // ✅ From Yesterday handler - ADD KARO
+  const handleFromYesterday = () => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const dateStr = yesterday.toISOString().split('T')[0];
+    setFromDate(dateStr);
+    setToDate(dateStr);
+    setFromTime('');
+    setToTime('');
+    fetchMatchWiseReport(1);
   };
 
   // Fetch Date Wise Bet User Report (Detail Table - Same Page)
@@ -179,12 +220,12 @@ function Adownlinesportspl() {
   const handleShowBets = (item) => {
     const fancyId = item._id || item.id;
     const eventId = selectedMatch?.event_id;
-     const marketId = item.market_id || selectedMatch?.market_id;
-      const betType = item.bet_type || selectedMatch?.bet_type || 'fancy';
+    const marketId = item.market_id || selectedMatch?.market_id;
+    const betType = item.bet_type || selectedMatch?.bet_type || 'fancy';
     // navigate(`/MatchBetDetails/fancy?fancy_id=${fancyId}&event_id=${eventId}&admin_id=${adminId}&role=${role}`);
 
-      //navigate(`/MatchBetDetails/fancy?market_id=${marketId}`);
-      navigate(`/MatchBetDetails/fancy?market_id=${marketId}&bet_type=${betType}`);
+    //navigate(`/MatchBetDetails/fancy?market_id=${marketId}`);
+    navigate(`/MatchBetDetails/fancy?market_id=${marketId}&bet_type=${betType}`);
 
   };
 
@@ -194,10 +235,22 @@ function Adownlinesportspl() {
   };
 
   // Handle reset
-  const handleReset = () => {
+  // const handleReset = () => {
+  //   setSearchTerm('');
+  //   fetchMatchWiseReport(1);
+  // };
+
+  // ✅ Handle reset - e.preventDefault() add karo
+  const handleReset = (e) => {  // ✅ e parameter add karo
+    e.preventDefault();        // ✅ ADD THIS - page reload rokega
     setSearchTerm('');
+    setFromDate('');
+    setToDate('');
+    setFromTime('');
+    setToTime('');
     fetchMatchWiseReport(1);
   };
+
 
   useEffect(() => {
     fetchMatchWiseReport();
@@ -278,7 +331,7 @@ function Adownlinesportspl() {
                       <div className="row">
                         <div className="col-xl-12 col-md-12">
                           <div className="row">
-                            <div className="mb-lg-0 mb-2 flex-grow-0 pe-2 col-lg-3 col-sm-6">
+                            {/* <div className="mb-lg-0 mb-2 flex-grow-0 pe-2 col-lg-3 col-sm-6">
                               <div className="bet-sec bet-period">
                                 <label className="px-2 form-label">From</label>
                                 <div className="form-group">
@@ -311,13 +364,60 @@ function Adownlinesportspl() {
                                   />
                                 </div>
                               </div>
+                            </div> */}
+
+                            {/* From Date */}
+                            <div className="mb-lg-0 mb-2 flex-grow-0 pe-2 col-lg-3 col-sm-6">
+                              <div className="bet-sec bet-period">
+                                <label className="px-2 form-label">From</label>
+                                <div className="form-group d-flex">
+                                  <input
+                                    type="date"
+                                    className="small_form_control form-control"
+                                    value={fromDate}  // ✅ ADD
+                                    onChange={(e) => setFromDate(e.target.value)}  // ✅ ADD
+                                  />
+                                  <input
+                                    placeholder="00:00"
+                                    type="time"
+                                    className="small_form_control form-control ms-2"
+                                    value={fromTime}  // ✅ ADD
+                                    onChange={(e) => setFromTime(e.target.value)}  // ✅ ADD
+                                    style={{ width: 80 }}
+                                  />
+                                </div>
+                              </div>
                             </div>
+
+                            {/* To Date */}
+                            <div className="mb-lg-0 mb-2 flex-grow-0 ps-2 col-lg-3 col-sm-6">
+                              <div className="bet-sec bet-period">
+                                <label className="px-2 form-label">To</label>
+                                <div className="form-group d-flex">
+                                  <input
+                                    type="date"
+                                    className="small_form_control form-control"
+                                    value={toDate}  // ✅ ADD
+                                    onChange={(e) => setToDate(e.target.value)}  // ✅ ADD
+                                  />
+                                  <input
+                                    placeholder="00:00"
+                                    type="time"
+                                    className="small_form_control form-control ms-2"
+                                    value={toTime}  // ✅ ADD
+                                    onChange={(e) => setToTime(e.target.value)}  // ✅ ADD
+                                    style={{ width: 80 }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
                           </div>
                         </div>
                       </div>
                       <div className="history-btn mt-2">
                         <ul className="list-unstyled mb-0">
-                          <li>
+                          {/* <li>
                             <button type="button" className="me-0 theme_light_btn btn btn-primary">
                               Just For Today
                             </button>
@@ -326,17 +426,47 @@ function Adownlinesportspl() {
                             <button type="button" className="me-0 theme_light_btn btn btn-primary">
                               From Yesterday
                             </button>
+                          </li> */}
+
+                          <li> <button
+                            type="button"
+                            className="me-0 theme_light_btn btn btn-primary"
+                            onClick={handleJustForToday}  // ✅ ADD
+                          >
+                            Just For Today
+                          </button>
                           </li>
+                          <li>
+                            <button
+                              type="button"
+                              className="me-0 theme_light_btn btn btn-primary"
+                              onClick={handleFromYesterday}  // ✅ ADD
+                            >
+                              From Yesterday
+                            </button>
+                          </li>
+
                           <li>
                             <button type="button" className="me-0 theme_light_btn theme_dark_btn btn btn-primary" onClick={handleSearch}>
                               Search
                             </button>
                           </li>
-                          <li>
+                          {/* <li>
                             <button type="button" className="me-0 theme_light_btn btn btn-primary" onClick={handleReset}>
                               Reset
                             </button>
+                          </li> */}
+
+                          <li>
+                            <button
+                              type="button"  // ✅ Already hai, but ensure karo
+                              className="me-0 theme_light_btn btn btn-primary"
+                              onClick={handleReset}
+                            >
+                              Reset
+                            </button>
                           </li>
+
                         </ul>
                       </div>
                     </form>
@@ -363,7 +493,7 @@ function Adownlinesportspl() {
                       </button>
                     ))}
                   </div>
-                  <div>
+                  {/* <div>
                     <input
                       placeholder="Search"
                       type="text"
@@ -373,7 +503,7 @@ function Adownlinesportspl() {
                       onChange={(e) => setSearchTerm(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                     />
-                  </div>
+                  </div> */}
                 </div>
               </>
             )}
@@ -450,8 +580,8 @@ function Adownlinesportspl() {
                                     </span>
                                   </td>
                                   <td>
-                                    <button 
-                                      className="btn btn-primary btn-sm" 
+                                    <button
+                                      className="btn btn-primary btn-sm"
                                       onClick={() => handleShowBets(item)}
                                     >
                                       Show Bets

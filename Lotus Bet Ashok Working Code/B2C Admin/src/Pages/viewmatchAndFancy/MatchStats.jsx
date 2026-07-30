@@ -291,7 +291,7 @@ function GetEventBets() {
 
   return (
     <div className="card">
-      <div className="card-header bg-color-black text-white d-flex justify-content-between align-items-md-center align-items-start">
+      <div className="card-header bg_new_paeg_all bg-color-black text-white d-flex justify-content-between align-items-md-center align-items-start">
         <h3 className="card-title text-white mb-0">MATCH STATS</h3>
 
         <div className="filter-controls gap-2 d-flex align-items-center mobilewidthh">
@@ -322,7 +322,7 @@ function GetEventBets() {
         </div>
       </div>
 
-      <div className="card-body">
+      <div className="card-body bg_design_new_all_all">
         <div className="event-bets-container">
           {error && <div className="alert alert-danger">{error}</div>}
 
@@ -336,7 +336,7 @@ function GetEventBets() {
           ) : (
             <>
               {filteredData.length === 0 ? (
-                <div className="no-data-section">
+                <div className="no-data-section ">
                   <div className="no-data-header table-responsive">
                     <table className="bets-table table table-striped">
                       <thead className="table-dark">
@@ -374,7 +374,7 @@ function GetEventBets() {
                 <>
                   <div className="data-section table-responsive">
                     <table className="bets-table table table-hover table-striped">
-                      <thead className="table-dark">
+                      <thead className="">
                         <tr>
                           <th className="text-white">PLACE TIME</th>
                           <th className="text-white">USERNAME</th>
@@ -415,9 +415,12 @@ function GetEventBets() {
                                         ? "#dc3545" // Red → Khai
                                         : "#6c757d", 
                                   color: "#fff",
-                                  padding: "6px 10px",
-                                  fontSize: "13px",
+                                  padding: "5px",
+                                  fontSize: "10px",
                                   borderRadius: "6px",
+                                  maxWidth:"25px",
+                                  margin:"auto"
+                                  
                                 }}
                               >
                                 {bet.bet_on?.toLowerCase() === "back"

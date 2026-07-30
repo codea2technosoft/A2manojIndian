@@ -343,11 +343,11 @@ export default function Header({ depositPending = 0, withdrawPending = 0 }) {
                             </div>
                             <ul className={activeDropdown === "report" ? "show" : ""}>
                                 <li><Link to="/my-account-statement">Account Statement</Link></li>
-                                <li><Link to="/comming-soon">Profit/Loss by Downline</Link></li>
+                                <li><Link to="/aprofitDownline">Profit/Loss by Downline</Link></li>
                                 <li><Link to="/adownlinesportspl">Match Profit Loss</Link></li>
-                                <li><Link to="/comming-soon">Profit/Loss Report by Market</Link></li>
-                                <li><Link to="/comming-soon">Profit/Loss Sports Wise</Link></li>
-                                <li><Link to="/comming-soon">Profit/Loss Report by Player</Link></li>
+                                <li><Link to="/AprofitMarket">Profit/Loss Report by Market</Link></li>
+                                <li><Link to="/adownlinesportspl">Profit/Loss Sports Wise</Link></li>
+                                <li><Link to="/aprofitplayer">Profit/Loss Report by Player</Link></li>
                                 <li><Link to="/comming-soon">Casino Profit/Loss Report by Date</Link></li>
                                 <li><Link to="/comming-soon">Profit/Loss Aura Casino Bets</Link></li>
                                 <li><Link to="/comming-soon">Profit/Loss International Casino Bets</Link></li>

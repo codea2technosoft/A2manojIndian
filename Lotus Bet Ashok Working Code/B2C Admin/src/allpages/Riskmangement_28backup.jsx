@@ -582,113 +582,87 @@ function Riskmangement() {
     };
 
     // Fetch event bets data
-// Update the function signature to accept fancy_id
-const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
-    try {
-        setLoadingEventBets(true);
+    const fetchEventBets = async (eventId, type) => {
+        try {
+            setLoadingEventBets(true);
 
-        const token = localStorage.getItem("accessToken");
+            const token = localStorage.getItem("accessToken");
 
-        // Create request body with fancy_id when type is "fancy"
-        const requestBody = {
-            event_id: eventId,
-            type,
-            page: 1,
-            limit: 15
-        };
+            const requestBody = {
+                //admin_id: "admin",
+                event_id: eventId,
+                type,
+                page: 1,
+                limit: 15
+            };
 
-        // Add fancy_id only if it's provided and type is "fancy"
-        if (type === "fancy" && fancy_id) {
-            requestBody.fancy_id = fancy_id;
-        }
-
-        // API change based on type
-        const apiUrl =
-            type === "fancy"
-                ? `${process.env.REACT_APP_API_URL}/get-event-bets-fancy-risk`
-                : `${process.env.REACT_APP_API_URL}/get-event-bets`;
-
-        const response = await axios.post(
-            apiUrl,
-            requestBody,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
+            const response = await axios.post(
+                `${process.env.REACT_APP_API_URL}/get-event-bets`,
+                requestBody,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 }
+            );
+
+            if (response.data.status_code === 1) {
+                const bets = response.data.data || [];
+
+                setEventBetsData({
+                    headers: [
+                        "User ID",
+                        "Agent ID",
+                        "Team",
+                        "Bet On",
+                        "Odd",
+                        "Stake",
+                        "Liability",
+                        "Total",
+                        "Bet Type",
+                        "Matched",
+                        "Created At"
+                    ],
+                    rows: bets.map(item => ({
+                        "User ID": item.user_id,
+                        "Agent ID": item.agent_id,
+                        "Team": item.team,
+                        "Bet On": item.bet_on,
+                        "Odd": item.odd,
+                        "Stake": item.stake,
+                        "Liability": item.liability,
+                        "Total": item.total,
+                        "Bet Type": item.bet_type,
+                        "Matched": item.matched_status,
+                        "Created At": new Date(item.created_at).toLocaleString()
+                    })),
+                    totalValues: [],
+                    title: `Event Bets (${response.data.pagination.totalRecords})`
+                });
+            } else {
+                setEventBetsData({
+                    headers: [],
+                    rows: [],
+                    totalValues: [],
+                    title: "No Data Found"
+                });
             }
-        );
-
-        if (response.data.status_code === 1) {
-            const bets = response.data.data || [];
-
-            setEventBetsData({
-                headers: [
-                    "User ID",
-                    "Agent ID",
-                    "Team",
-                    "Bet On",
-                    "Odd",
-                    "Stake",
-                    "Liability",
-                    "Total",
-                    "Bet Type",
-                    "Matched",
-                    "Created At"
-                ],
-                rows: bets.map(item => ({
-                    "User ID": item.user_id,
-                    "Agent ID": item.agent_id,
-                    "Team": item.team,
-                    "Bet On": item.bet_on,
-                    "Odd": item.odd,
-                    "Stake": item.stake,
-                    "Liability": item.liability,
-                    "Total": item.total,
-                    "Bet Type": item.bet_type,
-                    "Matched": item.matched_status,
-                    "Created At": new Date(item.created_at).toLocaleString()
-                })),
-                totalValues: [],
-                title: `Event Bets (${response.data.pagination?.totalRecords || bets.length})`
-            });
-        } else {
-            setEventBetsData({
-                headers: [],
-                rows: [],
-                totalValues: [],
-                title: "No Data Found"
-            });
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setLoadingEventBets(false);
         }
-    } catch (err) {
-        console.log(err);
-    } finally {
-        setLoadingEventBets(false);
-    }
-};
+    };
 
-    // const handleEventBetsClick = (eventId, type, agentId ,fancy_id= '', e) => {
-        
-    //     e.preventDefault();
-    //     closeAllModals();
-    //     if (eventId) {
-    //         setSelectedEventBetsParams({ eventId, type, agentId,fancy_id });
-    //         fetchEventBets(eventId, type, agentId);
-    //         handleOpenEventBetsModal();
-    //     }
-    // };
-
-    const handleEventBetsClick = (eventId, type, agentId, fancy_id = '', e) => {
-    // Check if e exists before calling preventDefault
-    if (e && e.preventDefault) {
+    const handleEventBetsClick = (eventId, type, agentId = '', e) => {
         e.preventDefault();
-    }
-    closeAllModals();
-    if (eventId) {
-        setSelectedEventBetsParams({ eventId, type, agentId, fancy_id });
-        fetchEventBets(eventId, type, agentId, fancy_id);
-        handleOpenEventBetsModal();
-    }
-};
+        closeAllModals();
+        if (eventId) {
+            setSelectedEventBetsParams({ eventId, type, agentId });
+            fetchEventBets(eventId, type, agentId);
+            handleOpenEventBetsModal();
+        }
+    };
 
     const handleViewBetsClick = (eventId, type, agentId, e) => {
         e.preventDefault();
@@ -1063,7 +1037,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
             if (type === 'match_odds' && item.book_pl?.formatted && item.book_pl.formatted.length > 0) {
                 const firstTeam = item.book_pl.formatted[0];
                 if (firstTeam && firstTeam.market_id) {
-                    marketIdDisplay = firstTeam.market_id;
+                    marketIdDisplay = `(${firstTeam.market_id})`;
                 }
             }
 
@@ -1086,7 +1060,6 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                 rawData: item,
                 apiType: apiType,
                 agentId: item.agent_id || '',
-                fancy_id: item.fancy_id || '',
                 marketIdDisplay: marketIdDisplay,
                 fancyName: item.fancy_name || '',
                 teams: teams,
@@ -1229,7 +1202,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                                                     <strong>
                                                                         <a
                                                                             className='text-dark text-decoration-underline'
-                                                                            href={`/viewmatch-fancy/series_idd/${item.marketIdDisplay || item.marketIdDisplay || '111111111111111'}/event_id/${item.eventId}/sport_id/4`}>
+                                                                            href={`/viewmatch-fancy/series_idd/${item.seriesId || item.series_id || '111111111111111'}/event_id/${item.eventId}/sport_id/4`}>
                                                                             {item.eventName}
                                                                         </a>
                                                                     </strong>
@@ -1450,7 +1423,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                                                     <strong>
                                                                         <a
                                                                             className='text-dark'
-                                                                            href={`/viewmatch-fancy/series_idd/${item.marketIdDisplay || item.marketIdDisplay || '111111111111111'}/event_id/${item.eventId}/sport_id/4`}>
+                                                                            href={`/viewmatch-fancy/series_idd/${item.seriesId || item.series_id || '111111111111111'}/event_id/${item.eventId}/sport_id/4`}>
                                                                             {item.eventName}
                                                                         </a>
                                                                     </strong>
@@ -1581,7 +1554,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                                                 <td width="80" className="border-l text-center">
                                                                     <a
                                                                         className="green-btn"
-                                                                        onClick={(e) => handleEventBetsClick(item.eventId, item.apiType, item.agentId,item.fancy_id, e)}
+                                                                        onClick={(e) => handleEventBetsClick(item.eventId, item.apiType, item.agentId, e)}
                                                                         href="#"
                                                                     >
                                                                         Event Bets
@@ -1819,7 +1792,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                                                                 <td width="80" className="border-l text-center">
                                                                     <a
                                                                         className="green-btn"
-                                                                        onClick={(e) => handleEventBetsClick(item.eventId, item.apiType, item.agentId,item.fancy_id, e)}
+                                                                        onClick={(e) => handleEventBetsClick(item.eventId, item.apiType, item.agentId, e)}
                                                                         href="#"
                                                                     >
                                                                         Event Bets

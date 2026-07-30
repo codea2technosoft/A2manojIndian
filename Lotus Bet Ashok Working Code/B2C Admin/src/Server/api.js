@@ -577,6 +577,7 @@ export const GetAllLifetimePL = (data) =>
 
 
 
+
 export const GetAllMyAccountStatement= (data) =>
   API.post("/my-account-statement", data)
 
@@ -764,6 +765,28 @@ export const getAccountOperationAll = (params) => {
 };
 
 
+export const getprofitLossReport = (params) => {
+  return API.get("/profit-loss-report", {
+    params,
+  });
+};
+
+
+export const getProfitLossReportUser = (params) => {
+  return API.get("/profit-loss-report-user", {
+    params,
+  });
+};
+
+
+
+
+
+
+
+
+
+
 export const getRiskManagementAll = (params) => {
   return API.get("/risk-management", {
     params,
@@ -874,6 +897,13 @@ export const getBetListlive = (params) => {
 
 
 
+export const profitLossReportPlayer = (params) => {
+  return API.get("/profit-loss-report-player", {
+    params,
+  });
+};
+
+
 
 
 
@@ -911,6 +941,16 @@ export const CompleteGameSessionPL = (payload) =>
   API.post("/complete-game-session-pl", payload);
 
 
+
+export const changeExposerDlimitAgent = (payload) =>
+  API.post("/change-exposer-limit-agent", payload);
+
+
+export const changeExposerWithdrawlimitAgent = (payload) =>
+  API.post("/change-withdraw-limit-agent", payload);
+
+export const changeCreditLimitUser = (payload) =>
+  API.post("/change-credit-limit-user", payload);
 
 /// InPlay game Session Api
 
@@ -1005,7 +1045,13 @@ export const updatePayingatewaySettingsDetails = (id, data) => {
 };
 
 
-export const getDashboardSummary = () => API.get('/dashboard/summary');
+// export const getDashboardSummary = () => API.get('/dashboard/summary');
+// ✅ GET method with query params
+export const getDashboardSummary = (params) => {
+  // params ko query string mein convert karo
+  const queryString = new URLSearchParams(params).toString();
+  return API.get(`/dashboard/summary?${queryString}`);
+};
 
 
 

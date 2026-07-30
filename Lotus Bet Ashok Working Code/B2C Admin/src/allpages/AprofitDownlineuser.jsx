@@ -1,25 +1,30 @@
-import React, { useEffect, useState } from 'react'
-import { getprofitLossReport } from "../../src/Server/api";
-import { Link } from 'react-router';
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { getProfitLossReportUser } from "../../src/Server/api";
 
-function AprofitDownline() {
+export default function AprofitDownlineuser() {
+  // ✅ Get agent_id from URL
+  const [searchParams] = useSearchParams();
+  const agent_id = searchParams.get("agent_id");
+
+  // ✅ States
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-  const limit = 50;
+  const limit = 20;
 
-  // Filter states
+  // ✅ Filter states
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [fromTime, setFromTime] = useState("");
   const [toTime, setToTime] = useState("");
 
-  // ✅ NEW: Dynamic game list state
+  // ✅ Dynamic game list state
   const [gameList, setGameList] = useState([]);
 
-  // Summary states
+  // ✅ Summary state
   const [summary, setSummary] = useState({
     totalCricketPL: 0,
     totalSoccerPL: 0,
@@ -30,7 +35,7 @@ function AprofitDownline() {
     totalUplinePL: 0
   });
 
-  // ✅ NEW: Dynamic summary state
+  // ✅ Dynamic summary state
   const [dynamicSummary, setDynamicSummary] = useState({
     total_pl: 0,
     game_totals: {},
@@ -47,14 +52,9 @@ function AprofitDownline() {
     return date;
   };
 
-  // ✅ NEW: Fetch game list dynamically
+  // ✅ Fetch game list
   const fetchGameList = async () => {
     try {
-      // Agar aapke paas game list API hai toh use karo
-      // const response = await API.get("/game-list");
-      // setGameList(response.data.game_list);
-
-      // ✅ Temporary: Static game list (baad me API se replace karna)
       const staticGameList = [
         { id: 1, name: "football", key: "football_" },
         { id: 4, name: "cricket", key: "cricket" },
@@ -70,46 +70,52 @@ function AprofitDownline() {
     }
   };
 
+  // ✅ Fetch Report with API
   const fetchReport = async () => {
+    if (!agent_id) {
+      console.warn("⚠️ No agent_id found");
+      return;
+    }
+
     setLoading(true);
     try {
+      // ✅ Payload as per backend
       const payload = {
-        page: currentPage,
-        limit: limit,
+        agent_id: agent_id,
         from_date: formatDateTime(fromDate, fromTime),
         to_date: formatDateTime(toDate, toTime),
+        search: "",
+        page: currentPage,
+        limit: limit
       };
 
-      const result = await getprofitLossReport(payload);
+      const result = await getProfitLossReportUser(payload);
 
       if (result?.data?.success) {
-        // ✅ NEW: Dynamic data mapping based on game keys
         const gameKeys = gameList.map(game => game.key);
 
+        // ✅ Map data - sahi fields use karo
         const mappedData = result.data.data.map(item => {
-          // Base object
           const mappedItem = {
-            admin_id: item.admin_id || item.uid || "",
-            username: item.username || item.name || "",
+            user_id: item.user_id || item.uid || "",
+            username: item.username || item.name || "-",
             phoneNumber: item.phoneNumber || "",
             email: item.email || "",
             record_count: item.record_count || 0,
             total_pl: item.total_pl || item.uplinePL || 0,
           };
 
-          // ✅ Dynamically add game values
           gameKeys.forEach(key => {
             mappedItem[key] = item[key] || 0;
           });
 
           return mappedItem;
         });
-
         setData(mappedData);
         setTotalPages(result.data.pagination?.totalPages || 1);
         setTotalRecords(result.data.pagination?.total || 0);
 
-        // ✅ NEW: Set dynamic summary
+        // ✅ Set summary
         if (result.data.summary) {
           setDynamicSummary({
             total_pl: result.data.summary.total_pl || 0,
@@ -118,7 +124,6 @@ function AprofitDownline() {
             total_records: result.data.summary.total_records || 0
           });
 
-          // ✅ Old summary mapping (backward compatibility)
           const gameTotals = result.data.summary.game_totals || {};
           setSummary({
             totalCricketPL: gameTotals.cricket || 0,
@@ -134,33 +139,35 @@ function AprofitDownline() {
         setData([]);
       }
     } catch (error) {
-      console.error("Error fetching downline report:", error);
+      console.error("❌ Error fetching user report:", error);
       setData([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Auto fetch on page change
+  // ✅ Auto fetch on mount and page change
   useEffect(() => {
-    if (gameList.length > 0) {
+    if (gameList.length > 0 && agent_id) {
       fetchReport();
     }
-  }, [currentPage, gameList]);
+  }, [currentPage, gameList, agent_id]);
 
-  // ✅ NEW: Fetch game list on mount
+  // ✅ Fetch game list on mount
   useEffect(() => {
     fetchGameList();
   }, []);
 
-  // Handle Search
-  const handleSearch = () => {
+  // ✅ Handle Search
+  const handleSearch = (e) => {
+    e.preventDefault();
     setCurrentPage(1);
     fetchReport();
   };
 
-  // Handle Reset
-  const handleReset = () => {
+  // ✅ Handle Reset
+  const handleReset = (e) => {
+    e.preventDefault();
     setFromDate("");
     setToDate("");
     setFromTime("");
@@ -207,66 +214,76 @@ function AprofitDownline() {
     if (currentPage < totalPages) setCurrentPage(prev => prev + 1);
   };
 
-  // ✅ NEW: Get display name for game key
+  // Get display name for game key
   const getGameDisplayName = (key) => {
     const game = gameList.find(g => g.key === key);
     return game ? game.name : key;
   };
 
   return (
-    <div className='allcommon'>
+    <div className="allcommon">
       <section className="main-inner-outer py-4">
         <div className="container-fluid">
           <div className="row">
             <div className="db-sec">
-              <h2 className="common-heading">Profit/Loss Report by Downline</h2>
+              <h2 className="common-heading">
+                Profit/Loss Report: {agent_id ? `Agent ${agent_id}` : "User"}
+              </h2>
+              {/* ✅ Back Button */}
+              <a href="/aprofit-downline" className="btn btn-secondary float-end">
+                ← Back
+              </a>
             </div>
+
             <div className="col-md-12">
               <div className="inner-wrapper">
-                <form className="bet_status" onSubmit={(e) => e.preventDefault()}>
+                <form className="bet_status" onSubmit={handleSearch}>
                   <div className="row">
                     <div className="col-xl-12 col-md-12">
                       <div className="row">
+                        {/* From */}
                         <div className="mb-lg-0 mb-2 flex-grow-0 pe-2 col-lg-3 col-sm-6">
                           <div className="bet-sec bet-period">
                             <label className="px-2 form-label">From</label>
-                            <div className="form-group">
+                            <div className="form-group d-flex">
                               <input
-                                // ✅ FIX: max attribute hatao ya dynamic karo
                                 type="date"
+                                // ✅ FIX: max attribute hatao
                                 className="small_form_control form-control"
                                 value={fromDate}
                                 onChange={(e) => setFromDate(e.target.value)}
                               />
                               <input
-                                placeholder="00:00"
                                 type="time"
-                                className="small_form_control form-control"
+                                placeholder="00:00"
+                                className="small_form_control form-control ms-2"
                                 value={fromTime}
                                 onChange={(e) => setFromTime(e.target.value)}
-                                style={{ width: 80 }}
+                                style={{ width: "80px" }}
                               />
                             </div>
                           </div>
                         </div>
+
+                        {/* To */}
                         <div className="mb-lg-0 mb-2 flex-grow-0 ps-2 col-lg-3 col-sm-6">
                           <div className="bet-sec bet-period">
                             <label className="px-2 form-label">To</label>
-                            <div className="form-group">
+                            <div className="form-group d-flex">
                               <input
-                                // ✅ FIX: min attribute hatao ya dynamic karo
                                 type="date"
+                                // ✅ FIX: min aur max attributes hatao
                                 className="small_form_control form-control"
                                 value={toDate}
                                 onChange={(e) => setToDate(e.target.value)}
                               />
                               <input
-                                placeholder="00:00"
                                 type="time"
-                                className="small_form_control form-control"
+                                placeholder="00:00"
+                                className="small_form_control form-control ms-2"
                                 value={toTime}
                                 onChange={(e) => setToTime(e.target.value)}
-                                style={{ width: 80 }}
+                                style={{ width: "80px" }}
                               />
                             </div>
                           </div>
@@ -274,21 +291,22 @@ function AprofitDownline() {
                       </div>
                     </div>
                   </div>
+
                   <div className="history-btn mt-2">
-                    <ul className="list-unstyled mb-0">
-                      <li>
+                    <ul className="list-unstyled mb-0 d-flex">
+                      <li className="me-2">
                         <button
-                          type="button"
+                          type="submit"
                           className="theme_dark_btn btn btn-primary"
-                          onClick={handleSearch}
                         >
                           Search
                         </button>
                       </li>
+
                       <li>
                         <button
                           type="button"
-                          className="me-0 theme_light_btn btn btn-primary"
+                          className="theme_light_btn btn btn-primary"
                           onClick={handleReset}
                         >
                           Reset
@@ -299,6 +317,7 @@ function AprofitDownline() {
                 </form>
               </div>
             </div>
+
             <div className="mt-2 col-lg-12 col-md-12 col-sm-12">
               <section className="account-table aprofit-downline w-100">
                 <div className="responsive transaction-history">
@@ -313,28 +332,29 @@ function AprofitDownline() {
                       <table className="table">
                         <thead>
                           <tr>
-                            <th scope="col">UID</th>
+                            <th>UID</th>
+                            {/* ✅ DYNAMIC: Game columns */}
                             {gameList.map((game) => (
-                              <th key={game.id} scope="col" >
-                                {game.name?.charAt(0).toUpperCase() + game.name?.slice(1).toLowerCase()} P/L
-                              </th>
+                              <th style={{textTransform:"capitalize"}} key={game.id}>{game.name} P/L</th>
                             ))}
-                            <th scope="col">Total P/L</th>
+                            <th>Total P/L</th>
                           </tr>
                         </thead>
+
                         <tbody>
                           {data.length > 0 ? (
                             data.map((item, index) => (
                               <tr key={index}>
                                 <td className="text-start">
-                                  <Link to={`/aprofit-downline-user?agent_id=${item.admin_id}`}>
-                                    <span>AG</span>
-                                    {item.username}
-                                  </Link>
+                                 <a href="#">
+                                    <span className="">CL</span>
+                                  {item.username}
+                                 </a>
                                 </td>
+                                {/* ✅ DYNAMIC: Game values */}
                                 {gameList.map((game) => (
                                   <td key={game.id}>
-                                    <span style={{color:"#000!important"}} className={getColorClass(item[game.key] || 0)}>
+                                    <span className={getColorClass(item[game.key] || 0)}>
                                       {formatPLValue(item[game.key] || 0)}
                                     </span>
                                   </td>
@@ -348,24 +368,25 @@ function AprofitDownline() {
                             ))
                           ) : (
                             <tr>
-                              <td colSpan={gameList.length + 3} className="text-center py-4">
-                                No records found
+                              <td colSpan={gameList.length + 2} className="text-center py-4">
+                                {agent_id ? "No records found for this agent" : "No agent selected"}
                               </td>
                             </tr>
                           )}
-                          {/* ✅ DYNAMIC: Total Row */}
+
+                          {/* ✅ Total Row */}
                           {data.length > 0 && (
                             <tr>
-                              <th scope="col">Total</th>
+                              <th>Total</th>
                               {/* ✅ DYNAMIC: Game totals */}
                               {gameList.map((game) => (
-                                <th key={game.id} scope="col">
+                                <th key={game.id}>
                                   <span className={getColorClassnew(dynamicSummary.game_totals[game.key] || 0)}>
                                     {formatPLValue(dynamicSummary.game_totals[game.key] || 0)}
                                   </span>
                                 </th>
                               ))}
-                              <th scope="col">
+                              <th>
                                 <span className={getColorClassnew(dynamicSummary.total_pl)}>
                                   {formatPLValue(dynamicSummary.total_pl)}
                                 </span>
@@ -375,42 +396,48 @@ function AprofitDownline() {
                         </tbody>
                       </table>
 
-                      {/* Pagination */}
+                      {/* ✅ Pagination */}
                       {data.length > 0 && totalPages > 0 && (
-                        <div className="bottom-pagination">
-                          <ul role="navigation" aria-label="Pagination">
-                            <li className={currentPage === 1 ? "previous disabled" : "previous"}>
-                              <a
-                                className=""
-                                tabIndex={currentPage === 1 ? -1 : 0}
-                                role="button"
-                                aria-disabled={currentPage === 1}
-                                aria-label="Previous page"
-                                rel="prev"
-                                onClick={handlePrev}
-                                style={{ cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
-                              >
-                                &lt;
-                              </a>
-                            </li>
-                            <li className="page-info">
-                              <span>Page {currentPage} of {totalPages}</span>
-                            </li>
-                            <li className={currentPage === totalPages ? "next disabled" : "next"}>
-                              <a
-                                className=""
-                                tabIndex={currentPage === totalPages ? -1 : 0}
-                                role="button"
-                                aria-disabled={currentPage === totalPages}
-                                aria-label="Next page"
-                                rel="next"
-                                onClick={handleNext}
-                                style={{ cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
-                              >
-                                &gt;
-                              </a>
-                            </li>
-                          </ul>
+                        <div className="d-flex justify-content-center">
+                          <div className="bottom-pagination">
+                            <ul
+                              className="pagination"
+                              role="navigation"
+                              aria-label="Pagination"
+                            >
+                              <li className={currentPage === 1 ? "page-item disabled" : "page-item"}>
+                                <a
+                                  href="#!"
+                                  className="page-link"
+                                  aria-disabled={currentPage === 1}
+                                  aria-label="Previous page"
+                                  onClick={handlePrev}
+                                  style={{ cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
+                                >
+                                  &lt;
+                                </a>
+                              </li>
+
+                              <li className="page-item">
+                                <span className="page-link">
+                                  Page {currentPage} of {totalPages}
+                                </span>
+                              </li>
+
+                              <li className={currentPage === totalPages ? "page-item disabled" : "page-item"}>
+                                <a
+                                  href="#!"
+                                  className="page-link"
+                                  aria-disabled={currentPage === totalPages}
+                                  aria-label="Next page"
+                                  onClick={handleNext}
+                                  style={{ cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
+                                >
+                                  &gt;
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
                         </div>
                       )}
                     </>
@@ -422,7 +449,5 @@ function AprofitDownline() {
         </div>
       </section>
     </div>
-  )
+  );
 }
-
-export default AprofitDownline

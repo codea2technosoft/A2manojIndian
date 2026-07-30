@@ -57,11 +57,23 @@ const LifetimePL = () => {
       
       const response = await getUserProfileData(payload);
       console.log("User Profile Response:", response);
-      const profileData = response?.data?.data?.admin_profile || response?.data?.admin_profile || response?.data || {};
       
-      const userIdFromProfile = profileData._id || profileData.id;
+      // ✅ Sahi tarah se data extract karo
+      const profileData = response?.data?.data?.user_profile || 
+                         response?.data?.user_profile || 
+                         response?.data?.data || 
+                         response?.data || 
+                         {};
+      
+      console.log("Profile Data:", profileData);
+      
+      // ✅ User ID extract karo
+      const userIdFromProfile = profileData._id || profileData.user_id || profileData.id;
       console.log("User ID from profile:", userIdFromProfile);
-      setUserId(userIdFromProfile);
+      
+      if (userIdFromProfile) {
+        setUserId(userIdFromProfile);
+      }
       
       const username = profileData.username || profileData.name || adminId;
       localStorage.setItem("headerUserName", username);
@@ -71,10 +83,6 @@ const LifetimePL = () => {
         username: username,
         mobileNumber: profileData.phoneNumber || profileData.mobile || profileData.mobileNumber || '-'
       });
-      
-      if (userIdFromProfile) {
-        fetchLifetimePL();
-      }
       
     } catch (error) {
       console.error("Error fetching profile:", error);
@@ -98,8 +106,10 @@ const LifetimePL = () => {
 
     setTableLoading(true);
     try {
+      // ✅ Payload mein admin_id aur user_id dono bhejo
       const payload = {
-        admin_id: adminId
+        admin_id: adminId,
+        user_id: userId  // ✅ User ID bhi add karo
       };
       
       console.log("Fetching Balance Summary with payload:", payload);
@@ -107,8 +117,13 @@ const LifetimePL = () => {
       const response = await GetAllLifetimePL(payload);
       console.log("Balance Summary Response:", response);
       
+      // ✅ Check if response is successful
+      if (response?.status === false || response?.success === false) {
+        throw new Error(response?.message || "Failed to fetch data");
+      }
+      
       const responseData = response?.data || response || {};
-      const dataObj = responseData.data || {};
+      const dataObj = responseData.data || responseData || {};
       
       // ✅ Extract user info
       if (dataObj.user) {
@@ -143,7 +158,7 @@ const LifetimePL = () => {
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: error.response?.data?.message || "Failed to fetch data",
+        text: error.response?.data?.message || error.message || "Failed to fetch data",
         confirmButtonText: "OK",
       });
     } finally {
@@ -151,16 +166,30 @@ const LifetimePL = () => {
     }
   };
 
+  // ✅ Effect to fetch profile and then PL data
   useEffect(() => {
-    fetchUserProfile();
+    const loadData = async () => {
+      await fetchUserProfile();
+      // ✅ Profile fetch hone ke baad PL data fetch karo
+      if (userId) {
+        await fetchLifetimePL();
+      }
+    };
+    
+    loadData();
   }, []);
+
+  // ✅ Separate effect to fetch PL when userId changes
+  useEffect(() => {
+    if (userId) {
+      fetchLifetimePL();
+    }
+  }, [userId]);
 
   return (
     <>
       <Layout activeItem="lifetime-PL">
         <div className="inner-wrapper">
-          {/* <h2 className="common-heading">Lifetime P/L</h2> */}
-          
           {loading ? (
             <div className="text-center py-5">
               <div className="spinner-border text-primary"></div>
@@ -174,98 +203,52 @@ const LifetimePL = () => {
                   <div className="col-lg-7 col-md-12">
                     <h2 className="common-heading">Balance Summary</h2>
 
-                    <table className="table">
-                      <thead>
-                        <tr>
-                          <th scope="col" colSpan={2} className="text-start">About Balance</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td className="text-start" style={{ fontWeight: 'bold' }}>Total Deposit</td>
-                          <td className="text-start" style={{ color: '#28a745', fontWeight: 'bold' }}>
-                            {balanceSummary.total_deposit.toFixed(2)}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="text-start" style={{ fontWeight: 'bold' }}>Total withdraw</td>
-                          <td className="text-start" style={{ color: '#dc3545', fontWeight: 'bold' }}>
-                            -{balanceSummary.total_withdraw.toFixed(2)}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="text-start" style={{ fontWeight: 'bold' }}>Balance</td>
-                          <td className="text-start" style={{ color: '#28a745', fontWeight: 'bold' }}>
-                            {balanceSummary.balance.toFixed(2)}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="text-start" style={{ fontWeight: 'bold' }}>Final PL</td>
-                          <td className="text-start" style={{ 
-                            color: balanceSummary.final_pl >= 0 ? '#0c0b0b' : '#dc3545', 
-                            fontWeight: 'bold' 
-                          }}>
-                            {balanceSummary.final_pl.toFixed(2)}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                    {tableLoading ? (
+                      <div className="text-center py-3">
+                        <div className="spinner-border text-primary spinner-border-sm"></div>
+                        <p className="mt-2">Loading data...</p>
+                      </div>
+                    ) : (
+                      <table className="table">
+                        <thead>
+                          <tr>
+                            <th scope="col" colSpan={2} className="text-start">About Balance</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td className="text-start" style={{ fontWeight: 'bold' }}>Total Deposit</td>
+                            <td className="text-start" style={{ color: '#28a745', fontWeight: 'bold' }}>
+                              {balanceSummary.total_deposit.toFixed(2)}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="text-start" style={{ fontWeight: 'bold' }}>Total withdraw</td>
+                            <td className="text-start" style={{ color: '#dc3545', fontWeight: 'bold' }}>
+                              -{balanceSummary.total_withdraw.toFixed(2)}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="text-start" style={{ fontWeight: 'bold' }}>Balance</td>
+                            <td className="text-start" style={{ color: '#28a745', fontWeight: 'bold' }}>
+                              {balanceSummary.balance.toFixed(2)}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="text-start" style={{ fontWeight: 'bold' }}>Final PL</td>
+                            <td className="text-start" style={{ 
+                              color: balanceSummary.final_pl >= 0 ? '#0c0b0b' : '#dc3545', 
+                              fontWeight: 'bold' 
+                            }}>
+                              {balanceSummary.final_pl.toFixed(2)}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    )}
                   </div>
                 </div>
               </div>
-
-              {/* User Info Table */}
-              {/* <div className="profile-tab mt-4">
-                <div className="row">
-                  <div className="col-lg-7 col-md-12">
-                    <h2 className="common-heading">User Information</h2>
-
-                    <table className="table">
-                      <thead>
-                        <tr>
-                          <th scope="col" className="text-start">Username</th>
-                          <th scope="col" className="text-start">Admin ID</th>
-                          <th scope="col" className="text-start">Phone Number</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td className="text-start">{userInfo.username}</td>
-                          <td className="text-start">{userInfo.admin_id}</td>
-                          <td className="text-start">{userInfo.phoneNumber}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div> */}
-
-              {/* Details Table - Deposit/Withdraw/Bet Count */}
-              {/* <div className="table-responsive mt-4">
-                <h2 className="common-heading">Summary Details</h2>
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th scope="col" className="text-start">Deposit Count</th>
-                      <th scope="col" className="text-start">Withdraw Count</th>
-                      <th scope="col" className="text-start">Bet Count</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="text-start" style={{ color: '#28a745', fontWeight: 'bold' }}>
-                        {details.deposit_count}
-                      </td>
-                      <td className="text-start" style={{ color: '#dc3545', fontWeight: 'bold' }}>
-                        {details.withdraw_count}
-                      </td>
-                      <td className="text-start" style={{ color: '#007bff', fontWeight: 'bold' }}>
-                        {details.bet_count}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div> */}
             </section>
           )}
         </div>

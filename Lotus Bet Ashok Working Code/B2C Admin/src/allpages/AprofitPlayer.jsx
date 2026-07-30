@@ -1,1042 +1,599 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import { profitLossReportPlayer } from "../Server/api";
 
 function AprofitPlayer() {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 20,
+    total: 0,
+    totalPages: 0
+  });
+  const [summary, setSummary] = useState({
+    total_downline_pl: 0,
+    total_player_pl: 0,
+    total_commission: 0,
+    total_upline_pl: 0
+  });
+  const [agentDetails, setAgentDetails] = useState({
+    total_users: 0,
+    total_records: 0,
+    message: ""
+  });
+
+  // ✅ Helper functions for dates
+  const getTodayDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  };
+
+  const getLastMonthDate = () => {
+    const date = new Date();
+    date.setMonth(date.getMonth() - 1);
+    return date.toISOString().split('T')[0];
+  };
+
+  // ✅ Filter states - WITH DEFAULT DATES (last 30 days)
+  const [filters, setFilters] = useState({
+    from_date: getLastMonthDate(),
+    from_time: "00:00",
+    to_date: getTodayDate(),
+    to_time: "23:59",
+    last: "",
+    sport_id: "",
+    page: 1,
+    limit: 20
+  });
+
+  // ✅ Initial fetch on component mount
+  useEffect(() => {
+    fetchData(filters);
+  }, []);
+
+  // Fetch data function
+  const fetchData = async (filterParams = null) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = filterParams || filters;
+
+      const cleanParams = {};
+      Object.keys(params).forEach(key => {
+        if (params[key] !== "" && params[key] !== null && params[key] !== undefined) {
+          cleanParams[key] = params[key];
+        }
+      });
+
+      // ✅ Agar dates empty hain toh error do
+      if (!cleanParams.from_date || !cleanParams.to_date) {
+        setLoading(false);
+        setData([]);
+        setSummary({
+          total_downline_pl: 0,
+          total_player_pl: 0,
+          total_commission: 0,
+          total_upline_pl: 0
+        });
+        setPagination({
+          page: 1,
+          limit: 20,
+          total: 0,
+          totalPages: 0
+        });
+        setAgentDetails({
+          total_users: 0,
+          total_records: 0,
+          message: ""
+        });
+        setError("Please select From and To dates");
+        return;
+      }
+
+      console.log("API Payload:", cleanParams);
+      const response = await profitLossReportPlayer(cleanParams);
+      console.log("Full API Response:", response);
+
+      if (response) {
+        let responseData = [];
+
+        if (response.data && Array.isArray(response.data)) {
+          responseData = response.data;
+        } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
+          responseData = response.data.data;
+        } else if (Array.isArray(response)) {
+          responseData = response;
+        }
+
+        setData(responseData);
+
+        if (response.summary) {
+          setSummary(response.summary);
+        } else if (response.data && response.data.summary) {
+          setSummary(response.data.summary);
+        }
+
+        if (response.pagination) {
+          setPagination(response.pagination);
+        } else if (response.data && response.data.pagination) {
+          setPagination(response.data.pagination);
+        }
+
+        if (response.agent_details) {
+          setAgentDetails(response.agent_details);
+        } else if (response.data && response.data.agent_details) {
+          setAgentDetails(response.data.agent_details);
+        }
+      } else {
+        setData([]);
+      }
+
+    } catch (err) {
+      console.error("Error fetching profit/loss data:", err);
+      setError("Failed to fetch data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle filter changes
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({
+      ...prev,
+      [name]: value,
+      page: 1
+    }));
+  };
+
+  const handleDateTimeChange = (type, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [type]: value,
+      page: 1
+    }));
+  };
+
+  const handleSportFilter = (sportId) => {
+    if (!filters.from_date || !filters.to_date) {
+      setError("Please select From and To dates first");
+      return;
+    }
+    const newFilters = {
+      ...filters,
+      sport_id: sportId,
+      page: 1
+    };
+    setFilters(newFilters);
+    fetchData(newFilters);
+  };
+
+  const handleJustForToday = () => {
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0];
+    const newFilters = {
+      ...filters,
+      from_date: formattedDate,
+      to_date: formattedDate,
+      from_time: "00:00",
+      to_time: "23:59",
+      page: 1
+    };
+    setFilters(newFilters);
+    fetchData(newFilters);
+  };
+
+  const handleFromYesterday = () => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const formattedDate = yesterday.toISOString().split('T')[0];
+    const newFilters = {
+      ...filters,
+      from_date: formattedDate,
+      to_date: formattedDate,
+      from_time: "00:00",
+      to_time: "23:59",
+      page: 1
+    };
+    setFilters(newFilters);
+    fetchData(newFilters);
+  };
+
+  const handleReset = () => {
+    const emptyFilters = {
+      from_date: getLastMonthDate(),
+      from_time: "00:00",
+      to_date: getTodayDate(),
+      to_time: "23:59",
+      last: "",
+      sport_id: "",
+      page: 1,
+      limit: 20
+    };
+    setFilters(emptyFilters);
+    fetchData(emptyFilters);
+  };
+
+  const handleSearch = () => {
+    if (!filters.from_date || !filters.to_date) {
+      setError("Please select From and To dates");
+      return;
+    }
+    const searchFilters = {
+      ...filters,
+      page: 1
+    };
+    setFilters(searchFilters);
+    fetchData(searchFilters);
+  };
+
+  const handleBlur = () => {
+    if (filters.from_date && filters.to_date) {
+      fetchData(filters);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSearch();
+    }
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > pagination.totalPages) return;
+    const newFilters = {
+      ...filters,
+      page: newPage
+    };
+    setFilters(newFilters);
+    fetchData(newFilters);
+  };
+
+  const handleLimitChange = (e) => {
+    const newLimit = parseInt(e.target.value);
+    const newFilters = {
+      ...filters,
+      limit: newLimit,
+      page: 1
+    };
+    setFilters(newFilters);
+    fetchData(newFilters);
+  };
+
   return (
     <div className='allcommon'>
       <section className="main-inner-outer py-4">
-  <div className="container-fluid">
-    <div className="row">
-      <div className="db-sec">
-        <h2 className="common-heading">Profit/Loss Report by Player</h2>
-      </div>
-      <div className="col-md-12">
-        <div className="inner-wrapper">
-          <form className="bet_status">
-            <div className="row">
-              <div className="col-xl-12 col-md-12">
-                <div className="row">
-                  <div className="mb-lg-0 mb-2 flex-grow-0 pe-2 col-lg-3 col-sm-6">
-                    <div className="bet-sec bet-period">
-                      <label className="px-2 form-label">From</label>
-                      <div className="form-group">
-                        <input
-                          max="2026-07-04"
-                          type="date"
-                          className="small_form_control form-control"
-                          defaultValue="2026-07-03"
-                        />{" "}
-                        <input
-                          placeholder="00:00"
-                          type="time"
-                          className="small_form_control form-control"
-                          defaultValue="10:00"
-                          style={{ width: 80 }}
-                        />
+        <div className="container-fluid">
+          <div className="row">
+            <div className="db-sec">
+              <h2 className="common-heading">Profit/Loss Report by Player</h2>
+            </div>
+            <div className="col-md-12">
+              <div className="inner-wrapper">
+                <form className="bet_status" onSubmit={(e) => e.preventDefault()}>
+                  <div className="row">
+                    <div className="col-xl-12 col-md-12">
+                      <div className="row">
+                        <div className="mb-lg-0 mb-2 flex-grow-0 pe-2 col-lg-3 col-sm-6">
+                          <div className="bet-sec bet-period">
+                            <label className="px-2 form-label">From</label>
+                            <div className="form-group d-flex">
+                              <input
+                                type="date"
+                                className="small_form_control form-control"
+                                value={filters.from_date}
+                                onChange={(e) => handleDateTimeChange('from_date', e.target.value)}
+                                onBlur={handleBlur}
+                                onKeyPress={handleKeyPress}
+                              />
+                              <input
+                                placeholder="00:00"
+                                type="time"
+                                className="small_form_control form-control ms-2"
+                                value={filters.from_time}
+                                onChange={(e) => handleDateTimeChange('from_time', e.target.value)}
+                                onBlur={handleBlur}
+                                onKeyPress={handleKeyPress}
+                                style={{ width: 80 }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mb-lg-0 mb-2 flex-grow-0 ps-2 col-lg-3 col-sm-6">
+                          <div className="bet-sec bet-period">
+                            <label className="px-2 form-label">To</label>
+                            <div className="form-group d-flex">
+                              <input
+                                type="date"
+                                className="small_form_control form-control"
+                                value={filters.to_date}
+                                onChange={(e) => handleDateTimeChange('to_date', e.target.value)}
+                                onBlur={handleBlur}
+                                onKeyPress={handleKeyPress}
+                              />
+                              <input
+                                placeholder="00:00"
+                                type="time"
+                                className="small_form_control form-control ms-2"
+                                value={filters.to_time}
+                                onChange={(e) => handleDateTimeChange('to_time', e.target.value)}
+                                onBlur={handleBlur}
+                                onKeyPress={handleKeyPress}
+                                style={{ width: 80 }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mb-lg-0 mb-3 col-lg-2 col-sm-3">
+                          <div className="bet-sec">
+                            <label className="form-label">Last</label>
+                            <select
+                              aria-label="Default select example"
+                              className="small_select form-select"
+                              name="last"
+                              value={filters.last}
+                              onChange={handleFilterChange}
+                              onBlur={handleBlur}
+                            >
+                              <option value="">All</option>
+                              <option value="100">100 Txn</option>
+                              <option value="200">200 Txn</option>
+                              <option value="500">500 Txn</option>
+                              <option value="1000">1000 Txn</option>
+                              <option value="5000">5000 Txn</option>
+                              <option value="10000">10000 Txn</option>
+                            </select>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div className="mb-lg-0 mb-2 flex-grow-0 ps-2 col-lg-3 col-sm-6">
-                    <div className="bet-sec bet-period">
-                      <label className="px-2 form-label">To</label>
-                      <div className="form-group">
-                        <input
-                          min="2026-07-03"
-                          max="2026-07-04"
-                          type="date"
-                          className="small_form_control form-control"
-                          defaultValue="2026-07-04"
-                        />{" "}
-                        <input
-                          placeholder="00:00"
-                          type="time"
-                          className="small_form_control form-control"
-                          defaultValue="09:59"
-                          style={{ width: 80 }}
-                        />
-                      </div>
-                    </div>
+                  <div className="history-btn mt-2">
+                    <ul className="list-unstyled mb-0 d-flex flex-wrap">
+                      <li>
+                        <button
+                          type="button"
+                          className="me-2 theme_light_btn btn btn-primary"
+                          onClick={handleJustForToday}
+                        >
+                          Just For Today
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          type="button"
+                          className="me-2 theme_light_btn btn btn-primary"
+                          onClick={handleFromYesterday}
+                        >
+                          From Yesterday
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          type="button"
+                          className="me-2 theme_dark_btn btn btn-primary"
+                          onClick={handleSearch}
+                        >
+                          Search
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          type="button"
+                          className="me-0 theme_light_btn btn btn-primary"
+                          onClick={handleReset}
+                        >
+                          Reset
+                        </button>
+                      </li>
+                    </ul>
                   </div>
-                  <div className="mb-lg-0 mb-3 col-lg-2 col-sm-3">
-                    <div className="bet-sec">
-                      <label className="form-label">Last</label>
-                      <select
-                        aria-label="Default select example"
-                        className="small_select form-select"
-                      >
-                        <option value={100}>100 Txn</option>
-                        <option value={200}>200 Txn</option>
-                        <option value={500}>500 Txn</option>
-                        <option value={1000}>1000 Txn</option>
-                        <option value={5000}>5000 Txn</option>
-                        <option value={10000}>10000 Txn</option>
-                        <option value="">All</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
+                </form>
               </div>
             </div>
-            <div className="history-btn mt-2">
-              <ul className="list-unstyled mb-0">
-                <li>
+            <div className="col-md-12">
+              <div className="d-flex flex-wrap align-items-center justify-content-between">
+                <div className="d-flex flex-wrap live-match-bat">
                   <button
                     type="button"
-                    className="me-0 theme_light_btn btn btn-primary"
+                    className={`mb-2 mx-1 ${filters.sport_id === '' ? 'theme_dark_btn' : 'theme_light_btn'} btn btn-primary`}
+                    onClick={() => handleSportFilter('')}
                   >
-                    Just For Today
+                    All
                   </button>
-                </li>
-                <li>
                   <button
                     type="button"
-                    className="me-0 theme_light_btn btn btn-primary"
+                    className={`mb-2 mx-1 ${filters.sport_id === '4' ? 'theme_dark_btn' : 'theme_light_btn'} btn btn-primary`}
+                    onClick={() => handleSportFilter('4')}
                   >
-                    From Yesterday
+                    Cricket
                   </button>
-                </li>
-                <li>
                   <button
                     type="button"
-                    className="theme_dark_btn btn btn-primary"
+                    className={`mb-2 mx-1 ${filters.sport_id === '1' ? 'theme_dark_btn' : 'theme_light_btn'} btn btn-primary`}
+                    onClick={() => handleSportFilter('1')}
                   >
-                    Search
+                    Soccer
                   </button>
-                </li>
-                <li>
                   <button
                     type="button"
-                    className="me-0 theme_light_btn btn btn-primary"
+                    className={`mb-2 mx-1 ${filters.sport_id === '2' ? 'theme_dark_btn' : 'theme_light_btn'} btn btn-primary`}
+                    onClick={() => handleSportFilter('2')}
                   >
-                    Reset
+                    Tennis
                   </button>
-                </li>
-              </ul>
+                  <button
+                    type="button"
+                    className={`mb-2 mx-1 ${filters.sport_id === '6' ? 'theme_dark_btn' : 'theme_light_btn'} btn btn-primary`}
+                    onClick={() => handleSportFilter('6')}
+                  >
+                    International Casino
+                  </button>
+                  <button
+                    type="button"
+                    className={`mb-2 mx-1 ${filters.sport_id === '11' ? 'theme_dark_btn' : 'theme_light_btn'} btn btn-primary`}
+                    onClick={() => handleSportFilter('11')}
+                  >
+                    Indian Casino
+                  </button>
+                </div>
+                {agentDetails.total_users > 0 && (
+                  <div className="mb-2">
+                    {/* <span className="badge bg-info me-2">Total Users: {agentDetails.total_users}</span>
+                    <span className="badge bg-secondary">Total Records: {agentDetails.total_records}</span> */}
+                  </div>
+                )}
+              </div>
             </div>
-          </form>
-        </div>
-      </div>
-      <div className="col-md-6">
-        <div className="d-flex flex-wrap live-match-bat justify-sm-content-end">
-          <button
-            type="button"
-            className="mb-2 mx-1 theme_light_btn btn btn-primary"
-          >
-            All
-          </button>
-          <button
-            type="button"
-            className="mb-2 mx-1  green-btn btn btn-primary"
-          >
-            Cricket
-          </button>
-          <button
-            type="button"
-            className="mb-2 mx-1 theme_light_btn btn btn-primary"
-          >
-            Soccer
-          </button>
-          <button
-            type="button"
-            className="mb-2 mx-1 theme_light_btn btn btn-primary"
-          >
-            Tenis
-          </button>
-          <button
-            type="button"
-            className="mb-2 mx-1 theme_light_btn btn btn-primary"
-          >
-            International Casion
-          </button>
-          <button
-            type="button"
-            className="mb-2 mx-1 theme_light_btn btn btn-primary"
-          >
-            Indian Casino
-          </button>
-        </div>
-      </div>
-      <div className="mt-2 col-lg-12 col-md-12 col-sm-12">
-        <section className="account-table  w-100">
-          <div className="responsive transaction-history table-color">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Sr No.</th>
-                  <th scope="col">UID</th>
-                  <th scope="col">Downline P/L</th>
-                  <th scope="col">Player P/L</th>
-                  <th scope="col">Comm.</th>
-                  <th scope="col" colSpan={2}>
-                    Upline P/L
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>
-                    <a href="/AprofitPlayer">thippe01</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-1,350.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">1,350.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-1,350.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>2</td>
-                  <td>
-                    <a href="/AprofitPlayer">thippa143</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-28,660.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">28,660.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-28,660.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>3</td>
-                  <td>
-                    <a href="/AprofitPlayer">amithgowda</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-3,714.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">3,714.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-3,714.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>4</td>
-                  <td>
-                    <a href="/AprofitPlayer">rajesh4977</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-3,300.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">3,300.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-3,300.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>5</td>
-                  <td>
-                    <a href="/AprofitPlayer">ant1122</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">1,000.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-1,000.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">1,000.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>6</td>
-                  <td>
-                    <a href="/AprofitPlayer">manchi</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-1,724.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">1,724.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-1,724.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>7</td>
-                  <td>
-                    <a href="/AprofitPlayer">balaji111</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">1,000.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-1,000.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">1,000.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>8</td>
-                  <td>
-                    <a href="/AprofitPlayer">shivu-6</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">2,000.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-2,000.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">2,000.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>9</td>
-                  <td>
-                    <a href="/AprofitPlayer">yathish02</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-18,000.90)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">18,000.90</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-18,000.90)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>10</td>
-                  <td>
-                    <a href="/AprofitPlayer">raghukagi</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-4,060.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">4,060.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-4,060.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>11</td>
-                  <td>
-                    <a href="/AprofitPlayer">pranavi</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-212.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">212.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-212.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>12</td>
-                  <td>
-                    <a href="/AprofitPlayer">govindraaj</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-4,710.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">4,710.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-4,710.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>13</td>
-                  <td>
-                    <a href="/AprofitPlayer">madhu11</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">6,750.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-6,750.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">6,750.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>14</td>
-                  <td>
-                    <a href="/AprofitPlayer">pradeepa</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-2,951.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">2,951.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-2,951.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>15</td>
-                  <td>
-                    <a href="/AprofitPlayer">srinivas45</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">300.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-300.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">300.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>16</td>
-                  <td>
-                    <a href="/AprofitPlayer">zari</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">420.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-420.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">420.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>17</td>
-                  <td>
-                    <a href="/AprofitPlayer">khalilauto</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-9,367.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">9,367.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-9,367.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>18</td>
-                  <td>
-                    <a href="/AprofitPlayer">hanu</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-250.50)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">250.50</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-250.50)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>19</td>
-                  <td>
-                    <a href="/AprofitPlayer">prathap</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-4,014.80)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">4,014.80</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-4,014.80)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>20</td>
-                  <td>
-                    <a href="/AprofitPlayer">nabi001</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-664.60)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">664.60</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-664.60)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>21</td>
-                  <td>
-                    <a href="/AprofitPlayer">ajay111</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">2,000.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-2,000.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">2,000.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>22</td>
-                  <td>
-                    <a href="/AprofitPlayer">naveens</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">1,094.30</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-1,094.30)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">1,094.30</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>23</td>
-                  <td>
-                    <a href="/AprofitPlayer">januu123</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-600.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">600.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-600.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>24</td>
-                  <td>
-                    <a href="/AprofitPlayer">anilbh</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-21,200.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">21,200.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-21,200.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>25</td>
-                  <td>
-                    <a href="/AprofitPlayer">raju1234</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-21,200.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">21,200.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-21,200.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>26</td>
-                  <td>
-                    <a href="/AprofitPlayer">chiru12</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">100.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-100.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">100.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>27</td>
-                  <td>
-                    <a href="/AprofitPlayer">vip777</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-12,773.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">12,773.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-12,773.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>28</td>
-                  <td>
-                    <a href="/AprofitPlayer">malli01</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-2,592.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">2,592.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-2,592.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>29</td>
-                  <td>
-                    <a href="/AprofitPlayer">diri123</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">14,000.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-14,000.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">14,000.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>30</td>
-                  <td>
-                    <a href="/AprofitPlayer">ranga01</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">3,000.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-3,000.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">3,000.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>31</td>
-                  <td>
-                    <a href="/AprofitPlayer">revanna</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">441.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-441.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">441.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>32</td>
-                  <td>
-                    <a href="/AprofitPlayer">sagar01</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-4,000.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">4,000.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-4,000.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>33</td>
-                  <td>
-                    <a href="/AprofitPlayer">zabi</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-6,430.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">6,430.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-6,430.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>34</td>
-                  <td>
-                    <a href="/AprofitPlayer">dini55</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">1,002.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-1,002.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">1,002.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>35</td>
-                  <td>
-                    <a href="/AprofitPlayer">rani098</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">19,748.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-19,748.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">19,748.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>36</td>
-                  <td>
-                    <a href="/AprofitPlayer">charv123</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-8,310.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">8,310.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-8,310.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>37</td>
-                  <td>
-                    <a href="/AprofitPlayer">sunilsis</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-16,380.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">16,380.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-16,380.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>38</td>
-                  <td>
-                    <a href="/AprofitPlayer">dadu3737</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">1,000.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-1,000.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">1,000.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>39</td>
-                  <td>
-                    <a href="/AprofitPlayer">dundappa</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">245,000.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-245,000.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">245,000.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>40</td>
-                  <td>
-                    <a href="/AprofitPlayer">shachin</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">33,000.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-33,000.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">33,000.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>41</td>
-                  <td>
-                    <a href="/AprofitPlayer">bittu1992</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-2,562.00)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">2,562.00</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-2,562.00)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>42</td>
-                  <td>
-                    <a href="/AprofitPlayer">vinay1234</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">1,310.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-1,310.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">1,310.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>43</td>
-                  <td>
-                    <a href="/AprofitPlayer">shivu777</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">9,346.50</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-9,346.50)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">9,346.50</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>44</td>
-                  <td>
-                    <a href="/AprofitPlayer">veeranji</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-success">26.00</span>
-                  </td>
-                  <td>
-                    <span className="text-danger">(-26.00)</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-success">26.00</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <td>45</td>
-                  <td>
-                    <a href="/AprofitPlayer">shaik</a>
-                  </td>
-                  <td>
-                    {" "}
-                    <span className="text-danger">(-19,141.70)</span>
-                  </td>
-                  <td>
-                    <span className="text-success">19,141.70</span>
-                  </td>
-                  <td>0.00</td>
-                  <td>
-                    <span className="text-danger">(-19,141.70)</span>
-                  </td>
-                </tr>
-                <tr className="" style={{ display: "none" }} />
-                <tr>
-                  <th scope="col">Total</th>
-                  <th scope="col" />
-                  <th>
-                    {" "}
-                    <span className="text-success">144,370.30</span>
-                  </th>
-                  <th>
-                    <span className="text-danger">(-144,370.30)</span>
-                  </th>
-                  <th>0.00</th>
-                  <th>
-                    <span className="text-success">144,370.30</span>
-                  </th>
-                </tr>
-              </tbody>
-            </table>
-            <div className="bottom-pagination">
-              <ul role="navigation" aria-label="Pagination">
-                <li className="previous disabled">
-                  <a
-                    className=" "
-                    tabIndex={-1}
-                    role="button"
-                    aria-disabled="true"
-                    aria-label="Previous page"
-                    rel="prev"
-                  >
-                    &lt;{" "}
-                  </a>
-                </li>
-                <li className="next">
-                  <a
-                    className=""
-                    tabIndex={0}
-                    role="button"
-                    aria-disabled="false"
-                    aria-label="Next page"
-                    rel="next"
-                  >
-                    {" "}
-                    &gt;
-                  </a>
-                </li>
-              </ul>
+            <div className="mt-2 col-lg-12 col-md-12 col-sm-12">
+              <section className="account-table w-100">
+                <div className="responsive transaction-history table-color">
+                  {loading ? (
+                    <div className="text-center py-4">
+                      <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+                  ) : error ? (
+                    <div className="alert alert-danger m-3">{error}</div>
+                  ) : data && data.length > 0 ? (
+                    <>
+                      <table className="table">
+                        <thead>
+                          <tr>
+                            <th>Sr No.</th>
+                            <th scope="col">UID</th>
+                            <th scope="col">Downline P/L</th>
+                            <th scope="col">Player P/L</th>
+                            <th scope="col">Comm.</th>
+                            <th scope="col">Upline P/L</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {data.map((item, index) => (
+                            <tr key={item.user_id || index}>
+                              <td>{(pagination.page - 1) * pagination.limit + index + 1}</td>
+                              <td>
+                                <div>
+                                  <strong>{item.username || 'N/A'}</strong>
+                                  <br />
+                                </div>
+                              </td>
+                              <td>
+                                <span className={item.downline_pl < 0 ? 'text-danger' : 'text-success'}>
+                                  {item.downline_pl < 0 ? `(${Math.abs(item.downline_pl).toFixed(2)})` : item.downline_pl.toFixed(2)}
+                                </span>
+                              </td>
+                              <td>
+                                <span className={item.player_pl < 0 ? 'text-danger' : 'text-success'}>
+                                  {item.player_pl < 0 ? `(${Math.abs(item.player_pl).toFixed(2)})` : item.player_pl.toFixed(2)}
+                                </span>
+                              </td>
+                              <td>{item.commission ? item.commission.toFixed(2) : '0.00'}</td>
+                              <td>
+                                <span className={item.upline_pl < 0 ? 'text-danger' : 'text-success'}>
+                                  {item.upline_pl < 0 ? `(${Math.abs(item.upline_pl).toFixed(2)})` : item.upline_pl.toFixed(2)}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                          <tr className="table-active fw-bold">
+                            <td colSpan="2" className="text-end">Total</td>
+                            <td>
+                              <span className={summary.total_downline_pl < 0 ? 'text-danger' : 'text-success'}>
+                                {summary.total_downline_pl < 0 ? `(${Math.abs(summary.total_downline_pl).toFixed(2)})` : summary.total_downline_pl.toFixed(2)}
+                              </span>
+                            </td>
+                            <td>
+                              <span className={summary.total_player_pl < 0 ? 'text-danger' : 'text-success'}>
+                                {summary.total_player_pl < 0 ? `(${Math.abs(summary.total_player_pl).toFixed(2)})` : summary.total_player_pl.toFixed(2)}
+                              </span>
+                            </td>
+                            <td>{summary.total_commission ? summary.total_commission.toFixed(2) : '0.00'}</td>
+                            <td>
+                              <span className={summary.total_upline_pl < 0 ? 'text-danger' : 'text-success'}>
+                                {summary.total_upline_pl < 0 ? `(${Math.abs(summary.total_upline_pl).toFixed(2)})` : summary.total_upline_pl.toFixed(2)}
+                              </span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+                      {/* Pagination */}
+                      {pagination.totalPages > 0 && (
+                        <div className="bottom-pagination">
+                          <ul role="navigation" aria-label="Pagination">
+                            <li className={`previous ${pagination.page <= 1 ? 'disabled' : ''}`}>
+                              <a
+                                className=""
+                                tabIndex={pagination.page <= 1 ? -1 : 0}
+                                role="button"
+                                aria-disabled={pagination.page <= 1}
+                                aria-label="Previous page"
+                                rel="prev"
+                                onClick={() => handlePageChange(pagination.page - 1)}
+                                style={{ cursor: pagination.page <= 1 ? 'not-allowed' : 'pointer' }}
+                              >
+                                &lt;{" "}
+                              </a>
+                            </li>
+                            <li className="page-info">
+                              <span>
+                                Page {pagination.page} of {pagination.totalPages}
+                                ({pagination.total} records)
+                              </span>
+                            </li>
+                            <li className={`next ${pagination.page >= pagination.totalPages ? 'disabled' : ''}`}>
+                              <a
+                                className=""
+                                tabIndex={pagination.page >= pagination.totalPages ? -1 : 0}
+                                role="button"
+                                aria-disabled={pagination.page >= pagination.totalPages}
+                                aria-label="Next page"
+                                rel="next"
+                                onClick={() => handlePageChange(pagination.page + 1)}
+                                style={{ cursor: pagination.page >= pagination.totalPages ? 'not-allowed' : 'pointer' }}
+                              >
+                                {" "}
+                                &gt;
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    // ✅ Empty table with headers
+                    <table className="table">
+                      <thead>
+                        <tr>
+                          <th>Sr No.</th>
+                          <th scope="col">UID</th>
+                          <th scope="col">Downline P/L</th>
+                          <th scope="col">Player P/L</th>
+                          <th scope="col">Comm.</th>
+                          <th scope="col">Upline P/L</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td colSpan="6" className="text-center py-4">
+                            No records found
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </section>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
-  </div>
-</section>
-
-    </div>
-  )
+  );
 }
 
-export default AprofitPlayer
+export default AprofitPlayer;
