@@ -1865,6 +1865,9 @@ ant-table-thead>tr>th,
     input {
       background: transparent;
       color: $white-color;
+      &::placeholder{
+        color: rgb(99, 99, 99);
+      }
     }
 
     &:hover {

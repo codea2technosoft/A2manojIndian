@@ -191,8 +191,8 @@ function BetListLive() {
                                             <option value="4">Cricket</option>
                                             <option value="2">Tennis</option>
                                             <option value="1">Soccer</option>
-                                            <option value="3">Casino</option>
-                                            <option value="4339">Greyhound</option>
+                                            <option value="10">Casino</option>
+                                            <option value="8">Greyhound</option>
                                             <option value="7">Horse</option>
                                         </select>
                                     </div>
@@ -286,7 +286,7 @@ function BetListLive() {
                             ) : (
                                 <>
                                     {/* ✅ Summary Section - Uncommented */}
-                                    {summary && (
+                                    {/* {summary && (
                                         <div className="summary-section mb-3 p-3 bg-light rounded">
                                             <div className="row">
                                                 <div className="col-md-3">
@@ -306,7 +306,7 @@ function BetListLive() {
                                                 </div>
                                             </div>
                                         </div>
-                                    )}
+                                    )} */}
 
                                     <div className="table-responsive">
                                         <table className="all-bets-dialog-tabel table">

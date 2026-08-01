@@ -57,6 +57,37 @@ export const getUser = (id) => {
 	});
 };
 
+
+
+// export const getUserLogs = (id) => {
+// 	return new Promise((resolve, reject) => {
+// 		return api
+// 			.get(`/admin/partner/login-history/${id}`)
+// 			.then((response) => {
+// 				resolve(response.data);
+// 			})
+// 			.catch((err) => {
+// 				reject(err);
+// 			});
+// 	});
+// };
+
+// requests/user.js
+export const getUserLogs = (params) => {
+  return new Promise((resolve, reject) => {
+    return api
+      .get(`/admin/partner/login-history`, { params })
+      .then((response) => {
+        resolve(response.data);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+
+
 export const fetchData1 = (query, page, per_page) => {
 	return new Promise((resolve, reject) => {
 	  return api

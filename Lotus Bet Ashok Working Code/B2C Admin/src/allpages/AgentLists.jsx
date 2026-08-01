@@ -59,7 +59,7 @@ function AgentLists() {
   const AdduserCloseModalall = () => setAdduser(false);
   const AmountEditOpenModalall = () => setAmountEdit(true);
   const AmountEditCloseModalall = () => setAmountEdit(false);
-   // Password change states
+  // Password change states
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [passwordLoading, setPasswordLoading] = useState(false);
@@ -86,15 +86,15 @@ function AgentLists() {
 
 
   const [withdrawAmount, setWithdrawAmount] = useState('');
-const [withdrawPassword, setWithdrawPassword] = useState('');
-const [withdrawAmountError, setWithdrawAmountError] = useState('');
-const [withdrawPasswordError, setWithdrawPasswordError] = useState('');
+  const [withdrawPassword, setWithdrawPassword] = useState('');
+  const [withdrawAmountError, setWithdrawAmountError] = useState('');
+  const [withdrawPasswordError, setWithdrawPasswordError] = useState('');
 
-// Deposit states
-const [depositAmount, setDepositAmount] = useState('');
-const [depositPassword, setDepositPassword] = useState('');
-const [depositAmountError, setDepositAmountError] = useState('');
-const [depositPasswordError, setDepositPasswordError] = useState('');
+  // Deposit states
+  const [depositAmount, setDepositAmount] = useState('');
+  const [depositPassword, setDepositPassword] = useState('');
+  const [depositAmountError, setDepositAmountError] = useState('');
+  const [depositPasswordError, setDepositPasswordError] = useState('');
   const [status, setStatus] = useState("active");
   const [agentErrors, setAgentErrors] = useState({});
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
@@ -106,25 +106,25 @@ const [depositPasswordError, setDepositPasswordError] = useState('');
 
 
   const handleOpensetDepositmodal = () => {
-  setDepositmodal(true);
-  setDepositAmount('');
-  setDepositPassword('');
-  setDepositAmountError('');
-  setDepositPasswordError('');
-};
-const handleOpenModalall = () => {
-  setShowModal(true);
-  setWithdrawAmount('');
-  setWithdrawPassword('');
-  setWithdrawAmountError('');
-  setWithdrawPasswordError('');
-};
+    setDepositmodal(true);
+    setDepositAmount('');
+    setDepositPassword('');
+    setDepositAmountError('');
+    setDepositPasswordError('');
+  };
+  const handleOpenModalall = () => {
+    setShowModal(true);
+    setWithdrawAmount('');
+    setWithdrawPassword('');
+    setWithdrawAmountError('');
+    setWithdrawPasswordError('');
+  };
   const handleClosesetDepositmodal = () => setDepositmodal(false);
   const handleClosesetDepositmodalmarket = () => setBlockMarketModal(false);
   // Get admin_id from localStorage
   const admin_id = localStorage.getItem("admin_id");
 
- 
+
   // ======================================
 
   // Agent form states
@@ -168,21 +168,21 @@ const handleOpenModalall = () => {
   // =============================================
   // const handleDepositSubmit = async (e) => {
   //   e.preventDefault();
-    
+
   //   const form = e.target;
   //   const newAmount = form.querySelector('[name="deposit_amount"]')?.value;
   //   const password = form.querySelector('[name="deposit_password"]')?.value;
-    
+
   //   if (!newAmount || !password) {
   //     Swal.fire("Error", "Please fill all fields", "error");
   //     return;
   //   }
-    
+
   //   if (!selectedAgent) {
   //     Swal.fire("Error", "No agent selected", "error");
   //     return;
   //   }
-    
+
   //   try {
   //     setLoading(true);
   //     const payload = {
@@ -190,11 +190,11 @@ const handleOpenModalall = () => {
   //       exposure_limit: Number(newAmount),
   //       password: password
   //     };
-      
+
   //     console.log("📤 Deposit Payload:", payload);
-      
+
   //     const response = await changeExposerDlimitAgent(payload);
-      
+
   //     if (response.data && response.data.success) {
   //       Swal.fire("Success!", "Exposure limit updated successfully!", "success");
   //       handleClosesetDepositmodal();
@@ -209,91 +209,91 @@ const handleOpenModalall = () => {
   //     setLoading(false);
   //   }
   // };
- const handleDepositSubmit = async (e) => {
-  e.preventDefault();
-  
-  // ✅ Final validation check
-  if (!depositAmount || Number(depositAmount) <= 0) {
-    setDepositAmountError('Please enter a valid amount');
-    return;
-  }
-  
-  if (!depositPassword || depositPassword.length < 4) {
-    setDepositPasswordError('Password must be at least 4 characters');
-    return;
-  }
-  
-  if (!selectedAgent) {
-    Swal.fire("Error", "No agent selected", "error");
-    return;
-  }
-  
-  try {
-    setLoading(true);
-    const payload = {
-      admin_id: selectedAgent?.admin_id || selectedAgent?._id,
-      exposure_limit: Number(depositAmount),
-      password: depositPassword
-    };
-    
-    const response = await changeExposerDlimitAgent(payload);
-    
-    if (response.data && response.data.success) {
-      Swal.fire("Success!", "Exposure limit updated successfully!", "success");
-      handleClosesetDepositmodal();
-      fetchAgentList();
-    } else {
-      Swal.fire("Error", response.data?.message || "Failed to update", "error");
-    }
-  } catch (error) {
-    Swal.fire("Error", error.response?.data?.message || "Something went wrong", "error");
-  } finally {
-    setLoading(false);
-  }
-};
+  const handleDepositSubmit = async (e) => {
+    e.preventDefault();
 
-const handleWithdrawSubmit = async (e) => {
-  e.preventDefault();
-  
-  // ✅ Final validation check
-  if (!withdrawAmount || Number(withdrawAmount) <= 0) {
-    setWithdrawAmountError('Please enter a valid amount');
-    return;
-  }
-  
-  if (!withdrawPassword || withdrawPassword.length < 4) {
-    setWithdrawPasswordError('Password must be at least 4 characters');
-    return;
-  }
-  
-  if (!selectedAgent) {
-    Swal.fire("Error", "No agent selected", "error");
-    return;
-  }
-  
-  try {
-    setLoading(true);
-    const payload = {
-      admin_id: selectedAgent?.admin_id || selectedAgent?._id,
-      withdraw_limit: Number(withdrawAmount),
-      password: withdrawPassword
-    };
-    
-    const response = await changeExposerWithdrawlimitAgent(payload);
-    
-    if (response.data && response.data.success) {
-      Swal.fire("Success!", "Withdraw limit updated successfully!", "success");
-      handleCloseModalall();
-      fetchAgentList();
-    } else {
-      Swal.fire("Error", response.data?.message || "Failed to update", "error");
+    // ✅ Final validation check
+    if (!depositAmount || Number(depositAmount) <= 0) {
+      setDepositAmountError('Please enter a valid amount');
+      return;
     }
-  } catch (error) {
-    Swal.fire("Error", error.response?.data?.message || "Something went wrong", "error");
-  } finally {
-    setLoading(false);
-  }
-};
+
+    if (!depositPassword || depositPassword.length < 4) {
+      setDepositPasswordError('Password must be at least 4 characters');
+      return;
+    }
+
+    if (!selectedAgent) {
+      Swal.fire("Error", "No agent selected", "error");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const payload = {
+        admin_id: selectedAgent?.admin_id || selectedAgent?._id,
+        exposure_limit: Number(depositAmount),
+        password: depositPassword
+      };
+
+      const response = await changeExposerDlimitAgent(payload);
+
+      if (response.data && response.data.success) {
+        Swal.fire("Success!", "Exposure limit updated successfully!", "success");
+        handleClosesetDepositmodal();
+        fetchAgentList();
+      } else {
+        Swal.fire("Error", response.data?.message || "Failed to update", "error");
+      }
+    } catch (error) {
+      Swal.fire("Error", error.response?.data?.message || "Something went wrong", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleWithdrawSubmit = async (e) => {
+    e.preventDefault();
+
+    // ✅ Final validation check
+    if (!withdrawAmount || Number(withdrawAmount) <= 0) {
+      setWithdrawAmountError('Please enter a valid amount');
+      return;
+    }
+
+    if (!withdrawPassword || withdrawPassword.length < 4) {
+      setWithdrawPasswordError('Password must be at least 4 characters');
+      return;
+    }
+
+    if (!selectedAgent) {
+      Swal.fire("Error", "No agent selected", "error");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const payload = {
+        admin_id: selectedAgent?.admin_id || selectedAgent?._id,
+        withdraw_limit: Number(withdrawAmount),
+        password: withdrawPassword
+      };
+
+      const response = await changeExposerWithdrawlimitAgent(payload);
+
+      if (response.data && response.data.success) {
+        Swal.fire("Success!", "Withdraw limit updated successfully!", "success");
+        handleCloseModalall();
+        fetchAgentList();
+      } else {
+        Swal.fire("Error", response.data?.message || "Failed to update", "error");
+      }
+    } catch (error) {
+      Swal.fire("Error", error.response?.data?.message || "Something went wrong", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
   const [agentList, setAgentList] = useState([]);
   const [agentLoading, setAgentLoading] = useState(false);
 
@@ -895,6 +895,39 @@ const handleWithdrawSubmit = async (e) => {
     }
   };
 
+  // const handleExposureClick = async (agentId, agentName, adminId) => {
+  //   try {
+  //     setExposureLoading(true);
+  //     setSelectedAgentName(agentName || 'Agent');
+
+  //     const payload = {
+  //       agent_id: adminId || agentId
+  //     };
+
+  //     const response = await getUserExposure(payload);
+  //     console.log("Exposure Response:", response.data);
+
+  //     if (response?.data?.status_code === 1) {
+  //       const userData = response.data.data[0];
+  //       if (userData && userData.bets) {
+  //         setExposureData(userData.bets);
+  //       } else {
+  //         setExposureData([]);
+  //       }
+  //     } else {
+  //       setExposureData([]);
+  //     }
+  //     setShowExposurePopup(true);
+  //   } catch (error) {
+  //     console.error('Error fetching exposure:', error);
+  //     setExposureData([]);
+  //     setShowExposurePopup(true);
+  //   } finally {
+  //     setExposureLoading(false);
+  //   }
+  // };
+
+
   const handleExposureClick = async (agentId, agentName, adminId) => {
     try {
       setExposureLoading(true);
@@ -905,22 +938,39 @@ const handleWithdrawSubmit = async (e) => {
       };
 
       const response = await getUserExposure(payload);
-      console.log("Exposure Response:", response.data);
+      console.log("Exposure Response:", response);
 
+      // ✅ CHECK STATUS_CODE
       if (response?.data?.status_code === 1) {
-        const userData = response.data.data[0];
-        if (userData && userData.bets) {
-          setExposureData(userData.bets);
+        const userData = response.data.data[0]; // First user in array
+
+        // ✅ ✅ ✅ IMPORTANT: exposures array se data lo
+        if (userData && userData.exposures) {
+          // ✅ Map exposures array to match table fields
+          const mappedExposures = userData.exposures.map((item) => ({
+            match_name: item.match_name || '-',
+            market_fancy_name: item.market_fancy_name || '-',
+            type: item.type || '-',
+            exposure: item.exposure || 0
+          }));
+
+          setExposureData(mappedExposures);
+          console.log("✅ Mapped Exposures:", mappedExposures);
         } else {
           setExposureData([]);
+          console.log("ℹ️ No exposures found");
         }
       } else {
         setExposureData([]);
+        console.log("❌ API returned error status");
       }
+
       setShowExposurePopup(true);
+
     } catch (error) {
       console.error('Error fetching exposure:', error);
       setExposureData([]);
+      // ✅ Still show popup with empty data
       setShowExposurePopup(true);
     } finally {
       setExposureLoading(false);
@@ -1035,29 +1085,58 @@ const handleWithdrawSubmit = async (e) => {
             className="list-unstyled detail-header mb-2"
             style={{ width: "100%" }}
           >
-            <li>
+            {/* <li>
               <dt>Total Balance</dt>
-              <strong>INR {summary.total_balance}</strong>
+              <strong>INR {summary.total_balance.toFixed(2)}</strong>
             </li>
             <li>
               <dt>Total Exposure</dt>
-              <strong>INR {summary.total_exposure}</strong>
+              <strong>INR {summary.total_exposure.toFixed(2)}</strong>
             </li>
             <li>
               <dt>Total Avail. bal.</dt>
-              <strong>INR {summary.total_available_balance}</strong>
+              <strong>INR {summary.total_available_balance.toFixed(2)}</strong>
             </li>
             <li>
               <dt>Balance</dt>
-              <strong>INR {summary.balance}</strong>
+              <strong>INR {summary.balance.toFixed(2)}</strong>
             </li>
             <li>
               <dt>Available Balance</dt>
-              <strong>INR {summary.available_balance}</strong>
+              <strong>INR {summary.available_balance.toFixed(2)}</strong>
             </li>
             <li>
               <dt>Total Player Balance</dt>
-              <strong>INR {summary.total_player_balance}</strong>
+              <strong>INR {summary.total_player_balance.toFixed(2)}</strong>
+            </li> */}
+            <li>
+              <dt>Total Balance</dt>
+              <strong>INR {Number(summary?.total_balance || 0).toFixed(2)}</strong>
+            </li>
+
+            <li>
+              <dt>Total Exposure</dt>
+              <strong>INR {Number(summary?.total_exposure || 0).toFixed(2)}</strong>
+            </li>
+
+            <li>
+              <dt>Total Avail. bal.</dt>
+              <strong>INR {Number(summary?.total_available_balance || 0).toFixed(2)}</strong>
+            </li>
+
+            <li>
+              <dt>Balance</dt>
+              <strong>INR {Number(summary?.balance || 0).toFixed(2)}</strong>
+            </li>
+
+            <li>
+              <dt>Available Balance</dt>
+              <strong>INR {Number(summary?.available_balance || 0).toFixed(2)}</strong>
+            </li>
+
+            <li>
+              <dt>Total Player Balance</dt>
+              <strong>INR {Number(summary?.total_player_balance || 0).toFixed(2)}</strong>
             </li>
           </ul>
         </section>
@@ -1138,14 +1217,14 @@ const handleWithdrawSubmit = async (e) => {
                         <i className="fas fa-pen ps-1" />
                       </Link>
                     </td>
-                    <td className="text-primary text-end">{agent.balance || "0.00"}</td>
+                    <td className="text-primary text-end">{agent.balance.toFixed(2) || "0.00"}</td>
                     <td className="text-end">
                       <Link onClick={() => handleExposureClick(agent.admin_id)}>
-                        <span className="status-suspend1">{agent.player_exposure || '0.00'}</span>
+                        <span className="status-suspend1">{agent.player_exposure.toFixed(2) || '0.00'}</span>
                       </Link>
                     </td>
-                    <td className="text-end">{agent.available_balance || "0.00"}</td>
-                    <td className="text-end">{agent.total_player_balance || "0.00"}</td>
+                    <td className="text-end">{agent.available_balance.toFixed(2) || "0.00"}</td>
+                    <td className="text-end">{agent.total_player_balance.toFixed(2) || "0.00"}</td>
                     <td className={`text-end  ${Number(agent.total_amount) <= 0 ? "ul-t" : "ul-t2"}`}>
                       <span>{agent.total_amount || "0.00"}</span>
                     </td>
@@ -1319,117 +1398,117 @@ const handleWithdrawSubmit = async (e) => {
         </div>
       )} */}
 
-    {showModal && (
-  <div className="allcommon">
-    <div
-      className="modal show d-block"
-      style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-      onClick={handleCloseModalall}
-    >
-      <div
-        className="modal-dialog modal-md"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="common-heading">Withdraw Amount Edit</h5>
-            <button
-              type="button"
-              className="btn-close"
-              onClick={handleCloseModalall}
-            ></button>
-          </div>
-          <div className="modal-body">
-            <form className="change-password-sec" onSubmit={handleWithdrawSubmit}>
-              <h4 className="h4 mb-3 curent-value">
-                <label>Current :</label>
-                <strong>{selectedAgent?.withdraw_limit || "0.00"}</strong>
-              </h4>
-              
-              <div className="mb-2 d-flex align-items-center">
-                <label className="me-2">New</label>
-                <div className="w-sm-50">
-                  <input
-                    placeholder="Enter Withdraw Amount"
-                    name="withdraw_amount"
-                    type="number"
-                    className={`form-control ${withdrawAmountError ? 'is-invalid' : ''}`}
-                    value={withdrawAmount}
-                    onChange={(e) => {
-                      setWithdrawAmount(e.target.value);
-                      if (e.target.value && Number(e.target.value) > 0) {
-                        setWithdrawAmountError('');
-                      } else {
-                        setWithdrawAmountError('Please enter Withdraw Amount');
-                      }
-                    }}
-                    onBlur={(e) => {
-                      if (!e.target.value) {
-                        setWithdrawAmountError('Please enter Withdraw Amount');
-                      } else if (Number(e.target.value) <= 0) {
-                        setWithdrawAmountError('Amount must be greater than 0');
-                      } else {
-                        setWithdrawAmountError('');
-                      }
-                    }}
-                    required
-                  />
-                  {withdrawAmountError && (
-                    <div className="text-danger small mt-1">{withdrawAmountError}</div>
-                  )}
+      {showModal && (
+        <div className="allcommon">
+          <div
+            className="modal show d-block"
+            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+            onClick={handleCloseModalall}
+          >
+            <div
+              className="modal-dialog modal-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="common-heading">Withdraw Amount Edit</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={handleCloseModalall}
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <form className="change-password-sec" onSubmit={handleWithdrawSubmit}>
+                    <h4 className="h4 mb-3 curent-value">
+                      <label>Current :</label>
+                      <strong>{selectedAgent?.withdraw_limit || "0.00"}</strong>
+                    </h4>
+
+                    <div className="mb-2 d-flex align-items-center">
+                      <label className="me-2">New</label>
+                      <div className="w-sm-50">
+                        <input
+                          placeholder="Enter Withdraw Amount"
+                          name="withdraw_amount"
+                          type="number"
+                          className={`form-control ${withdrawAmountError ? 'is-invalid' : ''}`}
+                          value={withdrawAmount}
+                          onChange={(e) => {
+                            setWithdrawAmount(e.target.value);
+                            if (e.target.value && Number(e.target.value) > 0) {
+                              setWithdrawAmountError('');
+                            } else {
+                              setWithdrawAmountError('Please enter Withdraw Amount');
+                            }
+                          }}
+                          onBlur={(e) => {
+                            if (!e.target.value) {
+                              setWithdrawAmountError('Please enter Withdraw Amount');
+                            } else if (Number(e.target.value) <= 0) {
+                              setWithdrawAmountError('Amount must be greater than 0');
+                            } else {
+                              setWithdrawAmountError('');
+                            }
+                          }}
+                          required
+                        />
+                        {withdrawAmountError && (
+                          <div className="text-danger small mt-1">{withdrawAmountError}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="mb-2 d-flex align-items-center">
+                      <label className="me-2">Password</label>
+                      <div className="w-sm-50">
+                        <input
+                          placeholder="Enter Password"
+                          name="withdraw_password"
+                          type="password"
+                          className={`form-control ${withdrawPasswordError ? 'is-invalid' : ''}`}
+                          value={withdrawPassword}
+                          onChange={(e) => {
+                            setWithdrawPassword(e.target.value);
+                            if (e.target.value && e.target.value.length >= 4) {
+                              setWithdrawPasswordError('');
+                            } else {
+                              setWithdrawPasswordError('Please enter password');
+                            }
+                          }}
+                          onBlur={(e) => {
+                            if (!e.target.value) {
+                              setWithdrawPasswordError('Please enter password');
+                            } else if (e.target.value.length < 4) {
+                              setWithdrawPasswordError('Password must be at least 4 characters');
+                            } else {
+                              setWithdrawPasswordError('');
+                            }
+                          }}
+                          required
+                        />
+                        {withdrawPasswordError && (
+                          <div className="text-danger small mt-1">{withdrawPasswordError}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-center mt-4">
+                      <button
+                        type="submit"
+                        className="theme_dark_btn btn btn-primary"
+                        disabled={loading || withdrawAmountError || withdrawPasswordError}
+                      >
+                        {loading ? "Submitting..." : "Submit"}
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
-
-              <div className="mb-2 d-flex align-items-center">
-                <label className="me-2">Password</label>
-                <div className="w-sm-50">
-                  <input
-                    placeholder="Enter Password"
-                    name="withdraw_password"
-                    type="password"
-                    className={`form-control ${withdrawPasswordError ? 'is-invalid' : ''}`}
-                    value={withdrawPassword}
-                    onChange={(e) => {
-                      setWithdrawPassword(e.target.value);
-                      if (e.target.value && e.target.value.length >= 4) {
-                        setWithdrawPasswordError('');
-                      } else {
-                        setWithdrawPasswordError('Please enter password');
-                      }
-                    }}
-                    onBlur={(e) => {
-                      if (!e.target.value) {
-                        setWithdrawPasswordError('Please enter password');
-                      } else if (e.target.value.length < 4) {
-                        setWithdrawPasswordError('Password must be at least 4 characters');
-                      } else {
-                        setWithdrawPasswordError('');
-                      }
-                    }}
-                    required
-                  />
-                  {withdrawPasswordError && (
-                    <div className="text-danger small mt-1">{withdrawPasswordError}</div>
-                  )}
-                </div>
-              </div>
-
-              <div className="text-center mt-4">
-                <button 
-                  type="submit" 
-                  className="theme_dark_btn btn btn-primary" 
-                  disabled={loading || withdrawAmountError || withdrawPasswordError}
-                >
-                  {loading ? "Submitting..." : "Submit"}
-                </button>
-              </div>
-            </form>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-)}
+      )}
       {/* ===== DEPOSIT MODAL WITH onSubmit ===== */}
       {/* {depositmodal && (
         <div className="allcommon">
@@ -1491,116 +1570,116 @@ const handleWithdrawSubmit = async (e) => {
       )} */}
 
       {depositmodal && (
-  <div className="allcommon">
-    <div
-      className="modal show d-block"
-      style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-      onClick={handleClosesetDepositmodal}
-    >
-      <div
-        className="modal-dialog modal-md"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="common-heading">Deposit Amount Edit</h5>
-            <button
-              type="button"
-              className="btn-close"
-              onClick={handleClosesetDepositmodal}
-            ></button>
-          </div>
-          <div className="modal-body">
-            <form className="change-password-sec" onSubmit={handleDepositSubmit}>
-              <h4 className="h4 mb-3 curent-value">
-                <label>Current :</label>
-                <strong>{selectedAgent?.credit_ref || "0.00"}</strong>
-              </h4>
+        <div className="allcommon">
+          <div
+            className="modal show d-block"
+            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+            onClick={handleClosesetDepositmodal}
+          >
+            <div
+              className="modal-dialog modal-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="common-heading">Deposit Amount Edit</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={handleClosesetDepositmodal}
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <form className="change-password-sec" onSubmit={handleDepositSubmit}>
+                    <h4 className="h4 mb-3 curent-value">
+                      <label>Current :</label>
+                      <strong>{selectedAgent?.credit_ref || "0.00"}</strong>
+                    </h4>
 
-              <div className="mb-2 d-flex align-items-center">
-                <label className="me-2">New</label>
-                <div className="w-sm-50">
-                  <input
-                    placeholder="Enter Deposit Amount"
-                    name="deposit_amount"
-                    type="number"
-                    className={`form-control ${depositAmountError ? 'is-invalid' : ''}`}
-                    value={depositAmount}
-                    onChange={(e) => {
-                      setDepositAmount(e.target.value);
-                      if (e.target.value && Number(e.target.value) > 0) {
-                        setDepositAmountError('');
-                      } else {
-                        setDepositAmountError('Please enter Deposit Amount');
-                      }
-                    }}
-                    onBlur={(e) => {
-                      if (!e.target.value) {
-                        setDepositAmountError('Please enter Deposit Amount');
-                      } else if (Number(e.target.value) <= 0) {
-                        setDepositAmountError('Amount must be greater than 0');
-                      } else {
-                        setDepositAmountError('');
-                      }
-                    }}
-                    required
-                  />
-                  {depositAmountError && (
-                    <div className="text-danger small mt-1">{depositAmountError}</div>
-                  )}
+                    <div className="mb-2 d-flex align-items-center">
+                      <label className="me-2">New</label>
+                      <div className="w-sm-50">
+                        <input
+                          placeholder="Enter Deposit Amount"
+                          name="deposit_amount"
+                          type="number"
+                          className={`form-control ${depositAmountError ? 'is-invalid' : ''}`}
+                          value={depositAmount}
+                          onChange={(e) => {
+                            setDepositAmount(e.target.value);
+                            if (e.target.value && Number(e.target.value) > 0) {
+                              setDepositAmountError('');
+                            } else {
+                              setDepositAmountError('Please enter Deposit Amount');
+                            }
+                          }}
+                          onBlur={(e) => {
+                            if (!e.target.value) {
+                              setDepositAmountError('Please enter Deposit Amount');
+                            } else if (Number(e.target.value) <= 0) {
+                              setDepositAmountError('Amount must be greater than 0');
+                            } else {
+                              setDepositAmountError('');
+                            }
+                          }}
+                          required
+                        />
+                        {depositAmountError && (
+                          <div className="text-danger small mt-1">{depositAmountError}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="mb-2 d-flex align-items-center">
+                      <label className="me-2">Password</label>
+                      <div className="w-sm-50">
+                        <input
+                          placeholder="Enter Password"
+                          name="deposit_password"
+                          type="password"
+                          className={`form-control ${depositPasswordError ? 'is-invalid' : ''}`}
+                          value={depositPassword}
+                          onChange={(e) => {
+                            setDepositPassword(e.target.value);
+                            if (e.target.value && e.target.value.length >= 4) {
+                              setDepositPasswordError('');
+                            } else {
+                              setDepositPasswordError('Please enter password');
+                            }
+                          }}
+                          onBlur={(e) => {
+                            if (!e.target.value) {
+                              setDepositPasswordError('Please enter password');
+                            } else if (e.target.value.length < 4) {
+                              setDepositPasswordError('Password must be at least 4 characters');
+                            } else {
+                              setDepositPasswordError('');
+                            }
+                          }}
+                          required
+                        />
+                        {depositPasswordError && (
+                          <div className="text-danger small mt-1">{depositPasswordError}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-center mt-4">
+                      <button
+                        type="submit"
+                        className="theme_dark_btn btn btn-primary"
+                        disabled={loading || depositAmountError || depositPasswordError}
+                      >
+                        {loading ? "Submitting..." : "Submit"}
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
-
-              <div className="mb-2 d-flex align-items-center">
-                <label className="me-2">Password</label>
-                <div className="w-sm-50">
-                  <input
-                    placeholder="Enter Password"
-                    name="deposit_password"
-                    type="password"
-                    className={`form-control ${depositPasswordError ? 'is-invalid' : ''}`}
-                    value={depositPassword}
-                    onChange={(e) => {
-                      setDepositPassword(e.target.value);
-                      if (e.target.value && e.target.value.length >= 4) {
-                        setDepositPasswordError('');
-                      } else {
-                        setDepositPasswordError('Please enter password');
-                      }
-                    }}
-                    onBlur={(e) => {
-                      if (!e.target.value) {
-                        setDepositPasswordError('Please enter password');
-                      } else if (e.target.value.length < 4) {
-                        setDepositPasswordError('Password must be at least 4 characters');
-                      } else {
-                        setDepositPasswordError('');
-                      }
-                    }}
-                    required
-                  />
-                  {depositPasswordError && (
-                    <div className="text-danger small mt-1">{depositPasswordError}</div>
-                  )}
-                </div>
-              </div>
-
-              <div className="text-center mt-4">
-                <button 
-                  type="submit" 
-                  className="theme_dark_btn btn btn-primary" 
-                  disabled={loading || depositAmountError || depositPasswordError}
-                >
-                  {loading ? "Submitting..." : "Submit"}
-                </button>
-              </div>
-            </form>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-)}
+      )}
 
       {/* ===== REST ALL MODALS ===== */}
       {changestatus && (
@@ -2150,11 +2229,11 @@ const handleWithdrawSubmit = async (e) => {
                           <tr>
                             <th className="text-center text-dark">Match Name</th>
                             <th className="text-center text-dark">Market/FancyName</th>
-                            <th className="text-center text-dark">Type</th>
+                            {/* <th className="text-center text-dark">Type</th> */}
                             <th className="text-center text-dark">Exposure</th>
                           </tr>
                         </thead>
-                        <tbody>
+                        {/* <tbody>
                           {exposureData && exposureData.length > 0 ? (
                             <>
                               {exposureData.map((item, index) => (
@@ -2182,6 +2261,38 @@ const handleWithdrawSubmit = async (e) => {
                             <tr>
                               <td colSpan="4" className="text-center py-4">
                                 No Records Found
+                              </td>
+                            </tr>
+                          )}
+                        </tbody> */}
+                        <tbody>
+                          {exposureData && exposureData.length > 0 ? (
+                            <>
+                              {exposureData.map((item, index) => (
+                                <tr key={index}>
+                                  <td className="text-center">{item.match_name || '-'}</td>
+                                  <td className="text-center">{item.market_fancy_name || '-'}</td>
+                                  {/* <td className="text-center">{item.type || '-'}</td> */}
+                                  <td className="text-center fw-bold">
+                                    {Math.abs(item.exposure || 0).toFixed(2)}
+                                  </td>
+                                </tr>
+                              ))}
+                              <tr className="table-secondary">
+                                <td colSpan="2" className="text-end fw-bold">
+                                  <strong>Grand Total</strong>
+                                </td>
+                                <td className="text-center fw-bold text-danger">
+                                  <strong>
+                                    {exposureData.reduce((sum, item) => sum + Math.abs(item.exposure || 0), 0).toFixed(2)}
+                                  </strong>
+                                </td>
+                              </tr>
+                            </>
+                          ) : (
+                            <tr>
+                              <td colSpan="4" className="text-center py-4">
+                                {exposureLoading ? 'Loading...' : 'No Records Found'}
                               </td>
                             </tr>
                           )}

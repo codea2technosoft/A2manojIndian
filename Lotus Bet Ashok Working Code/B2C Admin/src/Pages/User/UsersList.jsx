@@ -299,8 +299,8 @@ function UsersList() {
         password: userFormData.password,
         email: userFormData.email.trim(),
         phoneNumber: userFormData.phoneNumber.trim(),
-       // exposure_limit: userFormData.exposureLimit.trim()
-       exposure_limit: String(userFormData.exposureLimit).trim(),
+        // exposure_limit: userFormData.exposureLimit.trim()
+        exposure_limit: String(userFormData.exposureLimit).trim(),
       };
       const response = await CreateUserAdmin(payload);
       if (response.data && response.data.success) {
@@ -664,6 +664,39 @@ function UsersList() {
     }
   };
 
+  // const handleExposureClick = async (userId, userName) => {
+  //   try {
+  //     setExposureLoading(true);
+  //     setSelectedUserName(userName || 'User');
+
+  //     const payload = {
+  //       user_id: userId
+  //     };
+
+  //     const response = await getUserExposure(payload);
+  //     console.log("Exposure Response:", response.data);
+
+  //     if (response?.data?.status_code === 1) {
+  //       const userData = response.data.data[0];
+  //       if (userData && userData.bets) {
+  //         setExposureData(userData.bets);
+  //       } else {
+  //         setExposureData([]);
+  //       }
+  //     } else {
+  //       setExposureData([]);
+  //     }
+  //     setShowExposurePopup(true);
+  //   } catch (error) {
+  //     console.error('Error fetching exposure:', error);
+  //     setExposureData([]);
+  //     setShowExposurePopup(true);
+  //   } finally {
+  //     setExposureLoading(false);
+  //   }
+  // };
+
+
   const handleExposureClick = async (userId, userName) => {
     try {
       setExposureLoading(true);
@@ -673,22 +706,59 @@ function UsersList() {
         user_id: userId
       };
 
-      const response = await getUserExposure(payload);
-      console.log("Exposure Response:", response.data);
+      console.log("📤 Exposure Payload:", payload);
 
+      const response = await getUserExposure(payload);
+      console.log("📥 Exposure Response:", response);
+
+      // ✅ Check status_code
       if (response?.data?.status_code === 1) {
-        const userData = response.data.data[0];
-        if (userData && userData.bets) {
-          setExposureData(userData.bets);
+        const dataArray = response.data.data || [];
+
+        if (dataArray.length > 0) {
+          const firstUser = dataArray[0];
+
+          // ✅ ✅ ✅ IMPORTANT: exposures array se data lo
+          if (firstUser.exposures && Array.isArray(firstUser.exposures)) {
+            const mappedExposures = firstUser.exposures.map((item) => ({
+              match_name: item.match_name || item.team || '-',
+              market_fancy_name: item.market_fancy_name || item.game_name || '-',
+              type: item.type || item.bet_type || '-',
+              exposure: item.exposure || item.total || 0,
+              // For UsersList table fields
+              team: item.match_name || item.team || '-',
+              game_name: item.market_fancy_name || item.game_name || '-',
+              bet_type: item.type || item.bet_type || '-',
+              liability: item.exposure || item.total || 0
+            }));
+
+            setExposureData(mappedExposures);
+            console.log("✅ Mapped Exposures:", mappedExposures);
+          } else {
+            // ✅ Fallback: if no exposures array
+            const mappedExposures = dataArray.map((item) => ({
+              match_name: item.match_name || item.team || '-',
+              market_fancy_name: item.market_fancy_name || item.game_name || '-',
+              type: item.type || item.bet_type || '-',
+              exposure: item.exposure || item.total || 0,
+              team: item.match_name || item.team || '-',
+              game_name: item.market_fancy_name || item.game_name || '-',
+              bet_type: item.type || item.bet_type || '-',
+              liability: item.exposure || item.total || 0
+            }));
+            setExposureData(mappedExposures);
+          }
         } else {
           setExposureData([]);
         }
       } else {
         setExposureData([]);
       }
+
       setShowExposurePopup(true);
+
     } catch (error) {
-      console.error('Error fetching exposure:', error);
+      console.error('❌ Error fetching exposure:', error);
       setExposureData([]);
       setShowExposurePopup(true);
     } finally {
@@ -889,7 +959,7 @@ function UsersList() {
                             <i className="fas fa-pen ps-1" />
                           </a>
                         </td>
-                        <td className="text-primary text-end">{user.balance || '0.00'}</td>
+                        <td className="text-primary text-end">{user.balance.toFixed(2) || '0.00'}</td>
                         <td className="text-end">
                           <a>
                             <span
@@ -901,7 +971,7 @@ function UsersList() {
                             </span>
                           </a>
                         </td>
-                        <td className="text-end">{user.avail_bal || '0.00'}</td>
+                        <td className="text-end">{Number(user.avail_bal).toFixed(2) || '0.00'}</td>
                         <td className="text-end">{user.exposure_limit || '0.00'}</td>
                         <td className={`text-end  ${Number(user.pl_winning) <= 0 ? "ul-t" : "ul-t2"}`}>
                           <span>
@@ -1508,7 +1578,7 @@ function UsersList() {
       )}
 
       {/* Exposure Popup Modal */}
-      {showExposurePopup && (
+      {/* {showExposurePopup && (
         <div className="allcommon newwidthallsames">
           <div
             className="modal show d-block"
@@ -1584,6 +1654,95 @@ function UsersList() {
                             </tr>
                           </tfoot>
                         )}
+                      </table>
+                    </div>
+                  )}
+                </div>
+                <div className="modal-footer">
+                  <button
+                    className="theme_dark_btn btn btn-secondary"
+                    onClick={() => setShowExposurePopup(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )} */}
+
+      {/* Exposure Popup Modal */}
+      {showExposurePopup && (
+        <div className="allcommon newwidthallsames">
+          <div
+            className="modal show d-block"
+            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+            onClick={() => setShowExposurePopup(false)}
+          >
+            <div
+              className="modal-dialog"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-content exposure-content">
+                <div className="modal-header">
+                  <h5 className="common-heading">
+                    Exposure Information - {selectedUserName}
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setShowExposurePopup(false)}
+                  ></button>
+                </div>
+                <div className="">
+                  {exposureLoading ? (
+                    <div className="text-center py-4">
+                      <div className="spinner-border text-primary"></div>
+                    </div>
+                  ) : (
+                    <div className="table-responsive">
+                      <table className="table table-bordered table-hover">
+                        <thead>
+                          <tr>
+                            <th className="text-center text-dark">Match Name</th>
+                            <th className="text-center text-dark">Market/FancyName</th>
+                            {/* <th className="text-center text-dark">Type</th> */}
+                            <th className="text-center text-dark">Exposure</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {exposureData && exposureData.length > 0 ? (
+                            <>
+                              {exposureData.map((item, index) => (
+                                <tr key={index}>
+                                  <td className="text-center">{item.match_name || '-'}</td>
+                                  <td className="text-center">{item.market_fancy_name || '-'}</td>
+                                  {/* <td className="text-center">{item.type || '-'}</td> */}
+                                  <td className="text-center fw-bold">
+                                    {Math.abs(item.exposure || 0).toFixed(2)}
+                                  </td>
+                                </tr>
+                              ))}
+                              <tr className="table-secondary">
+                                <td colSpan="2" className="text-end fw-bold">
+                                  <strong>Grand Total</strong>
+                                </td>
+                                <td className="text-center fw-bold text-danger">
+                                  <strong>
+                                    {exposureData.reduce((sum, item) => sum + Math.abs(item.exposure || 0), 0).toFixed(2)}
+                                  </strong>
+                                </td>
+                              </tr>
+                            </>
+                          ) : (
+                            <tr>
+                              <td colSpan="4" className="text-center py-4">
+                                No Records Found
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
                       </table>
                     </div>
                   )}

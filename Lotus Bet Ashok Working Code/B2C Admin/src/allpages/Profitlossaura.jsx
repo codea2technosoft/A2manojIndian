@@ -1,221 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
+import { getProfitLossAura } from "../../src/Server/api";
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { Link } from 'react-router';
 
 function Profitlossaura() {
-    const [activeTab, setActiveTab] = useState('PlayerPnL');
+    const [activeTab, setActiveTab] = useState('Casino');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [reportData, setReportData] = useState([]);
+    const [totals, setTotals] = useState(null);
+    const [pagination, setPagination] = useState({
+        current_page: 1,
+        per_page: 50,
+        total_records: 0,
+        total_pages: 1
+    });
+
     const [periodFrom, setPeriodFrom] = useState({
-        date: '2026-07-03',
-        time: '10:00'
+        date: '',
+        time: ''
     });
     const [periodTo, setPeriodTo] = useState({
-        date: '2026-07-04',
-        time: '09:59'
+        date: '',
+        time: ''
     });
-    const [selectedLast, setSelectedLast] = useState(25);
+    const [selectedLast, setSelectedLast] = useState("all");
     const [selectedUser, setSelectedUser] = useState(null);
     const [expandedRows, setExpandedRows] = useState({});
 
-    // Sample data for Casino tab
-    const casinoData = [
-        {
-            id: 'summary0_1',
-            prefix: 'AG',
-            name: 'agvip',
-            playerPL: '(7,305.00)',
-            downLinePL: '(7,305.00)',
-            agentComm: '(0.00)',
-            uplinePL: '(7,305.00)',
-            playerClass: 'text-danger',
-            downLineClass: 'text-success',
-            uplineClass: 'text-danger',
-            children: [
-                {
-                    id: 'child1_1',
-                    prefix: 'CL',
-                    name: 'charv123',
-                    playerPL: '(1,062.00)',
-                    downLinePL: '(1,062.00)',
-                    agentComm: '(0.00)',
-                    uplinePL: '(1,062.00)',
-                    playerClass: 'text-danger',
-                    downLineClass: 'text-success',
-                    uplineClass: 'text-danger'
-                },
-                {
-                    id: 'child1_2',
-                    prefix: 'CL',
-                    name: 'ngr39',
-                    playerPL: '(22,552.00)',
-                    downLinePL: '(22,552.00)',
-                    agentComm: '(0.00)',
-                    uplinePL: '(22,552.00)',
-                    playerClass: 'text-danger',
-                    downLineClass: 'text-success',
-                    uplineClass: 'text-danger'
-                },
-                {
-                    id: 'child1_3',
-                    prefix: 'CL',
-                    name: 'punithkb',
-                    playerPL: '(-517.00)',
-                    downLinePL: '(-517.00)',
-                    agentComm: '(0.00)',
-                    uplinePL: '(-517.00)',
-                    playerClass: 'text-success',
-                    downLineClass: 'text-danger',
-                    uplineClass: 'text-success'
-                }
-            ]
-        },
-        {
-            id: 'summary0_2',
-            prefix: 'AG',
-            name: 'pradeep005',
-            playerPL: '(500.00)',
-            downLinePL: '(500.00)',
-            agentComm: '(0.00)',
-            uplinePL: '(500.00)',
-            playerClass: 'text-success',
-            downLineClass: 'text-danger',
-            uplineClass: 'text-success'
-        },
-        {
-            id: 'summary0_3',
-            prefix: 'AG',
-            name: 'rakesh hsd',
-            playerPL: '(200.00)',
-            downLinePL: '(200.00)',
-            agentComm: '(0.00)',
-            uplinePL: '(200.00)',
-            playerClass: 'text-success',
-            downLineClass: 'text-danger',
-            uplineClass: 'text-success'
-        },
-        {
-            id: 'summary0_4',
-            prefix: 'AG',
-            name: 'manjanna009b',
-            playerPL: '(1,043.00)',
-            downLinePL: '(1,043.00)',
-            agentComm: '(0.00)',
-            uplinePL: '(1,043.00)',
-            playerClass: 'text-success',
-            downLineClass: 'text-danger',
-            uplineClass: 'text-success'
-        },
-        {
-            id: 'summary0_5',
-            prefix: 'AG',
-            name: 'ambu010',
-            playerPL: '(3,050.00)',
-            downLinePL: '(3,050.00)',
-            agentComm: '(0.00)',
-            uplinePL: '(3,050.00)',
-            playerClass: 'text-success',
-            downLineClass: 'text-danger',
-            uplineClass: 'text-success'
-        },
-        {
-            id: 'summary0_6',
-            prefix: 'AG',
-            name: 'nawabjan ajjampura',
-            playerPL: '(2,997.00)',
-            downLinePL: '(2,997.00)',
-            agentComm: '(0.00)',
-            uplinePL: '(2,997.00)',
-            playerClass: 'text-success',
-            downLineClass: 'text-danger',
-            uplineClass: 'text-success'
-        }
-    ];
-
-    // Sample data for CasinoGamePnL tab
-    const casinoGameData = [
-        {
-            id: 'game1',
-            sportName: 'DRAGOONSOFT',
-            playerPL: '(200.00)',
-            downLinePL: '(200.00)',
-            agentComm: '(0.00)',
-            uplinePL: '(200.00)',
-            playerClass: 'text-success',
-            downLineClass: 'text-danger',
-            uplineClass: 'text-success'
-        },
-        {
-            id: 'game2',
-            sportName: 'JDB',
-            playerPL: '(1,043.00)',
-            downLinePL: '(1,043.00)',
-            agentComm: '(0.00)',
-            uplinePL: '(1,043.00)',
-            playerClass: 'text-success',
-            downLineClass: 'text-danger',
-            uplineClass: 'text-success'
-        },
-        {
-            id: 'game3',
-            sportName: 'EVOLUTION',
-            playerPL: '(4,950.00)',
-            downLinePL: '(4,950.00)',
-            agentComm: '(0.00)',
-            uplinePL: '(4,950.00)',
-            playerClass: 'text-danger',
-            downLineClass: 'text-success',
-            uplineClass: 'text-danger'
-        },
-        {
-            id: 'game4',
-            sportName: 'SPRIBE',
-            playerPL: '(177.00)',
-            downLinePL: '(177.00)',
-            agentComm: '(0.00)',
-            uplinePL: '(177.00)',
-            playerClass: 'text-success',
-            downLineClass: 'text-danger',
-            uplineClass: 'text-success'
-        },
-        {
-            id: 'game5',
-            sportName: 'JILI',
-            playerPL: '(4,015.00)',
-            downLinePL: '(4,015.00)',
-            agentComm: '(0.00)',
-            uplinePL: '(4,015.00)',
-            playerClass: 'text-success',
-            downLineClass: 'text-danger',
-            uplineClass: 'text-success'
-        }
-    ];
-
-    // Sample data for PlayerPnL tab
-    const playerData = [
-        { uid: 'ngr39', prefix: 'CL', playerPL: '(7,505.00)', downLinePL: '(7,505.00)', agentComm: '(0.00)', uplinePL: '(7,505.00)', playerClass: 'text-danger', downLineClass: 'text-success', uplineClass: 'text-danger' },
-        { uid: 'rohan01', prefix: 'CL', playerPL: '(200.00)', downLinePL: '(200.00)', agentComm: '(0.00)', uplinePL: '(200.00)', playerClass: 'text-success', downLineClass: 'text-danger', uplineClass: 'text-success' },
-        { uid: 'ajay2222', prefix: 'CL', playerPL: '(500.00)', downLinePL: '(500.00)', agentComm: '(0.00)', uplinePL: '(500.00)', playerClass: 'text-success', downLineClass: 'text-danger', uplineClass: 'text-success' },
-        { uid: 'narasimha', prefix: 'CL', playerPL: '(200.00)', downLinePL: '(200.00)', agentComm: '(0.00)', uplinePL: '(200.00)', playerClass: 'text-success', downLineClass: 'text-danger', uplineClass: 'text-success' },
-        { uid: 'tej95', prefix: 'CL', playerPL: '(1,043.00)', downLinePL: '(1,043.00)', agentComm: '(0.00)', uplinePL: '(1,043.00)', playerClass: 'text-success', downLineClass: 'text-danger', uplineClass: 'text-success' },
-        { uid: 'bns', prefix: 'CL', playerPL: '(3,050.00)', downLinePL: '(3,050.00)', agentComm: '(0.00)', uplinePL: '(3,050.00)', playerClass: 'text-success', downLineClass: 'text-danger', uplineClass: 'text-success' },
-        { uid: 'varsha01', prefix: 'CL', playerPL: '(2,997.00)', downLinePL: '(2,997.00)', agentComm: '(0.00)', uplinePL: '(2,997.00)', playerClass: 'text-success', downLineClass: 'text-danger', uplineClass: 'text-success' }
-    ];
-
-    // User options for react-select
     const userOptions = [
-        { value: 'user1', label: 'User 1' },
-        { value: 'user2', label: 'User 2' },
-        { value: 'user3', label: 'User 3' },
-        { value: 'user4', label: 'User 4' },
-        { value: 'user5', label: 'User 5' },
-        { value: 'ngr39', label: 'ngr39' },
-        { value: 'rohan01', label: 'rohan01' },
-        { value: 'ajay2222', label: 'ajay2222' },
-        { value: 'narasimha', label: 'narasimha' },
-        { value: 'tej95', label: 'tej95' },
-        { value: 'bns', label: 'bns' },
-        { value: 'varsha01', label: 'varsha01' }
+        { value: 'no options', label: 'no options' },
     ];
 
-    // Custom styles for react-select
     const customStyles = {
         control: (provided, state) => ({
             ...provided,
@@ -239,8 +56,105 @@ function Profitlossaura() {
         })
     };
 
+    const getGroupBy = () => {
+        switch (activeTab) {
+            case 'Casino':
+                return 'agent';
+            case 'CasinoGamePnL':
+                return 'game';
+            case 'PlayerPnL':
+                return 'user';
+            default:
+                return 'agent';
+        }
+    };
+
+    const fetchReportData = async (customPayload = null) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const groupBy = getGroupBy();
+            const payload = customPayload || {
+                from_date: periodFrom.date,
+                to_date: periodTo.date,
+                group_by: groupBy,
+                last: selectedLast === "all" ? undefined : parseInt(selectedLast),
+                user_id: selectedUser?.value || undefined,
+                page: pagination.current_page || 1,
+                per_page: pagination.per_page || 50
+            };
+
+            console.log('📤 Sending payload:', payload);
+
+            const response = await getProfitLossAura(payload);
+
+            console.log('📥 Full API Response:', response);
+
+            if (!response) {
+                throw new Error('No response received from server');
+            }
+
+            if (response.status === 200 || response.status === 1) {
+                const actualData = response.data?.data || [];
+                setReportData(actualData);
+
+                if (response.data?.total) {
+                    setTotals(response.data.total);
+                }
+
+                // ✅ Set Pagination from server response
+                if (response.data?.pagination) {
+                    setPagination({
+                        current_page: response.data.pagination.current_page || 1,
+                        per_page: response.data.pagination.per_page || 50,
+                        total_records: response.data.pagination.total_records || 0,
+                        total_pages: response.data.pagination.total_pages || 1
+                    });
+                }
+
+                console.log('✅ Data set:', actualData);
+            } else {
+                setError(response.message || 'Failed to fetch data');
+                setReportData([]);
+                setTotals(null);
+                setPagination({
+                    current_page: 1,
+                    per_page: 50,
+                    total_records: 0,
+                    total_pages: 1
+                });
+            }
+        } catch (err) {
+            console.error('Error:', err);
+            setError(err.message || 'Failed to fetch data. Please try again.');
+            setReportData([]);
+            setTotals(null);
+            setPagination({
+                current_page: 1,
+                per_page: 50,
+                total_records: 0,
+                total_pages: 1
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchReportData();
+    }, [activeTab]);
+
     const handleTabChange = (tab) => {
         setActiveTab(tab);
+        setExpandedRows({});
+        // Reset pagination on tab change
+        setPagination({
+            current_page: 1,
+            per_page: 50,
+            total_records: 0,
+            total_pages: 1
+        });
     };
 
     const handlePeriodFromDateChange = (e) => {
@@ -260,50 +174,91 @@ function Profitlossaura() {
     };
 
     const handleLastChange = (e) => {
-        setSelectedLast(parseInt(e.target.value) || '');
+        setSelectedLast(e.target.value);
     };
 
     const handleUserChange = (selectedOption) => {
         setSelectedUser(selectedOption);
     };
 
+    // ✅ Search Function
+    const handleSearch = () => {
+        const payload = {
+            from_date: periodFrom.date,
+            to_date: periodTo.date,
+            group_by: getGroupBy(),
+            last: selectedLast === "all" ? undefined : parseInt(selectedLast),
+            user_id: selectedUser?.value || undefined,
+            page: 1,
+            per_page: pagination.per_page || 50
+        };
+        // Reset pagination on search
+        setPagination(prev => ({ ...prev, current_page: 1 }));
+        fetchReportData(payload);
+    };
+
+    // ✅ Page Change Handler
+    const handlePageChange = (page) => {
+        if (page < 1 || page > pagination?.total_pages) return;
+
+        const payload = {
+            from_date: periodFrom.date,
+            to_date: periodTo.date,
+            group_by: getGroupBy(),
+            last: selectedLast === "all" ? undefined : parseInt(selectedLast),
+            user_id: selectedUser?.value || undefined,
+            page: page,
+            per_page: pagination?.per_page || 50
+        };
+        setPagination(prev => ({ ...prev, current_page: page }));
+        fetchReportData(payload);
+    };
+
     const handleJustForToday = () => {
         const today = new Date();
         const todayStr = today.toISOString().split('T')[0];
-        setPeriodFrom({
-            date: todayStr,
-            time: '00:00'
-        });
-        setPeriodTo({
-            date: todayStr,
-            time: '23:59'
-        });
+        const payload = {
+            from_date: todayStr,
+            to_date: todayStr,
+            group_by: getGroupBy(),
+            last: selectedLast === "all" ? undefined : parseInt(selectedLast),
+            user_id: selectedUser?.value || undefined,
+            page: 1,
+            per_page: pagination.per_page || 50
+        };
+        setPagination(prev => ({ ...prev, current_page: 1 }));
+        fetchReportData(payload);
     };
 
     const handleFromYesterday = () => {
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
         const yesterdayStr = yesterday.toISOString().split('T')[0];
-        const today = new Date();
-        const todayStr = today.toISOString().split('T')[0];
-        setPeriodFrom({
-            date: yesterdayStr,
-            time: '00:00'
-        });
-        setPeriodTo({
-            date: todayStr,
-            time: '23:59'
-        });
+        const payload = {
+            from_date: yesterdayStr,
+            to_date: yesterdayStr,
+            group_by: getGroupBy(),
+            last: selectedLast === "all" ? undefined : parseInt(selectedLast),
+            user_id: selectedUser?.value || undefined,
+            page: 1,
+            per_page: pagination.per_page || 50
+        };
+        setPagination(prev => ({ ...prev, current_page: 1 }));
+        fetchReportData(payload);
     };
 
     const handleGetPL = () => {
-        console.log('Getting P/L with:', {
-            periodFrom,
-            periodTo,
-            selectedLast,
-            selectedUser,
-            activeTab
-        });
+        const payload = {
+            from_date: periodFrom.date,
+            to_date: periodTo.date,
+            group_by: getGroupBy(),
+            last: selectedLast === "all" ? undefined : parseInt(selectedLast),
+            user_id: selectedUser?.value || undefined,
+            page: 1,
+            per_page: pagination.per_page || 50
+        };
+        setPagination(prev => ({ ...prev, current_page: 1 }));
+        fetchReportData(payload);
     };
 
     const toggleExpand = (id) => {
@@ -313,7 +268,20 @@ function Profitlossaura() {
         }));
     };
 
-    // Render filter form (reused across tabs)
+    const formatNumber = (num) => {
+        if (num === undefined || num === null) return '0.00';
+        const formatted = Number(num).toFixed(2);
+        if (num < 0) {
+            return `(${Math.abs(num).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')})`;
+        }
+        return formatted.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    };
+
+    const getColorClass = (num) => {
+        if (num === undefined || num === null) return '';
+        return num < 0 ? 'text-danger' : 'text-success';
+    };
+
     const renderFilterForm = () => (
         <form className="bet_status bet-list-live" onSubmit={(e) => e.preventDefault()}>
             <div className="bet_outer">
@@ -324,7 +292,6 @@ function Profitlossaura() {
                         </label>
                         <div className="form-group">
                             <input
-                                max="2026-07-04"
                                 type="date"
                                 className="form-control"
                                 value={periodFrom.date}
@@ -349,8 +316,6 @@ function Profitlossaura() {
                         </label>
                         <div className="form-group">
                             <input
-                                min="2026-07-03"
-                                max="2026-07-04"
                                 type="date"
                                 className="form-control"
                                 value={periodTo.date}
@@ -378,11 +343,11 @@ function Profitlossaura() {
                         value={selectedLast}
                         onChange={handleLastChange}
                     >
-                        <option value={25}>25 Txn</option>
-                        <option value={50}>50 Txn</option>
-                        <option value={100}>100 Txn</option>
-                        <option value={200}>200 Txn</option>
-                        <option value="">All</option>
+                        <option value="all">All</option>
+                        <option value="25">25 Txn</option>
+                        <option value="50">50 Txn</option>
+                        <option value="100">100 Txn</option>
+                        <option value="200">200 Txn</option>
                     </select>
                 </div>
 
@@ -404,6 +369,20 @@ function Profitlossaura() {
                                 classNamePrefix="select"
                             />
                         </div>
+                        <button
+                            type="button"
+                            className="btn btn-primary ms-2"
+                            onClick={handleSearch}
+                            style={{
+                                padding: '6px 15px',
+                                borderRadius: '4px',
+                                fontSize: '14px',
+                                whiteSpace: 'nowrap'
+                            }}
+                            disabled={loading}
+                        >
+                            {loading ? 'Loading...' : 'Search'}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -433,8 +412,9 @@ function Profitlossaura() {
                             type="button"
                             className="theme_light_btn theme_dark_btn btn btn-primary"
                             onClick={handleGetPL}
+                            disabled={loading}
                         >
-                            Get P/L
+                            {loading ? 'Loading...' : 'Get P/L'}
                         </button>
                     </li>
                 </ul>
@@ -442,142 +422,278 @@ function Profitlossaura() {
         </form>
     );
 
-    // Render Casino table with expandable rows
     const renderCasinoTable = () => (
         <div className="account-table">
             <div className="responsive">
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">UID</th>
-                            <th scope="col">Player P/L</th>
-                            <th scope="col">DownLine P/L</th>
-                            <th scope="col">Agent Comm. P/L</th>
-                            <th scope="col">Upline P/L</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {casinoData.map((item) => (
-                            <React.Fragment key={item.id}>
-                                <tr id={item.id} style={{ display: 'table-row' }}>
-                                    <td className="text-start">
-                                        {item.children && (
-                                            <i
-                                                id={`icon_${item.id}`}
-                                                className={`fas fa-${expandedRows[item.id] ? 'minus' : 'plus'}-square pe-2`}
-                                                onClick={() => toggleExpand(item.id)}
-                                                style={{ cursor: 'pointer' }}
-                                            />
-                                        )}
-                                        <a href="#" className="text-primary">
-                                            <span>{item.prefix}</span>
-                                        </a>
-                                        {item.name}
-                                    </td>
-                                    <td><span className={item.playerClass}>{item.playerPL}</span></td>
-                                    <td><span className={item.downLineClass}>{item.downLinePL}</span></td>
-                                    <td><span>{item.agentComm}</span></td>
-                                    <td><span className={item.uplineClass}>{item.uplinePL}</span></td>
+                {loading ? (
+                    <div className="text-center py-4">Loading...</div>
+                ) : error ? (
+                    <div className="alert alert-danger">{error}</div>
+                ) : (
+                    <>
+                        <table className="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">UID</th>
+                                    <th scope="col">Player P/L</th>
+                                    <th scope="col">DownLine P/L</th>
+                                    <th scope="col">Agent Comm. P/L</th>
+                                    <th scope="col">Upline P/L</th>
                                 </tr>
-                                {item.children && expandedRows[item.id] && (
-                                    <tr className="expand">
-                                        <td colSpan={9} className="expand_wrap" style={{ background: 'lightgrey' }}>
-                                            <table style={{ width: '100%', background: 'lightgrey' }}>
-                                                <tbody style={{ background: 'lightgrey' }}>
-                                                    {item.children.map((child) => (
-                                                        <tr key={child.id}>
-                                                            <td className="text-start">
-                                                                <a href="#" className="text-primary">
-                                                                    <span>{child.prefix}</span>
-                                                                </a>
-                                                                {child.name}
-                                                            </td>
-                                                            <td><span className={child.playerClass}>{child.playerPL}</span></td>
-                                                            <td><span className={child.downLineClass}>{child.downLinePL}</span></td>
-                                                            <td><span>{child.agentComm}</span></td>
-                                                            <td><span className={child.uplineClass}>{child.uplinePL}</span></td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
+                            </thead>
+                            <tbody>
+                                {reportData && reportData.length > 0 ? (
+                                    <>
+                                        {reportData.map((item) => (
+                                            <React.Fragment key={item.uid || item.id}>
+                                                <tr id={item.uid || item.id} style={{ display: 'table-row' }}>
+                                                    <td className="text-start">
+                                                        {item.children && item.children.length > 0 && (
+                                                            <i
+                                                                id={`icon_${item.uid || item.id}`}
+                                                                className={`fas fa-${expandedRows[item.uid || item.id] ? 'minus' : 'plus'}-square pe-2`}
+                                                                onClick={() => toggleExpand(item.uid || item.id)}
+                                                                style={{ cursor: 'pointer' }}
+                                                            />
+                                                        )}
+                                                        <a href="#" className="text-primary">
+                                                            <span>AG</span>
+                                                        </a>
+                                                        {item.name || ''}
+                                                    </td>
+                                                    <td><span className={getColorClass(item.player_pl)}>{formatNumber(item.player_pl)}</span></td>
+                                                    <td><span className={getColorClass(item.downline_pl)}>{formatNumber(item.downline_pl)}</span></td>
+                                                    <td><span>{formatNumber(item.agent_commission || item.agent_comm)}</span></td>
+                                                    <td><span className={getColorClass(item.upline_pl)}>{formatNumber(item.upline_pl)}</span></td>
+                                                </tr>
+                                                {item.children && item.children.length > 0 && expandedRows[item.uid || item.id] && (
+                                                    <tr className="expand">
+                                                        <td colSpan={9} className="expand_wrap" style={{ background: 'lightgrey' }}>
+                                                            <table style={{ width: '100%', background: 'lightgrey' }}>
+                                                                <tbody style={{ background: 'lightgrey' }}>
+                                                                    {item.children.map((child) => (
+                                                                        <tr key={child.admin_id || child.uid}>
+                                                                            <td className="text-start">
+                                                                                <a href="#" className="text-primary">
+                                                                                    <span>CL</span>
+                                                                                </a>
+                                                                                {child.username || child.name || ''}
+                                                                            </td>
+                                                                            <td><span className={getColorClass(child.player_pl)}>{formatNumber(child.player_pl)}</span></td>
+                                                                            <td><span className={getColorClass(child.downline_pl)}>{formatNumber(child.downline_pl)}</span></td>
+                                                                            <td><span>{formatNumber(child.agent_commission || child.agent_comm)}</span></td>
+                                                                            <td><span className={getColorClass(child.upline_pl)}>{formatNumber(child.upline_pl)}</span></td>
+                                                                        </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </React.Fragment>
+                                        ))}
+                                        {totals && (
+                                            <tr className="total-table-balance-none">
+                                                <td><strong>Total</strong></td>
+                                                <td><strong><span className={getColorClass(totals.player_pl)}>{formatNumber(totals.player_pl)}</span></strong></td>
+                                                <td><strong><span className={getColorClass(totals.downline_pl)}>{formatNumber(totals.downline_pl)}</span></strong></td>
+                                                <td><strong>{formatNumber(totals.agent_commission || totals.agent_comm)}</strong></td>
+                                                <td><strong><span className={getColorClass(totals.upline_pl)}>{formatNumber(totals.upline_pl)}</span></strong></td>
+                                            </tr>
+                                        )}
+                                    </>
+                                ) : (
+                                    <tr>
+                                        <td colSpan="5" className="text-center py-4">
+                                            No data available
                                         </td>
                                     </tr>
                                 )}
-                            </React.Fragment>
-                        ))}
-                    </tbody>
-                </table>
+                            </tbody>
+                        </table>
+
+                        {/* ✅ PAGINATION */}
+                        {renderPagination()}
+                    </>
+                )}
             </div>
         </div>
     );
 
-    // Render CasinoGame table
     const renderCasinoGameTable = () => (
         <div className="account-table">
             <div className="responsive">
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">SportName</th>
-                            <th scope="col">Player P/L</th>
-                            <th scope="col">DownLine P/L</th>
-                            <th scope="col">Agent Comm. P/L</th>
-                            <th scope="col">Upline P/L</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {casinoGameData.map((item) => (
-                            <tr key={item.id} style={{ display: 'table-row' }}>
-                                <td className="text-start">
-                                    <i id={`icon_${item.id}`} className="fas fa-plus-square pe-2" />
-                                    {item.sportName}
-                                </td>
-                                <td><span className={item.playerClass}>{item.playerPL}</span></td>
-                                <td><span className={item.downLineClass}>{item.downLinePL}</span></td>
-                                <td><span>{item.agentComm}</span></td>
-                                <td><span className={item.uplineClass}>{item.uplinePL}</span></td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                {loading ? (
+                    <div className="text-center py-4">Loading...</div>
+                ) : error ? (
+                    <div className="alert alert-danger">{error}</div>
+                ) : (
+                    <>
+                        <table className="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">SportName</th>
+                                    <th scope="col">Player P/L</th>
+                                    <th scope="col">DownLine P/L</th>
+                                    <th scope="col">Agent Comm. P/L</th>
+                                    <th scope="col">Upline P/L</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {reportData && reportData.length > 0 ? (
+                                    <>
+                                        {reportData.map((item) => (
+                                            <tr key={item.uid || item.id}>
+                                                <td className="text-start">
+                                                    <i className="fas fa-plus-square pe-2" />
+                                                    {item.name || item.uid}
+                                                </td>
+                                                <td><span className={getColorClass(item.player_pl)}>{formatNumber(item.player_pl)}</span></td>
+                                                <td><span className={getColorClass(item.downline_pl)}>{formatNumber(item.downline_pl)}</span></td>
+                                                <td><span>{formatNumber(item.agent_commission || item.agent_comm)}</span></td>
+                                                <td><span className={getColorClass(item.upline_pl)}>{formatNumber(item.upline_pl)}</span></td>
+                                            </tr>
+                                        ))}
+                                        {totals && (
+                                            <tr className="total-table-balance-none">
+                                                <td><strong>Total</strong></td>
+                                                <td><strong><span className={getColorClass(totals.player_pl)}>{formatNumber(totals.player_pl)}</span></strong></td>
+                                                <td><strong><span className={getColorClass(totals.downline_pl)}>{formatNumber(totals.downline_pl)}</span></strong></td>
+                                                <td><strong>{formatNumber(totals.agent_commission || totals.agent_comm)}</strong></td>
+                                                <td><strong><span className={getColorClass(totals.upline_pl)}>{formatNumber(totals.upline_pl)}</span></strong></td>
+                                            </tr>
+                                        )}
+                                    </>
+                                ) : (
+                                    <tr>
+                                        <td colSpan="5" className="text-center py-4">
+                                            No data available
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+
+                        {/* ✅ PAGINATION */}
+                        {renderPagination()}
+                    </>
+                )}
             </div>
         </div>
     );
 
-    // Render Player table
     const renderPlayerTable = () => (
         <div className="account-table">
             <div className="responsive">
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">UID</th>
-                            <th scope="col">Player P/L</th>
-                            <th scope="col">DownLine P/L</th>
-                            <th scope="col">Agent Comm. P/L</th>
-                            <th scope="col">Upline P/L</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {playerData.map((item, index) => (
-                            <tr key={index} style={{ display: 'table-row' }}>
-                                <td className="text-start">
-                                    <a href="#" className="text-primary-span">
-                                        <span>{item.prefix}</span>
-                                    </a>
-                                    {item.uid}
-                                </td>
-                                <td><span className={item.playerClass}>{item.playerPL}</span></td>
-                                <td><span className={item.downLineClass}>{item.downLinePL}</span></td>
-                                <td><span>{item.agentComm}</span></td>
-                                <td><span className={item.uplineClass}>{item.uplinePL}</span></td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                {loading ? (
+                    <div className="text-center py-4">Loading...</div>
+                ) : error ? (
+                    <div className="alert alert-danger">{error}</div>
+                ) : (
+                    <>
+                        <table className="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">UID</th>
+                                    <th scope="col">Player P/L</th>
+                                    <th scope="col">DownLine P/L</th>
+                                    <th scope="col">Agent Comm. P/L</th>
+                                    <th scope="col">Upline P/L</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {reportData && reportData.length > 0 ? (
+                                    <>
+                                        {reportData.map((item) => (
+                                            <tr key={item.uid || item.id}>
+                                                <td className="text-start">
+                                                    <a href="#" className="text-primary-span">
+                                                        <span>CL</span>
+                                                    </a>
+                                                    {item.name || ''}
+                                                </td>
+                                                <td><span className={getColorClass(item.player_pl)}>{formatNumber(item.player_pl)}</span></td>
+                                                <td><span className={getColorClass(item.downline_pl)}>{formatNumber(item.downline_pl)}</span></td>
+                                                <td><span>{formatNumber(item.agent_commission || item.agent_comm)}</span></td>
+                                                <td><span className={getColorClass(item.upline_pl)}>{formatNumber(item.upline_pl)}</span></td>
+                                            </tr>
+                                        ))}
+                                        {totals && (
+                                            <tr className="total-table-balance-none">
+                                                <td><strong>Total</strong></td>
+                                                <td><strong><span className={getColorClass(totals.player_pl)}>{formatNumber(totals.player_pl)}</span></strong></td>
+                                                <td><strong><span className={getColorClass(totals.downline_pl)}>{formatNumber(totals.downline_pl)}</span></strong></td>
+                                                <td><strong>{formatNumber(totals.agent_commission || totals.agent_comm)}</strong></td>
+                                                <td><strong><span className={getColorClass(totals.upline_pl)}>{formatNumber(totals.upline_pl)}</span></strong></td>
+                                            </tr>
+                                        )}
+                                    </>
+                                ) : (
+                                    <tr>
+                                        <td colSpan="5" className="text-center py-4">
+                                            No data available
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+
+                        {/* ✅ PAGINATION */}
+                        {renderPagination()}
+                    </>
+                )}
             </div>
         </div>
     );
+
+    const renderPagination = () => {
+        if (pagination.total_pages < 0) return null;
+
+        const pages = [
+            pagination.current_page - 1,
+            pagination.current_page,
+            pagination.current_page + 1,
+        ].filter(
+            (p) => p > 0 && p <= pagination.total_pages
+        );
+
+        return (
+            <div className="bottom-pagination d-flex justify-content-center align-items-center">
+                <ul className="pagination mb-0 gap-0">
+
+                    <li className={`previous ${pagination.current_page === 1 ? "disabled" : ""}`}>
+                        <Link onClick={() => handlePageChange(pagination.current_page - 1)}>
+                            <FaChevronLeft />
+                        </Link>
+                    </li>
+
+                    {pages.map((page) => (
+                        <li
+                            key={page}
+                            className={`p-0 ${pagination.current_page === page ? "active" : ""}`}
+                        >
+                            <Link
+                                className="pagintion-li"
+                                onClick={() => handlePageChange(page)}
+                            >
+                                {page}
+                            </Link>
+                        </li>
+                    ))}
+
+                    <li
+                        className={`next ${pagination.current_page === pagination.total_pages ? "disabled" : ""
+                            }`}
+                    >
+                        <Link onClick={() => handlePageChange(pagination.current_page + 1)}>
+                            <FaChevronRight />
+                        </Link>
+                    </li>
+
+                </ul>
+            </div>
+        );
+    };
 
     return (
         <main className='allcommon'>
@@ -625,7 +741,6 @@ function Profitlossaura() {
                             </ul>
 
                             <div className="tab-content">
-                                {/* Casino Tab */}
                                 <div
                                     role="tabpanel"
                                     className={`fade tab-pane ${activeTab === 'Casino' ? 'active show' : ''}`}
@@ -636,7 +751,6 @@ function Profitlossaura() {
                                     </div>
                                 </div>
 
-                                {/* CasinoGamePnL Tab */}
                                 <div
                                     role="tabpanel"
                                     className={`fade tab-pane ${activeTab === 'CasinoGamePnL' ? 'active show' : ''}`}
@@ -647,7 +761,6 @@ function Profitlossaura() {
                                     </div>
                                 </div>
 
-                                {/* PlayerPnL Tab */}
                                 <div
                                     role="tabpanel"
                                     className={`fade tab-pane ${activeTab === 'PlayerPnL' ? 'active show' : ''}`}

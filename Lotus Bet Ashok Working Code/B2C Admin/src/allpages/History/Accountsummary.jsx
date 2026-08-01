@@ -508,7 +508,8 @@ const AccountSummary = () => {
     try {
       const payload = {
         admin_id: adminId,
-        newPassword: newPassword
+        newPassword: newPassword,
+        oldPassword: oldPassword  // ✅ YAHAN ADD KARO
       };
 
       console.log("Change Password Payload:", payload);

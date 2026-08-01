@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getprofitLossReport } from "../../src/Server/api";
 import { Link } from 'react-router';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 function AprofitDownline() {
   const [data, setData] = useState([]);
@@ -47,6 +48,11 @@ function AprofitDownline() {
     return date;
   };
 
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
   // ✅ NEW: Fetch game list dynamically
   const fetchGameList = async () => {
     try {
@@ -334,7 +340,7 @@ function AprofitDownline() {
                                 </td>
                                 {gameList.map((game) => (
                                   <td key={game.id}>
-                                    <span style={{color:"#000!important"}} className={getColorClass(item[game.key] || 0)}>
+                                    <span style={{ color: "#000!important" }} className={getColorClass(item[game.key] || 0)}>
                                       {formatPLValue(item[game.key] || 0)}
                                     </span>
                                   </td>
@@ -376,40 +382,39 @@ function AprofitDownline() {
                       </table>
 
                       {/* Pagination */}
+
                       {data.length > 0 && totalPages > 0 && (
-                        <div className="bottom-pagination">
-                          <ul role="navigation" aria-label="Pagination">
-                            <li className={currentPage === 1 ? "previous disabled" : "previous"}>
-                              <a
-                                className=""
-                                tabIndex={currentPage === 1 ? -1 : 0}
-                                role="button"
-                                aria-disabled={currentPage === 1}
-                                aria-label="Previous page"
-                                rel="prev"
-                                onClick={handlePrev}
-                                style={{ cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
-                              >
-                                &lt;
-                              </a>
+                        <div className="bottom-pagination d-flex justify-content-center align-items-center">
+                          <ul className="pagination mb-0 gap-0">
+
+                            <li className={`previous ${currentPage === 1 ? "disabled" : ""}`}>
+                              <Link onClick={() => handlePageChange(currentPage - 1)}>
+                                <FaChevronLeft />
+                              </Link>
                             </li>
-                            <li className="page-info">
-                              <span>Page {currentPage} of {totalPages}</span>
+
+                            {[currentPage - 1, currentPage, currentPage + 1]
+                              .filter((p) => p > 0 && p <= totalPages)
+                              .map((p) => (
+                                <li
+                                  key={p}
+                                  className={`p-0 ${currentPage === p ? "active" : ""}`}
+                                >
+                                  <Link
+                                    className="pagintion-li"
+                                    onClick={() => handlePageChange(p)}
+                                  >
+                                    {p}
+                                  </Link>
+                                </li>
+                              ))}
+
+                            <li className={`next ${currentPage === totalPages ? "disabled" : ""}`}>
+                              <Link onClick={() => handlePageChange(currentPage + 1)}>
+                                <FaChevronRight />
+                              </Link>
                             </li>
-                            <li className={currentPage === totalPages ? "next disabled" : "next"}>
-                              <a
-                                className=""
-                                tabIndex={currentPage === totalPages ? -1 : 0}
-                                role="button"
-                                aria-disabled={currentPage === totalPages}
-                                aria-label="Next page"
-                                rel="next"
-                                onClick={handleNext}
-                                style={{ cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
-                              >
-                                &gt;
-                              </a>
-                            </li>
+
                           </ul>
                         </div>
                       )}

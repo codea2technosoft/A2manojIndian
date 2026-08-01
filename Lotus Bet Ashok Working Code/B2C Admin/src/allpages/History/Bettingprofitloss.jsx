@@ -9,7 +9,7 @@ import {
 function Bettingprofitloss() {
     const [searchParams] = useSearchParams();
     const [activeTab, setActiveTab] = useState('Exchange');
-    const [betStatus, setBetStatus] = useState('unmatched');
+    const [betStatus, setBetStatus] = useState('');
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [noBetsMessage, setNoBetsMessage] = useState('You have no bets in this time period.');
@@ -37,7 +37,7 @@ function Bettingprofitloss() {
         'casino',
         'Toss',
         'Tie',
-        'Indian Casino',
+        // 'Indian Casino',
         'lottery'
     ];
 
@@ -49,17 +49,35 @@ function Bettingprofitloss() {
         casino: ['Market', 'Profit / Loss', ''],
         Toss: ['Market', 'Settled Date', 'Profit / Loss', ''],
         Tie: ['Market', 'Settled Date', 'Profit / Loss', ''],
-        'Indian Casino': ['Market', 'Profit / Loss', ''],
+        // 'Indian Casino': ['Market', 'Profit / Loss', ''],
         lottery: ['PL ID', 'Bet ID', 'Bet placed', 'Match', 'Lottery Type', 'Bhav', 'P/L', '']
     };
 
-    const betStatusOptions = [
-        { value: 'unmatched', label: 'Unmatched' },
-        { value: 'matched', label: 'Matched' },
-        { value: 'completed', label: 'Settled' },
-        { value: 'suspend', label: 'Cancelled' },
-        { value: 'voided', label: 'Voided' }
+    // const betStatusOptions = [
+    //     { value: 'unmatched', label: 'Unmatched' },
+    //     { value: 'matched', label: 'Matched' },
+    //     { value: 'completed', label: 'Settled' },
+    //     { value: 'suspend', label: 'Cancelled' },
+    //     { value: 'voided', label: 'Voided' }
+    // ];
+    // const betStatusOptions = [
+    //     { value: 'matched', label: 'Matched' },
+    //     { value: 'unmatched', label: 'Unmatched' },
+    //     { value: 'settled', label: 'Settled' },
+    //     { value: 'cancelled', label: 'Cancelled' },
+    //     { value: 'voided', label: 'Voided' }
+    // ];
+
+     const betStatusOptions = [
+        // { value: 'all', label: 'SelectAll' },
+        // { value: 'matched', label: 'Matched' },
+         { value: '0', label: 'UnSettled' },//pending bets
+        { value: '1', label: 'Settled' },
+        { value: '2', label: 'Cancelled' },
+        // { value: 'voided', label: 'Voided' }
     ];
+
+
 
     // ✅ Get tab specific params
     const getTabParams = (tabKey) => {
@@ -70,7 +88,7 @@ function Bettingprofitloss() {
             'casino': { sport_id: '', bet_type: 'casino' },
             'Toss': { sport_id: '', bet_type: 'toss' },
             'Tie': { sport_id: '', bet_type: 'tie' },
-            'Indian Casino': { sport_id: '', bet_type: 'casino' },
+            // 'Indian Casino': { sport_id: '', bet_type: 'casino' },
             'lottery': { sport_id: '', bet_type: 'lottery' },
         };
         return paramsMap[tabKey] || { sport_id: '', bet_type: 'all' };
@@ -103,6 +121,15 @@ function Bettingprofitloss() {
                 page: page,
                 limit: 50,
             };
+
+
+            if (betStatus && betStatus !== '') {
+                params.bet_status = betStatus;
+                console.log("✅ Status filter applied:", betStatus);
+            } else {
+                console.log("ℹ️ No status filter applied (All Status)");
+            }
+
 
             // ✅ CONDITION: Role ke hisaab se parameter bhejo
             if (role === '2') {
@@ -236,6 +263,12 @@ function Bettingprofitloss() {
                 limit: 100,
             };
 
+            // ✅ ADD STATUS ONLY IF SELECTED (not empty)
+            if (betStatus && betStatus !== '') {
+                params.bet_status = betStatus; // matched, unmatched, settled, cancelled, voided
+                console.log("✅ Status filter applied:", betStatus);
+            }
+
             // ✅ CONDITION: Role ke hisaab se parameter bhejo
             if (role === '2') {
                 params.agent_id = agentId;  // role=2 → agent_id
@@ -282,7 +315,7 @@ function Bettingprofitloss() {
                 selection: item.selection || item.team || 'N/A',
                 odds: item.bet_on || 0,
                 stake: item.stake || 0,
-                type:  item.bet_on || '-',
+                type: item.bet_on || '-',
                 placed: item.bet_placed || item.created_at ?
                     new Date(item.bet_placed || item.created_at).toLocaleString() :
                     'N/A',
@@ -326,9 +359,9 @@ function Bettingprofitloss() {
                 user_name: bet.user_name || bet.pl_id || 'N/A',
                 bet_id: bet.bet_id || bet._id || 'N/A',
                 selection: bet.selection || bet.team || 'N/A',
-                odds: bet.bet_on  || 0,
+                odds: bet.bet_on || 0,
                 stake: bet.stake || 0,
-                type: bet.bet_type|| '-',
+                type: bet.bet_type || '-',
                 placed: bet.placed || bet.bet_placed || bet.created_at ?
                     new Date(bet.placed || bet.bet_placed || bet.created_at).toLocaleString() :
                     'N/A',
@@ -533,8 +566,8 @@ function Bettingprofitloss() {
                                                         <dt className="fw-bold me-2">Net Market Total</dt>
                                                         <dd
                                                             className={`fw-bold mb-0 ${summary.netMarketTotal >= 0
-                                                                    ? "text-success"
-                                                                    : "text-danger"
+                                                                ? "text-success"
+                                                                : "text-danger"
                                                                 }`}
                                                         >
                                                             {summary.netMarketTotal >= 0
@@ -570,7 +603,7 @@ function Bettingprofitloss() {
                 'casino': ['market', 'profit_loss'],
                 'Toss': ['market', 'settled_date', 'profit_loss'],
                 'Tie': ['market', 'settled_date', 'profit_loss'],
-                'Indian Casino': ['market', 'profit_loss'],
+                // 'Indian Casino': ['market', 'profit_loss'],
                 'lottery': ['pl_id', 'bet_id', 'bet_placed', 'match', 'lottery_type', 'bhav', 'pl'],
             };
             return fieldMap[tab] || ['market', 'profit_loss'];
@@ -693,6 +726,24 @@ function Bettingprofitloss() {
                 <div className="row">
                     <div className="col-md-12">
                         <div className="row">
+                            {/* <div className="mb-sm-0 mb-3 col-lg-4 col-sm-6 col-12">
+                                <div className="bet-sec">
+                                    <label className="mt-2 me-2 form-label">Bet Status:</label>
+                                    <select
+                                        className="small_select form-select"
+                                        value={betStatus}
+                                        onChange={(e) => setBetStatus(e.target.value)}
+                                    >
+                                        {betStatusOptions.map(option => (
+                                            <option key={option.value} value={option.value}>
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div> */}
+
+
                             <div className="mb-sm-0 mb-3 col-lg-4 col-sm-6 col-12">
                                 <div className="bet-sec">
                                     <label className="mt-2 me-2 form-label">Bet Status:</label>
@@ -701,6 +752,7 @@ function Bettingprofitloss() {
                                         value={betStatus}
                                         onChange={(e) => setBetStatus(e.target.value)}
                                     >
+                                        <option value="all">All Status</option> {/* ✅ YAHAN ADD KARO */}
                                         {betStatusOptions.map(option => (
                                             <option key={option.value} value={option.value}>
                                                 {option.label}

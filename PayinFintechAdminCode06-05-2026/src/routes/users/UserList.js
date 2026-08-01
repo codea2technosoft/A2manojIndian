@@ -21,6 +21,7 @@ import {
 import UserAssignForm from "./UserAssignForm";
 import moment from "moment";
 import { removeCookie, setCookie } from "utils/cookie";
+import { FaFileAlt } from "react-icons/fa";
 
 const UserList = () => {
   const [page, setPage] = useState(1);
@@ -39,8 +40,14 @@ const UserList = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
-
   const titles = [{ path: location.pathname, title: "Users" }];
+
+  // UserList.js - onViewLogs function change karo
+  const onViewLogs = (userId) => {
+    // ✅ Correct path - /users-logs (not /user-logs)
+    navigate(`/users-logs/${userId}`);
+  };
+
 
   const columns = [
     // {
@@ -61,7 +68,7 @@ const UserList = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-     render: (text, record) => {
+      render: (text, record) => {
         return <div>{record.full_name || ""}</div>;
       },
     },
@@ -69,7 +76,7 @@ const UserList = () => {
       title: "Client Name",
       dataIndex: "client_name",
       key: "client_name",
-     render: (text, record) => {
+      render: (text, record) => {
         return <div>{record.client_name || ""}</div>;
       },
     },
@@ -137,6 +144,13 @@ const UserList = () => {
           <Button type="link" size="small" onClick={() => onEdit(record)}>
             <PencilAltIcon width={24} height={24} />
           </Button>
+
+          <Button type="primary"
+            size="small"
+            onClick={() => onViewLogs(record.id)}>
+            Login History
+          </Button>
+
           {/* <Button type="link" size="small" onClick={() => onAccessMerchantDashboard(record.id)}>
             <LoginIcon width={24} height={24} />
           </Button> */}
@@ -233,7 +247,7 @@ const UserList = () => {
     onToggleUpdateForm();
   };
 
- 
+
 
   const onToggleUpdateForm = () => {
     // in case hide update form, set selected currency is null
@@ -331,18 +345,18 @@ const UserList = () => {
 
   const disabledRowIds = [436, 438];
 
-const rowSelection = {
-  selectedRowKeys,
-  onChange: (selectedRowKeys, selectedRows) => {
-    setSelectedRowKeys(selectedRowKeys);
-  ;
-  },
-  getCheckboxProps: (record) => {
-    return {
-      disabled: disabledRowIds.includes(record.id),
-    };
-  },
-};
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setSelectedRowKeys(selectedRowKeys);
+      ;
+    },
+    getCheckboxProps: (record) => {
+      return {
+        disabled: disabledRowIds.includes(record.id),
+      };
+    },
+  };
 
   return (
     <div>

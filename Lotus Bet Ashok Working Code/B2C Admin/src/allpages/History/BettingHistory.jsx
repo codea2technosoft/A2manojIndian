@@ -197,7 +197,8 @@ const BettingHistory = () => {
             'Exchange': '',
             'FancyBet': '',
             'BookMaker': '',
-            'casino': ['Game ID', 'PL ID', 'Market', 'Bet Placed', 'Stake', 'Profit / Loss'],
+            'casino': ['PL ID', 'Bet ID', 'Bet placed', 'IP Address', 'Market', 'Selection', 'Type', 'Odds req.', 'Stake', 'Profit/Loss'],
+            // 'casino': ['Game ID', 'PL ID', 'Market', 'Bet Placed', 'Stake', 'Profit / Loss'],
             'Toss': '',
             'Tie': '',
             'lottery': '',
@@ -267,11 +268,33 @@ const BettingHistory = () => {
                                     </tr>
                                 ) : data.length > 0 ? (
                                     data.map((item, index) => (
-                                        <tr key={index}>
-                                            {Object.values(item).map((value, idx) => (
-                                                <td key={idx}>{value}</td>
-                                            ))}
-                                        </tr>
+                                        // <tr key={index}>
+                                        //     {Object.values(item).map((value, idx) => (
+                                        //         <td key={idx}>{value}</td>
+                                        //     ))}
+                                        // </tr>
+                                           <tr key={index}>
+                                        <td>{item.pl_id}</td>
+                                        <td>{item.bet_id}</td>
+                                        <td>{item.bet_placed}</td>
+                                        <td>{item.ip}</td>
+                                        <td>{item.market}</td>
+                                        <td>{item.selection}</td>
+                                        <td>{item.type}</td>
+                                        <td>{item.odds}</td>
+                                        <td>{item.stake}</td>
+                                        <td
+                                            style={{
+                                                color:
+                                                    Number(item.profit_loss) >= 0
+                                                        ? "green"
+                                                        : "red",
+                                                fontWeight: "bold",
+                                            }}
+                                        >
+                                            {item.profit_loss}
+                                        </td>
+                                    </tr>
                                     ))
                                 ) : (
                                     <tr>

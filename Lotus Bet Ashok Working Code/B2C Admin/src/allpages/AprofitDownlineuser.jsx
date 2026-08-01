@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { getProfitLossReportUser } from "../../src/Server/api";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 export default function AprofitDownlineuser() {
   // ✅ Get agent_id from URL
@@ -20,6 +21,11 @@ export default function AprofitDownlineuser() {
   const [toDate, setToDate] = useState("");
   const [fromTime, setFromTime] = useState("");
   const [toTime, setToTime] = useState("");
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
 
   // ✅ Dynamic game list state
   const [gameList, setGameList] = useState([]);
@@ -335,7 +341,7 @@ export default function AprofitDownlineuser() {
                             <th>UID</th>
                             {/* ✅ DYNAMIC: Game columns */}
                             {gameList.map((game) => (
-                              <th style={{textTransform:"capitalize"}} key={game.id}>{game.name} P/L</th>
+                              <th style={{ textTransform: "capitalize" }} key={game.id}>{game.name} P/L</th>
                             ))}
                             <th>Total P/L</th>
                           </tr>
@@ -346,10 +352,10 @@ export default function AprofitDownlineuser() {
                             data.map((item, index) => (
                               <tr key={index}>
                                 <td className="text-start">
-                                 <a href="#">
+                                  <a href="#">
                                     <span className="">CL</span>
-                                  {item.username}
-                                 </a>
+                                    {item.username}
+                                  </a>
                                 </td>
                                 {/* ✅ DYNAMIC: Game values */}
                                 {gameList.map((game) => (
@@ -398,46 +404,38 @@ export default function AprofitDownlineuser() {
 
                       {/* ✅ Pagination */}
                       {data.length > 0 && totalPages > 0 && (
-                        <div className="d-flex justify-content-center">
-                          <div className="bottom-pagination">
-                            <ul
-                              className="pagination"
-                              role="navigation"
-                              aria-label="Pagination"
-                            >
-                              <li className={currentPage === 1 ? "page-item disabled" : "page-item"}>
-                                <a
-                                  href="#!"
-                                  className="page-link"
-                                  aria-disabled={currentPage === 1}
-                                  aria-label="Previous page"
-                                  onClick={handlePrev}
-                                  style={{ cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
-                                >
-                                  &lt;
-                                </a>
-                              </li>
+                        <div className="bottom-pagination d-flex justify-content-center align-items-center">
+                          <ul className="pagination mb-0 gap-0">
 
-                              <li className="page-item">
-                                <span className="page-link">
-                                  Page {currentPage} of {totalPages}
-                                </span>
-                              </li>
+                            <li className={`previous ${currentPage === 1 ? "disabled" : ""}`}>
+                              <Link onClick={() => handlePageChange(currentPage - 1)}>
+                                <FaChevronLeft />
+                              </Link>
+                            </li>
 
-                              <li className={currentPage === totalPages ? "page-item disabled" : "page-item"}>
-                                <a
-                                  href="#!"
-                                  className="page-link"
-                                  aria-disabled={currentPage === totalPages}
-                                  aria-label="Next page"
-                                  onClick={handleNext}
-                                  style={{ cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
+                            {[currentPage - 1, currentPage, currentPage + 1]
+                              .filter((p) => p > 0 && p <= totalPages)
+                              .map((p) => (
+                                <li
+                                  key={p}
+                                  className={`p-0 ${currentPage === p ? "active" : ""}`}
                                 >
-                                  &gt;
-                                </a>
-                              </li>
-                            </ul>
-                          </div>
+                                  <Link
+                                    className="pagintion-li"
+                                    onClick={() => handlePageChange(p)}
+                                  >
+                                    {p}
+                                  </Link>
+                                </li>
+                              ))}
+
+                            <li className={`next ${currentPage === totalPages ? "disabled" : ""}`}>
+                              <Link onClick={() => handlePageChange(currentPage + 1)}>
+                                <FaChevronRight />
+                              </Link>
+                            </li>
+
+                          </ul>
                         </div>
                       )}
                     </>

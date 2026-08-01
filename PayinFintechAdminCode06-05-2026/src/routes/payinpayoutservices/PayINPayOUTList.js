@@ -69,11 +69,11 @@ const PayINPayOUTList = () => {
             <strong>Email : </strong>
             <a href={`mailto:${record.email}`}>{record.email}</a>
           </div>
-          <div>
+          {/* <div>
             <span>
               <strong>Password : </strong> {record.simple_pass}
             </span>
-          </div>
+          </div> */}
         </div>
       ),
     },

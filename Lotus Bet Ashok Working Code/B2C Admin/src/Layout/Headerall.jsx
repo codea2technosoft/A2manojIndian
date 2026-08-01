@@ -321,15 +321,15 @@ export default function Header({ depositPending = 0, withdrawPending = 0 }) {
 
                         <li className={`dropdown ${[
                             "/my-account-statement",
-                            "/aprofitDownline",
-                            "/adownlinesportspl",
-                            "/aprofitMarket",
+                            "/pl-by-downline",
+                            "/match-profit-loss",
+                            "/pl-by-market",
                             "/profit-loss-sports",
-                            "/aprofitplayer",
-                            "/aprofitCasino",
+                            "/pl-report-by-player",
+                            "/casino-profit-loss-by-date",
                             "/report/aura",
                             "/report/international",
-                            "/report/gap",
+                            "/pl-gap-casino-bets",
                         ].includes(location.pathname)
                             ? "active"
                             : ""
@@ -343,15 +343,15 @@ export default function Header({ depositPending = 0, withdrawPending = 0 }) {
                             </div>
                             <ul className={activeDropdown === "report" ? "show" : ""}>
                                 <li><Link to="/my-account-statement">Account Statement</Link></li>
-                                <li><Link to="/aprofitDownline">Profit/Loss by Downline</Link></li>
-                                <li><Link to="/adownlinesportspl">Match Profit Loss</Link></li>
-                                <li><Link to="/AprofitMarket">Profit/Loss Report by Market</Link></li>
-                                <li><Link to="/adownlinesportspl">Profit/Loss Sports Wise</Link></li>
-                                <li><Link to="/aprofitplayer">Profit/Loss Report by Player</Link></li>
-                                <li><Link to="/comming-soon">Casino Profit/Loss Report by Date</Link></li>
-                                <li><Link to="/comming-soon">Profit/Loss Aura Casino Bets</Link></li>
-                                <li><Link to="/comming-soon">Profit/Loss International Casino Bets</Link></li>
-                                <li><Link to="/comming-soon">Profit/Loss Gap Casino Bets</Link></li>
+                                <li><Link to="/pl-by-downline">Profit/Loss by Downline</Link></li>
+                                <li><Link to="/match-profit-loss">Match Profit Loss</Link></li>
+                                <li><Link to="/pl-by-market">Profit/Loss Report by Market</Link></li>
+                                <li><Link to="/match-profit-loss">Profit/Loss Sports Wise</Link></li>
+                                <li><Link to="/pl-report-by-player">Profit/Loss Report by Player</Link></li>
+                                <li><Link to="/casino-profit-loss-by-date">Casino Profit/Loss Report by Date</Link></li>
+                                <li><Link to="pl-aura-casino-bets">Profit/Loss Aura Casino Bets</Link></li>
+                                <li><Link to="/pl-international-casino-bets">Profit/Loss International Casino Bets</Link></li>
+                                <li><Link to="/pl-gap-casino-bets">Profit/Loss Gap Casino Bets</Link></li>
                             </ul>
                         </li>
 

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { profitLossReportPlayer } from "../Server/api";
+import { Link } from 'react-router';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 function AprofitPlayer() {
   const [data, setData] = useState([]);
@@ -162,7 +164,7 @@ function AprofitPlayer() {
     }
     const newFilters = {
       ...filters,
-      sport_id: sportId,
+    sport_id: sportId ? String(sportId) : "",
       page: 1
     };
     setFilters(newFilters);
@@ -426,18 +428,18 @@ function AprofitPlayer() {
                   </button>
                   <button
                     type="button"
-                    className={`mb-2 mx-1 ${filters.sport_id === '6' ? 'theme_dark_btn' : 'theme_light_btn'} btn btn-primary`}
-                    onClick={() => handleSportFilter('6')}
+                    className={`mb-2 mx-1 ${filters.sport_id === '10' ? 'theme_dark_btn' : 'theme_light_btn'} btn btn-primary`}
+                    onClick={() => handleSportFilter('10')}
                   >
                     International Casino
                   </button>
-                  <button
+                  {/* <button
                     type="button"
                     className={`mb-2 mx-1 ${filters.sport_id === '11' ? 'theme_dark_btn' : 'theme_light_btn'} btn btn-primary`}
                     onClick={() => handleSportFilter('11')}
                   >
                     Indian Casino
-                  </button>
+                  </button> */}
                 </div>
                 {agentDetails.total_users > 0 && (
                   <div className="mb-2">
@@ -522,43 +524,28 @@ function AprofitPlayer() {
                       </table>
 
                       {/* Pagination */}
-                      {pagination.totalPages > 0 && (
-                        <div className="bottom-pagination">
-                          <ul role="navigation" aria-label="Pagination">
-                            <li className={`previous ${pagination.page <= 1 ? 'disabled' : ''}`}>
-                              <a
-                                className=""
-                                tabIndex={pagination.page <= 1 ? -1 : 0}
-                                role="button"
-                                aria-disabled={pagination.page <= 1}
-                                aria-label="Previous page"
-                                rel="prev"
-                                onClick={() => handlePageChange(pagination.page - 1)}
-                                style={{ cursor: pagination.page <= 1 ? 'not-allowed' : 'pointer' }}
-                              >
-                                &lt;{" "}
-                              </a>
+
+                      {pagination.total > 0 && (
+                        <div className="bottom-pagination d-flex justify-content-center align-items-center">
+                          <ul className="pagination mb-0 gap-0">
+                            <li className={`previous ${pagination.page === 1 ? "disabled" : ""}`}>
+                              <Link className="" onClick={() => handlePageChange(pagination.page - 1)}>
+                                <FaChevronLeft />
+                              </Link>
                             </li>
-                            <li className="page-info">
-                              <span>
-                                Page {pagination.page} of {pagination.totalPages}
-                                ({pagination.total} records)
-                              </span>
-                            </li>
-                            <li className={`next ${pagination.page >= pagination.totalPages ? 'disabled' : ''}`}>
-                              <a
-                                className=""
-                                tabIndex={pagination.page >= pagination.totalPages ? -1 : 0}
-                                role="button"
-                                aria-disabled={pagination.page >= pagination.totalPages}
-                                aria-label="Next page"
-                                rel="next"
-                                onClick={() => handlePageChange(pagination.page + 1)}
-                                style={{ cursor: pagination.page >= pagination.totalPages ? 'not-allowed' : 'pointer' }}
-                              >
-                                {" "}
-                                &gt;
-                              </a>
+                            {[pagination.page - 1, pagination.page, pagination.page + 1]
+                              .filter((p) => p > 0 && p <= pagination.totalPages)
+                              .map((p) => (
+                                <li key={p} className={`p-0 ${pagination.page === p ? "active" : ""}`}>
+                                  <Link className="pagintion-li" onClick={() => handlePageChange(p)}>
+                                    {p}
+                                  </Link>
+                                </li>
+                              ))}
+                            <li className={`next ${pagination.page === pagination.totalPages ? "disabled" : ""}`}>
+                              <Link className="" onClick={() => handlePageChange(pagination.page + 1)}>
+                                <FaChevronRight />
+                              </Link>
                             </li>
                           </ul>
                         </div>

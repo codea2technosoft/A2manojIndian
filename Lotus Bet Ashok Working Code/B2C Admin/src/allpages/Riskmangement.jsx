@@ -643,7 +643,7 @@ const fetchEventBets = async (eventId, type, agentId, fancy_id = '') => {
                     "Odd": item.odd,
                     "Stake": item.stake,
                     "Liability": item.liability,
-                    "Total": item.total,
+                    "Total": Number(item.total.toFixed(2)),
                     "Bet Type": item.bet_type,
                     "Matched": item.matched_status,
                     "Created At": new Date(item.created_at).toLocaleString()

@@ -63,10 +63,10 @@ const PayINPayOUTPermission = () => {
             <strong>Email : </strong>
             <a href={`mailto:${record.email}`}>{record.email}</a>
           </div>
-          <div>
+          {/* <div>
             <strong>Password : </strong>
             <span> {record.simple_pass}</span>
-          </div>
+          </div> */}
           {/* <div>
             <span> {record.user_temp && record.user_temp.otp}</span>
           </div> */}

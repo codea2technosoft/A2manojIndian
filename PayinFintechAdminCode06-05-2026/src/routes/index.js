@@ -103,6 +103,7 @@ import TransactionAccountPayoutReportDetails from "routes/payout/TransactionAcco
 import TransactionPayoutList from "routes/payout/TransactionPayoutList";
 import TransactionPaypalList from "routes/Paypal-Transacrion/TransactionPaypalList";
 import FreezeAmount from "./freezeAmount";
+import UserListLogs from "routes/users/UserListLogs";
 
 const ProtectedRoute = ({ children }) => {
   const location = useLocation();
@@ -155,6 +156,7 @@ const AppRoutes = () => {
         <Route exact path="/transaction" element={<Transaction />} />
         <Route exact path="/account-payout-report" element={<AccountPayoutReport />} />
         <Route exact path="/transactionspayin" element={<TransactionPayin />} />
+        <Route path="/users-logs/:userId" element={<UserListLogs />} />
         <Route
           exact
           path="/Paypal-Transaction"

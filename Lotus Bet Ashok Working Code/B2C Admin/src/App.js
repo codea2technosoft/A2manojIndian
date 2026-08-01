@@ -174,6 +174,7 @@ import AprofitPlayer from "./allpages/AprofitPlayer.jsx";
 import AprofitMarket from "./allpages/AprofitMarket.jsx";
 import AprofitCasino from "./allpages/AprofitCasino.jsx";
 import Internationalreport from "./allpages/Internationalreport.jsx";
+import Gapcasinobets from "./allpages/Gapcasinobets.jsx";
 import Profitgaploss from "./allpages/Profitgaploss.jsx";
 import Profitlossaura from "./allpages/Profitlossaura.jsx";
 import Banking from "./allpages/Banking.jsx";
@@ -427,20 +428,24 @@ const App = () => {
           element={<ProtectedRoute element={LifetimePL} path="/lifetime-PL" />}
         />
         <Route
-          path="/aprofitplayer"
-          element={<ProtectedRoute element={AprofitPlayer} path="/aprofitplayer" />}
+          path="/pl-report-by-player"
+          element={<ProtectedRoute element={AprofitPlayer} path="/pl-report-by-player" />}
         />
         <Route
           path="/sms"
           element={<ProtectedRoute element={Sms} path="/sms" />}
         />
         <Route
-          path="/report/international"
-          element={<ProtectedRoute element={Internationalreport} path="/report/international" />}
+          path="/pl-international-casino-bets"
+          element={<ProtectedRoute element={Internationalreport} path="/pl-international-casino-bets" />}
         />
         <Route
-          path="/report/aura"
-          element={<ProtectedRoute element={Profitlossaura} path="/report/aura" />}
+          path="/pl-gap-casino-bets"
+          element={<ProtectedRoute element={Gapcasinobets} path="/pl-gap-casino-bets" />}
+        />
+        <Route
+          path="/pl-aura-casino-bets"
+          element={<ProtectedRoute element={Profitlossaura} path="/pl-aura-casino-bets" />}
         />
         <Route
           path="/banking"
@@ -459,24 +464,24 @@ const App = () => {
           element={<ProtectedRoute element={Profitgaploss} path="/report/gap" />}
         />
         <Route
-          path="/aprofitCasino"
-          element={<ProtectedRoute element={AprofitCasino} path="/aprofitCasino" />}
+          path="/casino-profit-loss-by-date"
+          element={<ProtectedRoute element={AprofitCasino} path="/casino-profit-loss-by-date" />}
         />
         <Route
-          path="/aprofitDownline"
-          element={<ProtectedRoute element={AprofitDownline} path="/aprofitDownline" />}
+          path="/pl-by-downline"
+          element={<ProtectedRoute element={AprofitDownline} path="/pl-by-downline" />}
         />
         <Route
           path="/profit-loss-report-sports-wise-downline/:id"
           element={<ProtectedRoute element={Profitlossreportsportswisedownline} path="/profit-loss-report-sports-wise-downline/:id" />}
         />
         <Route
-          path="/aprofitMarket"
-          element={<ProtectedRoute element={AprofitMarket} path="/aprofitMarket" />}
+          path="/pl-by-market"
+          element={<ProtectedRoute element={AprofitMarket} path="/pl-by-market" />}
         />
         <Route
-          path="/adownlinesportspl"
-          element={<ProtectedRoute element={Adownlinesportspl} path="/adownlinesportspl" />}
+          path="/match-profit-loss"
+          element={<ProtectedRoute element={Adownlinesportspl} path="/match-profit-loss" />}
         />
         <Route
           path="/downlinesportspl-sports-wise"

@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../viewmatchAndFancy/Eventcss.scss"
-import { useLocation } from "react-router-dom";  // ✅ ADD THIS
+import { useLocation } from "react-router-dom";
+
 function GetEventBets() {
   const admin_id = localStorage.getItem("admin_id");
-  // const event_id = localStorage.getItem("event_id");
   const token = localStorage.getItem("token");
-    const location = useLocation();
+  const location = useLocation();
   const pathParts = location.pathname.split("/");
   const eventIndex = pathParts.indexOf("event_id");
   const event_id = eventIndex !== -1 && pathParts[eventIndex + 1] ? pathParts[eventIndex + 1] : "";
-  // alert(event_id)
- 
+
   const [betsData, setBetsData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [selectedBetType, setSelectedBetType] = useState("all");
@@ -27,6 +26,26 @@ function GetEventBets() {
 
   const [betTypes, setBetTypes] = useState([]);
 
+  // Format bet type for display
+  const formatBetType = (betType) => {
+    if (!betType || betType === "N/A" || betType === "") return "N/A";
+    
+    const type = betType.toUpperCase();
+    const typeMap = {
+      "BOOKMAKER": "BOOKMAKER",
+      "MATCH_ODDS": "MATCH ODDS",
+      "MATCH ODDS": "MATCH ODDS",
+      "FANCY": "FANCY",
+      "B": "BOOKMAKER",
+      "M": "MATCH ODDS",
+      "F": "FANCY"
+    };
+    
+    // Replace underscores with spaces for better display
+    const formatted = type.replace(/_/g, ' ');
+    return typeMap[formatted] || formatted;
+  };
+
   const getEventBets = async (page = 1) => {
     setLoading(true);
     setError(null);
@@ -35,10 +54,12 @@ function GetEventBets() {
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}/get-event-bets`,
         {
-          admin_id: admin_id,
+        //  admin_id: admin_id,
           event_id: event_id,
           page: page,
-          limit: pagination.pageSize
+          limit: pagination.pageSize,
+          // type: selectedBetType === "all" ? "" : selectedBetType  || "all"
+          type: selectedBetType || "all"
         },
         {
           headers: {
@@ -56,7 +77,7 @@ function GetEventBets() {
             place_time: bet.created_at || "N/A",
             username: `USER ${bet.user_id?.substring(0, 6) || "N/A"}`,
             runner_name: bet.team || bet.runner_name || "N/A",
-            bet_type: bet.bet_type?.toUpperCase() || "N/A",
+            bet_type: bet.bet_type ? bet.bet_type.toUpperCase() : "N/A",
             bet_price: bet.odd || 0,
             bet_value: bet.total || 0,
             bet_amount: bet.stake || bet.amount || 0,
@@ -66,8 +87,16 @@ function GetEventBets() {
           setBetsData(formattedData);
           setFilteredData(formattedData);
 
-          const uniqueBetTypes = [...new Set(formattedData.map(bet => bet.bet_type || "").filter(type => type !== ""))];
+          // Extract unique bet types
+          const uniqueBetTypes = [...new Set(
+            formattedData
+              .map(bet => bet.bet_type || "")
+              .filter(type => type !== "" && type !== "N/A")
+          )];
           setBetTypes(uniqueBetTypes);
+
+          // Debug log to check bet types
+          console.log("Unique bet types:", uniqueBetTypes);
 
           if (res.data.pagination) {
             setPagination(prev => ({
@@ -138,7 +167,9 @@ function GetEventBets() {
     if (betType === "all") {
       setFilteredData(betsData);
     } else {
-      const filtered = betsData.filter(bet => bet.bet_type.toLowerCase() === betType.toLowerCase());
+      const filtered = betsData.filter(
+        bet => bet.bet_type?.toUpperCase() === betType.toUpperCase()
+      );
       setFilteredData(filtered);
     }
   };
@@ -182,27 +213,15 @@ function GetEventBets() {
     }
   };
 
-  const formatBetType = (betType) => {
-    switch (betType.toLowerCase()) {
-      case "bookmaker":
-        return "BOOKMAKER";
-      case "match_odds":
-        return "MATCH ODDS";
-      case "fancy":
-        return "FANCY";
-      default:
-        return betType.toUpperCase() || "N/A";
-    }
-  };
-
   const getBadgeClass = (betType) => {
-    const type = betType.toLowerCase();
+    const type = betType?.toUpperCase() || "";
     switch (type) {
-      case "bookmaker":
+      case "BOOKMAKER":
         return "bg-primary";
-      case "match_odds":
+      case "MATCH_ODDS":
+      case "MATCH ODDS":
         return "bg-success";
-      case "fancy":
+      case "FANCY":
         return "bg-warning";
       default:
         return "bg-secondary";
@@ -302,11 +321,15 @@ function GetEventBets() {
               onChange={(e) => handleBetTypeFilter(e.target.value)}
             >
               <option value="all">All Types</option>
-              {betTypes.map((type, index) => (
-                <option key={index} value={type}>
-                  {formatBetType(type)}
-                </option>
-              ))}
+              {betTypes.length > 0 ? (
+                betTypes.map((type, index) => (
+                  <option key={index} value={type}>
+                    {formatBetType(type)}
+                  </option>
+                ))
+              ) : (
+                <option value="" disabled>No bet types available</option>
+              )}
             </select>
           </div>
 
@@ -336,7 +359,7 @@ function GetEventBets() {
           ) : (
             <>
               {filteredData.length === 0 ? (
-                <div className="no-data-section ">
+                <div className="no-data-section">
                   <div className="no-data-header table-responsive">
                     <table className="bets-table table table-striped">
                       <thead className="table-dark">
@@ -357,7 +380,7 @@ function GetEventBets() {
                     <h4 className="text-muted">NO DATA FOUND</h4>
                     <p className="text-muted">
                       {selectedBetType !== "all" ?
-                        `No bets found for bet type: ${selectedBetType}` :
+                        `No bets found for bet type: ${formatBetType(selectedBetType)}` :
                         "No bets available"}
                     </p>
                     {selectedBetType !== "all" && (
@@ -378,8 +401,7 @@ function GetEventBets() {
                         <tr>
                           <th className="text-white">PLACE TIME</th>
                           <th className="text-white">USERNAME</th>
-                                                    <th style={{ color: "white" }}>Phone Number</th>
-
+                          <th style={{ color: "white" }}>Phone Number</th>
                           <th className="text-white">RUNNER NAME</th>
                           <th className="text-white">BET ON</th>
                           <th className="text-white">BET TYPE</th>
@@ -394,43 +416,39 @@ function GetEventBets() {
                             <td>{formatDate(bet.place_time || bet.created_at)}</td>
                             <td>
                               <div className="d-flex align-items-center">
-                                {/* <span className={`badge ${getActionClass(bet.bet_action)} me-2`}>
-                                  {bet.bet_action || "N/A"}
-                                </span> */}
                                 {`${bet.admin_id?.substring(0, 6) || "N/A"}`}
                               </div>
                             </td>
-                                                        <td>{bet.mobile}</td>
-
+                            <td>{bet.mobile || "N/A"}</td>
                             <td>{bet.runner_name || bet.team || "N/A"}</td>
-                            
                             <td>
                               <span
                                 className="badge"
                                 style={{
                                   backgroundColor:
                                     bet.bet_on?.toLowerCase() === "back"
-                                      ? "#28a745"   // Green → Lagai
+                                      ? "#28a745"
                                       : bet.bet_on?.toLowerCase() === "lay"
-                                        ? "#dc3545" // Red → Khai
-                                        : "#6c757d", 
+                                        ? "#dc3545"
+                                        : "#6c757d",
                                   color: "#fff",
-                                  padding: "5px",
+                                  padding: "5px 10px",
                                   fontSize: "10px",
                                   borderRadius: "6px",
-                                  maxWidth:"25px",
-                                  margin:"auto"
-                                  
                                 }}
                               >
                                 {bet.bet_on?.toLowerCase() === "back"
                                   ? "Yes"
                                   : bet.bet_on?.toLowerCase() === "lay"
                                     ? "No"
-                                    : bet.bet_on}
+                                    : bet.bet_on || "N/A"}
                               </span>
                             </td>
-                            <td>{bet.bet_type}</td>
+                            <td>
+                              <span className={`badge ${getBadgeClass(bet.bet_type)}`}>
+                                {formatBetType(bet.bet_type)}
+                              </span>
+                            </td>
                             <td>{formatNumber(bet.bet_price || bet.odd)}</td>
                             <td>{formatNumber(bet.bet_value || bet.total)}</td>
                             <td>{formatNumber(bet.bet_amount || bet.stake || bet.amount)}</td>

@@ -386,6 +386,12 @@ export const DepositRequestListsByDate = (params = {}) =>
 
 export const BetListsDatewise = (data) =>
   API.post(`/get-Date-Wise-Bet-Report`, data);
+
+export const getProfitLossAura = (data) =>
+  API.post(`/getProfitLossAura`, data);
+
+
+
 export const getadmindepositlist = (data) =>
   API.post(`/get-admin-deposit-list`, data);
 
