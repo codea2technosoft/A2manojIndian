@@ -170,7 +170,7 @@ function AgentSettlementReport() {
       <div className="card-body">
         {/* Filters Row */}
         <div className="row mb-3 align-items-end gy-2">
-          <div className="col-md-2">
+          <div className="col-6 col-md-2">
             {/* <label  style={{ fontSize: '13px' }}>PAYMENT TYPE</label> */}
             <select
               className="form-select form-control-sm"
@@ -184,7 +184,7 @@ function AgentSettlementReport() {
               <option value="dr">Debit</option>
             </select>
           </div>
-          <div className="col-md-2">
+          <div className="col-6 col-md-2">
             {/* <label  style={{ fontSize: '13px' }}>From</label> */}
             <input
               type="date"
@@ -193,7 +193,7 @@ function AgentSettlementReport() {
               onChange={(e) => setFromDate(e.target.value)}
             />
           </div>
-          <div className="col-md-2">
+          <div className="col-6 col-md-2">
             {/* <label  style={{ fontSize: '13px' }}>To</label> */}
             <input
               type="date"
@@ -202,7 +202,7 @@ function AgentSettlementReport() {
               onChange={(e) => setToDate(e.target.value)}
             />
           </div>
-          <div className="col-md-4 d-flex gap-2">
+          <div className="col-6 col-md-4 d-flex gap-2">
             <button className="btn btn-primary btn-sm" onClick={handleSearch}>
               <FaSearch />
             </button>
@@ -243,12 +243,7 @@ function AgentSettlementReport() {
           </div>
         </div> */}
 
-        {loading ? (
-          <>
-            <Loader />
-            <div className="py-5 text-center">Loading...</div>
-          </>
-        ) : (
+        {
           <div className="table-responsive">
             <table className="table table-bordered table-striped table-sm">
               <thead>
@@ -264,7 +259,17 @@ function AgentSettlementReport() {
                 </tr>
               </thead>
               <tbody>
-                {historyData.length === 0 ? (
+                {loading ? (
+                  <>
+                    <tr>
+                      <td className="table_loader" colSpan="8">
+                        <div className="py-5">
+                          <Loader />
+                        </div>
+                      </td>
+                    </tr>
+                  </>
+                ) : historyData.length === 0 ? (
                   <tr>
                     <td className="py-5 text-center" colspan="7">
                       No Data Found
@@ -287,7 +292,10 @@ function AgentSettlementReport() {
                       <td>{item.debit > 0 ? item.debit.toFixed(2) : "-"}</td>
                       <td>{item.credit > 0 ? item.credit.toFixed(2) : "-"}</td>
                       <td>{item.balance ? item.balance.toFixed(2) : "-"}</td>
-                      <td>{item.type || "-"}</td>
+                      {/* <td>{item.type || "-"}</td> */}
+                      <td>
+                        {item.pay_type === "diya" ? "Debit" : "Credit"}
+                      </td>
                       <td>{item.remarks || "-"}</td>
                     </tr>
                   ))
@@ -305,9 +313,8 @@ function AgentSettlementReport() {
                   {getPageNumbers().map((page) => (
                     <div
                       key={page}
-                      className={`paginationnumber ${
-                        currentPage === page ? "active" : ""
-                      }`}
+                      className={`paginationnumber ${currentPage === page ? "active" : ""
+                        }`}
                       onClick={() => handlePageClick(page)}
                     >
                       {page}
@@ -324,7 +331,7 @@ function AgentSettlementReport() {
               </div>
             )}
           </div>
-        )}
+        }
       </div>
     </div>
   );

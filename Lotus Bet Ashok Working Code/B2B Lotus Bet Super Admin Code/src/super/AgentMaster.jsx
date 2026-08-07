@@ -393,15 +393,15 @@ function AgentMaster() {
           setPaginationData(response.data.pagination);
           setTotalItems(
             response.data.pagination.total_records ||
-              response.data.pagination.total,
+            response.data.pagination.total,
           );
           setTotalPages(
             response.data.pagination.total_pages ||
-              response.data.pagination.totalPages,
+            response.data.pagination.totalPages,
           );
           setCurrentPage(
             response.data.pagination.current_page ||
-              response.data.pagination.currentPage,
+            response.data.pagination.currentPage,
           );
           setItemsPerPage(response.data.pagination.limit || limit);
         }
@@ -459,17 +459,16 @@ function AgentMaster() {
   };
   const handleCopyData = (agent) => {
     const textToCopy = `
-AGENT LOGIN DETAILS
+MASTER LOGIN DETAILS
 --------------------
-Agent Code: ${agent.admin_id || "N/A"}
+Master Code: ${agent.admin_id || "N/A"}
 Password: ${agent.password || "N/A"}
-OTP: ${agent?.otp || "N/A"}
 Login URL:${COPY_API_URL}`;
 
     navigator.clipboard
       .writeText(textToCopy)
       .then(() => {
-        showSuccessToast("Agent login details copied!");
+        showSuccessToast("Master login details copied!");
       })
       .catch((err) => {
         console.error("Failed to copy: ", err);
@@ -767,9 +766,9 @@ Login URL:${COPY_API_URL}`;
           prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? {
-                  ...agent,
-                  chips: (Number(agent.chips) + depositValue).toString(),
-                }
+                ...agent,
+                chips: (Number(agent.chips) + depositValue).toString(),
+              }
               : agent,
           ),
         );
@@ -806,7 +805,7 @@ Login URL:${COPY_API_URL}`;
         } else {
           showErrorToast(
             error.response.data?.message ||
-              "Failed to deposit amount. Please try again.",
+            "Failed to deposit amount. Please try again.",
           );
         }
       } else if (error.request) {
@@ -889,9 +888,9 @@ Login URL:${COPY_API_URL}`;
           prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? {
-                  ...agent,
-                  chips: (Number(agent.chips) - withdrawValue).toString(),
-                }
+                ...agent,
+                chips: (Number(agent.chips) - withdrawValue).toString(),
+              }
               : agent,
           ),
         );
@@ -932,7 +931,7 @@ Login URL:${COPY_API_URL}`;
     navigate("/inactive-agent-lists");
   };
   const handleUpdateSuperAgent = (agent) => {
-    navigate(`/Updatesuperagentnew/${agent.admin_id}`);
+    navigate(`/AgentMasternew/update-master/${agent.admin_id}`);
 
     localStorage.setItem("super_agent_id", agent.super_agent_id);
   };
@@ -1034,17 +1033,6 @@ Login URL:${COPY_API_URL}`;
     }
   };
 
-  if (loading) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "100vh" }}
-      >
-        <Loader />
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="card agentmaster">
@@ -1065,7 +1053,7 @@ Login URL:${COPY_API_URL}`;
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="Search Agent..."
+                    placeholder="Search Master..."
                     value={searchInput}
                     onChange={handleSearchInputChange}
                     onKeyPress={handleSearchKeyPress}
@@ -1191,7 +1179,7 @@ Login URL:${COPY_API_URL}`;
                       <span>P/L</span>
                     </div>
                   </th>
-{/* 
+                  {/* 
                   <th rowSpan={2} className="position-relative">
                     <div className="d-flex justify-content-between align-items-center">
                       <span>Exposer</span>
@@ -1226,7 +1214,15 @@ Login URL:${COPY_API_URL}`;
               </thead>
               {/* API Data Rows */}
               <tbody>
-                {agentData.length > 0 ? (
+                {loading ? (
+                  <tr>
+                    <td colSpan="12">
+                      <div className="d-flex justify-content-center align-items-center py-5 table_loader">
+                        <Loader />
+                      </div>
+                    </td>
+                  </tr>
+                ) : agentData.length > 0 ? (
                   agentData.map((row, index) => (
                     <tr key={row.id}>
                       <td className="text-center">
@@ -1242,9 +1238,13 @@ Login URL:${COPY_API_URL}`;
                         </div>
                         <span>
                           [
-                          {row.username || row.name?.length > 10
-                            ? `${row.username || row.name.substring(0, 10)}`
-                            : row.username || row.name}
+                          {(() => {
+                            const name = row.username || row.name || "";
+                            const firstWord = name.split(" ")[0];
+                            return firstWord.length > 10
+                              ? firstWord.substring(0, 10)
+                              : firstWord;
+                          })()}
                           ]
                         </span>
                       </td>
@@ -1252,7 +1252,7 @@ Login URL:${COPY_API_URL}`;
                         <button
                           className="viewdetailsbutton"
                           onClick={() => handleCopyData(row)}
-                          title="Agent Code, OTP & Password"
+                          title="Copy Master Code, OTP & Password"
                         >
                           <FiCopy size={14} />
                         </button>
@@ -1508,7 +1508,33 @@ Login URL:${COPY_API_URL}`;
                       <td className="text-center">{row.doj}</td>
                       <td>{row?.reference ? row.reference : "-"}</td> */}
                       <td className="text-center">{row.share}</td>
-                      <td className="text-center">{row.master_admin_id}</td>
+
+
+                      {/* <td className="text-center">{row.master_admin_id}</td> */}
+
+                      <td className="text-center">
+                        {row.master_admin_id && row.master_admin_id !== "-" && row.master_admin_id !== "" ? (
+                          row.master_admin_id?.startsWith("SM") ? (
+                            <span
+                              onClick={() => navigate(`/AgentMasternew/${row.master_admin_id}`)}
+                              style={{ cursor: "pointer", color: "#000"}}
+                            >
+                              {row.master_admin_id}
+                            </span>
+                          ) : row.master_admin_id?.startsWith("MA") ? (
+                            <span
+                              onClick={() => navigate(`/Mastermyuser/${row.master_admin_id}`)}
+                              style={{ cursor: "pointer", color: "#000"}}
+                            >
+                              {row.master_admin_id}
+                            </span>
+                          ) : (
+                            row.master_admin_id
+                          )
+                        ) : (
+                          "admin"
+                        )}
+                      </td>
 
                       {/* <td className="text-center">
                         <div className="d-flex" style={{ width: "120px" }}>
@@ -1660,7 +1686,7 @@ Login URL:${COPY_API_URL}`;
                                     // Current row ka admin_id lein
                                     const selectedAdminId = row.admin_id;
                                     navigate(
-                                      `/CreateAgentmyuser/${selectedAdminId}`,
+                                      `/AgentMasternew/create-user/${selectedAdminId}`,
                                     );
                                     setOptionMenu(null);
                                   }}
@@ -1819,7 +1845,7 @@ Login URL:${COPY_API_URL}`;
                             title="Statement"
                           >
                             <FaFileAlt />
-                          </button>
+                          </button>*/}
 
                           <button
                             className="buttoncommon gradient-8"
@@ -1827,7 +1853,7 @@ Login URL:${COPY_API_URL}`;
                             title="Inactive Users"
                           >
                             <FaRectangleList />
-                          </button> */}
+                          </button>
                         </div>
                       </td>
 
@@ -1864,9 +1890,8 @@ Login URL:${COPY_API_URL}`;
                   {getPageNumbers().map((page) => (
                     <div
                       key={page}
-                      className={`paginationnumber ${
-                        currentPage === page ? "active" : ""
-                      }`}
+                      className={`paginationnumber ${currentPage === page ? "active" : ""
+                        }`}
                       onClick={() => handlePageClick(page)}
                     >
                       {page}
@@ -1921,7 +1946,7 @@ Login URL:${COPY_API_URL}`;
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className="btn btn-dark"
                     onClick={() => {
                       setShowStatusModal(false);
                       setSelectedAgent(null);
@@ -1931,7 +1956,7 @@ Login URL:${COPY_API_URL}`;
                   </button>
                   <button
                     type="button"
-                    className="btn btn-success"
+                    className="btn btn-theme"
                     onClick={handleStatusChange}
                   >
                     Confirm
@@ -2252,7 +2277,8 @@ Login URL:${COPY_API_URL}`;
 
                     <div className="col-6">
                       <Link
-                        to={`/icasino-setting/${selectedAgent?.admin_id}`}
+                       // to={`/icasino-setting/${selectedAgent?.admin_id}`}
+                        to={`#`}
                         className="btn gradient-2 w-100"
                         onClick={() => setShowSettingModal(false)}
                       >
@@ -2535,7 +2561,6 @@ Login URL:${COPY_API_URL}`;
                         className="form-control"
                         value={selectedAgent.password}
                         readOnly
-                        style={{ backgroundColor: "#f5f5f5" }}
                       />
                       <button
                         className="btn btn-outline-secondary"
@@ -2650,7 +2675,9 @@ Login URL:${COPY_API_URL}`;
                     />
                   </div>
                   <div>
-                    <label className="form-label">Deposit Amount </label>
+                    <label className="form-label text-uppercase">
+                      Deposit Amount{" "}
+                    </label>
                     <input
                       type="text"
                       className="form-control"
@@ -2775,7 +2802,17 @@ Login URL:${COPY_API_URL}`;
                   </div>
 
                   <div>
-                    <label className="form-label">Withdraw Amount </label>
+                    <div className="d-flex align-items-center justify-content-between">
+                      <label className="form-label text-uppercase">
+                        Withdraw Amount{" "}
+                      </label>
+                      <div className="text-muted remaining text-uppercase">
+                        Remaining balance :
+                        {(
+                          Number(selectedAgent.chips) - Number(withdrawAmount)
+                        ).toLocaleString()}
+                      </div>
+                    </div>
                     <input
                       type="text"
                       className="form-control"
@@ -2791,14 +2828,14 @@ Login URL:${COPY_API_URL}`;
                       Maximum withdrawable amount: {selectedAgent.chips}
                     </div> */}
                   </div>
-                  {withdrawAmount && !isNaN(withdrawAmount) && (
+                  {/* {withdrawAmount && !isNaN(withdrawAmount) && (
                     <div className="alert alert-info mt-2">
                       <strong>New Balance:</strong>
                       {(
                         Number(selectedAgent.chips) - Number(withdrawAmount)
                       ).toLocaleString()}
                     </div>
-                  )}
+                  )} */}
                   {withdrawAmount &&
                     Number(withdrawAmount) > Number(selectedAgent.chips) && (
                       <div className="alert alert-danger mt-2">

@@ -559,7 +559,7 @@ const Updatesuperagent = () => {
 
               {/* MATCH AND SHARE INFO Section */}
               <div className="col-12 my-4">
-                <h5 className="border-bottom pb-2">MATCH AND SHARE INFO</h5>
+                <h5 className="heading2 border-bottom pb-2">MATCH AND SHARE INFO</h5>
               </div>
 
               {/* MY MATCH SHARE */}
@@ -690,7 +690,7 @@ const Updatesuperagent = () => {
                   </small>
                 </div>
 
-                <div className="row">
+                <div className="row gy-2">
                   {/* Left Input */}
                   <div className="col-md-6">
                     <input
@@ -738,7 +738,7 @@ const Updatesuperagent = () => {
                   </small>
                 </div>
 
-                <div className="row">
+                <div className="row gy-2">
                   {/* Left Input */}
                   <div className="col-md-6">
                     <input
@@ -784,7 +784,7 @@ const Updatesuperagent = () => {
                     AVAILABLE PARTNERSHIP: {formData.myFootballComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -826,7 +826,7 @@ const Updatesuperagent = () => {
                     AVAILABLE PARTNERSHIP: {formData.myTennisComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -868,7 +868,7 @@ const Updatesuperagent = () => {
                     AVAILABLE PARTNERSHIP: {formData.myHorseRacingComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -912,7 +912,7 @@ const Updatesuperagent = () => {
                     AVAILABLE PARTNERSHIP: {formData.myGreyhoundRacingComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -954,7 +954,7 @@ const Updatesuperagent = () => {
                     AVAILABLE PARTNERSHIP: {formData.myPoliticsComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -996,7 +996,7 @@ const Updatesuperagent = () => {
                     AVAILABLE PARTNERSHIP: {formData.myCasinoComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"

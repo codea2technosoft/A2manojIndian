@@ -94,7 +94,7 @@ function MasterLedger() {
                                 );
                                 // navigate(`/super-agent-ledger`);
                                 navigate(
-                                  `/super-agent-ledger?master_id=${m.admin_id}`,
+                                  `/settlement?master_id=${m.admin_id}`,
                                 );
                               }}
                             />
@@ -157,7 +157,7 @@ function MasterLedger() {
                                 );
                                 // navigate(`/super-agent-ledger`);
                                 navigate(
-                                  `/super-agent-ledger?master_id=${m.admin_id}`,
+                                  `/settlement?master_id=${m.admin_id}`,
                                 );
                               }}
                             />

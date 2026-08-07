@@ -182,7 +182,7 @@ function UserSettlementReport() {
               <option value="dr">Debit</option>
             </select>
           </div> */}
-          <div className="col-md-2">
+          <div className="col-6 col-md-2">
             {/* <label  style={{ fontSize: '13px' }}>From</label> */}
             <input
               type="date"
@@ -191,7 +191,7 @@ function UserSettlementReport() {
               onChange={(e) => setFromDate(e.target.value)}
             />
           </div>
-          <div className="col-md-2">
+          <div className="col-6 col-md-2">
             {/* <label  style={{ fontSize: '13px' }}>To</label> */}
             <input
               type="date"
@@ -200,7 +200,7 @@ function UserSettlementReport() {
               onChange={(e) => setToDate(e.target.value)}
             />
           </div>
-          <div className="col-md-4 d-flex gap-2">
+          <div className="col-6 col-md-4 d-flex gap-2">
             <button className="btn btn-primary btn-sm" onClick={handleSearch}>
               <FaSearch />
             </button>
@@ -241,12 +241,7 @@ function UserSettlementReport() {
           </div>
         </div> */}
 
-        {loading ? (
-          <>
-            <Loader />
-            <div className="py-5 text-center">Loading...</div>
-          </>
-        ) : (
+        {
           <div className="table-responsive">
             <table className="table table-striped table-bordered table-sm">
               <thead>
@@ -264,7 +259,18 @@ function UserSettlementReport() {
                 </tr>
               </thead>
               <tbody>
-                {historyData.length === 0 ? (
+                {loading ? (
+                  <>
+                    <tr>
+                      <td colSpan="7">
+                        <div className="table_loader py-5 text-center">
+                          {" "}
+                          <Loader />
+                        </div>
+                      </td>
+                    </tr>
+                  </>
+                ) : historyData.length === 0 ? (
                   <tr>
                     <td colSpan="8" className="text-center py-5">
                       No transactions found
@@ -304,7 +310,7 @@ function UserSettlementReport() {
               </tbody>
             </table>
           </div>
-        )}
+        }
 
         {totalPages > 0 && (
           <div className="d-flex justify-content-center align-items-center mt-4">

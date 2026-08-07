@@ -1147,263 +1147,197 @@ const FancyBetsSection = memo(({
                 <p className="mt-2">Loading fancy bets...</p>
               </div>
             ) : (
-              <div className="fancybetsportsbook mt-2">
-                <div className="tabsfancycontent">
-                  <div className="fancybetcontent">
-                    <div>
-                      <div className="tab-content-fancy">
-                        <div className="indian-fancy-part skyDetailsRow">
-                          <div className="table-part position-relative">
-                            <table
-                              border={0}
-                              cellPadding={0}
-                              cellSpacing={0}
-                              className="table"
-                              width="100%"
-                              style={{ margin: 0 }}
-                            >
-                              <thead>
-                                <tr>
-                                  <th
-                                    align="left"
-                                    className="market-name-th"
-                                    valign="middle"
-                                  >
-                                    <div className="d-flex justify-content-between align-items-center">
-                                      <p className="text_blink"> Fancy Bet</p>
-                                    </div>
-                                  </th>
-                                  <th
-                                    align="center"
-                                    className="back-h"
-                                    valign="middle"
-                                  >
-                                    <span>NO</span>
-                                  </th>
-                                  <th
-                                    align="center"
-                                    className="lay-h"
-                                    valign="middle"
-                                  >
-                                    <span>YES</span>
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {Array.isArray(fancylist) &&
-                                  fancylist.length > 0 ? (
-                                  fancylist.map((market) => {
-                                    const rowId =
-                                      market.SelectionId || market.id;
-                                    const fancyExposureKey = `${event_id}-${market.SelectionId}`;
-                                    const exposureData =
-                                      fancyExposureData[fancyExposureKey];
-                                    const totalExposer =
-                                      exposureData?.total_exposer || 0;
-                                    const usersCount =
-                                      exposureData?.users_count || 0;
-
-                                    return (
-                                      <tr
-                                        key={rowId}
-                                        className="white-bg skyDetailsRow"
-                                      >
-                                        <td
-                                          align="left"
-                                          className="selaction_name"
-                                          valign="middle"
-                                        >
-                                          <div className="d-flex height_60 justify-content-between align-items-center">
-                                            <div className="d-flex gap-2">
-                                              <span>
-                                                <a>{market.RunnerName}</a>
-                                                <small className="max_amt">
-                                                  Max:{market.max || 1000}
-                                                </small>
-                                              </span>
-                                              {(totalExposer !== 0 ||
-                                                usersCount !== 0) && (
-                                                  <small className="exposerall">
-                                                    <span className="totalnewall">
-                                                      (
-                                                      {formatNumber(
-                                                        totalExposer,
-                                                      )}
-                                                      )
-                                                    </span>
-                                                  </small>
-                                                )}
-                                            </div>
-
-                                            <div className="d-flex justify-content-end align-items-center">
-                                              {exposureData &&
-                                                totalExposer > 0 && (
-                                                  <div className="exposure-info">
-                                                    <span
-                                                      className="ladderimage"
-                                                      role="button"
-                                                      onClick={() =>
-                                                        openLadder(
-                                                          `${event_id}-${market.SelectionId}`,
-                                                        )
-                                                      }
-                                                    >
-                                                      <img
-                                                        src={ladder}
-                                                        alt="ladder"
-                                                      />
-                                                    </span>
-                                                  </div>
-                                                )}
-                                            </div>
-                                          </div>
-                                        </td>
-                                        <td
-                                          align="center"
-                                          className="padding_0 p-0"
-                                          colSpan={2}
-                                          valign="middle"
-                                          style={{ position: "relative" }}
-                                        >
-                                          <div className="betbox">
-                                            <a
-                                              className={`td_btn pink_bg ${market.GameStatus ===
-                                                  "SUSPENDED" ||
-                                                  market.GameStatus ===
-                                                  "BALL RUNNING"
-                                                  ? "suspended-odds"
-                                                  : ""
-                                                }`}
-                                              onClick={() =>
-                                                market.GameStatus !==
-                                                "SUSPENDED" &&
-                                                market.GameStatus !==
-                                                "BALL RUNNING" &&
-                                                handleFancyOddsClick(
-                                                  market.LayPrice1,
-                                                  "lay",
-                                                  market,
-                                                  "no",
-                                                )
-                                              }
-                                            >
-                                              <span className="novalue">
-                                                {market.LayPrice1 || 0}
-                                              </span>
-                                              <span className="novalue1">
-                                                {formatVolume(
-                                                  market.LaySize1 || 0,
-                                                )}
-                                              </span>
-                                            </a>
-                                          </div>
-                                          <div
-                                            className="betbox"
-                                            style={{ right: 0 }}
-                                          >
-                                            <a
-                                              className={`td_btn blue_bg ${market.GameStatus ===
-                                                  "SUSPENDED" ||
-                                                  market.GameStatus ===
-                                                  "BALL RUNNING"
-                                                  ? "suspended-odds"
-                                                  : ""
-                                                }`}
-                                              onClick={() =>
-                                                market.GameStatus !==
-                                                "SUSPENDED" &&
-                                                market.GameStatus !==
-                                                "BALL RUNNING" &&
-                                                handleFancyOddsClick(
-                                                  market.BackPrice1,
-                                                  "back",
-                                                  market,
-                                                  "yes",
-                                                )
-                                              }
-                                            >
-                                              <span className="novalue">
-                                                {market.BackPrice1 || 0}
-                                              </span>
-                                              <span className="novalue1">
-                                                {formatVolume(
-                                                  market.BackSize1 || 0,
-                                                )}
-                                              </span>
-                                            </a>
-                                          </div>
-                                          {(market.GameStatus ===
-                                            "SUSPENDED" ||
-                                            market.GameStatus ===
-                                            "BALL RUNNING") && (
-                                              <div className="suspend-text">
-                                                {market.GameStatus ===
-                                                  "SUSPENDED"
-                                                  ? "SUSPENDED"
-                                                  : "BALL RUNNING"}
-                                              </div>
-                                            )}
-                                        </td>
-                                      </tr>
-                                    );
-                                  })
-                                ) : (
-                                  <tr className="white-bg skyDetailsRow">
-                                    <td
-                                      align="left"
-                                      className="selaction_name"
-                                      valign="middle"
-                                    >
-                                      <div className="d-flex height_60 justify-content-between align-items-center">
-                                        <span>
-                                          <a>----</a>
-                                          <small className="max_amt">
-                                            Max:---
-                                          </small>
-                                        </span>
-                                        <span
-                                          className="ladderimage"
-                                          role="button"
-                                          onClick={() => openLadder()}
-                                        >
-                                          <img alt="ladder" src={ladder} />
-                                        </span>
-                                      </div>
-                                    </td>
-                                    <td
-                                      align="center"
-                                      className="padding_0 p-0"
-                                      colSpan={2}
-                                      valign="middle"
-                                      style={{ position: "relative" }}
-                                    >
-                                      <div className="betbox">
-                                        <a className="td_btn pink_bg ">
-                                          <span className="novalue">--</span>
-                                          <span className="novalue1">--</span>
-                                        </a>
-                                      </div>
-                                      <div
-                                        className="betbox"
-                                        style={{ right: 0 }}
-                                      >
-                                        <a className="td_btn blue_bg ">
-                                          <span className="novalue">--</span>
-                                          <span className="novalue1">--</span>
-                                        </a>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                )}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
+     <div className="fancybetsportsbook mt-2">
+  <div className="tabsfancycontent">
+    <div className="fancybetcontent">
+    <div className="fancybetsportsbook mt-2">
+  <div className="tabsfancycontent">
+    <div className="fancybetcontent">
+      <div>
+        <div className="tab-content-fancy">
+          <div className="indian-fancy-part skyDetailsRow">
+            <div className="table-part position-relative">
+              <table
+                border={0}
+                cellPadding={0}
+                cellSpacing={0}
+                className="table"
+                width="100%"
+                style={{ margin: 0 }}
+              >
+                <thead>
+                  <tr>
+                    <th
+                      align="left"
+                      className="market-name-th"
+                      valign="middle"
+                    >
+                      <div className="d-flex justify-content-between align-items-center">
+                        <p className="text_blink"> Fancy Bet</p>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                    </th>
+                    <th
+                      align="center"
+                      className="back-h"
+                      valign="middle"
+                    >
+                      <span>NO</span>
+                    </th>
+                    <th
+                      align="center"
+                      className="lay-h"
+                      valign="middle"
+                    >
+                      <span>YES</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Array.isArray(fancylist) && fancylist.length > 0 ? (
+                    fancylist.map((market) => {
+                      const rowId = market.SelectionId || market.id;
+                      const fancyExposureKey = `${event_id}-${market.SelectionId}`;
+                      const exposureData = fancyExposureData[fancyExposureKey];
+                      const totalExposer = exposureData?.total_exposer || 0;
+                      const usersCount = exposureData?.users_count || 0;
+
+                      return (
+                        <tr
+                          key={rowId}
+                          className="white-bg skyDetailsRow"
+                        >
+                          <td
+                            align="left"
+                            className="selaction_name"
+                            valign="middle"
+                          >
+                            <div className="d-flex height_60 justify-content-between align-items-center">
+                              <div className="d-flex gap-2">
+                                <span>
+                                  <a>{market.RunnerName}</a>
+                                  <small className="max_amt">
+                                    Max:{market.max || 1000}
+                                  </small>
+                                </span>
+                                {(totalExposer !== 0 || usersCount !== 0) && (
+                                  <small className="exposerall">
+                                    <span className="totalnewall">
+                                      ({formatNumber(totalExposer)})
+                                    </span>
+                                  </small>
+                                )}
+                              </div>
+
+                              <div className="d-flex justify-content-end align-items-center">
+                                {exposureData && totalExposer > 0 && (
+                                  <div className="exposure-info">
+                                    <span
+                                      className="ladderimage"
+                                      role="button"
+                                      onClick={() =>
+                                        openLadder(
+                                          `${event_id}-${market.SelectionId}`
+                                        )
+                                      }
+                                    >
+                                      <img src={ladder} alt="ladder" />
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td
+                            align="center"
+                            className="padding_0 p-0"
+                            colSpan={2}
+                            valign="middle"
+                            style={{ position: "relative" }}
+                          >
+                            <div className="betbox">
+                              <a
+                                className={`td_btn pink_bg ${
+                                  market.GameStatus === "SUSPENDED" ||
+                                  market.GameStatus === "BALL RUNNING"
+                                    ? "suspended-odds"
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  market.GameStatus !== "SUSPENDED" &&
+                                  market.GameStatus !== "BALL RUNNING" &&
+                                  handleFancyOddsClick(
+                                    market.LayPrice1,
+                                    "lay",
+                                    market,
+                                    "no"
+                                  )
+                                }
+                              >
+                                <span className="novalue">
+                                  {market.LayPrice1 || 0}
+                                </span>
+                                <span className="novalue1">
+                                  {formatVolume(market.LaySize1 || 0)}
+                                </span>
+                              </a>
+                            </div>
+                            <div
+                              className="betbox"
+                              style={{ right: 0 }}
+                            >
+                              <a
+                                className={`td_btn blue_bg ${
+                                  market.GameStatus === "SUSPENDED" ||
+                                  market.GameStatus === "BALL RUNNING"
+                                    ? "suspended-odds"
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  market.GameStatus !== "SUSPENDED" &&
+                                  market.GameStatus !== "BALL RUNNING" &&
+                                  handleFancyOddsClick(
+                                    market.BackPrice1,
+                                    "back",
+                                    market,
+                                    "yes"
+                                  )
+                                }
+                              >
+                                <span className="novalue">
+                                  {market.BackPrice1 || 0}
+                                </span>
+                                <span className="novalue1">
+                                  {formatVolume(market.BackSize1 || 0)}
+                                </span>
+                              </a>
+                            </div>
+                            {(market.GameStatus === "SUSPENDED" ||
+                              market.GameStatus === "BALL RUNNING") && (
+                              <div className="suspend-text">
+                                {market.GameStatus === "SUSPENDED"
+                                  ? "SUSPENDED"
+                                  : "BALL RUNNING"}
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <Fakedata />
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+</div>
             )}
           </>
         )}
@@ -1575,198 +1509,198 @@ const BookmakerSection = memo(({
   };
 
   return (
-    <div className="bookmaker-section">
-      <div className="match-odds-part">
-        <div className="table-responsive">
-          <table className="table position-relative" style={{ marginBottom: 0 }} width="100%">
-            <thead>
-              <tr>
-                <th align="left" className="market-name-th" valign="middle">
-                  <div className="d-flex justify-content-between align-items-center">
-                    Book Maker
-                  </div>
-                </th>
-                <th align="center" className="back-h" valign="middle">
-                  <span>Back</span>
-                </th>
-                <th align="center" className="lay-h" valign="middle">
-                  <span>Lay</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {mainBookmakerMarkets.length > 0 ? (
-                mainBookmakerMarkets.map((market) => {
-                  const runners = market.runners || [];
-                  
-                  // We want only 2 runners (both teams)
-                  const sortedRunners = runners.slice(0, 2);
-                  
-                  return sortedRunners.map((runner, index) => {
-                    const teamName = runner.runnerName || runner.name || "Unknown";
-                    const teamId = runner.selectionId || runner.id || index;
-                    const marketId = `${market.marketId || market.id || 'book'}_${teamId}`;
-                    const teamExposure = getExposureAmount(teamId, teamName);
-                    const exposureColor = getExposureColor(teamExposure);
-                    const exposureDisplay = teamExposure !== 0 ? 
-                      `${teamExposure > 0 ? '+' : ''}${formatNumber(teamExposure)}` : '';
-                    
-                    // Get back and lay odds - try multiple possible data structures
-                    const backOdds = runner.ex?.availableToBack || runner.back || [];
-                    const layOdds = runner.ex?.availableToLay || runner.lay || [];
-                    
-                    return (
-                      <tr key={marketId} className="white-bg skyDetailsRow" style={{ backgroundColor: "rgb(250, 248, 216)" }}>
-                        <td align="left" className="selaction_name" valign="middle">
-                          <div className="d-flex height_60 justify-content-between align-items-center">
-                            <div className="d-flex gap-2">
-                              <a>{teamName}</a>
-                              {exposureDisplay && (
-                                <span className="forstrongchang">
-                                  <strong className="red d-flex gap-1 align-items-center">
-                                    <div
-                                      style={{
-                                        color: exposureColor,
-                                        display: "inline-block",
-                                        fontSize: "12px",
-                                        fontWeight: "bold",
-                                        minWidth: "60px",
-                                        textAlign: "start",
-                                      }}
-                                    >
-                                      ({exposureDisplay})
-                                    </div>
-                                  </strong>
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="suspend-col d-desk" colSpan={6} style={{ position: "relative" }}>
-                          <div className="d-flex justify-content-start">
-                            {/* Back Odds - Show 3 prices like Match Odds */}
-                            {backOdds && backOdds.length > 0 ? (
-                              <>
-                                {[2, 1, 0].map((idx) => {
-                                  const oddsData = backOdds[idx] || {};
-                                  const price = getPriceValue(oddsData);
-                                  const size = getSizeValue(oddsData);
-                                  return (
-                                    <div
-                                      key={`back-${idx}`}
-                                      className={`back1 back-${idx + 1} bettinggrid ${idx > 0 ? "boxhide" : ""}`}
-                                      onClick={() => {
-                                        if (market.status === "SUSPENDED") {
-                                          showNotification("Market is suspended", "warning");
-                                          return;
-                                        }
-                                        if (price && parseFloat(price) > 0) {
-                                          handleBookmakerClick(price, "back", runner, teamName, teamId);
-                                        }
-                                      }}
-                                      style={{
-                                        cursor: market.status === "SUSPENDED" ? "not-allowed" : "pointer",
-                                        color: "#000",
-                                        background: highlightedMarkets[`${marketId}-back-${idx}`] ? "#f8e71c" : "",
-                                        transition: "background-color 0.5s ease",
-                                        padding: "2px 5px",
-                                        fontWeight: highlightedMarkets[`${marketId}-back-${idx}`] ? "bold" : "700",
-                                      }}
-                                    >
-                                      <span>{price || ""}</span>
-                                      <small>{formatVolume(size)}</small>
-                                    </div>
-                                  );
-                                })}
-                              </>
-                            ) : (
-                              <div className="d-flex">
-                                <div className="back1 back-1 bettinggrid">
-                                  <span>--</span>
+<div className="bookmaker-section">
+  <div className="match-odds-part">
+    <div className="table-responsive">
+      <table className="table position-relative" style={{ marginBottom: 0 }} width="100%">
+        <thead>
+          <tr>
+            <th align="left" className="market-name-th" valign="middle">
+              <div className="d-flex justify-content-between align-items-center">
+                Book Maker
+              </div>
+            </th>
+            <th align="center" className="back-h" valign="middle">
+              <span>Back</span>
+            </th>
+            <th align="center" className="lay-h" valign="middle">
+              <span>Lay</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {mainBookmakerMarkets.length > 0 ? (
+            mainBookmakerMarkets.map((market) => {
+              const runners = market.runners || [];
+              
+              // We want only 2 runners (both teams)
+              const sortedRunners = runners.slice(0, 2);
+              
+              return sortedRunners.map((runner, index) => {
+                const teamName = runner.runnerName || runner.name || "Unknown";
+                const teamId = runner.selectionId || runner.id || index;
+                const marketId = `${market.marketId || market.id || 'book'}_${teamId}`;
+                const teamExposure = getExposureAmount(teamId, teamName);
+                const exposureColor = getExposureColor(teamExposure);
+                const exposureDisplay = teamExposure !== 0 ? 
+                  `${teamExposure > 0 ? '+' : ''}${formatNumber(teamExposure)}` : '';
+                
+                // Get back and lay odds - try multiple possible data structures
+                const backOdds = runner.ex?.availableToBack || runner.back || [];
+                const layOdds = runner.ex?.availableToLay || runner.lay || [];
+                
+                return (
+                  <tr key={marketId} className="white-bg skyDetailsRow" style={{ backgroundColor: "rgb(250, 248, 216)" }}>
+                    <td align="left" className="selaction_name" valign="middle">
+                      <div className="d-flex height_60 justify-content-between align-items-center">
+                        <div className="d-flex gap-2">
+                          <a>{teamName}</a>
+                          {exposureDisplay && (
+                            <span className="forstrongchang">
+                              <strong className="red d-flex gap-1 align-items-center">
+                                <div
+                                  style={{
+                                    color: exposureColor,
+                                    display: "inline-block",
+                                    fontSize: "12px",
+                                    fontWeight: "bold",
+                                    minWidth: "60px",
+                                    textAlign: "start",
+                                  }}
+                                >
+                                  ({exposureDisplay})
                                 </div>
-                                <div className="back1 back-2 bettinggrid boxhide">
-                                  <span>--</span>
-                                </div>
-                                <div className="back1 back-3 bettinggrid boxhide">
-                                  <span>--</span>
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Lay Odds - Show 3 prices like Match Odds */}
-                            {layOdds && layOdds.length > 0 ? (
-                              <>
-                                {[0, 1, 2].map((idx) => {
-                                  const oddsData = layOdds[idx] || {};
-                                  const price = getPriceValue(oddsData);
-                                  const size = getSizeValue(oddsData);
-                                  return (
-                                    <div
-                                      key={`lay-${idx}`}
-                                      className={`lay3 lay-${idx + 1} bettinggrid ${idx > 0 ? "boxhide" : ""}`}
-                                      onClick={() => {
-                                        if (market.status === "SUSPENDED") {
-                                          showNotification("Market is suspended", "warning");
-                                          return;
-                                        }
-                                        if (price && parseFloat(price) > 0) {
-                                          handleBookmakerClick(price, "lay", runner, teamName, teamId);
-                                        }
-                                      }}
-                                      style={{
-                                        cursor: market.status === "SUSPENDED" ? "not-allowed" : "pointer",
-                                        color: "#000",
-                                        background: highlightedMarkets[`${marketId}-lay-${idx}`] ? "#26f1f8" : "",
-                                        transition: "background-color 0.5s ease",
-                                        padding: "2px 5px",
-                                        fontWeight: highlightedMarkets[`${marketId}-lay-${idx}`] ? "bold" : "700",
-                                      }}
-                                    >
-                                      <span>{price || ""}</span>
-                                      <small>{formatVolume(size)}</small>
-                                    </div>
-                                  );
-                                })}
-                              </>
-                            ) : (
-                              <div className="d-flex">
-                                <div className="lay3 lay-1 bettinggrid">
-                                  <span>--</span>
-                                </div>
-                                <div className="lay3 lay-2 bettinggrid boxhide">
-                                  <span>--</span>
-                                </div>
-                                <div className="lay3 lay-3 bettinggrid boxhide">
-                                  <span>--</span>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                          {market.status === "SUSPENDED" && (
-                            <span className="suspend-text">SUSPENDED</span>
+                              </strong>
+                            </span>
                           )}
-                        </td>
-                      </tr>
-                    );
-                  });
-                })
-              ) : (
-                <tr className="white-bg skyDetailsRow">
-                  <td align="left" className="selaction_name" valign="middle">
-                    <div className="d-flex height_60 justify-content-between align-items-center">
-                      <span>No Bookmaker data available</span>
-                    </div>
-                  </td>
-                  <td className="suspend-col" colSpan={6}>
-                    <div className="text-center">--</div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="suspend-col d-desk" colSpan={6} style={{ position: "relative" }}>
+                      <div className="d-flex justify-content-start">
+                        {/* Back Odds - Show 3 prices like Match Odds */}
+                        {backOdds && backOdds.length > 0 ? (
+                          <>
+                            {[2, 1, 0].map((idx) => {
+                              const oddsData = backOdds[idx] || {};
+                              const price = getPriceValue(oddsData);
+                              const size = getSizeValue(oddsData);
+                              return (
+                                <div
+                                  key={`back-${idx}`}
+                                  className={`back1 back-${idx + 1} bettinggrid ${idx > 0 ? "boxhide" : ""}`}
+                                  onClick={() => {
+                                    if (market.status === "SUSPENDED") {
+                                      showNotification("Market is suspended", "warning");
+                                      return;
+                                    }
+                                    if (price && parseFloat(price) > 0) {
+                                      handleBookmakerClick(price, "back", runner, teamName, teamId);
+                                    }
+                                  }}
+                                  style={{
+                                    cursor: market.status === "SUSPENDED" ? "not-allowed" : "pointer",
+                                    color: "#000",
+                                    background: highlightedMarkets[`${marketId}-back-${idx}`] ? "#f8e71c" : "",
+                                    transition: "background-color 0.5s ease",
+                                    padding: "2px 5px",
+                                    fontWeight: highlightedMarkets[`${marketId}-back-${idx}`] ? "bold" : "700",
+                                  }}
+                                >
+                                  <span>{price || "--"}</span>
+                                  <small>{formatVolume(size)}</small>
+                                </div>
+                              );
+                            })}
+                          </>
+                        ) : (
+                          <>
+                            {[2, 1, 0].map((idx) => (
+                              <div
+                                key={`back-${idx}`}
+                                className={`back1 back-${idx + 1} bettinggrid ${idx > 0 ? "boxhide" : ""}`}
+                                style={{
+                                  color: "#000",
+                                  padding: "2px 5px",
+                                  fontWeight: "700",
+                                }}
+                              >
+                                <span>--</span>
+                              </div>
+                            ))}
+                          </>
+                        )}
+
+                        {/* Lay Odds - Show 3 prices like Match Odds */}
+                        {layOdds && layOdds.length > 0 ? (
+                          <>
+                            {[0, 1, 2].map((idx) => {
+                              const oddsData = layOdds[idx] || {};
+                              const price = getPriceValue(oddsData);
+                              const size = getSizeValue(oddsData);
+                              return (
+                                <div
+                                  key={`lay-${idx}`}
+                                  className={`lay3 lay-${idx + 1} bettinggrid ${idx > 0 ? "boxhide" : ""}`}
+                                  onClick={() => {
+                                    if (market.status === "SUSPENDED") {
+                                      showNotification("Market is suspended", "warning");
+                                      return;
+                                    }
+                                    if (price && parseFloat(price) > 0) {
+                                      handleBookmakerClick(price, "lay", runner, teamName, teamId);
+                                    }
+                                  }}
+                                  style={{
+                                    cursor: market.status === "SUSPENDED" ? "not-allowed" : "pointer",
+                                    color: "#000",
+                                    background: highlightedMarkets[`${marketId}-lay-${idx}`] ? "#26f1f8" : "",
+                                    transition: "background-color 0.5s ease",
+                                    padding: "2px 5px",
+                                    fontWeight: highlightedMarkets[`${marketId}-lay-${idx}`] ? "bold" : "700",
+                                  }}
+                                >
+                                  <span>{price || "--"}</span>
+                                  <small>{formatVolume(size)}</small>
+                                </div>
+                              );
+                            })}
+                          </>
+                        ) : (
+                          <>
+                            {[0, 1, 2].map((idx) => (
+                              <div
+                                key={`lay-${idx}`}
+                                className={`lay3 lay-${idx + 1} bettinggrid ${idx > 0 ? "boxhide" : ""}`}
+                                style={{
+                                  color: "#000",
+                                  padding: "2px 5px",
+                                  fontWeight: "700",
+                                }}
+                              >
+                                <span>--</span>
+                              </div>
+                            ))}
+                          </>
+                        )}
+                      </div>
+                      {market.status === "SUSPENDED" && (
+                        <span className="suspend-text">SUSPENDED</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              });
+            })
+          ) : (
+            // Use Fakedata component when no data available
+            <Fakedata />
+          )}
+        </tbody>
+      </table>
     </div>
+  </div>
+</div>
   );
 });
 

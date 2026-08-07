@@ -169,7 +169,7 @@ const CurrentBets = () => {
       case 'lottery':
         return betData.map((bet, index) => (
           <tr key={bet.bet_id || index}>
-            <td>{bet.pl_id || bet.player_id || '-'}</td>
+            <td>{bet.pl_id || '-'}</td>
             <td>{bet.bet_id || '-'}</td>
             <td>{bet.bet_placed || bet.created_at || '-'}</td>
             <td>{bet.match || bet.match_name || '-'}</td>
@@ -201,7 +201,7 @@ const CurrentBets = () => {
       default:
         return betData.map((bet, index) => (
           <tr key={bet.bet_id || index}>
-            <td>{bet.pl_id || bet.player_id || '-'}</td>
+            <td>{bet.pl_id  || '-'}</td>
             <td>{bet.bet_id || '-'}</td>
             <td>{bet.bet_placed || bet.created_at || '-'}</td>
             <td>{bet.ip_address || bet.ip || '-'}</td>

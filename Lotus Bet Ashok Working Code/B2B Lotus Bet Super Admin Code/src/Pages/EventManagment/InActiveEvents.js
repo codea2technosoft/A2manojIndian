@@ -1,6 +1,10 @@
 import { Link, useParams, useLocation } from "react-router-dom"; // ✅ useLocation add karo
 import React, { useState, useEffect } from "react";
-import { MdFilterListAlt } from "react-icons/md";
+import {
+  MdFilterListAlt,
+  MdKeyboardDoubleArrowLeft,
+  MdKeyboardDoubleArrowRight,
+} from "react-icons/md";
 // import { Link } from "react-router";
 import axios from "axios";
 import Toast from "../../User/Toast";
@@ -8,8 +12,13 @@ import { InActiveEventList } from "../../Server/api";
 import { FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
-import { MdOutlineKeyboardArrowRight } from "react-icons/md";
-import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import {
+  MdOutlineKeyboardArrowRight,
+  MdOutlineKeyboardArrowLeft,
+} from "react-icons/md";
+import Loader from "../../Common/Loader";
+import { FaSearch } from "react-icons/fa";
+
 function InActiveEvents() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -292,27 +301,17 @@ function InActiveEvents() {
     );
   };
 
-  // Loading state
-  if (loading)
-    return (
-      <div className="text-center mt-3">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-        <p className="mt-2">Loading games...</p>
-      </div>
-    );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  // Error state
-  if (error)
-    return (
-      <div className="text-center mt-3 text-danger">
-        <p>{error}</p>
-        <button className="btn btn-primary" onClick={fetchEvents}>
-          Retry
-        </button>
-      </div>
-    );
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
 
   return (
     <div className="">
@@ -324,7 +323,7 @@ function InActiveEvents() {
           <h3 className="card-title mb-0">All InActive Event List</h3>
           <div>
             <button
-              className="btn btn-dark"
+              className="btn btn-outline-light"
               onClick={() => navigate(-1)}
             >
               Back
@@ -389,11 +388,11 @@ function InActiveEvents() {
 
               <div className="col-md-3 d-flex align-items-end gap-2">
                 <button className="btn btn-primary" onClick={applyFilters}>
-                  Apply Filters
+                  <FaSearch />
                 </button>
-                <button className="btn btn-secondary" onClick={resetFilters}>
+                {/* <button className="btn btn-secondary" onClick={resetFilters}>
                   Reset
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
@@ -405,7 +404,7 @@ function InActiveEvents() {
             <div className="row mb-3">
               <div className="col-md-6">
                 <div className="d-flex">
-                   <div className="input-group me-2" style={{ width: "500px" }}>
+                  <div className="input-group me-2" style={{ width: "500px" }}>
                     <input
                       type="text"
                       className="form-control"
@@ -422,7 +421,7 @@ function InActiveEvents() {
                     >
                       <FiSearch />
                     </button>
-                    {(searchTerm || hasActiveFilters) && (
+                    {/* {(searchTerm || hasActiveFilters) && (
                       <button
                         className="btn btn-outline-secondary"
                         type="button"
@@ -430,7 +429,7 @@ function InActiveEvents() {
                       >
                         Clear
                       </button>
-                    )}
+                    )} */}
                   </div>
                 </div>
 
@@ -456,7 +455,27 @@ function InActiveEvents() {
                 </tr>
               </thead>
               <tbody>
-                {games.length > 0 ? (
+                {loading ? (
+                  <tr>
+                    <td colSpan="5" className="table_loader">
+                     <div className="text-center py-5">
+                        <Loader />
+                        {/* <p className="mt-2">Loading games...</p> */}
+                      </div>
+                    </td>
+                  </tr>
+                ) : error ? (
+                  /* Error */
+                  <tr>
+                    <td colSpan="5" className="text-center py-5">
+                      <p className="text-danger mb-3">{error}</p>
+
+                      <button className="btn btn-primary" onClick={fetchEvents}>
+                        Retry
+                      </button>
+                    </td>
+                  </tr>
+                ) : games.length > 0 ? (
                   games.map((game, index) => (
                     <tr key={game._id}>
                       <td>
@@ -473,14 +492,7 @@ function InActiveEvents() {
                           //   status={game.status}
                           disabled={updating === game._id}
                         />
-                        {updating === game._id && (
-                          <div
-                            className="spinner-border spinner-border-sm text-primary"
-                            role="status"
-                          >
-                            <span className="visually-hidden">Loading...</span>
-                          </div>
-                        )}
+                        {updating === game._id && <Loader />}
                         {/* <button
                       className="btn btn-sm btn-danger"
                       onClick={() => deleteMatch(game._id)}
@@ -493,10 +505,9 @@ function InActiveEvents() {
                 ) : (
                   <tr>
                     <td colSpan="5" className="text-center py-4">
-                      No games found
-                      <br />
+                      <p> No games found</p>
                       <button
-                        className="refreshbuttonall"
+                        className="btn btn-primary btn-sm"
                         onClick={fetchEvents}
                       >
                         Refresh
@@ -507,52 +518,35 @@ function InActiveEvents() {
               </tbody>
             </table>
           </div>
-        </div>
-        {pagination.totalItems > pagination.itemsPerPage && (
-          <div className="d-flex justify-content-between align-items-center mt-4">
-            <div className="sohwingallentries d-flex align-items-center gap-3">
-              Showing{" "}
-              {(pagination.currentPage - 1) * pagination.itemsPerPage + 1} to{" "}
-              {Math.min(
-                pagination.currentPage * pagination.itemsPerPage,
-                pagination.totalItems,
-              )}{" "}
-              of {pagination.totalItems} entries
-            </div>
+          {totalPages > 1 && (
+            <div className="d-flex justify-content-center align-items-center mt-4">
+              <div className="paginationall d-flex align-items-center gap-1">
+                <button disabled={currentPage === 1} onClick={handlePrev}>
+                  <MdKeyboardDoubleArrowLeft /> Previous
+                </button>
 
-            <div className="paginationall d-flex align-items-center gap-2">
-              <button
-                className="btn btn-sm btn-outline-primary"
-                disabled={pagination.currentPage === 1}
-                onClick={handlePrevPage}
-                title="Previous Page"
-              >
-                <MdOutlineKeyboardArrowLeft />
-              </button>
+                <div className="d-flex gap-1">
+                  {getPageNumbers().map((page) => (
+                    <div
+                      key={page}
+                      className={`paginationnumber ${currentPage === page ? "active" : ""}`}
+                      onClick={() => handlePageClick(page)}
+                    >
+                      {page}
+                    </div>
+                  ))}
+                </div>
 
-              <div className="d-flex gap-1">
-                {getPageNumbers().map((page) => (
-                  <button
-                    key={page}
-                    className={`btn btn-sm ${pagination.currentPage === page ? "btn-primary" : "btn-outline-primary"}`}
-                    onClick={() => handlePageClick(page)}
-                  >
-                    {page}
-                  </button>
-                ))}
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={handleNext}
+                >
+                  Next <MdKeyboardDoubleArrowRight />
+                </button>
               </div>
-
-              <button
-                className="btn btn-sm btn-outline-primary"
-                disabled={pagination.currentPage === pagination.totalPages}
-                onClick={handleNextPage}
-                title="Next Page"
-              >
-                <MdOutlineKeyboardArrowRight />
-              </button>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

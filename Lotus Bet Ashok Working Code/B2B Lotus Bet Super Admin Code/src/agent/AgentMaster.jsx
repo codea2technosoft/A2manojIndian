@@ -47,7 +47,7 @@ import {
 } from "../Server/api";
 import Loader from "../Common/Loader";
 
-function AgentMasterClone() {
+function AgentMaster() {
   const navigate = useNavigate();
   const COPY_API_URL = process.env.REACT_APP_COPY_API_URL;
   const [openFilter, setOpenFilter] = useState(null);
@@ -893,7 +893,7 @@ function AgentMasterClone() {
     const masterID = agent?.originalData?.master_admin_id;
     localStorage.setItem("master_admin_id", masterID);
     console.log("Saved Master Admin ID:", masterID);
-    navigate(`/Updatesuperagent/${agent.admin_id}`);
+    navigate(`/agent_lists/update-super-master/${agent.admin_id}`);
   };
 
   //  const handleUpdateSuperAgent = (agent) => {
@@ -946,17 +946,15 @@ function AgentMasterClone() {
     // const textToCopy = `SUPER AGENT LOGIN DETAILS\nMaster Code: ${agent.admin_id || "N/A"}\nOTP: ${agent.admin_otp || "N/A"}\nPassword: ${agent.password || "N/A"}`;
 
     const textToCopy = `
-SUPER AGENT LOGIN DETAILS
+SUPER MASTER LOGIN DETAILS
 --------------------
-Super Agent Code: ${agent.admin_id || "N/A"}
+Super Master Code: ${agent.admin_id || "N/A"}
 Password: ${agent.password || "N/A"}
-OTP: ${agent.admin_otp || "N/A"}
-
 Login URL:${COPY_API_URL}`;
     navigator.clipboard
       .writeText(textToCopy)
       .then(() => {
-        showSuccessToast("Super Agent login details copied!");
+        showSuccessToast("Super Master login details copied!");
       })
       .catch((err) => {
         console.error("Failed to copy: ", err);
@@ -1056,16 +1054,6 @@ Login URL:${COPY_API_URL}`;
   //   navigate("/AgentMasternew");
   // };
 
-  if (loading) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "100vh" }}
-      >
-        <Loader />
-      </div>
-    );
-  }
 
   return (
     <>
@@ -1088,7 +1076,7 @@ Login URL:${COPY_API_URL}`;
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="Search Super agent..."
+                    placeholder="Search Super Master..."
                     value={searchInput}
                     onChange={handleSearchInputChange}
                     onKeyPress={handleSearchKeyPress}
@@ -1240,7 +1228,15 @@ Login URL:${COPY_API_URL}`;
                 </tr> */}
               </thead>
               <tbody>
-                {agentData.length > 0 ? (
+                {loading ? (
+                  <tr>
+                    <td colSpan="12">
+                      <div className="d-flex justify-content-center align-items-center py-5 table_loader">
+                        <Loader />
+                      </div>
+                    </td>
+                  </tr>
+                ) : agentData.length > 0 ? (
                   agentData.map((row, index) => (
                     <tr key={row.id}>
                       <td className="text-center">
@@ -1254,19 +1250,24 @@ Login URL:${COPY_API_URL}`;
                           <span className="badge badge-warning me-1">S</span>
                           {row.username || row.name}
                         </div>
-                        <span>
-                          [
-                          {row.username || row.name?.length > 10
-                            ? `${row.username || row.name.substring(0, 10)}`
-                            : row.username || row.name}
-                          ]
-                        </span>
+
+                          <span>
+                            [
+                            {(() => {
+                              const name = row.username || row.name || "";
+                              const firstWord = name.split(" ")[0];
+                              return firstWord.length > 10
+                                ? firstWord.substring(0, 10)
+                                : firstWord;
+                            })()}
+                            ]
+                          </span>
                       </td>
                       <td className="text-center">
                         <button
                           className="viewdetailsbutton"
                           onClick={() => handleCopyData(row)}
-                          title="Copy Agent Code, OTP & Password"
+                          title="Copy Super Master Code, OTP & Password"
                         >
                           <FiCopy size={14} />
                         </button>
@@ -1509,7 +1510,7 @@ Login URL:${COPY_API_URL}`;
                                     // Current row ka admin_id lein
                                     const selectedAdminId = row.admin_id;
                                     navigate(
-                                      `/CreateSuperAgent/${selectedAdminId}`,
+                                      `/agent_lists/create-new-master/${selectedAdminId}`,
                                     );
                                     setOptionMenu(null);
                                   }}
@@ -1683,7 +1684,7 @@ Login URL:${COPY_API_URL}`;
                             title="Statement"
                           >
                             <CgFileDocument />
-                          </button>
+                          </button>*/}
 
                           <button
                             className="buttoncommon gradient-8"
@@ -1691,7 +1692,7 @@ Login URL:${COPY_API_URL}`;
                             title="Inactive Users"
                           >
                             <FaRectangleList />
-                          </button> */}
+                          </button> 
                         </div>
                       </td>
                     </tr>
@@ -2111,7 +2112,8 @@ Login URL:${COPY_API_URL}`;
 
                     <div className="col-6">
                       <Link
-                        to={`/icasino-setting/${selectedAgent?.admin_id}`}
+                       // to={`/icasino-setting/${selectedAgent?.admin_id}`}
+                        to={`#`}
                         className="btn gradient-2 w-100"
                         onClick={() => setShowSettingModal(false)}
                       >
@@ -2314,8 +2316,7 @@ Login URL:${COPY_API_URL}`;
                         type={showPasswords.oldPassword ? "text" : "password"}
                         className="form-control"
                         value={selectedAgent.password}
-                        readOnly
-                        style={{ backgroundColor: "#f5f5f5" }}
+                        disabled
                       />
                       <button
                         className="btn btn-outline-secondary"
@@ -2429,7 +2430,7 @@ Login URL:${COPY_API_URL}`;
                     />
                   </div>
                   <div>
-                    <label className="form-label">Deposit Amount </label>
+                    <label className="form-label text-uppercase">Deposit Amount </label>
                     <input
                       type="text"
                       className="form-control"
@@ -2558,7 +2559,17 @@ Login URL:${COPY_API_URL}`;
                     />
                   </div>
                   <div>
-                    <label className="form-label">Withdraw Amount </label>
+                     <div className="d-flex align-items-center justify-content-between">
+                      <label className="form-label text-uppercase">
+                        Withdraw Amount{" "}
+                      </label>
+                      <div className="text-muted remaining text-uppercase">     
+                        Remaining balance : 
+                        {(
+                          Number(selectedAgent.chips) - Number(withdrawAmount)
+                        ).toLocaleString()}
+                      </div>
+                    </div>
                     <input
                       type="text"
                       className="form-control"
@@ -2574,14 +2585,14 @@ Login URL:${COPY_API_URL}`;
                       Maximum withdrawable amount: {selectedAgent.chips}
                     </div> */}
                   </div>
-                  {withdrawAmount && !isNaN(withdrawAmount) && (
+                  {/* {withdrawAmount && !isNaN(withdrawAmount) && (
                     <div className="alert alert-info mt-2">
                       <strong>New Balance:</strong>
                       {(
                         Number(selectedAgent.chips) - Number(withdrawAmount)
                       ).toLocaleString()}
                     </div>
-                  )}
+                  )} */}
                   {withdrawAmount &&
                     Number(withdrawAmount) > Number(selectedAgent.chips) && (
                       <div className="alert alert-danger mt-2">
@@ -2717,4 +2728,4 @@ Login URL:${COPY_API_URL}`;
   );
 }
 
-export default AgentMasterClone;
+export default AgentMaster;

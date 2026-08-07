@@ -227,7 +227,7 @@ function WebSetting() {
           title: "Success",
           text: response.data.message,
           icon: "success",
-          timer: 2000, 
+          timer: 2000,
           showConfirmButton: false,
         });
         fetchSettings();
@@ -268,59 +268,53 @@ function WebSetting() {
     </div>
   );
 
-  if (loading) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "200px" }}
-      >
-        <Loader />
-      </div>
-    );
-  }
-
   return (
     <div className="row">
       <div className="col-lg-12">
         <div className="card">
-          <div className="card-header bg-primary-yellow">
+          <div className="card-header bgHeader">
             <div className="d-flex align-items-center justify-content-between align-items-center">
               <h3 className="card-title mb-0">Admin Settings</h3>
             </div>
           </div>
           <div className="card-body">
-            <form noValidate onSubmit={handleSave}>
-              <div className="row">
-                <div className="col-md-12 mb-3">
-                  <label className="form-label">Status</label>
-                  <select
-                    className="form-control"
-                    name="status"
-                    value={settings.status}
-                    onChange={handleChange}
-                  >
-                    <option value="1">Active</option>
-                    <option value="0">Inactive</option>
-                  </select>
-                </div>
+            {loading ? (
+              <div className="d-flex justify-content-center align-items-center py-5">
+                <Loader />
+              </div>
+            ) : (
+              <form noValidate onSubmit={handleSave}>
+                <div className="row">
+                  <div className="col-md-12 mb-3">
+                    <label className="form-label">Status</label>
+                    <select
+                      className="form-control"
+                      name="status"
+                      value={settings.status}
+                      onChange={handleChange}
+                    >
+                      <option value="1">Active</option>
+                      <option value="0">Inactive</option>
+                    </select>
+                  </div>
 
-                {/* {renderInput("WhatsApp Number", "whatsapp_no", "text", "Enter WhatsApp number", 10)}
+                  {/* {renderInput("WhatsApp Number", "whatsapp_no", "text", "Enter WhatsApp number", 10)}
                 {renderInput("WhatsApp Support", "whatsapp_support", "text", "Enter WhatsApp support number", 10)}
                 {renderInput("Telegram Link", "telegram_link", "text", "Enter Telegram link")}
                 {renderInput("Telegram Support", "telegram_support", "text", "Enter Telegram support link")} */}
 
-                <div className="col-md-12 mb-3">
-                  <label className="form-label">Description</label>
-                  <textarea
-                    className="form-control"
-                    rows="3"
-                    name="description"
-                    value={settings.description}
-                    onChange={handleChange}
-                    placeholder="Enter description"
-                  ></textarea>
-                </div>
-                {/* 
+                  <div className="col-md-12 mb-3">
+                    <label className="form-label">Description</label>
+                    <textarea
+                      className="form-control"
+                      rows="3"
+                      name="description"
+                      value={settings.description}
+                      onChange={handleChange}
+                      placeholder="Enter description"
+                    ></textarea>
+                  </div>
+                  {/* 
                 <div className="col-md-6 mb-3">
                   <label className="form-label">Logo</label>
                   <input
@@ -344,78 +338,78 @@ function WebSetting() {
                     </div>
                   )}
                 </div> */}
+                  <div className="col-12">
+                    <h5 className="border-bottom pb-2">Betting Limits</h5>
+                  </div>
 
-                <div className="col-12 mt-4">
-                  <h5 className="border-bottom pb-2">Betting Limits</h5>
-                </div>
+                  {renderInput(
+                    "Fancy Minimum Bet",
+                    "fancy_min_bet",
+                    "text",
+                    "Enter minimum bet for fancy",
+                    10,
+                  )}
+                  {renderInput(
+                    "Fancy Maximum Bet",
+                    "fancy_max_bet",
+                    "text",
+                    "Enter maximum bet for fancy",
+                    10,
+                  )}
+                  {renderInput(
+                    "Odds Minimum Bet",
+                    "odds_min_bet",
+                    "text",
+                    "Enter minimum bet for odds",
+                    10,
+                  )}
+                  {renderInput(
+                    "Odds Maximum Bet",
+                    "odds_max_bet",
+                    "text",
+                    "Enter maximum bet for odds",
+                    10,
+                  )}
+                  {renderInput(
+                    "Bookmaker Minimum Bet",
+                    "bookmaker_min_bet",
+                    "text",
+                    "Enter minimum bet for bookmaker",
+                    10,
+                  )}
+                  {renderInput(
+                    "Bookmaker Maximum Bet",
+                    "bookmaker_max_bet",
+                    "text",
+                    "Enter maximum bet for bookmaker",
+                    10,
+                  )}
 
-                {renderInput(
-                  "Fancy Minimum Bet",
-                  "fancy_min_bet",
-                  "text",
-                  "Enter minimum bet for fancy",
-                  10,
-                )}
-                {renderInput(
-                  "Fancy Maximum Bet",
-                  "fancy_max_bet",
-                  "text",
-                  "Enter maximum bet for fancy",
-                  10,
-                )}
-                {renderInput(
-                  "Odds Minimum Bet",
-                  "odds_min_bet",
-                  "text",
-                  "Enter minimum bet for odds",
-                  10,
-                )}
-                {renderInput(
-                  "Odds Maximum Bet",
-                  "odds_max_bet",
-                  "text",
-                  "Enter maximum bet for odds",
-                  10,
-                )}
-                {renderInput(
-                  "Bookmaker Minimum Bet",
-                  "bookmaker_min_bet",
-                  "text",
-                  "Enter minimum bet for bookmaker",
-                  10,
-                )}
-                {renderInput(
-                  "Bookmaker Maximum Bet",
-                  "bookmaker_max_bet",
-                  "text",
-                  "Enter maximum bet for bookmaker",
-                  10,
-                )}
-
-                <div className="col-md-12">
-                  <div className="d-flex justify-content-end">
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      disabled={loading}
-                    >
-                      {loading ? (
-                        <>
-                          <span
-                            className="spinner-border spinner-border-sm me-2"
-                            role="status"
-                            aria-hidden="true"
-                          ></span>
-                          Updating...
-                        </>
-                      ) : (
-                        "Update Settings"
-                      )}
-                    </button>
+                  <div className="col-md-12">
+                    <div className="d-flex justify-content-start">
+                      <button
+                        type="submit"
+                        className="btn btn-primary"
+                        disabled={loading}
+                      >
+                        {loading ? (
+                          <>
+                            <span
+                              className="spinner-border spinner-border-sm me-2"
+                              role="status"
+                              aria-hidden="true"
+                            ></span>
+                            Updating...
+                          </>
+                        ) : (
+                          "Update Settings"
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </form>
+              </form>
+            )}
           </div>
         </div>
       </div>

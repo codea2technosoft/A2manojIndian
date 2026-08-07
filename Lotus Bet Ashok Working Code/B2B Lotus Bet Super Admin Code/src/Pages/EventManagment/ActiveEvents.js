@@ -1,7 +1,12 @@
 import { Link, useParams, useLocation } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdFilterListAlt, MdMoreVert } from "react-icons/md";
+import {
+  MdFilterListAlt,
+  MdKeyboardDoubleArrowLeft,
+  MdKeyboardDoubleArrowRight,
+  MdMoreVert,
+} from "react-icons/md";
 import Swal from "sweetalert2";
 import Toast from "../../User/Toast";
 import {
@@ -12,6 +17,9 @@ import {
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { FiSearch } from "react-icons/fi";
+import Loader from "../../Common/Loader";
+import { LuRefreshCw } from "react-icons/lu";
+import { FaLock, FaUnlock } from "react-icons/fa";
 
 function ActiveEvents() {
   const navigate = useNavigate();
@@ -39,6 +47,8 @@ function ActiveEvents() {
   const sportId = searchParams.get("sportId");
   const seriesId = searchParams.get("seriesId");
   const hasActiveFilters = searchTerm !== "";
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchEvents = async (
     page = pagination.current_page,
@@ -348,41 +358,58 @@ function ActiveEvents() {
     );
   };
 
-  if (loading)
-    return (
-      <div className="text-center mt-3">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-        <p className="mt-2">Loading games...</p>
-      </div>
-    );
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
 
-  if (error)
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+  };
+
+  const StatusToggle = ({ gameId, status, disabled }) => {
+    const isActive = status === 1;
+
     return (
-      <div className="text-center mt-3 text-danger">
-        <p>{error}</p>
-        <button className="btn btn-primary" onClick={fetchEvents}>
-          Retry
-        </button>
-      </div>
+      <button
+        type="button"
+        className="btn btn-link p-0 border-0"
+        disabled={disabled}
+        onClick={() => handleToggleEventStatus(gameId, status)}
+        title={isActive ? "Click to Inactive" : "Click to Active"}
+        style={{
+          cursor: disabled ? "not-allowed" : "pointer",
+        }}
+      >
+        {isActive ? (
+          <FaUnlock size={16} className="text-success" />
+        ) : (
+          <FaLock size={16} className="text-danger" />
+        )}
+      </button>
     );
+  };
+
   return (
     <div>
       {toast.show && (
         <Toast message={toast.message} type={toast.type} onClose={hideToast} />
       )}
+
       <div className="card">
         <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
           <h3 className="card-title mb-0">Active Event List</h3>
 
           <div className="d-flex align-items-center gap-2">
-            <button className="btn btn-light" onClick={handleRefresh}>
-              Refresh
+            <button className="btn btn-dark gradient-10 border-0" onClick={handleRefresh}>
+              <LuRefreshCw />
             </button>
 
             <button
-              className="btn btn-dark"
+              className="btn btn-outline-light border border-warning"
               onClick={() => navigate(-1)}
             >
               Back
@@ -391,10 +418,10 @@ function ActiveEvents() {
         </div>
         <div className="card-body">
           {games.length > 0 && (
-            <div className="row mb-3">
-              <div className="col-md-6">
+            <div className="row mb-2">
+              <div className="col-md-4">
                 <div className="d-flex">
-                   <div className="input-group me-2" style={{ width: "500px" }}>
+                  <div className="input-group me-2">
                     <input
                       type="text"
                       className="form-control"
@@ -404,14 +431,14 @@ function ActiveEvents() {
                       onKeyPress={handleSearchKeyPress}
                     />
                     <button
-                      className="btn btn-outline-success"
+                      className="btn btn-primary"
                       type="button"
                       onClick={handleSearch}
                       disabled={isSearching}
                     >
                       <FiSearch />
                     </button>
-                    {(searchTerm || hasActiveFilters) && (
+                    {/* {(searchTerm || hasActiveFilters) && (
                       <button
                         className="btn btn-outline-danger"
                         type="button"
@@ -419,7 +446,7 @@ function ActiveEvents() {
                       >
                         Clear
                       </button>
-                    )}
+                    )} */}
                   </div>
                 </div>
                 {searchTerm && (
@@ -431,7 +458,7 @@ function ActiveEvents() {
                 )}
               </div>
 
-              <div className="col-md-6">
+              {/* <div className="col-md-8">
                 <div className="d-flex justify-content-end mb-2">
                   <select
                     className="form-select form-select-sm"
@@ -446,7 +473,7 @@ function ActiveEvents() {
                     <option value={50}>50</option>
                   </select>
                 </div>
-              </div>
+              </div> */}
             </div>
           )}
 
@@ -462,7 +489,30 @@ function ActiveEvents() {
                 </tr>
               </thead>
               <tbody>
-                {games.length > 0 ? (
+                {loading ? (
+                  <tr>
+                    <td colSpan="5" className="table_loader">
+                      <div className="text-center py-5">
+                        <Loader />
+                        {/* <p className="mt-2">Loading games...</p> */}
+                      </div>
+                    </td>
+                  </tr>
+                ) : error ? (
+                  <tr>
+                    <td colSpan="5">
+                      <div className="text-center mt-3 text-danger">
+                        <p>{error}</p>
+                        <button
+                          className="btn btn-primary"
+                          onClick={fetchEvents}
+                        >
+                          Retry
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ) : games.length > 0 ? (
                   games.map((game, index) => (
                     <tr key={game._id}>
                       <td>
@@ -473,13 +523,29 @@ function ActiveEvents() {
                       </td>
                       <td>{game.date_time}</td>
                       <td>{game.name}</td>
-                      <td>{getStatusBadge(game.status)}</td>
-                      <td className="d-flex align-items-center gap-2">
-                        <ToggleSwitch
+                      <td>
+                        {/* {getStatusBadge(game.status)} */}
+                        <StatusToggle
                           gameId={game._id}
                           status={game.status}
                           disabled={updating === game._id}
                         />
+                        {updating === game._id && (
+                          <div
+                            className="spinner-border spinner-border-sm text-warning"
+                            role="status"
+                          >
+                            <span className="visually-hidden">Loading...</span>
+                          </div>
+                        )}
+                      </td>
+
+                      <td className="d-flex align-items-center gap-2">
+                        {/* <ToggleSwitch
+                          gameId={game._id}
+                          status={game.status}
+                          disabled={updating === game._id}
+                        /> */}
                         <select
                           className="form-select form-select-sm"
                           value={
@@ -513,13 +579,9 @@ function ActiveEvents() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="4" className="text-center py-4">
-                      No games found
-                      <br />
-                      <button
-                        className="refreshbuttonall"
-                        onClick={fetchEvents}
-                      >
+                    <td colSpan="5" className="text-center py-5">
+                      <p> No games found</p>
+                      <button className="btn btn-primary" onClick={fetchEvents}>
                         Refresh
                       </button>
                     </td>
@@ -528,45 +590,35 @@ function ActiveEvents() {
               </tbody>
             </table>
           </div>
-        </div>
-        {pagination.total_records > pagination.limit && (
-          <div className="card-footer">
-            <div className="d-flex justify-content-between align-items-center mt-4">
-              <div className="sohwingallentries">
-                Page {pagination.current_page} of
-                {/* {pagination.totalPages}  */}
-                {pagination.total_pages}
-                {/* of{" "} {totalItems} entries */}
-              </div>
+          {totalPages > 1 && (
+            <div className="d-flex justify-content-center align-items-center mt-4">
               <div className="paginationall d-flex align-items-center gap-1">
-                <button
-                  className=""
-                  disabled={pagination.current_page <= 1}
-                  onClick={() => handlePageChange(pagination.current_page - 1)}
-                >
-                  <MdOutlineKeyboardArrowLeft />
+                <button disabled={currentPage === 1} onClick={handlePrev}>
+                  <MdKeyboardDoubleArrowLeft /> Previous
                 </button>
-                {getPageNumbers().map((page) => (
-                  <button
-                    key={page}
-                    className={`btn ${page === pagination.current_page ? "btn-primary" : "btn-light"}`}
-                    onClick={() => handlePageChange(page)}
-                  >
-                    {page}
-                  </button>
-                ))}
-                {/* <span>Page {pagination.current_page} of {pagination.total_pages}</span> */}
+
+                <div className="d-flex gap-1">
+                  {getPageNumbers().map((page) => (
+                    <div
+                      key={page}
+                      className={`paginationnumber ${currentPage === page ? "active" : ""}`}
+                      onClick={() => handlePageClick(page)}
+                    >
+                      {page}
+                    </div>
+                  ))}
+                </div>
+
                 <button
-                  className=""
-                  disabled={pagination.current_page >= pagination.total_pages}
-                  onClick={() => handlePageChange(pagination.current_page + 1)}
+                  disabled={currentPage === totalPages}
+                  onClick={handleNext}
                 >
-                  <MdOutlineKeyboardArrowRight />
+                  Next <MdKeyboardDoubleArrowRight />
                 </button>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

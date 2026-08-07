@@ -193,7 +193,7 @@ function SuperAgentSettlementReport() {
               <option value="dr">Debit</option>
             </select>
           </div> */}
-          <div className="col-md-2">
+          <div className="col-6 col-md-2">
             {/* <label  style={{ fontSize: '13px' }}>From</label> */}
             <input
               type="date"
@@ -202,7 +202,7 @@ function SuperAgentSettlementReport() {
               onChange={(e) => setFromDate(e.target.value)}
             />
           </div>
-          <div className="col-md-2">
+          <div className="col-6 col-md-2">
             {/* <label  style={{ fontSize: '13px' }}>To</label> */}
             <input
               type="date"
@@ -211,7 +211,7 @@ function SuperAgentSettlementReport() {
               onChange={(e) => setToDate(e.target.value)}
             />
           </div>
-          <div className="col-md-4 d-flex gap-2">
+          <div className="col-6 col-md-4 d-flex gap-2">
             <button className="btn btn-primary btn-sm" onClick={handleSearch}>
               <FaSearch />
             </button>
@@ -253,12 +253,7 @@ function SuperAgentSettlementReport() {
           </div>
         </div> */}
 
-        {loading ? (
-          <>
-            <Loader />
-            <div className="py-5 text-center">Loading...</div>
-          </>
-        ) : (
+        {
           <div className="table-responsive">
             <table className="table table-bordered table-striped table-sm">
               <thead>
@@ -267,16 +262,27 @@ function SuperAgentSettlementReport() {
                   <th>NO</th>
                   <th>DESC</th>
                   <th>Type</th>
-                  {/* <th>DR</th>
-                  <th>CR</th> */}
-                  <th>Amount</th>
+                  <th>DR</th>
+                  <th>CR</th>
+                  <th>Balance</th>
                   <th>D/C</th>
                   <th>Note</th>
                   <th>DATE</th>
                 </tr>
               </thead>
               <tbody>
-                {historyData.length === 0 ? (
+                {loading ? (
+                  <>
+                    <tr>
+                      <td colSpan="7">
+                        <div className="table_loader py-5 text-center">
+                          {" "}
+                          <Loader />
+                        </div>
+                      </td>
+                    </tr>
+                  </>
+                ) : historyData.length === 0 ? (
                   <tr>
                     <td colSpan="8" className="py-5 text-center">
                       No transactions found
@@ -298,8 +304,8 @@ function SuperAgentSettlementReport() {
                       </td> */}
                       <td>{item.comment || "-"}</td>
                       <td>{item.collection_name || "-"}</td>
-                      {/* <td>{item.debit > 0 ? item.debit.toFixed(2) : "-"}</td>
-                      <td>{item.credit > 0 ? item.credit.toFixed(2) : "-"}</td> */}
+                      <td>{item.debit > 0 ? item.debit.toFixed(2) : "-"}</td>
+                      <td>{item.credit > 0 ? item.credit.toFixed(2) : "-"}</td>
                       <td>{item.balance ? item.balance.toFixed(2) : "-"}</td>
                       <td>
                         {item.pay_type == "diya"
@@ -316,7 +322,7 @@ function SuperAgentSettlementReport() {
               </tbody>
             </table>
           </div>
-        )}
+        }
 
         {totalPages > 0 && (
           <div className="d-flex justify-content-center align-items-center mt-4">

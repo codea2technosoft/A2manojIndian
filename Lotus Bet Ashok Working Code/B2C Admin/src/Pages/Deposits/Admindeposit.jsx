@@ -222,34 +222,35 @@ const AdminDepositList = () => {
 
     const { value: formValues } = await Swal.fire({
       showCloseButton: true,
-      title: `Are You Sure Want To - ${statusLabel}?`,
+      title: `${statusLabel} Request?`,
+      width: 400, // 👈 Choti size
+      padding: '20px',
       html: `
-      <div style="display:flex; flex-direction:column; gap:10px; text-align:left">
-        <div class="mb-3">
-          <label for="statusDisplay" class="form-label">Status</label>
-          <div style="font-weight: bold; color: ${isApprove ? 'green' : 'red'};">
-            ${statusLabel}
+        <div style="padding: 5px 0;">
+          <div style="margin-bottom: 15px; text-align:center;">
+           
           </div>
-        </div>
-        <div class="mb-3">
-          <label for="notesInput" class="form-label">Admin Remark:</label>
-          <textarea 
-            id="notesInput"
-            class="form-control"
-            placeholder="${isApprove ? 'Enter remark (optional)' : 'Enter rejection reason (required)'}"
-            rows="3"
-          ></textarea>
-        </div>
-        ${!isApprove ? `
-          <div id="errorMessage" style="color: red; display: block; font-size: 14px;">
-            Remark is required when rejecting
+          <div style="text-align:left; margin-bottom: 10px;">
+            <label style="font-weight:600; display:block; margin-bottom:5px; font-size:13px;">Admin Remark:</label>
+            <textarea 
+              id="notesInput"
+              style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px; min-height:60px; font-size:13px;"
+              placeholder="${isApprove ? 'Enter remark (optional)' : 'Enter rejection reason (required)'}"
+            ></textarea>
           </div>
-        ` : ''}
-      </div>
-    `,
+          ${!isApprove ? `
+            <div style="color:#dc3545; font-size:12px; text-align:left; padding:6px 10px; background:#fff3f3; border-radius:4px; border-left:3px solid #dc3545;">
+              ⚠️ Remark is required when rejecting
+            </div>
+          ` : ''}
+        </div>
+      `,
       focusConfirm: false,
       showCancelButton: true,
       confirmButtonText: statusLabel,
+      confirmButtonColor: isApprove ? '#28a745' : '#dc3545',
+      cancelButtonColor: '#dc3545',
+      buttonsStyling: true,
       preConfirm: () => {
         const notes = document.getElementById("notesInput").value;
 
@@ -418,7 +419,7 @@ const AdminDepositList = () => {
                                 <td>{deposit.accountHolderName || "-"}</td>
                                 <td>{deposit.bankName || "-"}</td>
                                 <td>{deposit.accountNumber || "-"}</td>
-                                <td>₹{formatCurrency(deposit.amount)}</td>
+                                <td>{formatCurrency(deposit.amount)}</td>
                                 <td>{deposit.type || "Deposit"}</td>
                                 <td>
                                   {imageUrl ? (

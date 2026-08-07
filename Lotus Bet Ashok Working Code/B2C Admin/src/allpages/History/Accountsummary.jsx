@@ -679,8 +679,8 @@ const AccountSummary = () => {
                   <tbody>
                     <tr>
                       <td>Main wallet</td>
-                      <td>{userData.availableToBet}</td>
-                      <td>{userData.availableToWithdraw}</td>
+                      <td>{Number(userData.availableToBet).toFixed(2)}</td>
+                      <td>{Number(userData.availableToWithdraw).toFixed(2)}</td>
                       {/* <td>{userData.currentExposure}</td> */}
                    <td>{String(userData.currentExposure || "").replace(/^INR\s*/, "")}</td>
                     </tr>

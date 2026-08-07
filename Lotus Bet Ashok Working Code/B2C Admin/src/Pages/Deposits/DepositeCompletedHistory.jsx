@@ -499,7 +499,7 @@ const DepositeCompletedHistory = () => {
                                 <td>{item.accountHolderName || "NA"}</td>
                                 <td>{item.bankName || "NA"}</td>
                                 <td>{item.accountNumber || "NA"}</td>
-                                <td>₹{item.amount || 0}</td>
+                                <td>{item.amount || 0}</td>
                                 <td>{item.type || "Deposit"}</td>
                                 <td className="p-0 m-0">
                                   {imageUrl ? (

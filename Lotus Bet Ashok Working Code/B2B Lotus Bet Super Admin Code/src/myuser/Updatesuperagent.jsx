@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useParams } from "react-router-dom";
+import Loader from "../Common/Loader";
 
 const Updatesuperagent = () => {
   const navigate = useNavigate();
@@ -472,19 +473,6 @@ const Updatesuperagent = () => {
     }));
   };
 
-  if (loading) {
-    return (
-      <div className="card">
-        <div className="card-body text-center">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-          <p className="mt-2">Loading admin data...</p>
-        </div>
-      </div>
-    );
-  }
-
   // Helper function to get commission type display text
   const getCommissionTypeText = (type) => {
     if (type === "1") return "BET BY BET";
@@ -529,7 +517,7 @@ const Updatesuperagent = () => {
           </h5>
           <div className="d-flex gap-2">
             <button
-              className="btn btn-dark"
+              className="btn btn-outline-light"
               onClick={() => navigate(-1)}
             >
               Back
@@ -539,43 +527,46 @@ const Updatesuperagent = () => {
 
         <div className="card-body">
           <form onSubmit={handleSubmit}>
-            <div className="row">
-              {/* USER INFO Section */}
-              {/* <div className="col-12 mb-4">
+            {loading ? (
+              <div className="text-center">
+                <Loader />
+              </div>
+            ) : (
+              <div className="row">
+                {/* USER INFO Section */}
+                {/* <div className="col-12 mb-4">
                 <h5 className="border-bottom pb-2">USER INFO</h5>
               </div> */}
 
-              {/* NAME */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label">FULL NAME</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  placeholder="Enter name"
-                />
-              </div>
+                {/* NAME */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">FULL NAME</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    placeholder="Enter name"
+                  />
+                </div>
 
-              {/* USERNAME */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label">USERNAME</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  // name="username"
-                  value={AdminData.username}
-                  onChange={handleChange}
-                  //disabled={isSubmitting}
+                {/* USERNAME */}
+                {/* <div className="col-md-6 mb-3">
+                  <label className="form-label">USERNAME</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={AdminData.username}
+                    onChange={handleChange}
                     disabled={true}
-                  placeholder="Enter username"
-                />
-              </div>
+                    placeholder="Enter username"
+                  />
+                </div> */}
 
-              {/* MATCH AND SHARE INFO Section */}
-              {/* <div className="col-12 my-4">
-                <h5 className="border-bottom pb-2">MATCH AND SHARE INFO</h5>
+                {/* MATCH AND SHARE INFO Section */}
+                {/* <div className="col-12 my-4">
+                <h5 className="heading2 border-bottom pb-2">MATCH AND SHARE INFO</h5>
               </div>
 
               <div className="col-md-6 mb-3">
@@ -604,8 +595,8 @@ const Updatesuperagent = () => {
                 />
               </div> */}
 
-              {/* MY COMMISSION TYPE */}
-              {/* <div className="col-md-6 mb-3">
+                {/* MY COMMISSION TYPE */}
+                {/* <div className="col-md-6 mb-3">
                 <label className="form-label">MY COMMISSION TYPE</label>
                 <input
                   type="text"
@@ -616,8 +607,8 @@ const Updatesuperagent = () => {
                 />
               </div> */}
 
-              {/* COMMISSION TYPE (Agent) */}
-              {/* <div className="col-md-6 mb-3">
+                {/* COMMISSION TYPE (Agent) */}
+                {/* <div className="col-md-6 mb-3">
                 <label className="form-label">COMMISSION TYPE</label>
                 <select
                   className="form-select"
@@ -631,8 +622,8 @@ const Updatesuperagent = () => {
                 </select>
               </div> */}
 
-              {/* MY MATCH COMM */}
-              {/* <div className="col-md-6 mb-3">
+                {/* MY MATCH COMM */}
+                {/* <div className="col-md-6 mb-3">
                                 <label className="form-label">MY MATCH COMM</label>
                                 <input
                                     type="text"
@@ -643,8 +634,8 @@ const Updatesuperagent = () => {
                                 />
                             </div> */}
 
-              {/* MATCH COMM (Agent) */}
-              {/* <div className="col-md-6 mb-3">
+                {/* MATCH COMM (Agent) */}
+                {/* <div className="col-md-6 mb-3">
                                 <label className="form-label">MATCH COMM</label>
                                 <input
                                     type="text"
@@ -664,8 +655,8 @@ const Updatesuperagent = () => {
                                 )}
                             </div> */}
 
-              {/* MY SESSION COMM */}
-              {/* <div className="col-md-6 mb-3">
+                {/* MY SESSION COMM */}
+                {/* <div className="col-md-6 mb-3">
                                 <label className="form-label">MY SESSION COMM</label>
                                 <input
                                     type="text"
@@ -675,8 +666,8 @@ const Updatesuperagent = () => {
                                 />
                             </div> */}
 
-              {/* SESSION COMM (Agent) */}
-              {/* <div className="col-md-6 mb-3">
+                {/* SESSION COMM (Agent) */}
+                {/* <div className="col-md-6 mb-3">
                                 <label className="form-label">SESSION COMM</label>
                                 <input
                                     type="text"
@@ -696,7 +687,7 @@ const Updatesuperagent = () => {
                                 )}
                             </div> */}
 
-              {/* <div className="col-md-12 mb-3">
+                {/* <div className="col-md-12 mb-3">
                 <div className="d-flex justify-content-between mb-2">
                   <label className="fw-bold mb-0">RATIO (CRICKET) :</label>
 
@@ -705,7 +696,7 @@ const Updatesuperagent = () => {
                   </small>
                 </div>
 
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -742,7 +733,7 @@ const Updatesuperagent = () => {
                 </div>
               </div> */}
 
-              {/* <div className="col-md-12 mb-3">
+                {/* <div className="col-md-12 mb-3">
                 <div className="d-flex justify-content-between mb-2">
                   <label className="fw-bold mb-0">RATIO (Session) :</label>
 
@@ -751,7 +742,7 @@ const Updatesuperagent = () => {
                   </small>
                 </div>
 
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -787,14 +778,14 @@ const Updatesuperagent = () => {
                 </div>
               </div> */}
 
-              {/* <div className="col-md-12 mb-3">
+                {/* <div className="col-md-12 mb-3">
                 <div className="d-flex justify-content-between mb-2">
                   <label className="fw-bold mb-0">Ratio (Football) :</label>
                   <small className="fw-bold">
                     AVAILABLE PARTNERSHIP: {formData.myFootballComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -829,14 +820,14 @@ const Updatesuperagent = () => {
                 </div>
               </div> */}
 
-              {/* <div className="col-md-12 mb-3">
+                {/* <div className="col-md-12 mb-3">
                 <div className="d-flex justify-content-between mb-2">
                   <label className="fw-bold mb-0">Ratio (Tennis) :</label>
                   <small className="fw-bold">
                     AVAILABLE PARTNERSHIP: {formData.myTennisComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -878,7 +869,7 @@ const Updatesuperagent = () => {
                     AVAILABLE PARTNERSHIP: {formData.myHorseRacingComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -922,7 +913,7 @@ const Updatesuperagent = () => {
                     AVAILABLE PARTNERSHIP: {formData.myGreyhoundRacingComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -964,7 +955,7 @@ const Updatesuperagent = () => {
                     AVAILABLE PARTNERSHIP: {formData.myPoliticsComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -1006,7 +997,7 @@ const Updatesuperagent = () => {
                     AVAILABLE PARTNERSHIP: {formData.myCasinoComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -1041,32 +1032,30 @@ const Updatesuperagent = () => {
                 </div>
               </div> */}
 
-              {/* MATKA COMM (Agent) */}
-
-              {/* Submit Button */}
-              <div className="col-12 text-center mt-4">
-                <div className="d-flex justify-content-start">
-                  <button
-                    type="submit"
-                    className="btn btn-primary px-5"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <span
-                          className="spinner-border spinner-border-sm me-2"
-                          role="status"
-                          aria-hidden="true"
-                        ></span>
-                        Creating...
-                      </>
-                    ) : (
-                      "SUBMIT"
-                    )}
-                  </button>
+                <div className="col-12 text-center mt-md-4">
+                  <div className="d-flex justify-content-start">
+                    <button
+                      type="submit"
+                      className="btn btn-primary px-5"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <span
+                            className="spinner-border spinner-border-sm me-2"
+                            role="status"
+                            aria-hidden="true"
+                          ></span>
+                          Creating...
+                        </>
+                      ) : (
+                        "SUBMIT"
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </form>
         </div>
       </div>

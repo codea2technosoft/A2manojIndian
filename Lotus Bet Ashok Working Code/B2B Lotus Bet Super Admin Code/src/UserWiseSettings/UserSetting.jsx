@@ -262,6 +262,14 @@ function UserSetting() {
   if (loading) {
     return (
       <div className="card">
+        <div className="card-header bgHeader bg-primary-yellow d-flex justify-content-between align-items-center">
+          <h3 className="card-title mb-0">User Setting</h3>
+          <div className="d-flex gap-2">
+            <button className="btn btn-light" onClick={() => navigate(-1)}>
+              Back
+            </button>
+          </div>
+        </div>
         <div className="card-body text-center">
           <Loader />
         </div>
@@ -343,7 +351,11 @@ function UserSetting() {
             })}
           </div>
 
-          {marketNames.length > 0 ? (
+          {loading ? (
+            <div className="text-center">
+              <Loader />
+            </div>
+          ) : marketNames.length > 0 ? (
             marketNames.map((marketName, index) => {
               const market = currentSportMarkets[marketName];
               const isThisMarketSubmitting = submittingMarket === marketName;

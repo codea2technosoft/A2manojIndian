@@ -294,10 +294,9 @@ const ProfitLossBetHistory = () => {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="9">
-                      <div className="text-center py-5 mt-1">
-                        <p>Loading bet history data...</p>
-                        <Loader className="mt-2" />
+                    <td colSpan="9" className="table_loader">
+                      <div className="text-center py-5">
+                        <Loader />
                       </div>
                     </td>
                   </tr>
@@ -318,17 +317,13 @@ const ProfitLossBetHistory = () => {
                           <td>{serialNo}</td>
                           <td>{item.username || "N/A"}</td>
                           <td>{item.team_name || "N/A"}</td>
-                          <td>{item.odd || item.rate || "0"}</td>
-                          <td>
-                            {formatNumber(item.amount || 0)}
-                          </td>
-                          <td>
-                            {formatNumber(item.win || 0)}
-                          </td>
-                          <td>
-                            {formatNumber(item.loss || 0)}
-                          </td>
-                          <td className={`fw-bold ${item.total >= 0 ? "text-success" : "text-danger"}`}>
+                          <td>{!isNaN(item.amount) ? Number(item.amount).toFixed(2) : "-"}</td>
+                          <td>{!isNaN(item.stake) ? Number(item.stake).toFixed(2) : "-"}</td>
+                          <td>{!isNaN(item.comm_in) ? Number(item.comm_in).toFixed(2) : "-"}</td>
+                          <td>{!isNaN(item.comm_out) ? Number(item.comm_out).toFixed(2) : "-"}</td>
+                          <td
+                            className={`fw-bold ${item.total >= 0 ? "text-success" : "text-danger"}`}
+                          >
                             {formatNumber(item.total || 0)}
                           </td>
                           <td>{new Date(item.created_at).toLocaleString()}</td>
@@ -339,36 +334,36 @@ const ProfitLossBetHistory = () => {
                 )}
               </tbody>
             </table>
-
-            {totalPages > 0 && (
-              <div className="d-flex justify-content-center align-items-center mt-4">
-                <div className="paginationall d-flex align-items-center gap-1">
-                  <button disabled={currentPage === 1} onClick={handlePrev}>
-                    <MdKeyboardDoubleArrowLeft /> Previous
-                  </button>
-
-                  <div className="d-flex gap-1">
-                    {getPageNumbers().map((page) => (
-                      <div
-                        key={page}
-                        className={`paginationnumber ${currentPage === page ? "active" : ""}`}
-                        onClick={() => handlePageClick(page)}
-                      >
-                        {page}
-                      </div>
-                    ))}
-                  </div>
-
-                  <button
-                    disabled={currentPage === totalPages}
-                    onClick={handleNext}
-                  >
-                    Next <MdKeyboardDoubleArrowRight />
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
+
+          {totalPages > 0 && (
+            <div className="d-flex justify-content-center align-items-center mb-2">
+              <div className="paginationall d-flex align-items-center gap-1">
+                <button disabled={currentPage === 1} onClick={handlePrev}>
+                  <MdKeyboardDoubleArrowLeft /> Previous
+                </button>
+
+                <div className="d-flex gap-1">
+                  {getPageNumbers().map((page) => (
+                    <div
+                      key={page}
+                      className={`paginationnumber ${currentPage === page ? "active" : ""}`}
+                      onClick={() => handlePageClick(page)}
+                    >
+                      {page}
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={handleNext}
+                >
+                  Next <MdKeyboardDoubleArrowRight />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>

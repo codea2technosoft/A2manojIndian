@@ -52,15 +52,6 @@ function IcasinoSetting() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="card">
-        <div className="card-body text-center">
-          <Loader />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -86,6 +77,7 @@ function IcasinoSetting() {
             </button>
           </div>
         </div>
+
         <div className="card-body">
           <div className="setting_btns d-flex flex-nowrap overflow-auto gap-2">
             {Object.keys(settings).map((tab) => (
@@ -99,7 +91,13 @@ function IcasinoSetting() {
             ))}
           </div>
 
-          <div className="row mt-3 user_setting">
+          {loading ? (
+            <div className="table_loader">
+              <div className="py-5 text-center">
+                <Loader />
+              </div>
+            </div>
+          ) : <div className="row mt-3 user_setting">
             <div className="col-md-4 mb-3">
               <label>Min Bet</label>
 
@@ -211,7 +209,7 @@ function IcasinoSetting() {
             <div className="d-flex gap-2 justify-content-start">
               <button className="btn btn-primary text-dark">Save</button>
             </div>
-          </div>
+          </div>}
         </div>
       </div>
     </>

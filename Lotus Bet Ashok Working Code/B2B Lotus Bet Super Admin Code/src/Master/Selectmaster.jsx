@@ -73,7 +73,7 @@ function CustomDropdown() {
     setSelectedUpline(user);
     setSearchText(user.username);
     setDropdownOpen(false);
-    navigate(`/CreateSuperAgent/${user.admin_id}`);
+    navigate(`/agent_lists/create-new-master/${user.admin_id}`);
   };
 
   return (

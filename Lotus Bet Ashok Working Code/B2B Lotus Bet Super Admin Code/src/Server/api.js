@@ -528,6 +528,20 @@ export const getSettlementReporttAll = (payload) => {
   return API.post("/chip-statement-new", payload);
 };
 
+
+export const getsportsSummaryReportAll = (payload) => {
+  return API.post("/sports-summary-report", payload);
+};
+
+
+
+export const getsChipSummaryReportAll = (payload) => {
+  return API.post("/chip-summary", payload);
+};
+
+
+
+
 // export const toggleUserBetBlockUnblock = (admin_id, role, active) =>
 //   API.post("/update-client-status", { admin_id, role, active });
 
@@ -600,8 +614,6 @@ export const getSeriesHorseRacingCountryMatchListAll = (params) => {
   });
 };
 
-
 export const getMarketAnalysis = (payload) => {
   return API.post("/market-analysis", payload);
 };
-

@@ -282,15 +282,15 @@ function InActiveUserLists() {
                   <th className="text-center">#</th>
                   <th>Code</th>
                   <th>Name</th>
-                  <th>Super Admin</th>
+                  {/* <th>Super Admin</th>
                   <th>Date of Joining</th>
-                  <th>Password</th>
+                  <th>Password</th> */}
                   {/* <th>OTP</th> */}
-                  <th>Share(%)</th>
+                  {/* <th>Share(%)</th>
                   <th>Commission Type</th>
                   <th>Match Comm(%)</th>
                   <th>Session Comm(%)</th>
-                  <th>Chips</th>
+                  <th>Chips</th> */}
                   <th>Status</th>
                 </tr>
               </thead>
@@ -302,15 +302,15 @@ function InActiveUserLists() {
                       <td className="text-center">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                       <td>{row.admin_id || "N/A"}</td>
                       <td>{row.username || "N/A"}</td>
-                      <td>
+                      {/* <td>
                         <div>{row.super_admin_id || "N/A"}</div>
                         <small>{row.parent_username || "N/A"}</small>
-                      </td>
+                      </td> */}
                       {/* <td className="text-center">
   {new Date(row.createdAt).toLocaleDateString("en-GB")}
 </td> */}
 
-                      <td className="text-center">
+                      {/* <td className="text-center">
                         {row?.createdAt
                           ? new Date(row.createdAt).toLocaleString("en-GB", {
                             day: "2-digit",
@@ -333,9 +333,9 @@ function InActiveUserLists() {
                             style={{ background: "white" }}
                           />
                         </div>
-                      </td>
+                      </td> */}
                       {/* <td>{row.admin_otp || "0"}</td> */}
-                      <td className="text-center">{row.match_share || "0"}</td>
+                      {/* <td className="text-center">{row.match_share || "0"}</td>
                       <td className="text-center">
                         {String(row.commission_type) === "1" ? "BBB" :
                           String(row.commission_type) === "0" ? "NOS" :
@@ -343,9 +343,9 @@ function InActiveUserLists() {
                       </td>
                       <td className="text-center">{row.match_comm || "0"}</td>
                       <td className="text-center">{row.session_comm || "0"}</td>
-                      <td className="text-center">₹{row.coins || "0"}</td>
+                      <td className="text-center">₹{row.coins || "0"}</td> */}
                       <td>
-                        <span className="badge bg-danger me-2">Inactive</span>
+                        {/* <span className="badge bg-danger me-2">Inactive</span> */}
                         <Button
                           variant="success"
                           size="sm"
@@ -353,7 +353,7 @@ function InActiveUserLists() {
                             setSelectedAgent(row);
                             setShowStatusModal(true);
                           }}
-                          title="Activate Master"
+                          title="Activate User"
                         >
                           Activate
                         </Button>
@@ -393,18 +393,18 @@ function InActiveUserLists() {
 
                   <div className="modal-body">
                     <p className="mb-2">
-                      <strong>Master Username:</strong> {selectedAgent.username}
+                      <strong>User Name :</strong> {selectedAgent.username}
                     </p>
 
                     <p className="mb-2">
-                      <strong>Master Code:</strong>{" "}
+                      <strong>User Code :</strong>{" "}
                       {selectedAgent.code || selectedAgent.admin_id}
                     </p>
 
                     <p>
-                      Status change to:
+                      Status change to :
                       <strong>
-                        {selectedAgent.active === 1 ? "Inactive" : "Active"}
+                         {selectedAgent.active === 1 ? "Inactive" : "Active"}
                       </strong>
                     </p>
                   </div>

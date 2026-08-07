@@ -5,6 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { useParams } from "react-router-dom";
+import Loader from "../Common/Loader";
 
 const Updatesuperagent = () => {
   const navigate = useNavigate();
@@ -357,19 +358,6 @@ const Updatesuperagent = () => {
     }
   }, []);
 
-  if (loading) {
-    return (
-      <div className="card">
-        <div className="card-body text-center">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-          <p className="mt-2">Loading admin data...</p>
-        </div>
-      </div>
-    );
-  }
-
   // Helper function to get commission type display text
   const getCommissionTypeText = (type) => {
     if (type === "1") return "BET BY BET";
@@ -482,10 +470,10 @@ const Updatesuperagent = () => {
       />
       <div className="card">
         <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
-          <h3 className="card-title mb-0">Edit Details </h3>
+          <h3 className="card-title mb-0">Update Master</h3>
           <div className="d-flex gap-2">
             <button
-              className="btn btn-dark"
+              className="btn btn-outline-light"
               onClick={() => navigate(-1)}
             >
               Back
@@ -494,97 +482,101 @@ const Updatesuperagent = () => {
         </div>
         <div className="card-body">
           <form onSubmit={handleSubmit}>
-            <div className="row">
-              {/* USER INFO Section */}
-              {/* <div className="col-12 mb-4">
+            {loading ? (
+              <div className="text-center">
+                <Loader />
+              </div>
+            ) : (
+              <div className="row">
+                {/* USER INFO Section */}
+                {/* <div className="col-12 mb-4">
                 <h5 className="border-bottom pb-2">USER INFO</h5>
               </div> */}
 
-              {/* NAME */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Full Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  placeholder="Enter name"
-                />
-              </div>
+                {/* NAME */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Full Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    placeholder="Enter name"
+                  />
+                </div>
 
-              {/* USERNAME */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label">User Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  // name="username"
-                  value={AdminData.username}
-                  onChange={handleChange}
-                  disabled={isSubmitting}
-                  placeholder="Enter username"
-                />
-              </div>
+                {/* USERNAME */}
+                {/* <div className="col-md-6 mb-3">
+                  <label className="form-label">User Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={AdminData.username}
+                    onChange={handleChange}
+                    disabled={isSubmitting}
+                    placeholder="Enter username"
+                  />
+                </div> */}
 
-              {/* MATCH AND SHARE INFO Section */}
-              <div className="col-12 my-4">
-                <h5 className="border-bottom pb-2">MATCH AND SHARE INFO</h5>
-              </div>
+                {/* MATCH AND SHARE INFO Section */}
+                {/* <div className="col-12 my-4">
+                  <h5 className="heading2 border-bottom pb-2">
+                    MATCH AND SHARE INFO
+                  </h5>
+                </div> */}
 
-              {/* MY MATCH SHARE */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label">MY MATCH SHARE</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={`${AdminData.match_share}%`}
-                  style={{ backgroundColor: "#f8f9fa" }}
-                />
-              </div>
+                {/* MY MATCH SHARE */}
+                {/* <div className="col-md-6 mb-3">
+                  <label className="form-label">MY MATCH SHARE</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={`${AdminData.match_share}%`}
+                  />
+                </div> */}
 
-              {/* MATCH SHARE (Agent) */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label">MATCH SHARE</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="agentMatchShare"
-                  value={formData.agentMatchShare}
-                  onChange={handleChange}
-                  placeholder="Enter match share"
-                />
-              </div>
+                {/* MATCH SHARE (Agent) */}
+                {/* <div className="col-md-6 mb-3">
+                  <label className="form-label">MATCH SHARE</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    name="agentMatchShare"
+                    value={formData.agentMatchShare}
+                    onChange={handleChange}
+                    placeholder="Enter match share"
+                  />
+                </div> */}
 
-              {/* MY COMMISSION TYPE */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label">MY COMMISSION TYPE</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={getCommissionTypeText(AdminData.commission_type)}
-                  disabled
-                  style={{ backgroundColor: "#f8f9fa" }}
-                />
-              </div>
+                {/* MY COMMISSION TYPE */}
+                {/* <div className="col-md-6 mb-3">
+                  <label className="form-label">MY COMMISSION TYPE</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={getCommissionTypeText(AdminData.commission_type)}
+                    disabled
+                  />
+                </div> */}
 
-              {/* COMMISSION TYPE (Agent) */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label">COMMISSION TYPE</label>
-                <select
-                  className="form-select"
-                  name="agentCommissionType"
-                  value={formData.agentCommissionType}
-                  onChange={handleChange}
-                >
-                  <option value="">Select</option>
-                  <option value="1">BET BY BET</option>
-                  <option value="0">NO MATCH COMMISSION</option>
-                </select>
-              </div>
+                {/* COMMISSION TYPE (Agent) */}
+                {/* <div className="col-md-6 mb-3">
+                  <label className="form-label">COMMISSION TYPE</label>
+                  <select
+                    className="form-select"
+                    name="agentCommissionType"
+                    value={formData.agentCommissionType}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select</option>
+                    <option value="1">BET BY BET</option>
+                    <option value="0">NO MATCH COMMISSION</option>
+                  </select>
+                </div> */}
 
-              {/* MY MATCH COMM */}
-              {/* <div className="col-md-6 mb-3">
+                {/* MY MATCH COMM */}
+                {/* <div className="col-md-6 mb-3">
                                 <label className="form-label">MY MATCH COMM</label>
                                 <input
                                     type="text"
@@ -595,8 +587,8 @@ const Updatesuperagent = () => {
                                 />
                             </div> */}
 
-              {/* MATCH COMM (Agent) */}
-              {/* <div className="col-md-6 mb-3">
+                {/* MATCH COMM (Agent) */}
+                {/* <div className="col-md-6 mb-3">
                                 <label className="form-label">MATCH COMM</label>
                                 <input
                                     type="number"
@@ -613,8 +605,8 @@ const Updatesuperagent = () => {
                                 )}
                             </div> */}
 
-              {/* MY SESSION COMM */}
-              {/* <div className="col-md-6 mb-3">
+                {/* MY SESSION COMM */}
+                {/* <div className="col-md-6 mb-3">
                                 <label className="form-label">MY SESSION COMM</label>
                                 <input
                                     type="text"
@@ -624,8 +616,8 @@ const Updatesuperagent = () => {
                                 />
                             </div> */}
 
-              {/* SESSION COMM (Agent) */}
-              {/* <div className="col-md-6 mb-3">
+                {/* SESSION COMM (Agent) */}
+                {/* <div className="col-md-6 mb-3">
                                 <label className="form-label">SESSION COMM</label>
                                 <input
                                     type="number"
@@ -642,380 +634,346 @@ const Updatesuperagent = () => {
                                 )}
                             </div> */}
 
-              <div className="col-md-12 mb-3">
-                <div className="d-flex justify-content-between mb-2">
-                  <label className="fw-bold mb-0">RATIO (CRICKET) :</label>
+                {/* <div className="col-md-12 mb-3">
+                  <div className="d-flex justify-content-between mb-2">
+                    <label className="fw-bold mb-0">RATIO (CRICKET) :</label>
 
-                  <small className="fw-bold">
-                    AVAILABLE PARTNERSHIP: {formData.myMatchComm}
-                  </small>
-                </div>
-
-                <div className="row">
-                  {/* Left Input */}
-                  <div className="col-md-6">
-                    <input
-                      type="text"
-                      className={`form-control ${errors.agentMatchComm ? "is-invalid" : ""}`}
-                      name="agentMatchComm"
-                      value={formData.agentMatchComm}
-                      onChange={handleRatioChange}
-                      min="0"
-                      max={Number(formData.myMatchComm) - 1}
-                      disabled={
-                        formData.agentCommissionType === "0" || isSubmitting
-                      }
-                    />
-
-                    {errors.agentMatchComm && (
-                      <div className="invalid-feedback d-block">
-                        {errors.agentMatchComm}
-                      </div>
-                    )}
+                    <small className="new_label fw-bold">
+                      AVAILABLE PARTNERSHIP: {formData.myMatchComm}
+                    </small>
                   </div>
 
-                  {/* Right Input */}
-                  <div className="col-md-6">
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={formData.myMatchComm}
-                      disabled
-                      style={{
-                        backgroundColor: "#f5f5f5",
-                        color: "#000",
-                      }}
-                    />
+                  <div className="row gy-2">
+                    <div className="col-6 col-md-6">
+                      <input
+                        type="text"
+                        className={`form-control ${errors.agentMatchComm ? "is-invalid" : ""}`}
+                        name="agentMatchComm"
+                        value={formData.agentMatchComm}
+                        onChange={handleRatioChange}
+                        min="0"
+                        max={Number(formData.myMatchComm) - 1}
+                        disabled={
+                          formData.agentCommissionType === "0" || isSubmitting
+                        }
+                      />
+
+                      {errors.agentMatchComm && (
+                        <div className="invalid-feedback d-block">
+                          {errors.agentMatchComm}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="col-6 col-md-6">
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={formData.myMatchComm}
+                        disabled
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="col-md-12 mb-3">
-                <div className="d-flex justify-content-between mb-2">
-                  <label className="fw-bold mb-0">RATIO (Session) :</label>
+                <div className="col-md-12 mb-3">
+                  <div className="d-flex justify-content-between mb-2">
+                    <label className="fw-bold mb-0">RATIO (Session) :</label>
 
-                  <small className="fw-bold">
-                    AVAILABLE PARTNERSHIP: {formData.mySessionComm}
-                  </small>
-                </div>
-
-                <div className="row">
-                  {/* Left Input */}
-                  <div className="col-md-6">
-                    <input
-                      type="text"
-                      className={`form-control ${errors.agentSessionComm ? "is-invalid" : ""}`}
-                      name="agentSessionComm"
-                      value={formData.agentSessionComm}
-                      onChange={handleRatioChange}
-                      min="0"
-                      max={Number(formData.mySessionComm) - 1}
-                      disabled={
-                        formData.agentCommissionType === "0" || isSubmitting
-                      }
-                    />
-
-                    {errors.agentMatchComm && (
-                      <div className="invalid-feedback d-block">
-                        {errors.agentSessionComm}
-                      </div>
-                    )}
+                    <small className="new_label fw-bold">
+                      AVAILABLE PARTNERSHIP: {formData.mySessionComm}
+                    </small>
                   </div>
 
-                  {/* Right Input */}
-                  <div className="col-md-6">
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={formData.mySessionComm}
-                      disabled
-                      style={{
-                        backgroundColor: "#f5f5f5",
-                        color: "#000",
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
+                  <div className="row gy-2">
+                    <div className="col-6 col-md-6">
+                      <input
+                        type="text"
+                        className={`form-control ${errors.agentSessionComm ? "is-invalid" : ""}`}
+                        name="agentSessionComm"
+                        value={formData.agentSessionComm}
+                        onChange={handleRatioChange}
+                        min="0"
+                        max={Number(formData.mySessionComm) - 1}
+                        disabled={
+                          formData.agentCommissionType === "0" || isSubmitting
+                        }
+                      />
 
-              <div className="col-md-12 mb-3">
-                <div className="d-flex justify-content-between mb-2">
-                  <label className="fw-bold mb-0">Ratio (Football) :</label>
-                  <small className="fw-bold">
-                    AVAILABLE PARTNERSHIP: {formData.myFootballComm}
-                  </small>
-                </div>
-                <div className="row">
-                  <div className="col-md-6">
-                    <input
-                      type="text"
-                      className={`form-control ${errors.agentFootballComm ? "is-invalid" : ""}`}
-                      name="agentFootballComm"
-                      value={formData.agentFootballComm}
-                      onChange={handleRatioChange}
-                      min="0"
-                      max={Number(formData.mySessionComm) - 1}
-                      disabled={
-                        formData.agentCommissionType === "0" || isSubmitting
-                      }
-                    />
-                    {errors.agentFootballComm && (
-                      <div className="invalid-feedback d-block">
-                        {errors.myFootballComm}
-                      </div>
-                    )}
-                  </div>
-                  <div className="col-md-6">
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={formData.myFootballComm}
-                      disabled
-                      style={{
-                        backgroundColor: "#f5f5f5",
-                        color: "#000",
-                      }}
-                    />
+                      {errors.agentMatchComm && (
+                        <div className="invalid-feedback d-block">
+                          {errors.agentSessionComm}
+                        </div>
+                      )}
+                    </div>
+                    <div className="col-6 col-md-6">
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={formData.mySessionComm}
+                        disabled
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="col-md-12 mb-3">
-                <div className="d-flex justify-content-between mb-2">
-                  <label className="fw-bold mb-0">Ratio (Tennis) :</label>
-                  <small className="fw-bold">
-                    AVAILABLE PARTNERSHIP: {formData.myTennisComm}
-                  </small>
-                </div>
-                <div className="row">
-                  <div className="col-md-6">
-                    <input
-                      type="text"
-                      className={`form-control ${errors.agentTennisComm ? "is-invalid" : ""}`}
-                      name="agentTennisComm"
-                      value={formData.agentTennisComm}
-                      onChange={handleRatioChange}
-                      min="0"
-                      max={Number(formData.mySessionComm) - 1}
-                      disabled={
-                        formData.agentCommissionType === "0" || isSubmitting
-                      }
-                    />
-                    {errors.agentTennisComm && (
-                      <div className="invalid-feedback d-block">
-                        {errors.myTennisComm}
-                      </div>
-                    )}
+                <div className="col-md-12 mb-3">
+                  <div className="d-flex justify-content-between mb-2">
+                    <label className="fw-bold mb-0">Ratio (Football) :</label>
+                    <small className="new_label fw-bold">
+                      AVAILABLE PARTNERSHIP: {formData.myFootballComm}
+                    </small>
                   </div>
-                  <div className="col-md-6">
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={formData.myTennisComm}
-                      disabled
-                      style={{
-                        backgroundColor: "#f5f5f5",
-                        color: "#000",
-                      }}
-                    />
+                  <div className="row gy-2">
+                    <div className="col-6 col-md-6">
+                      <input
+                        type="text"
+                        className={`form-control ${errors.agentFootballComm ? "is-invalid" : ""}`}
+                        name="agentFootballComm"
+                        value={formData.agentFootballComm}
+                        onChange={handleRatioChange}
+                        min="0"
+                        max={Number(formData.mySessionComm) - 1}
+                        disabled={
+                          formData.agentCommissionType === "0" || isSubmitting
+                        }
+                      />
+                      {errors.agentFootballComm && (
+                        <div className="invalid-feedback d-block">
+                          {errors.myFootballComm}
+                        </div>
+                      )}
+                    </div>
+                    <div className="col-6 col-md-6">
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={formData.myFootballComm}
+                        disabled
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="col-md-12 mb-3">
-                <div className="d-flex justify-content-between mb-2">
-                  <label className="fw-bold mb-0">Ratio (Horse Racing) :</label>
-                  <small className="fw-bold">
-                    AVAILABLE PARTNERSHIP: {formData.myHorseRacingComm}
-                  </small>
-                </div>
-                <div className="row">
-                  <div className="col-md-6">
-                    <input
-                      type="text"
-                      className={`form-control ${errors.agentHorseRacingComm ? "is-invalid" : ""}`}
-                      name="agentHorseRacingComm"
-                      value={formData.agentHorseRacingComm}
-                      onChange={handleRatioChange}
-                      min="0"
-                      max={Number(formData.mySessionComm) - 1}
-                      disabled={
-                        formData.agentCommissionType === "0" || isSubmitting
-                      }
-                    />
-                    {errors.agentHorseRacingComm && (
-                      <div className="invalid-feedback d-block">
-                        {errors.myHorseRacingComm}
-                      </div>
-                    )}
+                <div className="col-md-12 mb-3">
+                  <div className="d-flex justify-content-between mb-2">
+                    <label className="fw-bold mb-0">Ratio (Tennis) :</label>
+                    <small className="new_label fw-bold">
+                      AVAILABLE PARTNERSHIP: {formData.myTennisComm}
+                    </small>
                   </div>
-                  <div className="col-md-6">
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={formData.myHorseRacingComm}
-                      disabled
-                      style={{
-                        backgroundColor: "#f5f5f5",
-                        color: "#000",
-                      }}
-                    />
+                  <div className="row gy-2">
+                    <div className="col-6 col-md-6">
+                      <input
+                        type="text"
+                        className={`form-control ${errors.agentTennisComm ? "is-invalid" : ""}`}
+                        name="agentTennisComm"
+                        value={formData.agentTennisComm}
+                        onChange={handleRatioChange}
+                        min="0"
+                        max={Number(formData.mySessionComm) - 1}
+                        disabled={
+                          formData.agentCommissionType === "0" || isSubmitting
+                        }
+                      />
+                      {errors.agentTennisComm && (
+                        <div className="invalid-feedback d-block">
+                          {errors.myTennisComm}
+                        </div>
+                      )}
+                    </div>
+                    <div className="col-6 col-md-6">
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={formData.myTennisComm}
+                        disabled
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="col-md-12 mb-3">
-                <div className="d-flex justify-content-between mb-2">
-                  <label className="fw-bold mb-0">
-                    Ratio (Greyhound Racing) :
-                  </label>
-                  <small className="fw-bold">
-                    AVAILABLE PARTNERSHIP: {formData.myGreyhoundRacingComm}
-                  </small>
-                </div>
-                <div className="row">
-                  <div className="col-md-6">
-                    <input
-                      type="text"
-                      className={`form-control ${errors.agentGreyhoundRacingComm ? "is-invalid" : ""}`}
-                      name="agentGreyhoundRacingComm"
-                      value={formData.agentGreyhoundRacingComm}
-                      onChange={handleRatioChange}
-                      min="0"
-                      max={Number(formData.mySessionComm) - 1}
-                      disabled={
-                        formData.agentCommissionType === "0" || isSubmitting
-                      }
-                    />
-                    {errors.agentGreyhoundRacingComm && (
-                      <div className="invalid-feedback d-block">
-                        {errors.myGreyhoundRacingComm}
-                      </div>
-                    )}
+                <div className="col-md-12 mb-3">
+                  <div className="d-flex justify-content-between mb-2">
+                    <label className="fw-bold mb-0">
+                      Ratio (Horse Racing) :
+                    </label>
+                    <small className="new_label fw-bold">
+                      AVAILABLE PARTNERSHIP: {formData.myHorseRacingComm}
+                    </small>
                   </div>
-                  <div className="col-md-6">
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={formData.myGreyhoundRacingComm}
-                      disabled
-                      style={{
-                        backgroundColor: "#f5f5f5",
-                        color: "#000",
-                      }}
-                    />
+                  <div className="row gy-2">
+                    <div className="col-6 col-md-6">
+                      <input
+                        type="text"
+                        className={`form-control ${errors.agentHorseRacingComm ? "is-invalid" : ""}`}
+                        name="agentHorseRacingComm"
+                        value={formData.agentHorseRacingComm}
+                        onChange={handleRatioChange}
+                        min="0"
+                        max={Number(formData.mySessionComm) - 1}
+                        disabled={
+                          formData.agentCommissionType === "0" || isSubmitting
+                        }
+                      />
+                      {errors.agentHorseRacingComm && (
+                        <div className="invalid-feedback d-block">
+                          {errors.myHorseRacingComm}
+                        </div>
+                      )}
+                    </div>
+                    <div className="col-6 col-md-6">
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={formData.myHorseRacingComm}
+                        disabled
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="col-md-12 mb-3">
-                <div className="d-flex justify-content-between mb-2">
-                  <label className="fw-bold mb-0">Ratio (Politics) :</label>
-                  <small className="fw-bold">
-                    AVAILABLE PARTNERSHIP: {formData.myPoliticsComm}
-                  </small>
-                </div>
-                <div className="row">
-                  <div className="col-md-6">
-                    <input
-                      type="text"
-                      className={`form-control ${errors.agentPoliticsComm ? "is-invalid" : ""}`}
-                      name="agentPoliticsComm"
-                      value={formData.agentPoliticsComm}
-                      onChange={handleRatioChange}
-                      min="0"
-                      max={Number(formData.mySessionComm) - 1}
-                      disabled={
-                        formData.agentCommissionType === "0" || isSubmitting
-                      }
-                    />
-                    {errors.agentPoliticsComm && (
-                      <div className="invalid-feedback d-block">
-                        {errors.myPoliticsComm}
-                      </div>
-                    )}
+                <div className="col-md-12 mb-3">
+                  <div className="d-flex justify-content-between mb-2">
+                    <label className="fw-bold mb-0">
+                      Ratio (Greyhound Racing) :
+                    </label>
+                    <small className="new_label fw-bold">
+                      AVAILABLE PARTNERSHIP: {formData.myGreyhoundRacingComm}
+                    </small>
                   </div>
-                  <div className="col-md-6">
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={formData.myPoliticsComm}
-                      disabled
-                      style={{
-                        backgroundColor: "#f5f5f5",
-                        color: "#000",
-                      }}
-                    />
+                  <div className="row gy-2">
+                    <div className="col-6 col-md-6">
+                      <input
+                        type="text"
+                        className={`form-control ${errors.agentGreyhoundRacingComm ? "is-invalid" : ""}`}
+                        name="agentGreyhoundRacingComm"
+                        value={formData.agentGreyhoundRacingComm}
+                        onChange={handleRatioChange}
+                        min="0"
+                        max={Number(formData.mySessionComm) - 1}
+                        disabled={
+                          formData.agentCommissionType === "0" || isSubmitting
+                        }
+                      />
+                      {errors.agentGreyhoundRacingComm && (
+                        <div className="invalid-feedback d-block">
+                          {errors.myGreyhoundRacingComm}
+                        </div>
+                      )}
+                    </div>
+                    <div className="col-6 col-md-6">
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={formData.myGreyhoundRacingComm}
+                        disabled
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="col-md-12 mb-3">
-                <div className="d-flex justify-content-between mb-2">
-                  <label className="fw-bold mb-0">Ratio (Casino) :</label>
-                  <small className="fw-bold">
-                    AVAILABLE PARTNERSHIP: {formData.myCasinoComm}
-                  </small>
-                </div>
-                <div className="row">
-                  <div className="col-md-6">
-                    <input
-                      type="text"
-                      className={`form-control ${errors.agentCasinoComm ? "is-invalid" : ""}`}
-                      name="agentCasinoComm"
-                      value={formData.agentCasinoComm}
-                      onChange={handleRatioChange}
-                      min="0"
-                      max={Number(formData.mySessionComm) - 1}
-                      disabled={
-                        formData.agentCommissionType === "0" || isSubmitting
-                      }
-                    />
-                    {errors.agentCasinoComm && (
-                      <div className="invalid-feedback d-block">
-                        {errors.myCasinoComm}
-                      </div>
-                    )}
+                <div className="col-md-12 mb-3">
+                  <div className="d-flex justify-content-between mb-2">
+                    <label className="fw-bold mb-0">Ratio (Politics) :</label>
+                    <small className="new_label fw-bold">
+                      AVAILABLE PARTNERSHIP: {formData.myPoliticsComm}
+                    </small>
                   </div>
-                  <div className="col-md-6">
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={formData.myCasinoComm}
-                      disabled
-                      style={{
-                        backgroundColor: "#f5f5f5",
-                        color: "#000",
-                      }}
-                    />
+                  <div className="row gy-2">
+                    <div className="col-6 col-md-6">
+                      <input
+                        type="text"
+                        className={`form-control ${errors.agentPoliticsComm ? "is-invalid" : ""}`}
+                        name="agentPoliticsComm"
+                        value={formData.agentPoliticsComm}
+                        onChange={handleRatioChange}
+                        min="0"
+                        max={Number(formData.mySessionComm) - 1}
+                        disabled={
+                          formData.agentCommissionType === "0" || isSubmitting
+                        }
+                      />
+                      {errors.agentPoliticsComm && (
+                        <div className="invalid-feedback d-block">
+                          {errors.myPoliticsComm}
+                        </div>
+                      )}
+                    </div>
+                    <div className="col-6 col-md-6">
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={formData.myPoliticsComm}
+                        disabled
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-md-12 mb-3">
+                  <div className="d-flex justify-content-between mb-2">
+                    <label className="fw-bold mb-0">Ratio (Casino) :</label>
+                    <small className="new_label fw-bold">
+                      AVAILABLE PARTNERSHIP: {formData.myCasinoComm}
+                    </small>
+                  </div>
+                  <div className="row gy-2">
+                    <div className="col-6 col-md-6">
+                      <input
+                        type="text"
+                        className={`form-control ${errors.agentCasinoComm ? "is-invalid" : ""}`}
+                        name="agentCasinoComm"
+                        value={formData.agentCasinoComm}
+                        onChange={handleRatioChange}
+                        min="0"
+                        max={Number(formData.mySessionComm) - 1}
+                        disabled={
+                          formData.agentCommissionType === "0" || isSubmitting
+                        }
+                      />
+                      {errors.agentCasinoComm && (
+                        <div className="invalid-feedback d-block">
+                          {errors.myCasinoComm}
+                        </div>
+                      )}
+                    </div>
+                    <div className="col-6 col-md-6">
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={formData.myCasinoComm}
+                        disabled
+                      />
+                    </div>
+                  </div>
+                </div> */}
+
+                {/* Submit Button */}
+                <div className="col-12 text-center mt-md-4">
+                  <div className="d-flex justify-content-start">
+                    <button
+                      type="submit"
+                      className="btn btn-primary px-5"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <span
+                            className="spinner-border spinner-border-sm me-2"
+                            role="status"
+                            aria-hidden="true"
+                          ></span>
+                          Creating...
+                        </>
+                      ) : (
+                        "SUBMIT"
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>
-
-              {/* Submit Button */}
-              <div className="col-12 text-center mt-4">
-                <div className="d-flex justify-content-start">
-                  <button
-                    type="submit"
-                    className="btn btn-primary px-5"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <span
-                          className="spinner-border spinner-border-sm me-2"
-                          role="status"
-                          aria-hidden="true"
-                        ></span>
-                        Creating...
-                      </>
-                    ) : (
-                      "SUBMIT"
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
+            )}
           </form>
         </div>
       </div>

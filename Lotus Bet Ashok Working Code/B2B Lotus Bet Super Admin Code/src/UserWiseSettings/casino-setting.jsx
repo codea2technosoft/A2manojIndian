@@ -145,15 +145,6 @@ function CasinoSetting() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="card">
-        <div className="card-body text-center">
-          <Loader />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -174,10 +165,7 @@ function CasinoSetting() {
         <div className="card-header bgHeader bg-primary-yellow d-flex justify-content-between align-items-center">
           <h3 className="card-title mb-0">Casino Setting</h3>
           <div className="d-flex gap-2">
-            <button
-              className="btn btn-light"
-              onClick={() => navigate(-1)}
-            >
+            <button className="btn btn-light" onClick={() => navigate(-1)}>
               Back
             </button>
           </div>
@@ -192,101 +180,109 @@ function CasinoSetting() {
             <button className={`btn active btn-warning`}>CASINO(MAIN)</button>
           </div>
 
-          <div className="row mt-3 user_setting">
-            <div className="col-md-4 mb-3">
-              <label>Min Bet</label>
-              <input
-                type="number"
-                name="min_bet"
-                className="form-control"
-                value={settings.min_bet}
-                onChange={handleChange}
-                placeholder="Enter min bet"
-              />
+          {loading ? (
+            <div className="table_loader">
+              <div className="py-5 text-center">
+                <Loader />
+              </div>
             </div>
+          ) : (
+            <div className="row mt-3 user_setting">
+              <div className="col-md-4 mb-3">
+                <label>Min Bet</label>
+                <input
+                  type="number"
+                  name="min_bet"
+                  className="form-control"
+                  value={settings.min_bet}
+                  onChange={handleChange}
+                  placeholder="Enter min bet"
+                />
+              </div>
 
-            <div className="col-md-4 mb-3">
-              <label>Max Bet</label>
-              <input
-                type="number"
-                name="max_bet"
-                className="form-control"
-                value={settings.max_bet}
-                onChange={handleChange}
-                placeholder="Enter max bet"
-              />
-            </div>
+              <div className="col-md-4 mb-3">
+                <label>Max Bet</label>
+                <input
+                  type="number"
+                  name="max_bet"
+                  className="form-control"
+                  value={settings.max_bet}
+                  onChange={handleChange}
+                  placeholder="Enter max bet"
+                />
+              </div>
 
-            <div className="col-md-4 mb-3">
-              <label>Max Profit</label>
-              <input
-                type="number"
-                name="max_profit"
-                className="form-control"
-                value={settings.max_profit}
-                onChange={handleChange}
-                placeholder="Enter max profit"
-              />
-            </div>
+              <div className="col-md-4 mb-3">
+                <label>Max Profit</label>
+                <input
+                  type="number"
+                  name="max_profit"
+                  className="form-control"
+                  value={settings.max_profit}
+                  onChange={handleChange}
+                  placeholder="Enter max profit"
+                />
+              </div>
 
-            <div className="col-md-4 mb-3">
-              <label>Max Market Profit</label>
-              <input
-                type="number"
-                name="max_market_profit"
-                className="form-control"
-                value={settings.max_market_profit}
-                onChange={handleChange}
-                placeholder="Enter max market profit"
-              />
-            </div>
+              <div className="col-md-4 mb-3">
+                <label>Max Market Profit</label>
+                <input
+                  type="number"
+                  name="max_market_profit"
+                  className="form-control"
+                  value={settings.max_market_profit}
+                  onChange={handleChange}
+                  placeholder="Enter max market profit"
+                />
+              </div>
 
-            <div className="col-md-4 mb-3">
-              <label>Max Liability</label>
-              <input
-                type="number"
-                name="max_liability"
-                className="form-control"
-                value={settings.max_liability}
-                onChange={handleChange}
-                placeholder="Enter max liability"
-              />
-            </div>
+              <div className="col-md-4 mb-3">
+                <label>Max Liability</label>
+                <input
+                  type="number"
+                  name="max_liability"
+                  className="form-control"
+                  value={settings.max_liability}
+                  onChange={handleChange}
+                  placeholder="Enter max liability"
+                />
+              </div>
 
-            <div className="col-md-4 mb-3">
-              <label>Max Market Liability</label>
-              <input
-                type="number"
-                name="max_market_liability"
-                className="form-control"
-                value={settings.max_market_liability}
-                onChange={handleChange}
-                placeholder="Enter max market liability"
-              />
-            </div>
+              <div className="col-md-4 mb-3">
+                <label>Max Market Liability</label>
+                <input
+                  type="number"
+                  name="max_market_liability"
+                  className="form-control"
+                  value={settings.max_market_liability}
+                  onChange={handleChange}
+                  placeholder="Enter max market liability"
+                />
+              </div>
 
-            <div className="d-flex gap-2 justify-content-start mt-2">
-              <button
-                className="btn btn-primary text-dark py-2 px-4"
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <span
-                      className="spinner-border spinner-border-sm me-2"
-                      role="status"
-                    >
-                      <span className="visually-hidden">Loading...</span>
-                    </span>
-                    Saving...
-                  </>
-                ) : (
-                  "Save"
-                )}
-              </button>
+              <div className="d-flex gap-2 justify-content-start mt-2">
+                <button
+                  className="btn btn-primary text-dark py-2 px-4"
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <span
+                        className="spinner-border spinner-border-sm me-2"
+                        role="status"
+                      >
+                        <span className="visually-hidden">Loading...</span>
+                      </span>
+                      Saving...
+                    </>
+                  ) : (
+                    "Save"
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>

@@ -3,7 +3,9 @@ import Toast from "../../User/Toast";
 import { getAllGames, toggleGameStatus } from "../../Server/game.service";
 import ToggleSwitch from "../../Common/ToggleSwitch";
 import { useNavigate } from "react-router";
-import { FaEye } from "react-icons/fa";
+import { FaEye, FaUnlock } from "react-icons/fa";
+import Loader from "../../Common/Loader";
+import { FaLock, FaLockOpen } from "react-icons/fa";
 
 function AllGameList() {
   const [filter, setFilter] = useState(false);
@@ -54,6 +56,48 @@ function AllGameList() {
     fetchGames();
   }, []);
 
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [selectedGame, setSelectedGame] = useState(null);
+
+  const handleStatusClick = (game) => {
+    setSelectedGame(game);
+    setShowStatusModal(true);
+  };
+
+  const confirmStatusChange = async () => {
+    if (!selectedGame) return;
+
+    try {
+      setUpdating(selectedGame._id);
+
+      const response = await toggleGameStatus(selectedGame._id);
+
+      if (response.data.success) {
+        const updatedGame = response.data.data;
+
+        setGames((prev) =>
+          prev.map((g) => (g._id === selectedGame._id ? updatedGame : g)),
+        );
+
+        showToast("Status updated successfully");
+      } else {
+        showToast(response.data.message, "error");
+      }
+    } catch (err) {
+      console.error(err);
+      showToast("Error updating status", "error");
+    } finally {
+      setUpdating(null);
+      setShowStatusModal(false);
+      setSelectedGame(null);
+    }
+  };
+
+  const closeStatusModal = () => {
+    setShowStatusModal(false);
+    setSelectedGame(null);
+  };
+
   const handleToggleGameStatus = async (game) => {
     try {
       setUpdating(game._id);
@@ -87,26 +131,6 @@ function AllGameList() {
     );
   };
 
-  if (loading)
-    return (
-      <div className="text-center mt-3">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-        <p className="mt-2">Loading games...</p>
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="text-center mt-3 text-danger">
-        <p>{error}</p>
-        <button className="btn btn-primary" onClick={fetchGames}>
-          Retry
-        </button>
-      </div>
-    );
-
   return (
     <div className="all_sport">
       {toast.show && (
@@ -125,52 +149,98 @@ function AllGameList() {
                 <th>Sports Name</th>
                 <th>Category</th>
                 <th>Status</th>
-                <th className="text-center">Action</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {games.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan="5" className="table_loader">
+                    <div className="text-center py-5">
+                      <Loader />
+                      {/* <h6>Loading games...</h6> */}
+                    </div>
+                  </td>
+                </tr>
+              ) : error ? (
+                /* Error */
+                <tr>
+                  <td colSpan="4" className="text-center py-5">
+                    <p className="text-danger mb-3">{error}</p>
+
+                    <button className="btn btn-primary" onClick={fetchGames}>
+                      Retry
+                    </button>
+                  </td>
+                </tr>
+              ) : games.length > 0 ? (
                 games.map((game, index) => (
                   <tr key={game._id}>
                     <td>{index + 1}</td>
-                    <td>
+                    <td className="text-capitalize">
                       {game.name}
                       {/* {game.description && <small className="d-block text-muted">{game.description}</small>} */}
                     </td>
                     <td>{game.category}</td>
-                    <td>{getStatusBadge(game.isActive)}</td>
+                    {/* <td>{getStatusBadge(game.isActive)}</td> */}
                     <td>
-                      <div className="d-flex align-items-center gap-2 justify-content-center gap-3">
-                        <ToggleSwitch
+                      <span
+                        onClick={() => handleStatusClick(game)}
+                        disabled={updating === game._id}
+                      >
+                        {game.isActive ? (
+                          <>
+                            <FaUnlock
+                              className="me-1 text-success"
+                              title="active"
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <FaLock
+                              className="me-1 text-danger"
+                              title="Inactive"
+                            />
+                          </>
+                        )}
+                      </span>
+                      {/* 
+                      {updating === game._id && (
+                        <span className="spinner-border spinner-border-sm ms-2"></span>
+                      )} */}
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-center gap-2 justify-content-start gap-3">
+                        {/* <ToggleSwitch
                           checked={game.isActive}
                           loading={updating === game._id}
                           onChange={() => handleToggleGameStatus(game)}
-                        />
+                        /> */}
                         <button
-                          className="btn btn-sm btn-info"
+                          className="btn gradient-7 btn-rounded"
                           onClick={() => handleView(game.id)}
-                          title="View"
+                          title="View Matches"
                         >
                           <FaEye />
                         </button>
                         <button
-                          className="btn btn-sm btn-warning"
+                          className="btn btn-sm btn-warning gradient-10 border-0"
                           onClick={() => handleActive(game.id)}
-                          title="Active"
+                          title="Active Events"
                         >
                           Active
                         </button>
                         <button
-                          className="btn btn-sm btn-danger"
+                          className="btn btn-sm btn-danger gradient-2 border-0"
                           onClick={() => handleInActive(game.id)}
-                          title="InActive"
+                          title="InActive Events"
                         >
                           InActive
                         </button>
                         <button
-                          className="btn btn-sm btn-success"
+                          className="btn btn-sm btn-success gradient-4 border-0"
                           onClick={() => handleComplete(game.id)}
-                          title="Complete"
+                          title="Complete Events"
                         >
                           Complete
                         </button>
@@ -196,6 +266,51 @@ function AllGameList() {
           </table>
         </div>
       </div>
+
+      {showStatusModal && (
+        <>
+          <div className="modal fade show d-block">
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Confirm Status Change</h5>
+
+                  <button
+                    className="btn-close"
+                    onClick={closeStatusModal}
+                  ></button>
+                </div>
+
+                <div className="modal-body">
+                  <h6>Change Status this game</h6>
+
+                  <p className="mb-0">
+                    Are you sure you want to
+                    <span className="fw-bold">
+                      {selectedGame?.isActive ? " Inactive " : " Active "}
+                    </span>
+                    this game?
+                  </p>
+                </div>
+
+                <div className="modal-footer">
+                  <button
+                    className={`btn btn-theme`}
+                    onClick={confirmStatusChange}
+                  >
+                    Yes, {selectedGame?.isActive ? "Inactive" : "Active"}
+                  </button>
+                  <button className="btn btn-dark" onClick={closeStatusModal}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="modal-backdrop fade show"></div>
+        </>
+      )}
     </div>
   );
 }

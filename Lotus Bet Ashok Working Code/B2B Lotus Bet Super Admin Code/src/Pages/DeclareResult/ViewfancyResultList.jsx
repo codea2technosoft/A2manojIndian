@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
 import {
+  MdKeyboardDoubleArrowLeft,
+  MdKeyboardDoubleArrowRight,
   MdOutlineKeyboardArrowLeft,
   MdOutlineKeyboardArrowRight,
 } from "react-icons/md";
@@ -9,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { getFancyResultList, rollbackFancyNow1 } from "../../Server/api";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import Loader from "../../Common/Loader";
+
 function ViewfancyResultList() {
   const navigate = useNavigate();
   const { event_id } = useParams();
@@ -19,6 +23,7 @@ function ViewfancyResultList() {
   const [limit] = useState(10);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   useEffect(() => {
     if (event_id) {
       fetcfancyResultList();
@@ -140,7 +145,7 @@ function ViewfancyResultList() {
               className="btn btn-outline-light"
               onClick={() => navigate(-1)}
             >
-              ← Back
+              Back
             </button>
             {/* <button className="btn btn-outline-light" onClick={() => setFilter(prev => !prev)}>
               <MdFilterListAlt /> Filter
@@ -166,8 +171,10 @@ function ViewfancyResultList() {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="8" className="text-center">
-                      Loading...
+                    <td colSpan="8" className="table_loader">
+                      <div className="py-5 text-center">
+                        <Loader />
+                      </div>
                     </td>
                   </tr>
                 ) : fancyResultList.length > 0 ? (
@@ -211,41 +218,32 @@ function ViewfancyResultList() {
             </table>
           </div>
         </div>
+
         <div className="card-footer">
           {totalPages > 1 && (
-            <div className="d-flex justify-content-between align-items-center">
-              <div className="sohwingallentries">
-                Showing {(page - 1) * limit + 1} to{" "}
-                {Math.min(page * limit, total)} of {total}
-              </div>
-
-              <div className="paginationall d-flex align-items-stretch gap-1">
-                <button
-                  disabled={page === 1}
-                  onClick={handlePrev}
-                  className="d-flex justify-content-center align-items-center"
-                >
-                  <MdOutlineKeyboardArrowLeft />
+            <div className="d-flex justify-content-center align-items-center mt-4">
+              <div className="paginationall d-flex align-items-center gap-1">
+                <button disabled={currentPage === 1} onClick={handlePrev}>
+                  <MdKeyboardDoubleArrowLeft /> Previous
                 </button>
 
                 <div className="d-flex gap-1">
-                  {getPageNumbers().map((pageNo) => (
+                  {getPageNumbers().map((page) => (
                     <div
-                      key={pageNo}
-                      className={`btn btn-primary btn-sm ${pageNo === page ? "active" : ""}`}
-                      onClick={() => handlePageClick(pageNo)}
+                      key={page}
+                      className={`paginationnumber ${currentPage === page ? "active" : ""}`}
+                      onClick={() => handlePageClick(page)}
                     >
-                      {pageNo}
+                      {page}
                     </div>
                   ))}
                 </div>
 
                 <button
-                  disabled={page === totalPages}
+                  disabled={currentPage === totalPages}
                   onClick={handleNext}
-                  className="d-flex justify-content-center align-items-center"
                 >
-                  <MdOutlineKeyboardArrowRight />
+                  Next <MdKeyboardDoubleArrowRight />
                 </button>
               </div>
             </div>

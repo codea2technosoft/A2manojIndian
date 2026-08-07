@@ -4,7 +4,6 @@ import "./Login.scss";
 import { useNavigate } from "react-router-dom";
 import { verifySuperAdminPassword } from "../Server/api";
 import { Link } from "react-router-dom";
-
 import logo from "../asset/image/logo.png";
 
 const Login = () => {
@@ -105,6 +104,12 @@ const Login = () => {
         </div>
 
         <div className="w-100 overflow-hidden h-100 form_design_all">
+          <a
+            className="logo_mobile d-lg-none d-flex justify-content-center"
+            href="/"
+          >
+            <img src={logo} alt="logo" />
+          </a>
           <div className="py-60 px-24 max-w-464-px">
             <div className="form_login_input">
               <form onSubmit={handleLogin} noValidate>
@@ -116,9 +121,6 @@ const Login = () => {
                     big.
                   </p>
                 </div> */}
-                <a className="d-lg-none d-flex justify-content-center" href="/">
-                  <img src={logo} alt="logo" style={{ width: "150px" }} />
-                </a>
 
                 <div className="form-group mb-3">
                   <label className="form-label">Username</label>

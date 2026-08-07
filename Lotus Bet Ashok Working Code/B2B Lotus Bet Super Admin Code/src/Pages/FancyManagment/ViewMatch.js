@@ -1,6 +1,12 @@
 import { Link, useParams, useLocation } from "react-router-dom"; // ✅ useLocation add karo
 import React, { useState, useEffect } from "react";
-import { MdFilterListAlt, MdMoreVert, MdRefresh } from "react-icons/md";
+import {
+  MdFilterListAlt,
+  MdKeyboardDoubleArrowLeft,
+  MdKeyboardDoubleArrowRight,
+  MdMoreVert,
+  MdRefresh,
+} from "react-icons/md";
 import Swal from "sweetalert2";
 import Toast from "../../User/Toast";
 import { getExternalmatch } from "../../Server/api";
@@ -9,6 +15,7 @@ import { Button } from "react-bootstrap";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { FiSearch } from "react-icons/fi";
+import Loader from "../../Common/Loader";
 
 function ViewMatch() {
   const navigate = useNavigate();
@@ -247,25 +254,6 @@ function ViewMatch() {
     navigate(`/view_result/${match.id}`);
   };
 
-  if (pageLoading) {
-    return (
-      <div className="text-center mt-5">
-        <div className="spinner-border text-primary" />
-        <p>Loading page...</p>
-      </div>
-    );
-  }
-
-  // Error state
-  if (error)
-    return (
-      <div className="text-center mt-3 text-danger">
-        <p>{error}</p>
-        <button className="btn btn-primary" onClick={fetchEvents}>
-          Retry
-        </button>
-      </div>
-    );
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
 
@@ -285,6 +273,7 @@ function ViewMatch() {
       {toast.show && (
         <Toast message={toast.message} type={toast.type} onClose={hideToast} />
       )}
+
       <div className="card">
         <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
           <h3 className="card-title mb-0">All Matches List</h3>
@@ -314,7 +303,7 @@ function ViewMatch() {
           {events.length > 0 && (
             <div className="col-md-6">
               <div className="d-flex">
-                 <div className="input-group me-2" style={{ width: "500px" }}>
+                <div className="input-group me-2" style={{ width: "500px" }}>
                   <input
                     type="text"
                     className="form-control"
@@ -331,7 +320,7 @@ function ViewMatch() {
                   >
                     <FiSearch />
                   </button>
-                  {(searchTerm || hasActiveFilters) && (
+                  {/* {(searchTerm || hasActiveFilters) && (
                     <button
                       className="btn btn-outline-danger"
                       type="button"
@@ -339,7 +328,7 @@ function ViewMatch() {
                     >
                       Clear
                     </button>
-                  )}
+                  )} */}
                 </div>
               </div>
 
@@ -353,7 +342,7 @@ function ViewMatch() {
             </div>
           )}
 
-          <div className="table-responsive">
+          <div className="table-responsive mt-2">
             <table className="table table-bordered table-hover">
               <thead className="table-dark">
                 <tr>
@@ -365,7 +354,29 @@ function ViewMatch() {
                 </tr>
               </thead>
               <tbody>
-                {tableLoading ? (
+                {pageLoading ? (
+                  <tr>
+                    <td colSpan="5" className="table_loader">
+                      <div className="text-center py-5">
+                        <Loader />
+                      </div>
+                    </td>
+                  </tr>
+                ) : error ? (
+                  <tr>
+                    <td colSpan="5">
+                      <div className="text-center mt-3 text-danger">
+                        <p>{error}</p>
+                        <button
+                          className="btn btn-primary"
+                          onClick={fetchEvents}
+                        >
+                          Retry
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ) : tableLoading ? (
                   <tr>
                     <td colSpan="5" className="text-center py-4">
                       <div className="spinner-border spinner-border-sm text-primary" />
@@ -378,7 +389,7 @@ function ViewMatch() {
                       <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
 
                       <td>
-                        <span className="fs-6">{game.name}</span>
+                        <span style={{ fontSize: "14px" }}>{game.name}</span>
                         <br />
                         <span className="text-success">{game.series_name}</span>
                       </td>
@@ -389,7 +400,7 @@ function ViewMatch() {
 
                       <td className="">
                         <button
-                          className="importbutton"
+                          className="btn btn-light gradient-2 text-light"
                           onClick={() => handleViewResult(game)}
                         >
                           Result
@@ -407,10 +418,10 @@ function ViewMatch() {
                 ) : (
                   <tr>
                     <td colSpan="5" className="text-center py-4">
-                      No games found
+                      <p>No games found</p>
                       <br />
                       <button
-                        className="refreshbuttonall mt-2"
+                        className="btn btn-primary"
                         onClick={() => fetchEvents(1, itemsPerPage, true)}
                       >
                         Refresh
@@ -422,42 +433,30 @@ function ViewMatch() {
             </table>
           </div>
 
-          {/* Simple Pagination (Prev / Next only) */}
           {totalPages > 1 && (
-            <div className="d-flex justify-content-between align-items-center mt-4">
-              <div className="sohwingallentries">
-                Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-                {Math.min(currentPage * itemsPerPage, totalItems)}
-              </div>
-
+            <div className="d-flex justify-content-center align-items-center mt-4">
               <div className="paginationall d-flex align-items-center gap-1">
-                <button
-                  disabled={currentPage === 1}
-                  onClick={handlePrev}
-                  className={`paginationarrow ${currentPage === 1 ? "disabled" : ""}`}
-                >
-                  <MdOutlineKeyboardArrowLeft />
+                <button disabled={currentPage === 1} onClick={handlePrev}>
+                  <MdKeyboardDoubleArrowLeft /> Previous
                 </button>
 
                 <div className="d-flex gap-1">
                   {getPageNumbers().map((page) => (
                     <div
                       key={page}
-                      className={`paginationnumber ${
-                        currentPage === page ? "active" : ""
-                      }`}
+                      className={`paginationnumber ${currentPage === page ? "active" : ""}`}
                       onClick={() => handlePageClick(page)}
                     >
                       {page}
                     </div>
                   ))}
                 </div>
+
                 <button
                   disabled={currentPage === totalPages}
                   onClick={handleNext}
-                  className={`paginationarrow ${currentPage === totalPages ? "disabled" : ""}`}
                 >
-                  <MdOutlineKeyboardArrowRight />
+                  Next <MdKeyboardDoubleArrowRight />
                 </button>
               </div>
             </div>

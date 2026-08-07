@@ -1087,17 +1087,6 @@ function BlockedChildLists() {
     }
   };
 
-  if (loading && agentData.length === 0) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "100vh" }}
-      >
-        <Loader />
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="card agentmaster">
@@ -1122,7 +1111,7 @@ function BlockedChildLists() {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="Search master..."
+                    placeholder="Search Blocked Super master, Master and User..."
                     value={searchInput}
                     onChange={handleSearchInputChange}
                     onKeyPress={handleSearchKeyPress}
@@ -1215,9 +1204,9 @@ function BlockedChildLists() {
                       <span>Username</span>
                     </div>
                   </th>
-                  <th rowSpan={2} className="text-center align-middle">
+                  {/* <th rowSpan={2} className="text-center align-middle">
                     Copy
-                  </th>
+                  </th> */}
                   <th rowSpan={2}>CREDIT REF</th>
                   {/* <th rowSpan={2} className="text-center">
                     Actions
@@ -1260,8 +1249,26 @@ function BlockedChildLists() {
 
               {/* API Data Rows */}
               <tbody>
-                {agentData.length > 0 ? (
-                  agentData.map((row, index) => (
+                {loading ? (
+                  <tr>
+                    <td colSpan="11">
+                      <div className="d-flex justify-content-center align-items-center py-5 table_loader">
+                        <Loader />
+                      </div>
+                    </td>
+                  </tr>
+                ) : agentData.length > 0 ? (
+                  [...agentData]
+                    .sort((a, b) => {
+                      const getPriority = (adminId) => {
+                        if (adminId?.startsWith("SM")) return 1;
+                        if (adminId?.startsWith("MA")) return 2;
+                        if (adminId?.startsWith("US")) return 3;
+                        return 2;
+                      };
+
+                      return getPriority(a.admin_id) - getPriority(b.admin_id);
+                    }).map((row, index) => (
                     <tr key={row.id || index}>
                       <td className="text-center">
                         {(currentPage - 1) * itemsPerPage + index + 1}
@@ -1281,16 +1288,21 @@ function BlockedChildLists() {
                           </span>
                           {row.username || row.name}
                         </div>
-                        <span>
-                          [
-                          {row.username || row.name?.length > 10
-                            ? `${row.username.substring(0, 10)}`
-                            : row.username || row.name}
-                          ]
-                        </span>
+
+                          <span>
+                            [
+                            {(() => {
+                              const name = row.username || row.name || "";
+                              const firstWord = name.split(" ")[0];
+                              return firstWord.length > 10
+                                ? firstWord.substring(0, 10)
+                                : firstWord;
+                            })()}
+                            ]
+                          </span>
                       </td>
 
-                      <td className="text-center">
+                      {/* <td className="text-center">
                         <button
                           className="viewdetailsbutton"
                           onClick={() => handleCopyData(row)}
@@ -1298,7 +1310,7 @@ function BlockedChildLists() {
                         >
                           <FiCopy size={14} />
                         </button>
-                      </td>
+                      </td> */}
                       <td>{row.admin_id || "N/A"}</td>
 
                       <td>{row.coins || "0"}</td>
@@ -1465,8 +1477,8 @@ function BlockedChildLists() {
                         </span>
                       </td> */}
 
-                      <td className="text-center">
-                        <div className="d-flex gap-1 justify-content-center">
+                      <td className="text-start">
+                        <div className="d-flex gap-1 justify-content-start">
                           {/* <div className="position-relative d-inline-block">
                             <button
                               className="buttoncommon gradient-7"
@@ -1558,7 +1570,7 @@ function BlockedChildLists() {
                                     onClick={() => {
                                       const selectedAdminId = row.admin_id;
                                       navigate(
-                                        `/CreateSuperAgent/${selectedAdminId}`,
+                                        `/agent_lists/create-new-master/${selectedAdminId}`,
                                       );
                                       setOptionMenu(null);
                                     }}
@@ -1595,7 +1607,7 @@ function BlockedChildLists() {
                                     onClick={() => {
                                       const selectedAdminId = row.admin_id;
                                       navigate(
-                                        `/CreateAgentmyuser/${selectedAdminId}`,
+                                        `/AgentMasternew/create-user/${selectedAdminId}`,
                                       );
                                       setOptionMenu(null);
                                     }}
@@ -2246,7 +2258,8 @@ function BlockedChildLists() {
 
                     <div className="col-6">
                       <Link
-                        to={`/icasino-setting/${selectedAgent?.admin_id}`}
+                       // to={`/icasino-setting/${selectedAgent?.admin_id}`}
+                        to={`#`}
                         className="btn gradient-2 w-100"
                         onClick={() => setShowSettingModal(false)}
                       >
@@ -2479,8 +2492,7 @@ function BlockedChildLists() {
                         type={showPasswords.oldPassword ? "text" : "password"}
                         className="form-control"
                         value={selectedAgent.password}
-                        readOnly
-                        style={{ backgroundColor: "#f5f5f5" }}
+                        disabled
                       />
                       <button
                         className="btn btn-outline-secondary"
@@ -2529,7 +2541,7 @@ function BlockedChildLists() {
                   </div>
                 </div>
                 <div className="modal-footer">
-                   <button
+                  <button
                     className="btn btn-theme"
                     onClick={handlePasswordChange}
                     disabled={
@@ -2545,7 +2557,6 @@ function BlockedChildLists() {
                   >
                     Cancel
                   </button>
-                 
                 </div>
               </div>
             </div>
@@ -2720,7 +2731,17 @@ function BlockedChildLists() {
                     />
                   </div>
                   <div>
-                    <label className="form-label">Withdraw Amount</label>
+                    <div className="d-flex align-items-center justify-content-between">
+                      <label className="form-label text-uppercase">
+                        Withdraw Amount{" "}
+                      </label>
+                      <div className="text-muted remaining text-uppercase">     
+                        Remaining balance : 
+                        {(
+                          Number(selectedAgent.coins) - Number(withdrawAmount)
+                        ).toLocaleString()}
+                      </div>
+                    </div>
                     <input
                       type="text"
                       className="form-control"
@@ -2730,21 +2751,21 @@ function BlockedChildLists() {
                       placeholder="Enter amount to withdraw"
                       min="1"
                       step="0.01"
-                      max={selectedAgent.amount}
+                      max={selectedAgent.coins}
                     />
                     {/* <div className="form-text">
                       Maximum withdrawable amount: {selectedAgent.coins}
                     </div> */}
                   </div>
 
-                  {withdrawAmount && !isNaN(withdrawAmount) && (
+                  {/* {withdrawAmount && !isNaN(withdrawAmount) && (
                     <div className="alert alert-info mt-2">
                       <strong>New Balance:</strong>
                       {(
                         Number(selectedAgent.coins) - Number(withdrawAmount)
                       ).toLocaleString()}
                     </div>
-                  )}
+                  )} */}
 
                   {withdrawAmount &&
                     Number(withdrawAmount) > Number(selectedAgent.coins) && (

@@ -283,10 +283,10 @@ const ChipStatement = () => {
               {loading ? (
                 <tbody>
                   <tr>
-                    <td colspan="10">
-                      <div className="text-center py-5 mt-1">
-                        <p>Loading chip statement data...</p>
-                        <Loader className="mt-2" />
+                    <td colspan="10" className="table_loader">
+                      <div className="text-center py-5">
+                        {/* <p>Loading chip statement data...</p> */}
+                        <Loader />
                       </div>
                     </td>
                   </tr>
@@ -317,8 +317,8 @@ const ChipStatement = () => {
                               item.created_at || item.date,
                             ).toLocaleString()}
                           </td>
-                          <td>{item.remark || item.desc || "N/A"}</td>
-                          <td>{item.value_update_by || "N/A"}</td>
+                          <td>{item.remark  || "N/A"}</td>
+                          <td>{item.tr_type || "N/A"}</td>
                           <td className="text-end">
                             {formatNumber(item.comm_in || 0)}
                           </td>
@@ -331,7 +331,7 @@ const ChipStatement = () => {
                           <td className="text-end">
                             {formatNumber(item.before_balance_from || 0)}
                           </td>
-                          <td>{item.tr_type}</td>
+                          <td>{item.type}</td>
                           <td className="text-end">
                             {formatNumber(item.after_balance_from || 0)}
                           </td>
@@ -342,41 +342,41 @@ const ChipStatement = () => {
                 </>
               )}
             </table>
-            {totalPages > 0 && (
-              <div className="d-flex justify-content-center align-items-center mt-4">
-                {/* <div className="sohwingallentries">
+          </div>
+          {totalPages > 0 && (
+            <div className="d-flex justify-content-center align-items-center mt-4">
+              {/* <div className="sohwingallentries">
                                Showing {(currentPage - 1) * limit + 1} to{" "}
                                {Math.min(currentPage * limit, totalRecords)} of{" "}
                                {totalRecords} entries
                              </div> */}
 
-                <div className="paginationall d-flex align-items-center gap-1">
-                  <button disabled={currentPage === 1} onClick={handlePrev}>
-                    <MdKeyboardDoubleArrowLeft /> Previous
-                  </button>
+              <div className="paginationall d-flex align-items-center gap-1">
+                <button disabled={currentPage === 1} onClick={handlePrev}>
+                  <MdKeyboardDoubleArrowLeft /> Previous
+                </button>
 
-                  <div className="d-flex gap-1">
-                    {getPageNumbers().map((page) => (
-                      <div
-                        key={page}
-                        className={`paginationnumber ${currentPage === page ? "active" : ""}`}
-                        onClick={() => handlePageClick(page)}
-                      >
-                        {page}
-                      </div>
-                    ))}
-                  </div>
-
-                  <button
-                    disabled={currentPage === totalPages}
-                    onClick={handleNext}
-                  >
-                    Next <MdKeyboardDoubleArrowRight />
-                  </button>
+                <div className="d-flex gap-1">
+                  {getPageNumbers().map((page) => (
+                    <div
+                      key={page}
+                      className={`paginationnumber ${currentPage === page ? "active" : ""}`}
+                      onClick={() => handlePageClick(page)}
+                    >
+                      {page}
+                    </div>
+                  ))}
                 </div>
+
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={handleNext}
+                >
+                  Next <MdKeyboardDoubleArrowRight />
+                </button>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </>

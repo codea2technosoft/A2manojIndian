@@ -397,13 +397,18 @@ function Myprofile() {
                                   </td>
                                   <td className="text-start" colSpan={3}>
                                     {/* Add your first name data here */}
+                                   Admin
                                   </td>
                                 </tr>
                                 <tr>
                                   <td className="text-start" width="25%">
                                     Last Name
                                   </td>
-                                  <td className="text-start" colSpan={3} />
+                               <td className="text-start" colSpan={3}>
+                                    {/* Add your first name data here */}
+                                   Admin
+                                  </td>
+                                   
                                 </tr>
                                 <tr>
                                   <td className="text-start" width="25%">
@@ -417,13 +422,16 @@ function Myprofile() {
                                   <td className="text-start" width="25%">
                                     Email
                                   </td>
-                                  <td className="text-start" colSpan={3} />
+                                 <td className="text-start" colSpan={3}>
+                                    {/* Add your first name data here */}
+                                   admin@gmail.com
+                                  </td>
                                 </tr>
                                 <tr>
                                   <td className="text-start" width="25%">
                                     Password
                                   </td>
-                                  <td className="text-start">************</td>
+                                  <td className="text-start">-</td>
                                   <td className="p-2">
                                     <button
                                       className="text-decoration-none theme_dark_btn"
@@ -440,7 +448,7 @@ function Myprofile() {
                                     Exposure
                                   </td>
                                   <td className="text-start" colSpan={3}>
-                                    0
+                                    -
                                   </td>
                                 </tr>
                                 <tr>

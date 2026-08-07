@@ -19,44 +19,6 @@ export default function Registeruserdashboard() {
     to_date: ""
   });
 
-  // const fetchPendingRegistrations = async (page = 1) => {
-  //   setLoading(true);
-  //   try {
-  //     const params = {
-  //       page: page,
-  //       limit: pagination.limit
-  //     };
-
-  //     if (filters.search) params.search = filters.search;
-  //     if (filters.from_date) params.from_date = filters.from_date;
-  //     if (filters.to_date) params.to_date = filters.to_date;
-
-  //     const response = await getRegistrationStats(params);
-
-  //     if (response?.data?.success) {
-  //       const data = response.data;
-
-  //       if (data.pending_registrations) {
-  //         setPendingData(data.pending_registrations.data || []);
-
-  //         if (data.pending_registrations.pagination) {
-  //           setPagination({
-  //             page: data.pending_registrations.pagination.page || 1,
-  //             limit: data.pending_registrations.pagination.limit || 50,
-  //             total: data.pending_registrations.pagination.total || 0,
-  //             totalPages: data.pending_registrations.pagination.totalPages || 1
-  //           });
-  //         }
-  //       }
-  //     }
-  //   } catch (err) {
-  //     console.error("Error fetching pending registrations:", err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // Export to CSV
   const fetchPendingRegistrations = async (page = 1) => {
     setLoading(true);
     try {
@@ -66,8 +28,6 @@ export default function Registeruserdashboard() {
       };
 
       if (filters.search) params.search = filters.search;
-
-      // ✅ Sirf tab bhejo jab dates ho
       if (filters.from_date && filters.from_date.trim() !== "") {
         params.from_date = filters.from_date;
       }
@@ -76,7 +36,23 @@ export default function Registeruserdashboard() {
       }
 
       const response = await getRegistrationStats(params);
-      // ... rest of your code
+      
+      if (response?.data?.success) {
+        const data = response.data;
+
+        if (data.pending_registrations) {
+          setPendingData(data.pending_registrations.data || []);
+
+          if (data.pending_registrations.pagination) {
+            setPagination({
+              page: data.pending_registrations.pagination.page || 1,
+              limit: data.pending_registrations.pagination.limit || 50,
+              total: data.pending_registrations.pagination.total || 0,
+              totalPages: data.pending_registrations.pagination.totalPages || 1
+            });
+          }
+        }
+      }
     } catch (err) {
       console.error("Error fetching pending registrations:", err);
     } finally {
@@ -87,10 +63,9 @@ export default function Registeruserdashboard() {
   const exportToCSV = async () => {
     setExportLoading(true);
     try {
-      // Fetch all data for export (without pagination limit)
       const params = {
         page: 1,
-        limit: 1000 // Fetch all pending records
+        limit: 1000
       };
 
       if (filters.search) params.search = filters.search;
@@ -108,27 +83,26 @@ export default function Registeruserdashboard() {
           return;
         }
 
-        // CSV headers
         const headers = [
           "Sr No.",
           "Mobile Number",
-          "Date",
+          "Registration Status",
+          "Registration Date",
         ];
 
-        // Prepare CSV rows
         const rows = data.map((item, index) => [
           item.sr_no || index + 1,
-          item.mobile_number || "",
-          item.created_at?.split("T")[0],
+          item.phone_number || "-",
+          item.status || "-",
+          // item.created_at?.split("T")[0],
+          item.created_at?.replace("T", " ").split(".")[0]
         ]);
 
-        // Combine headers and rows
         const csvContent = [
           headers.join(","),
           ...rows.map(row => row.join(","))
         ].join("\n");
 
-        // Create blob and download
         const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
         const link = document.createElement("a");
         const url = URL.createObjectURL(blob);
@@ -155,18 +129,15 @@ export default function Registeruserdashboard() {
     fetchPendingRegistrations(1);
   };
 
-  // const handleReset = () => {
-  //   setFilters({ search: "", from_date: "", to_date: "" });
-  //   fetchPendingRegistrations(1);
-  // };
   const handleReset = () => {
     setFilters({
       search: "",
-      from_date: "",  // ✅ Empty
-      to_date: ""     // ✅ Empty
+      from_date: "",
+      to_date: ""
     });
     fetchPendingRegistrations(1);
   };
+
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.totalPages) {
       fetchPendingRegistrations(newPage);
@@ -253,13 +224,13 @@ export default function Registeruserdashboard() {
           >
             {loading ? 'Loading...' : 'Search'}
           </button>
-          {/* <button
+          <button
             type="button"
             className="theme_light_btn btn btn-primary ms-2"
             onClick={handleReset}
           >
             Reset
-          </button> */}
+          </button>
 
           <button
             type="button"
@@ -298,26 +269,28 @@ export default function Registeruserdashboard() {
                         <tr>
                           <th scope="col" style={{ width: "5%" }}>Sr No.</th>
                           <th scope="col">Mobile Number</th>
-                          <th scope="col">Username</th>
-                          <th scope="col">User ID</th>
-                          <th scope="col">Agent ID</th>
-                          <th scope="col">Date</th>
-                          <th scope="col">Status</th>
+                         {/* <th scope="col">User ID</th>
+                          <th scope="col">Agent ID</th> */}
+                             <th scope="col">Registered Status</th>
+                          <th scope="col">Registered DateTime</th>
+                       
                         </tr>
                       </thead>
                       <tbody>
                         {pendingData && pendingData.length > 0 ? (
                           pendingData.map((item, index) => (
-                            <tr key={item.sr_no || item.user_id || index}>
+                            <tr key={item.sr_no || item.phone_number || index}>
                               <td>{item.sr_no || ((pagination.page - 1) * pagination.limit) + index + 1}</td>
-                              <td>{item.mobile_number}</td>
-                              <td>{item.username || '-'}</td>
-                              <td>{item.user_id || '-'}</td>
-                              <td>{item.agent_id || '-'}</td>
-                              <td>{formatDate(item.created_at)}</td>
-                              <td className="text-center">
-                                <span className="d-inline badge bg-success">{item.status || 'Active'}</span>
+                              <td>{item.phone_number}</td>
+                              {/* ✅ FIX: Use actual data from API response */}
+                              {/* <td>{item.type || '-'}</td>
+                              <td>{item.otp || '-'}</td>
+                              <td>{item.is_used ? 'Used' : 'Pending'}</td> */}
+                               <td className="text-center">
+                                <span className="d-inline badge bg-info">{item.status || 'Pending'}</span>
                               </td>
+                              <td>{formatDate(item.created_at)}</td>
+                             
                             </tr>
                           ))
                         ) : (

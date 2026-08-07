@@ -638,14 +638,6 @@ const CreateSuperAgentAdmin = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="card">
-        <Loader />
-      </div>
-    );
-  }
-
   return (
     <>
       <ToastContainer
@@ -676,67 +668,71 @@ const CreateSuperAgentAdmin = () => {
             </button>
           </div> */}
         </div>
+        {loading ? (
+          <div className="py-5 table_loader">
+            <Loader />
+          </div>
+        ) : (
+          <div className="card-body">
+            <form
+              noValidate
+              className={`needs-validation ${validated ? "was-validated" : ""}`}
+              onSubmit={handleSubmit}
+            >
+              <div className="row">
+                {/* Name */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label d-flex align-items-center justify-content-between">
+                    Full Name* <span className="text-danger"></span>{" "}
+                    <small _ngcontent-owm-c76="">
+                      [A-Z , a-z , 0-9 , @ ] Allowed
+                    </small>
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control ${errors.name ? "is-invalid" : ""}`}
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    disabled={isSubmitting}
+                  />
+                  {errors.name && (
+                    <div className="invalid-feedback d-block">
+                      {errors.name}
+                    </div>
+                  )}
+                  {validated && !formData.name.trim() && (
+                    <div className="invalid-feedback"></div>
+                  )}
+                </div>
 
-        <div className="card-body">
-          <form
-            noValidate
-            className={`needs-validation ${validated ? "was-validated" : ""}`}
-            onSubmit={handleSubmit}
-          >
-            <div className="row">
-              {/* Name */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label d-flex align-items-center justify-content-between">
-                  Full Name* <span className="text-danger"></span>{" "}
-                  <small _ngcontent-owm-c76="">
-                    [A-Z , a-z , 0-9 , @ ] Allowed
-                  </small>
-                </label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.name ? "is-invalid" : ""}`}
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  disabled={isSubmitting}
-                />
-                {errors.name && (
-                  <div className="invalid-feedback d-block">{errors.name}</div>
-                )}
-                {validated && !formData.name.trim() && (
-                  <div className="invalid-feedback"></div>
-                )}
-              </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Reference</label>
+                  <input
+                    type="text"
+                    name="reference"
+                    className="form-control"
+                    value={formData.reference || ""}
+                    onChange={handleChange}
+                    disabled={isSubmitting}
+                  />
+                </div>
 
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Reference</label>
-                <input
-                  type="text"
-                  name="reference"
-                  className="form-control"
-                  value={formData.reference || ""}
-                  onChange={handleChange}
-                  disabled={isSubmitting}
-                  style={{ backgroundColor: "#fff" }}
-                />
-              </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Super Admin ID</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={formData.username}
+                    readOnly
+                    disabled={isSubmitting}
+                  />
+                  {/* <small className="text-muted">Super Admin ID</small> */}
+                </div>
 
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Super Admin ID</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={formData.username}
-                  readOnly
-                  style={{ backgroundColor: "#f8f9fa" }}
-                  disabled={isSubmitting}
-                />
-                <small className="text-muted">Super Admin ID</small>
-              </div>
-
-              {/* My Total Balance */}
-              {/* <div className="col-md-6 mb-3">
+                {/* My Total Balance */}
+                {/* <div className="col-md-6 mb-3">
                                 <label className="form-label">My Total Balance</label>
                                 <div className="input-group">
                                     <input
@@ -756,340 +752,344 @@ const CreateSuperAgentAdmin = () => {
                                     </small>
                                 )}
                             </div> */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Coins to Assign <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.coins ? "is-invalid" : ""}`}
-                  name="coins"
-                  value={formData.coins}
-                  onChange={handleChange}
-                  max={formData.myCoins}
-                  required
-                  disabled={isSubmitting}
-                />
-              </div>
-              {errors.coins && (
-                <div className="invalid-feedback d-block">{errors.coins}</div>
-              )}
-
-              {/* ✅ Password show + editable */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Password <span className="text-danger">*</span>
-                </label>
-                <div className="input-group">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Coins to Assign <span className="text-danger">*</span>
+                  </label>
                   <input
                     type="text"
-                    className={`form-control ${errors.password ? "is-invalid" : ""}`}
-                    name="password"
-                    value={formData.password}
-                    onKeyDown={blockInvalidKeys}
+                    className={`form-control ${errors.coins ? "is-invalid" : ""}`}
+                    name="coins"
+                    value={formData.coins}
                     onChange={handleChange}
+                    max={formData.myCoins}
                     required
-                    pattern="[A-Z]{2}[0-9]{4}"
-                    title="Format: 2 capital letters followed by 4 digits"
                     disabled={isSubmitting}
-                    readOnly
                   />
-                  <button
-                    type="button"
-                    className="btn btn-secondary generate_btn"
-                    onClick={handleGeneratePassword}
-                    disabled={isSubmitting}
-                  >
-                    {" "}
-                    Generate
-                  </button>
                 </div>
-                {errors.password && (
-                  <div className="invalid-feedback d-block">
-                    {errors.password}
-                  </div>
+                {errors.coins && (
+                  <div className="invalid-feedback d-block">{errors.coins}</div>
                 )}
-                {validated &&
-                  !formData.password.match(/^[A-Z]{2}[0-9]{4}$/) && (
-                    <div className="invalid-feedback">
-                      Format: 2 capital letters + 4 digits
+
+                {/* ✅ Password show + editable */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Password <span className="text-danger">*</span>
+                  </label>
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      className={`form-control ${errors.password ? "is-invalid" : ""}`}
+                      name="password"
+                      value={formData.password}
+                      onKeyDown={blockInvalidKeys}
+                      onChange={handleChange}
+                      required
+                      pattern="[A-Z]{2}[0-9]{4}"
+                      title="Format: 2 capital letters followed by 4 digits"
+                      disabled={isSubmitting}
+                      readOnly
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-secondary generate_btn"
+                      onClick={handleGeneratePassword}
+                      disabled={isSubmitting}
+                    >
+                      {" "}
+                      Generate
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <div className="invalid-feedback d-block">
+                      {errors.password}
                     </div>
                   )}
-              </div>
+                  {validated &&
+                    !formData.password.match(/^[A-Z]{2}[0-9]{4}$/) && (
+                      <div className="invalid-feedback">
+                        Format: 2 capital letters + 4 digits
+                      </div>
+                    )}
+                </div>
 
-              {/* Agent Match Share */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Master Match Share (%) <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.agentMatchShare ? "is-invalid" : ""}`}
-                  name="agentMatchShare"
-                  value={formData.agentMatchShare}
-                  onChange={handlePercentageChange}
-                  maxLength={3}
-                  required
-                />
+                {/* Agent Match Share */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Master Match Share (%){" "}
+                    <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control ${errors.agentMatchShare ? "is-invalid" : ""}`}
+                    name="agentMatchShare"
+                    value={formData.agentMatchShare}
+                    onChange={handlePercentageChange}
+                    maxLength={3}
+                    required
+                  />
 
-                {errors.agentMatchShare && (
-                  <div className="invalid-feedback d-block">
-                    {errors.agentMatchShare}
-                  </div>
-                )}
+                  {errors.agentMatchShare && (
+                    <div className="invalid-feedback d-block">
+                      {errors.agentMatchShare}
+                    </div>
+                  )}
 
-                <small className="text-muted">
-                  Maximum: {formData.myMatchShare}%
-                </small>
-              </div>
+                  <small className="text-muted">
+                    Maximum: {formData.myMatchShare}%
+                  </small>
+                </div>
 
-              {/* Commission Type */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Commission Type <span className="text-danger">*</span>
-                </label>
+                {/* Commission Type */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Commission Type <span className="text-danger">*</span>
+                  </label>
 
-                <select
-                  className={`form-control ${errors.agentCommissionType ? "is-invalid" : ""}`}
-                  name="agentCommissionType"
-                  value={formData.agentCommissionType}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Select</option>
-                  <option value="1">Bet by Bet</option>
-                  <option value="0">No Match Commission</option>
-                </select>
+                  <select
+                    className={`form-control ${errors.agentCommissionType ? "is-invalid" : ""}`}
+                    name="agentCommissionType"
+                    value={formData.agentCommissionType}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Select</option>
+                    <option value="1">Bet by Bet</option>
+                    <option value="0">No Match Commission</option>
+                  </select>
 
-                {errors.agentCommissionType && (
-                  <div className="invalid-feedback d-block">
-                    {errors.agentCommissionType}
-                  </div>
-                )}
-              </div>
+                  {errors.agentCommissionType && (
+                    <div className="invalid-feedback d-block">
+                      {errors.agentCommissionType}
+                    </div>
+                  )}
+                </div>
 
-              {/* Match Commission */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label"> Ratio (Cricket) </label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.agentMatchComm ? "is-invalid" : ""}`}
-                  name="agentMatchComm"
-                  // value={formData.agentMatchComm}
-                  // onChange={handleChange}
+                {/* Match Commission */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label"> Ratio (Cricket) </label>
+                  <input
+                    type="text"
+                    className={`form-control ${errors.agentMatchComm ? "is-invalid" : ""}`}
+                    name="agentMatchComm"
+                    // value={formData.agentMatchComm}
+                    // onChange={handleChange}
 
-                  value={formData.agentMatchComm}
-                  onChange={handlePercentageChange}
-                  onKeyDown={blockInvalidKeys}
-                  disabled={formData.agentCommissionType === "0"}
-                  maxLength={3}
-                />
+                    value={formData.agentMatchComm}
+                    onChange={handlePercentageChange}
+                    onKeyDown={blockInvalidKeys}
+                    disabled={formData.agentCommissionType === "0"}
+                    maxLength={3}
+                  />
 
-                {errors.agentMatchComm && (
-                  <div className="invalid-feedback d-block">
-                    {errors.agentMatchComm}
-                  </div>
-                )}
+                  {errors.agentMatchComm && (
+                    <div className="invalid-feedback d-block">
+                      {errors.agentMatchComm}
+                    </div>
+                  )}
 
-                <small className="text-muted">
-                  Maximum: {formData.myMatchComm}%
-                </small>
-              </div>
+                  <small className="text-muted">
+                    Maximum: {formData.myMatchComm}%
+                  </small>
+                </div>
 
-              <div className="col-md-6 mb-3">
-                <label className="form-label"> Football Commission </label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.agentFootballComm ? "is-invalid" : ""}`}
-                  name="agentFootballComm"
-                  // value={formData.agentMatchComm}
-                  // onChange={handleChange}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label"> Football Commission </label>
+                  <input
+                    type="text"
+                    className={`form-control ${errors.agentFootballComm ? "is-invalid" : ""}`}
+                    name="agentFootballComm"
+                    // value={formData.agentMatchComm}
+                    // onChange={handleChange}
 
-                  value={formData.agentFootballComm}
-                  onChange={handlePercentageChange}
-                  onKeyDown={blockInvalidKeys}
-                  disabled={formData.agentCommissionType === "0"}
-                  maxLength={3}
-                />
+                    value={formData.agentFootballComm}
+                    onChange={handlePercentageChange}
+                    onKeyDown={blockInvalidKeys}
+                    disabled={formData.agentCommissionType === "0"}
+                    maxLength={3}
+                  />
 
-                {errors.football_comm && (
-                  <div className="invalid-feedback d-block">
-                    {errors.agentFootballComm}
-                  </div>
-                )}
+                  {errors.football_comm && (
+                    <div className="invalid-feedback d-block">
+                      {errors.agentFootballComm}
+                    </div>
+                  )}
 
-                <small className="text-muted">
-                  Maximum: {formData.agentFootballComm}%
-                </small>
-              </div>
+                  <small className="text-muted">
+                    Maximum: {formData.agentFootballComm}%
+                  </small>
+                </div>
 
-              <div className="col-md-6 mb-3">
-                <label className="form-label"> Tennis Commission </label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.agentTennisComm ? "is-invalid" : ""}`}
-                  name="agentTennisComm"
-                  // value={formData.agentMatchComm}
-                  // onChange={handleChange}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label"> Tennis Commission </label>
+                  <input
+                    type="text"
+                    className={`form-control ${errors.agentTennisComm ? "is-invalid" : ""}`}
+                    name="agentTennisComm"
+                    // value={formData.agentMatchComm}
+                    // onChange={handleChange}
 
-                  value={formData.agentTennisComm}
-                  onChange={handlePercentageChange}
-                  onKeyDown={blockInvalidKeys}
-                  disabled={formData.agentCommissionType === "0"}
-                  maxLength={3}
-                />
+                    value={formData.agentTennisComm}
+                    onChange={handlePercentageChange}
+                    onKeyDown={blockInvalidKeys}
+                    disabled={formData.agentCommissionType === "0"}
+                    maxLength={3}
+                  />
 
-                {errors.agentTennisComm && (
-                  <div className="invalid-feedback d-block">
-                    {errors.agentTennisComm}
-                  </div>
-                )}
+                  {errors.agentTennisComm && (
+                    <div className="invalid-feedback d-block">
+                      {errors.agentTennisComm}
+                    </div>
+                  )}
 
-                <small className="text-muted">
-                  Maximum: {formData.agentTennisComm}%
-                </small>
-              </div>
+                  <small className="text-muted">
+                    Maximum: {formData.agentTennisComm}%
+                  </small>
+                </div>
 
-              <div className="col-md-6 mb-3">
-                <label className="form-label"> Horse Racing Commission </label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.agentHorseRacingComm ? "is-invalid" : ""}`}
-                  name="agentHorseRacingComm"
-                  // value={formData.agentMatchComm}
-                  // onChange={handleChange}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    {" "}
+                    Horse Racing Commission{" "}
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control ${errors.agentHorseRacingComm ? "is-invalid" : ""}`}
+                    name="agentHorseRacingComm"
+                    // value={formData.agentMatchComm}
+                    // onChange={handleChange}
 
-                  value={formData.agentHorseRacingComm}
-                  onChange={handlePercentageChange}
-                  onKeyDown={blockInvalidKeys}
-                  disabled={formData.agentCommissionType === "0"}
-                  maxLength={3}
-                />
+                    value={formData.agentHorseRacingComm}
+                    onChange={handlePercentageChange}
+                    onKeyDown={blockInvalidKeys}
+                    disabled={formData.agentCommissionType === "0"}
+                    maxLength={3}
+                  />
 
-                {errors.agentHorseRacingComm && (
-                  <div className="invalid-feedback d-block">
-                    {errors.agentHorseRacingComm}
-                  </div>
-                )}
+                  {errors.agentHorseRacingComm && (
+                    <div className="invalid-feedback d-block">
+                      {errors.agentHorseRacingComm}
+                    </div>
+                  )}
 
-                <small className="text-muted">
-                  Maximum: {formData.agentHorseRacingComm}%
-                </small>
-              </div>
+                  <small className="text-muted">
+                    Maximum: {formData.agentHorseRacingComm}%
+                  </small>
+                </div>
 
-              <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  {" "}
-                  Greyhound Racing Commission{" "}
-                </label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.agentGreyhoundRacingComm ? "is-invalid" : ""}`}
-                  name="agentGreyhoundRacingComm"
-                  // value={formData.agentMatchComm}
-                  // onChange={handleChange}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    {" "}
+                    Greyhound Racing Commission{" "}
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control ${errors.agentGreyhoundRacingComm ? "is-invalid" : ""}`}
+                    name="agentGreyhoundRacingComm"
+                    // value={formData.agentMatchComm}
+                    // onChange={handleChange}
 
-                  value={formData.agentGreyhoundRacingComm}
-                  onChange={handlePercentageChange}
-                  onKeyDown={blockInvalidKeys}
-                  disabled={formData.agentCommissionType === "0"}
-                  maxLength={3}
-                />
+                    value={formData.agentGreyhoundRacingComm}
+                    onChange={handlePercentageChange}
+                    onKeyDown={blockInvalidKeys}
+                    disabled={formData.agentCommissionType === "0"}
+                    maxLength={3}
+                  />
 
-                {errors.agentGreyhoundRacingComm && (
-                  <div className="invalid-feedback d-block">
-                    {errors.agentGreyhoundRacingComm}
-                  </div>
-                )}
+                  {errors.agentGreyhoundRacingComm && (
+                    <div className="invalid-feedback d-block">
+                      {errors.agentGreyhoundRacingComm}
+                    </div>
+                  )}
 
-                <small className="text-muted">
-                  Maximum: {formData.agentGreyhoundRacingComm}%
-                </small>
-              </div>
+                  <small className="text-muted">
+                    Maximum: {formData.agentGreyhoundRacingComm}%
+                  </small>
+                </div>
 
-              <div className="col-md-6 mb-3">
-                <label className="form-label"> Politics Commission </label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.agentPoliticsComm ? "is-invalid" : ""}`}
-                  name="agentPoliticsComm"
-                  // value={formData.agentMatchComm}
-                  // onChange={handleChange}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label"> Politics Commission </label>
+                  <input
+                    type="text"
+                    className={`form-control ${errors.agentPoliticsComm ? "is-invalid" : ""}`}
+                    name="agentPoliticsComm"
+                    // value={formData.agentMatchComm}
+                    // onChange={handleChange}
 
-                  value={formData.agentPoliticsComm}
-                  onChange={handlePercentageChange}
-                  onKeyDown={blockInvalidKeys}
-                  disabled={formData.agentCommissionType === "0"}
-                  maxLength={3}
-                />
+                    value={formData.agentPoliticsComm}
+                    onChange={handlePercentageChange}
+                    onKeyDown={blockInvalidKeys}
+                    disabled={formData.agentCommissionType === "0"}
+                    maxLength={3}
+                  />
 
-                {errors.agentPoliticsComm && (
-                  <div className="invalid-feedback d-block">
-                    {errors.agentPoliticsComm}
-                  </div>
-                )}
+                  {errors.agentPoliticsComm && (
+                    <div className="invalid-feedback d-block">
+                      {errors.agentPoliticsComm}
+                    </div>
+                  )}
 
-                <small className="text-muted">
-                  Maximum: {formData.agentPoliticsComm}%
-                </small>
-              </div>
+                  <small className="text-muted">
+                    Maximum: {formData.agentPoliticsComm}%
+                  </small>
+                </div>
 
-              <div className="col-md-6 mb-3">
-                <label className="form-label"> Casino Commission </label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.agentCasinoComm ? "is-invalid" : ""}`}
-                  name="agentCasinoComm"
-                  // value={formData.agentMatchComm}
-                  // onChange={handleChange}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label"> Casino Commission </label>
+                  <input
+                    type="text"
+                    className={`form-control ${errors.agentCasinoComm ? "is-invalid" : ""}`}
+                    name="agentCasinoComm"
+                    // value={formData.agentMatchComm}
+                    // onChange={handleChange}
 
-                  value={formData.agentCasinoComm}
-                  onChange={handlePercentageChange}
-                  onKeyDown={blockInvalidKeys}
-                  disabled={formData.agentCommissionType === "0"}
-                  maxLength={3}
-                />
+                    value={formData.agentCasinoComm}
+                    onChange={handlePercentageChange}
+                    onKeyDown={blockInvalidKeys}
+                    disabled={formData.agentCommissionType === "0"}
+                    maxLength={3}
+                  />
 
-                {errors.agentCasinoComm && (
-                  <div className="invalid-feedback d-block">
-                    {errors.agentCasinoComm}
-                  </div>
-                )}
+                  {errors.agentCasinoComm && (
+                    <div className="invalid-feedback d-block">
+                      {errors.agentCasinoComm}
+                    </div>
+                  )}
 
-                <small className="text-muted">
-                  Maximum: {formData.agentCasinoComm}%
-                </small>
-              </div>
+                  <small className="text-muted">
+                    Maximum: {formData.agentCasinoComm}%
+                  </small>
+                </div>
 
-              <div className="col-md-6 mb-3">
-                <label className="form-label"> Session Commission </label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.agentSessionComm ? "is-invalid" : ""}`}
-                  name="agentSessionComm"
-                  // value={formData.agentMatchComm}
-                  // onChange={handleChange}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label"> Session Commission </label>
+                  <input
+                    type="text"
+                    className={`form-control ${errors.agentSessionComm ? "is-invalid" : ""}`}
+                    name="agentSessionComm"
+                    // value={formData.agentMatchComm}
+                    // onChange={handleChange}
 
-                  value={formData.agentSessionComm}
-                  onChange={handlePercentageChange}
-                  onKeyDown={blockInvalidKeys}
-                  disabled={formData.agentCommissionType === "0"}
-                  maxLength={3}
-                />
+                    value={formData.agentSessionComm}
+                    onChange={handlePercentageChange}
+                    onKeyDown={blockInvalidKeys}
+                    disabled={formData.agentCommissionType === "0"}
+                    maxLength={3}
+                  />
 
-                {errors.agentSessionComm && (
-                  <div className="invalid-feedback d-block">
-                    {errors.agentSessionComm}
-                  </div>
-                )}
+                  {errors.agentSessionComm && (
+                    <div className="invalid-feedback d-block">
+                      {errors.agentSessionComm}
+                    </div>
+                  )}
 
-                <small className="text-muted">
-                  Maximum: {formData.agentSessionComm}%
-                </small>
-              </div>
+                  <small className="text-muted">
+                    Maximum: {formData.agentSessionComm}%
+                  </small>
+                </div>
 
-              {/* Company Share (%) */}
-              {/* <div className="col-md-6 mb-3">
+                {/* Company Share (%) */}
+                {/* <div className="col-md-6 mb-3">
                                 <label className="form-label">Company Share (%) <span className="text-danger">*</span></label>
 
                                 <input
@@ -1112,31 +1112,32 @@ const CreateSuperAgentAdmin = () => {
                                 </small>
                             </div> */}
 
-              <div className="col-12 text-center mt-4">
-                <div className="d-flex justify-content-start">
-                  <button
-                    type="submit"
-                    className="btn btn-primary px-4"
-                    disabled={!isFormValid || isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <span
-                          className="spinner-border spinner-border-sm me-2"
-                          role="status"
-                          aria-hidden="true"
-                        ></span>
-                        Submitting...
-                      </>
-                    ) : (
-                      "Submit"
-                    )}
-                  </button>
+                <div className="col-12 text-center mt-4">
+                  <div className="d-flex justify-content-start">
+                    <button
+                      type="submit"
+                      className="btn btn-primary px-4"
+                      disabled={!isFormValid || isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <span
+                            className="spinner-border spinner-border-sm me-2"
+                            role="status"
+                            aria-hidden="true"
+                          ></span>
+                          Submitting...
+                        </>
+                      ) : (
+                        "Submit"
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </form>
-        </div>
+            </form>
+          </div>
+        )}
       </div>
     </>
   );

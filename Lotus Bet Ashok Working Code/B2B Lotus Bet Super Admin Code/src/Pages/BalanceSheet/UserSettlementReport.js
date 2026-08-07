@@ -118,7 +118,7 @@ function UserSettlementReport() {
       <div className="card-body">
         {/* Filters Row */}
         <div className="row mb-3 align-items-end gy-2">
-          <div className="col-md-2">
+          <div className="col-6 col-md-2">
             {/* <label >PAYMENT TYPE</label> */}
             <select
               className="form-select form-control-sm"
@@ -132,7 +132,7 @@ function UserSettlementReport() {
               <option value="dr">Debit</option>
             </select>
           </div>
-          <div className="col-md-2">
+          <div className="col-6 col-md-2">
             {/* <label >From</label> */}
             <input
               type="date"
@@ -141,7 +141,7 @@ function UserSettlementReport() {
               onChange={(e) => setFromDate(e.target.value)}
             />
           </div>
-          <div className="col-md-2">
+          <div className="col-6 col-md-2">
             {/* <label >To</label> */}
             <input
               type="date"
@@ -150,7 +150,7 @@ function UserSettlementReport() {
               onChange={(e) => setToDate(e.target.value)}
             />
           </div>
-          <div className="col-md-4 d-flex gap-2">
+          <div className="col-6 col-md-4 d-flex gap-2">
             <button className="btn btn-primary" onClick={handleSearch}>
               <FaSearch />
             </button>
@@ -188,12 +188,7 @@ function UserSettlementReport() {
           </div>
         </div> */}
 
-        {loading ? (
-          <>
-            <Loader />
-            <div className="py-5 text-center">Loading...</div>
-          </>
-        ) : (
+        {
           <div className="table-responsive">
             <table className="table table-bordered table-striped table-sm">
               <thead>
@@ -209,7 +204,17 @@ function UserSettlementReport() {
                 </tr>
               </thead>
               <tbody>
-                {historyData.length === 0 ? (
+                {loading ? (
+                  <>
+                    <tr>
+                      <td className="table_loader" colSpan="8">
+                        <div className="py-5">
+                          <Loader />
+                        </div>
+                      </td>
+                    </tr>
+                  </>
+                ) : historyData.length === 0 ? (
                   <tr>
                     <td className="text-center py-5" colSpan="8">
                       No Data Found
@@ -232,7 +237,10 @@ function UserSettlementReport() {
                       <td>{item.debit > 0 ? item.debit.toFixed(2) : "-"}</td>
                       <td>{item.credit > 0 ? item.credit.toFixed(2) : "-"}</td>
                       <td>{item.balance ? item.balance.toFixed(2) : "-"}</td>
-                      <td>{item.type || "-"}</td>
+                      {/* <td>{item.type || "-"}</td> */}
+                      <td>
+                        {item.pay_type === "diya" ? "Debit" : "Credit"}
+                      </td>
                       <td>{item.remarks || "-"}</td>
                     </tr>
                   ))
@@ -240,7 +248,7 @@ function UserSettlementReport() {
               </tbody>
             </table>
           </div>
-        )}
+        }
       </div>
     </div>
   );

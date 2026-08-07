@@ -40,8 +40,19 @@ const PendingBets = () => {
     try {
       setLoading(true);
       const loggedInAdminId = localStorage.getItem("admin_id");
+
+       // ✅ URL se admin_id lo
+    const getAdminIdFromURL = () => {
+      const path = window.location.pathname;
+      const parts = path.split('/');
+      return parts[parts.length - 1];
+    };
+    const admin_id_from_url = getAdminIdFromURL();
+
+
       const payload = {
-        admin_id: navigationPayload.admin_id || loggedInAdminId || adminId,
+       // admin_id: navigationPayload.admin_id || loggedInAdminId || adminId,
+       admin_id: admin_id_from_url,
         role:
           navigationPayload.role || parseInt(localStorage.getItem("role")) || 1,
         page: page,
@@ -155,7 +166,7 @@ const PendingBets = () => {
       <ToastContainer autoClose={500} theme="colored" />
 
       <div className="card">
-        <div className="card-header flex-wrap-mobile bg-primary-yellow d-flex justify-content-between align-items-md-center gap-2">
+        <div className="card-header  bg-primary-yellow d-flex justify-content-between align-items-center gap-2">
           <h5 className="card-title mb-0">Pending Bets</h5>
           <div className="d-flex align-items-center">
             <button
@@ -237,12 +248,14 @@ const PendingBets = () => {
                 <tr>
                   <th>NO</th>
                   <th>USERNAME</th>
-                  <th>EVENT</th>
+                  <th>EVENT ID</th>
+                  <th>EVENT NAME</th>
                   <th>MARKET TYPE</th>
                   <th>SELECTION</th>
                   <th>TYPE</th>
                   <th>ODDS REQ.</th>
                   <th className="text-end">STAKE</th>
+                  <th>Total</th>
                   <th>PLACE TIME</th>
                   <th>MATCHED TIME</th>
                 </tr>
@@ -251,16 +264,16 @@ const PendingBets = () => {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="10">
-                      <div className="text-center py-5 mt-1">
-                        <p>Loading pending bets...</p>
-                        <Loader className="mt-2" />
+                    <td colSpan="12" className="table_loader">
+                      <div className="text-center py-5">
+                        {/* <p>Loading pending bets...</p> */}
+                        <Loader />
                       </div>
                     </td>
                   </tr>
                 ) : betsData.length === 0 ? (
                   <tr>
-                    <td colSpan="10">
+                    <td colSpan="12">
                       <h5 className="fs-6 text-dark py-5 text-center">
                         No Pending Bets Found
                       </h5>
@@ -273,15 +286,18 @@ const PendingBets = () => {
                       return (
                         <tr key={item._id || index}>
                           <td>{serialNo}</td>
-                          <td>{item.admin_id || "N/A"}</td>
-                          <td>{getSportName(item.sport_id)}</td>
+                          <td>{item.username || "-"}</td>
+                          <td>{item.event_id}</td>
+                          <td>{item.event_name || "-"}</td>
                           <td>{item.bet_type || "N/A"}</td>
                           <td>{item.team || "N/A"}</td>
                           <td>{item.bet_on || "N/A"}</td>
-                          <td>{formatNumber(item.odd || 0)}</td>
+                          <td>{item.odd || 0}</td>
                           <td className="text-end">
-                            {formatNumber(item.stake || 0)}
+                            {item.stake || 0}
+                           
                           </td>
+                          <td> {item.total || 0}</td>
                           <td>{new Date(item.created_at).toLocaleString()}</td>
                           <td>
                             {item.matched_status === "matched"

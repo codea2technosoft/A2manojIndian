@@ -9,6 +9,7 @@ import { FaEye, FaChartBar, FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
+import Loader from "../../Common/Loader";
 
 function UserLedger() {
   const [searchParams] = useSearchParams();
@@ -69,6 +70,7 @@ function UserLedger() {
   }, [master_id, fromDate, toDate]);
 
   const fetchMasters = async () => {
+    setLoading(true);
     try {
       setIsFiltering(true);
       const res = await getUserChildList({
@@ -92,6 +94,7 @@ function UserLedger() {
     } catch (err) {
       console.log(err);
     } finally {
+      setLoading(false);
       setIsFiltering(false);
     }
   };
@@ -287,148 +290,157 @@ function UserLedger() {
 
       <div className="mt-4">
         <div className="card-body">
-          <div className="row g-4">
-            {/* In Plus (Profit) */}
-            <div className="col-md-6">
-              <div className="card ledger-card">
-                <div className="ledger-header card-header py-2 lena">
-                  <h3 className="card-title mb-0">Client In Plus (Profit)</h3>
-                  <span className="text-success">{totals.lena.toFixed(2)}</span>
-                </div>
+          {loading ? (
+            <div className="py-5">
+              <Loader />
+            </div>
+          ) : (
+            <div className="row g-4">
+              {/* In Plus (Profit) */}
+              <div className="col-md-6">
+                <div className="card ledger-card">
+                  <div className="ledger-header card-header py-2 lena">
+                    <h3 className="card-title mb-0">Client In Plus (Profit)</h3>
+                    <span className="text-success">
+                      {totals.lena.toFixed(2)}
+                    </span>
+                  </div>
 
-                <div className="card-body">
-                  <div className="table-responsive height_scroll">
-                    <table className="table table-bordered table-hover table-striped align-middle mb-0">
-                      <thead className="table-light sticky_top">
-                        <tr>
-                          <th>Username</th>
-                          <th>Amount</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {lenaList.length === 0 ? (
+                  <div className="card-body">
+                    <div className="table-responsive height_scroll">
+                      <table className="table table-bordered table-hover table-striped align-middle mb-0">
+                        <thead className="table-light sticky_top">
                           <tr>
-                            <td colSpan="3" className="text-center py-4">
-                              No Data
-                            </td>
+                            <th>Username</th>
+                            <th>Amount</th>
+                            <th>Action</th>
                           </tr>
-                        ) : (
-                          lenaList.map((m, index) => (
-                            <tr key={m.id || index}>
-                              <td>
-                                <span className="fw-semibold">
-                                  {m.username}
-                                </span>
-                              </td>
+                        </thead>
 
-                              <td className="fw-bold text-success">
-                                {Number(m.amount || 0).toFixed(2)}
-                              </td>
-
-                              <td>
-                                <button
-                                  className="btn btn-sm btn-warning me-1"
-                                  onClick={() => handleSendClick(m, "lena")}
-                                  title="Send"
-                                >
-                                  S
-                                </button>
-                                <button
-                                  className="btn btn-sm btn-info h_btn"
-                                  onClick={() =>
-                                    navigate(
-                                      `/user-settlement-report/${m.admin_id}`,
-                                    )
-                                  }
-                                  title="History"
-                                >
-                                  H
-                                </button>
+                        <tbody>
+                          {lenaList.length === 0 ? (
+                            <tr>
+                              <td colSpan="3" className="text-center py-4">
+                                No Data
                               </td>
                             </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
+                          ) : (
+                            lenaList.map((m, index) => (
+                              <tr key={m.id || index}>
+                                <td>
+                                  <span className="fw-semibold">
+                                    {m.username}
+                                  </span>
+                                </td>
+
+                                <td className="fw-bold text-success">
+                                  {Number(m.amount || 0).toFixed(2)}
+                                </td>
+
+                                <td>
+                                  <button
+                                    className="btn btn-sm btn-warning me-1"
+                                    onClick={() => handleSendClick(m, "lena")}
+                                    title="Send"
+                                  >
+                                    S
+                                  </button>
+                                  <button
+                                    className="btn btn-sm btn-info h_btn"
+                                    onClick={() =>
+                                      navigate(
+                                        `/settlement/user-settlement-report/${m.admin_id}`,
+                                      )
+                                    }
+                                    title="History"
+                                  >
+                                    H
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* In Minus (Loss) */}
-            <div className="col-md-6">
-              <div className="card ledger-card">
-                <div className="ledger-header card-header py-2 dena">
-                  <h3 className="card-title mb-0">Client In Minus (Loss)</h3>
-                  <span className="text-danger">{totals.dena.toFixed(2)}</span>
-                </div>
+              {/* In Minus (Loss) */}
+              <div className="col-md-6">
+                <div className="card ledger-card">
+                  <div className="ledger-header card-header py-2 dena">
+                    <h3 className="card-title mb-0">Client In Minus (Loss)</h3>
+                    <span className="text-danger">
+                      {totals.dena.toFixed(2)}
+                    </span>
+                  </div>
 
-                <div className="card-body">
-                  <div className="table-responsive height_scroll">
-                    <table className="table table-bordered table-hover table-striped align-middle mb-0">
-                      <thead className="table-light sticky_top">
-                        <tr>
-                          <th>Username</th>
-                          <th>Amount</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {denaList.length === 0 ? (
+                  <div className="card-body">
+                    <div className="table-responsive height_scroll">
+                      <table className="table table-bordered table-hover table-striped align-middle mb-0">
+                        <thead className="table-light sticky_top">
                           <tr>
-                            <td colSpan="3" className="text-center py-4">
-                              No Data
-                            </td>
+                            <th>Username</th>
+                            <th>Amount</th>
+                            <th>Action</th>
                           </tr>
-                        ) : (
-                          denaList.map((m, index) => (
-                            <tr key={m.admin_id || index}>
-                              <td>
-                                <span className="fw-semibold">
-                                  {m.username}
-                                </span>
-                              </td>
+                        </thead>
 
-                              <td className="fw-bold text-danger">
-                                {Number(m.amount || 0).toFixed(2)}
-                              </td>
-
-                              <td>
-                                <button
-                                  className="btn btn-sm btn-warning me-1"
-                                  onClick={() => handleSendClick(m, "dena")}
-                                  title="Send"
-                                >
-                                  S
-                                </button>
-
-                                <button
-                                  className="btn btn-sm btn-info h_btn"
-                                  onClick={() =>
-                                    navigate(
-                                      `/user-settlement-report/${m.admin_id}`,
-                                    )
-                                  }
-                                  title="History"
-                                >
-                                  H
-                                </button>
+                        <tbody>
+                          {denaList.length === 0 ? (
+                            <tr>
+                              <td colSpan="3" className="text-center py-4">
+                                No Data
                               </td>
                             </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
+                          ) : (
+                            denaList.map((m, index) => (
+                              <tr key={m.admin_id || index}>
+                                <td>
+                                  <span className="fw-semibold">
+                                    {m.username}
+                                  </span>
+                                </td>
+
+                                <td className="fw-bold text-danger">
+                                  {Number(m.amount || 0).toFixed(2)}
+                                </td>
+
+                                <td>
+                                  <button
+                                    className="btn btn-sm btn-warning me-1"
+                                    onClick={() => handleSendClick(m, "dena")}
+                                    title="Send"
+                                  >
+                                    S
+                                  </button>
+
+                                  <button
+                                    className="btn btn-sm btn-info h_btn"
+                                    onClick={() =>
+                                      navigate(
+                                        `/settlement/user-settlement-report/${m.admin_id}`,
+                                      )
+                                    }
+                                    title="History"
+                                  >
+                                    H
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* CLEAR */}
-            {/* <div className="col-md-4">
+              {/* CLEAR */}
+              {/* <div className="col-md-4">
             <div className="card ledger-card">
               <div className="ledger-header clear">
                 <span>CLEAR</span>
@@ -496,7 +508,8 @@ function UserLedger() {
               )}
             </div>
           </div> */}
-          </div>
+            </div>
+          )}
         </div>
 
         {showSendModal && (
@@ -524,12 +537,12 @@ function UserLedger() {
                 <div className="modal-body">
                   <div className="form-group mb-3">
                     <label>CLIENT</label>
-                    <div
+                    <input
+                      type="text"
+                      value={selectedAgent?.username || "ramrajgg"}
                       className="form-control"
-                      style={{ backgroundColor: "#f5f5f5" }}
-                    >
-                      {selectedAgent?.username || "ramrajgg"}
-                    </div>
+                      disabled
+                    />
                   </div>
 
                   <div className="form-group mb-3">

@@ -11,6 +11,8 @@ import {
 import Toast from "../../User/Toast";
 import { getAllFancyMatches } from "../../Server/api";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../Common/Loader";
+import { FaSearch } from "react-icons/fa";
 function FancyManagment() {
   const navigate = useNavigate();
   const [filter, setFilter] = useState(false);
@@ -179,28 +181,6 @@ function FancyManagment() {
   //   );
   // };
 
-  // Loading state
-  if (loading)
-    return (
-      <div className="text-center mt-3">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-        <p className="mt-2">Loading games...</p>
-      </div>
-    );
-
-  // Error state
-  if (error)
-    return (
-      <div className="text-center mt-3 text-danger">
-        <p>{error}</p>
-        <button className="btn btn-primary" onClick={fetchMatches}>
-          Retry
-        </button>
-      </div>
-    );
-
   return (
     <div className="">
       {toast.show && (
@@ -211,119 +191,142 @@ function FancyManagment() {
         <div className="card-header bg-primary-yellow  d-flex justify-content-between align-items-center">
           <h3 className="card-title mb-0">All Games List</h3>
           <div className="d-flex gap-2">
-            <button className="btn btn-light" onClick={handleRefresh}>
+            <button className="btn btn-outline-light" onClick={handleRefresh}>
               Refresh
             </button>
-            <button
+            {/* <button
               className="btn btn-light"
               onClick={() => setFilter((prev) => !prev)}
             >
               <MdFilterListAlt /> Filter
-            </button>
+            </button> */}
           </div>
         </div>
-        {filter && (
-          <div className="card-body border-bottom">
-            <div className="row g-3">
-              <div className="col-md-5">
-                <label className="form-label">Search Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Search by name"
-                  value={filters.search}
-                  onChange={(e) =>
-                    setFilters((prev) => ({ ...prev, search: e.target.value }))
-                  }
-                />
-              </div>
-              <div className="col-md-5">
-                <label className="form-label">Status</label>
-                <select
-                  className="form-select"
-                  value={filters.status}
-                  onChange={(e) =>
-                    setFilters((prev) => ({ ...prev, status: e.target.value }))
-                  }
-                >
-                  <option value="">All</option>
-                  <option value="1">Active</option>
-                  <option value="0">Inactive</option>
-                </select>
-              </div>
-              <div className="col-md-2 d-flex align-items-end gap-2 mb-1">
-                <button
-                  className="btn btn-success"
-                  onClick={() => {
-                    setPagination((prev) => ({ ...prev, page: 1 }));
-                    fetchMatches(1);
-                  }}
-                >
-                  Apply
-                </button>
-                <button
-                  className="btn btn-danger"
-                  onClick={() => {
-                    setFilters({ status: "", search: "" });
-                    setPagination((prev) => ({ ...prev, page: 1 }));
-                    fetchMatches(1);
-                  }}
-                >
-                  Reset
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* {filter && ( */}
+        {/* <div className="card-body"></div> */}
+        {/* )} */}
 
         {/* Table */}
-        <div className="card-body table-responsive">
-          <table className="table table-bordered table-hover">
-            <thead className="table-dark">
-              <tr>
-                <th>Sr</th>
-                <th>Name</th>
-                {/* <th>Date&Time</th>
+        <div className="card-body ">
+          <div className="row g-3">
+            <div className="col-md-3">
+              {/* <label className="form-label">Search Name</label> */}
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search by name"
+                value={filters.search}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, search: e.target.value }))
+                }
+              />
+            </div>
+            <div className="col-md-3">
+              {/* <label className="form-label">Status</label> */}
+              <select
+                className="form-select"
+                value={filters.status}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, status: e.target.value }))
+                }
+              >
+                <option value="">All</option>
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+              </select>
+            </div>
+            <div className="col-md-2">
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  setPagination((prev) => ({ ...prev, page: 1 }));
+                  fetchMatches(1);
+                }}
+              >
+                <FaSearch />
+              </button>
+              {/* <button
+                className="btn btn-danger"
+                onClick={() => {
+                  setFilters({ status: "", search: "" });
+                  setPagination((prev) => ({ ...prev, page: 1 }));
+                  fetchMatches(1);
+                }}
+              >
+                Reset
+              </button> */}
+            </div>
+          </div>
+          <div className="table-responsive mt-2">
+            <table className="table table-bordered table-hover">
+              <thead className="table-dark">
+                <tr>
+                  <th>Sr</th>
+                  <th>Name</th>
+                  {/* <th>Date&Time</th>
                 <th>Status</th> */}
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {games.length > 0 ? (
-                games.map((game, index) => (
-                  <tr key={game._id}>
-                    <td>
-                      {(pagination.page - 1) * pagination.limit + index + 1}
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan="3">
+                      <div className="table_loader text-center mt-5">
+                        <Loader />
+                      </div>
                     </td>
-                    <td>{game.name}</td>
-                    {/* <td> {game.created_at}</td>
+                  </tr>
+                ) : error ? (
+                  <tr>
+                    <td colSpan="3">
+                      <div className="text-center mt-3 text-danger">
+                        <p>{error}</p>
+                        <button
+                          className="btn btn-primary"
+                          onClick={fetchMatches}
+                        >
+                          Retry
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ) : games.length > 0 ? (
+                  games.map((game, index) => (
+                    <tr key={game._id}>
+                      <td>
+                        {(pagination.page - 1) * pagination.limit + index + 1}
+                      </td>
+                      <td>{game.name}</td>
+                      {/* <td> {game.created_at}</td>
                   <td>{getStatusBadge(game.status)}</td> */}
-                    <td className="d-flex align-items-center gap-2">
+                      <td className="d-flex align-items-center gap-2">
+                        <button
+                          className="viewmatch"
+                          onClick={() => handleView(game)} // ✅ Game object pass karein
+                        >
+                          View Match
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="text-center py-4">
+                      No games found
+                      <br />
                       <button
-                        className="viewmatch"
-                        onClick={() => handleView(game)} // ✅ Game object pass karein
+                        className="btn btn-primary mt-2"
+                        onClick={fetchMatches}
                       >
-                        View Match
+                        Refresh
                       </button>
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="3" className="text-center py-4">
-                    No games found
-                    <br />
-                    <button
-                      className="btn btn-primary mt-2"
-                      onClick={fetchMatches}
-                    >
-                      Refresh
-                    </button>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
         {/* {pagination.total > 0 && (
   <div className="card-footer d-flex justify-content-between align-items-center">

@@ -268,14 +268,6 @@ const HorseGreyhundDetails = () => {
     return `${day}${suffix(day)} ${month}`;
   };
 
-  if (loading) {
-    return (
-      <div className="card-body text-center">
-        <Loader />
-      </div>
-    );
-  }
-
   if (!runners.length && !loading) {
     return (
       <div className="card">
@@ -307,83 +299,89 @@ const HorseGreyhundDetails = () => {
             </button>
           </div>
 
-          <Row className="mt-2">
-            <Col md={6}>
-              <div className="table-responsive">
-                <table className="table bet_table">
-                  <thead className="table-dark">
-                    <tr>
-                      <th className="fw-bold" style={{ width: "60%" }}>
-                        {raceInfo.race_name || "Runners"}
-                      </th>
-                      <th className="text-center" style={{ width: "20%" }}>
-                        BACK
-                      </th>
-                      <th className="text-center" style={{ width: "20%" }}>
-                        LAY
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {runners.length > 0 ? (
-                      runners.map((runner, idx) => (
-                        <tr key={idx}>
-                          <td>
-                            {runner.name}
-                          </td>
-                          <td className="text-center back_bet">
-                            {runner.back}
-                          </td>
-                          <td className="text-center lay_bet">{runner.lay}</td>
-                        </tr>
-                      ))
-                    ) : (
+          {loading ? (
+            <div className="py-5 table_loader text-center">
+              <Loader />
+            </div>
+          ) : (
+            <Row className="mt-2">
+              <Col md={6}>
+                <div className="table-responsive">
+                  <table className="table bet_table">
+                    <thead className="table-dark">
                       <tr>
-                        <td colSpan="3" className="text-center">
-                          No runners available
-                        </td>
+                        <th className="fw-bold" style={{ width: "60%" }}>
+                          {raceInfo.race_name || "Runners"}
+                        </th>
+                        <th className="text-center" style={{ width: "20%" }}>
+                          BACK
+                        </th>
+                        <th className="text-center" style={{ width: "20%" }}>
+                          LAY
+                        </th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </Col>
+                    </thead>
+                    <tbody>
+                      {runners.length > 0 ? (
+                        runners.map((runner, idx) => (
+                          <tr key={idx}>
+                            <td>{runner.name}</td>
+                            <td className="text-center back_bet">
+                              {runner.back}
+                            </td>
+                            <td className="text-center lay_bet">
+                              {runner.lay}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="3" className="text-center">
+                            No runners available
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </Col>
 
-            <Col md={6}>
-              <div className="table-responsive">
-                <table className="table table-bordered table-hover table-striped">
-                  <thead className="table-dark">
-                    <tr>
-                      <th>User Name</th>
-                      <th>Selection</th>
-                      <th>Rate</th>
-                      <th>User Stake</th>
-                      <th>Time</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {userBets && userBets.length > 0 ? (
-                      userBets.map((bet, idx) => (
-                        <tr key={idx}>
-                          <td>{bet.user || "-"}</td>
-                          <td>{bet.selection || "-"}</td>
-                          <td>{bet.rate || "-"}</td>
-                          <td>{bet.stake || "-"}</td>
-                          <td>{bet.time || "-"}</td>
-                        </tr>
-                      ))
-                    ) : (
+              <Col md={6}>
+                <div className="table-responsive">
+                  <table className="table table-bordered table-hover table-striped">
+                    <thead className="table-dark">
                       <tr>
-                        <td colSpan="5" className="text-center">
-                          <h6 className="py-5">No Data Found</h6>
-                        </td>
+                        <th>User Name</th>
+                        <th>Selection</th>
+                        <th>Rate</th>
+                        <th>User Stake</th>
+                        <th>Time</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </Col>
-          </Row>
+                    </thead>
+                    <tbody>
+                      {userBets && userBets.length > 0 ? (
+                        userBets.map((bet, idx) => (
+                          <tr key={idx}>
+                            <td>{bet.user || "-"}</td>
+                            <td>{bet.selection || "-"}</td>
+                            <td>{bet.rate || "-"}</td>
+                            <td>{bet.stake || "-"}</td>
+                            <td>{bet.time || "-"}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="5" className="text-center">
+                            <h6 className="py-5">No Data Found</h6>
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </Col>
+            </Row>
+          )}
         </div>
       </div>
     </>

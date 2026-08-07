@@ -1,19 +1,37 @@
 $secondary: #000;
 $darkcolor: #000;
+$Bgcolor: #d89528;
 @import "../asset/css/Color.scss";
 
 .login-container {
   background: #f3f3f9;
+  @media (max-width: 992px) {
+    padding: 10px;
+    background: $Bgcolor;
+  }
+  @media (max-width: 768px) {
+    padding: 0;
+  }
   .logo_leftside {
     width: 100%;
     min-height: 100vh;
     height: 100%;
-    background: #d89528;
+    background: $Bgcolor;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 38px;
   }
+
+  @media (max-width: 768px) {
+    .logo_mobile {
+      padding: 60px;
+      img {
+        width: 220px;
+      }
+    }
+  }
+
   .login_content {
     h1 {
       font-size: 25px;
@@ -70,6 +88,9 @@ $darkcolor: #000;
     display: flex;
     justify-content: center;
     align-items: center;
+    @media screen and (max-width: 768px) {
+      flex-direction: column;
+    }
     &:before {
       content: "";
       position: absolute;
@@ -96,6 +117,9 @@ $darkcolor: #000;
     @media screen and (min-width: 992px) {
       min-width: 470px;
     }
+    @media screen and (max-width: 768px) {
+      height: 100%;
+    }
 
     .form_login {
       display: flex;
@@ -107,6 +131,9 @@ $darkcolor: #000;
         display: flex;
         flex-direction: column;
         gap: 15px;
+        @media screen and (max-width: 768px) {
+          gap: 5px;
+        }
       }
     }
   }
@@ -162,6 +189,12 @@ $darkcolor: #000;
       &:hover {
         color: $primarycolor;
       }
+    @media screen and (max-width: 768px) {
+      font-size: 12px;
+      a {
+        font-size: 12px;
+      }
+    }
     }
   }
 }
@@ -175,10 +208,7 @@ $darkcolor: #000;
       width: 100%;
     }
   }
-  .login-container {
-    padding: 10px;
-    background: $primarycolor;
-  }
+
   .login-container .max-w-464-px {
     max-width: 600px;
     margin: 10px;

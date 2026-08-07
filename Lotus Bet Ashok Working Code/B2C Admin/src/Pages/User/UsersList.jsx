@@ -822,12 +822,12 @@ function UsersList() {
                         >
                           Search
                         </button>
-                        <button
+                        {/* <button
                           className="btn btn-secondary me-2 align-items-center d-flex"
                           onClick={resetServerFilters}
                         >
                           <i className="fas fa-undo me-1"></i> Reset
-                        </button>
+                        </button> */}
                       </div>
                     </form>
                     <div className="agent-path mb-3" />

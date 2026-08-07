@@ -806,14 +806,6 @@ const CreateSuperAgentAdmin = () => {
     }));
   };
 
-  if (loading) {
-    return (
-      <div className="card">
-        <Loader />
-      </div>
-    );
-  }
-
   return (
     <>
       <ToastContainer
@@ -849,147 +841,155 @@ const CreateSuperAgentAdmin = () => {
             className={`needs-validation ${validated ? "was-validated" : ""}`}
             onSubmit={handleSubmit}
           >
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label className="form-label text-uppercase">
-                 FULL NAME <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.name ? "is-invalid" : ""}`}
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  disabled={isSubmitting}
-                />
-                {errors.name && (
-                  <div className="invalid-feedback d-block">{errors.name}</div>
-                )}
+            {loading ? (
+              <div className="text-center">
+                <Loader />
               </div>
+            ) : (
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label text-uppercase">
+                    FULL NAME <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control ${errors.name ? "is-invalid" : ""}`}
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    disabled={isSubmitting}
+                  />
+                  {errors.name && (
+                    <div className="invalid-feedback d-block">
+                      {errors.name}
+                    </div>
+                  )}
+                </div>
 
-              {/* Username (Current Super Agent Username) */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label text-uppercase"> PARENT</label>
-                {/* <label className="form-label"> Agent Username</label> */}
-                <input
-                  type="text"
-                  className="form-control"
-                  value={formData.username || "Loading..."}
-                  readOnly
-                  style={{ backgroundColor: "#f8f9fa" }}
-                />
-              </div>
-
-              {/* My Total Balance */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label text-uppercase">My Total Balance</label>
-                <div className="input-group">
+                {/* Username (Current Super Agent Username) */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label text-uppercase"> PARENT</label>
+                  {/* <label className="form-label"> Agent Username</label> */}
                   <input
                     type="text"
                     className="form-control"
-                    value={formData.myCoins}
-                    onKeyDown={blockInvalidKeys}
-                    disabled
-                    style={{ backgroundColor: "#f8f9fa" }}
+                    value={formData.username || "Loading..."}
+                    readOnly
                   />
-                  <span className="input-group-text bg-success text-white">
-                    <i className="fas fa-coins"></i>
-                  </span>
                 </div>
-                {adminData && (
-                  <small className="text-muted">
-                    Your current balance: {adminData.amount}
-                  </small>
-                )}
-              </div>
 
-              {/* Coins to Assign */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label text-uppercase">
-                  Coins to Assign <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.coins ? "is-invalid" : ""}`}
-                  name="coins"
-                  value={formData.coins}
-                  // onChange={handleChange}
-                  onChange={handleCoinsChange}
-                  onKeyDown={(e) => {
-                    if (["e", "E", "+", "-", "."].includes(e.key)) {
-                      e.preventDefault();
-                    }
-                  }}
-                  min="0"
-                  max={formData.myCoins}
-                  required
-                  disabled={isSubmitting}
-                />
-                {errors.coins && (
-                  <div className="invalid-feedback d-block">{errors.coins}</div>
-                )}
-                <small className="text-muted">
-                  Maximum you can assign: {formData.myCoins}
-                </small>
-              </div>
+                {/* My Total Balance */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label text-uppercase">
+                    My Total Balance
+                  </label>
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={formData.myCoins}
+                      onKeyDown={blockInvalidKeys}
+                      disabled
+                    />
+                    <span className="input-group-text bg-success text-white">
+                      <i className="fas fa-coins"></i>
+                    </span>
+                  </div>
+                  {adminData && (
+                    <small className="text-muted">
+                      Your current balance: {adminData.amount}
+                    </small>
+                  )}
+                </div>
 
-              {/* Password */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label text-uppercase">
-                  Password <span className="text-danger">*</span>
-                </label>
-                <div className="input-group">
+                {/* Coins to Assign */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label text-uppercase">
+                    Coins to Assign <span className="text-danger">*</span>
+                  </label>
                   <input
                     type="text"
-                    className={`form-control ${errors.password ? "is-invalid" : ""}`}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
+                    className={`form-control ${errors.coins ? "is-invalid" : ""}`}
+                    name="coins"
+                    value={formData.coins}
+                    // onChange={handleChange}
+                    onChange={handleCoinsChange}
+                    onKeyDown={(e) => {
+                      if (["e", "E", "+", "-", "."].includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
+                    min="0"
+                    max={formData.myCoins}
                     required
-                    pattern="[A-Z]{2}[0-9]{4}"
                     disabled={isSubmitting}
                   />
-                  <button
-                    type="button"
-                    className="btn btn-secondary generate_btn"
-                    onClick={handleGeneratePassword}
-                    disabled={isSubmitting}
-                  >
-                    {" "}
-                    Generate
-                  </button>
+                  {errors.coins && (
+                    <div className="invalid-feedback d-block">
+                      {errors.coins}
+                    </div>
+                  )}
+                  <small className="text-muted">
+                    Maximum you can assign: {formData.myCoins}
+                  </small>
                 </div>
-                {errors.password && (
-                  <div className="invalid-feedback d-block">
-                    {errors.password}
+
+                {/* Password */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label text-uppercase">
+                    Password <span className="text-danger">*</span>
+                  </label>
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      className={`form-control ${errors.password ? "is-invalid" : ""}`}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                      pattern="[A-Z]{2}[0-9]{4}"
+                      disabled={isSubmitting}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-secondary generate_btn"
+                      onClick={handleGeneratePassword}
+                      disabled={isSubmitting}
+                    >
+                      {" "}
+                      Generate
+                    </button>
                   </div>
-                )}
-                <small className="text-muted">
-                  Format: 2 capital letters + 4 digits
-                </small>
-              </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label text-uppercase">Reference</label>
-                <input
-                  type="text"
-                  name="reference"
-                  className="form-control"
-                  value={formData.reference || ""}
-                  onChange={handleChange}
-                  disabled={isSubmitting}
-                  style={{ backgroundColor: "#fff" }}
-                />
-              </div>
-              {/* Divider */}
-              {/* <div className="col-12 my-3">
+                  {errors.password && (
+                    <div className="invalid-feedback d-block">
+                      {errors.password}
+                    </div>
+                  )}
+                  <small className="text-muted">
+                    Format: 2 capital letters + 4 digits
+                  </small>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label text-uppercase">Reference</label>
+                  <input
+                    type="text"
+                    name="reference"
+                    className="form-control"
+                    value={formData.reference || ""}
+                    onChange={handleChange}
+                    disabled={isSubmitting}
+                  />
+                </div>
+                {/* Divider */}
+                {/* <div className="col-12 my-3">
                 <h5 className="border-bottom pb-2">Match & Share Info</h5>
               </div> */}
-              <div className="row">
-                <div className="col-md-6">
-                  <div className="row">
-                    {/* My Match Share */}
-                    {/* <div className="col-md-12 mb-3">
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="row">
+                      {/* My Match Share */}
+                      {/* <div className="col-md-12 mb-3">
                                             <label className="form-label">My Share (%)</label>
                                             <input
                                                 type="text"
@@ -1000,7 +1000,7 @@ const CreateSuperAgentAdmin = () => {
                                                 style={{ backgroundColor: "#f8f9fa" }}
                                             />
                                         </div> */}
-                    {/* <div className="col-12 mb-3">
+                      {/* <div className="col-12 mb-3">
                       <label className="form-label">Company Share (%)</label>
                       <input
                         type="text"
@@ -1013,8 +1013,8 @@ const CreateSuperAgentAdmin = () => {
                       />
                     </div> */}
 
-                    {/* My Commission Type */}
-                    {/* <div className="col-md-12 mb-3">
+                      {/* My Commission Type */}
+                      {/* <div className="col-md-12 mb-3">
                       <label className="form-label">My Commission Type</label>
                       <input
                         type="text"
@@ -1029,8 +1029,8 @@ const CreateSuperAgentAdmin = () => {
                       />
                     </div> */}
 
-                    {/* My Match Comm */}
-                    {/* <div className="col-md-12 mb-3">
+                      {/* My Match Comm */}
+                      {/* <div className="col-md-12 mb-3">
                                             <label className="form-label">My Match Comm (%)</label>
                                             <input
                                                 type="text"
@@ -1041,8 +1041,8 @@ const CreateSuperAgentAdmin = () => {
                                                 style={{ backgroundColor: "#f8f9fa" }}
                                             />
                                         </div> */}
-                    {/* My Session Comm */}
-                    {/* <div className="col-md-12 mb-3">
+                      {/* My Session Comm */}
+                      {/* <div className="col-md-12 mb-3">
                                             <label className="form-label">My Session Comm (%)</label>
                                             <input
                                                 type="text"
@@ -1053,11 +1053,11 @@ const CreateSuperAgentAdmin = () => {
                                                 style={{ backgroundColor: "#f8f9fa" }}
                                             />
                                         </div> */}
+                    </div>
                   </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="row">
-                    {/* <div className="col-md-6> mb-3">
+                  <div className="col-md-6">
+                    <div className="row">
+                      {/* <div className="col-md-6> mb-3">
                       <label className="form-label">
                         Clint Match Share (%){" "}
                         <span className="text-danger">*</span>
@@ -1078,7 +1078,7 @@ const CreateSuperAgentAdmin = () => {
                       )}
                     </div> */}
 
-                    {/* <div className="col-md-6> mb-3">
+                      {/* <div className="col-md-6> mb-3">
                       <label className="form-label">
                         Agent Commission Type{" "}
                         <span className="text-danger">*</span>
@@ -1101,8 +1101,8 @@ const CreateSuperAgentAdmin = () => {
                         </div>
                       )}
                     </div> */}
-                    {/* Agent Match Comm */}
-                    {/* <div className="col-md-6> mb-3">
+                      {/* Agent Match Comm */}
+                      {/* <div className="col-md-6> mb-3">
                                             <label className="form-label">Clint Match Comm (%)</label>
                                             <input
                                                 type="text"
@@ -1127,8 +1127,8 @@ const CreateSuperAgentAdmin = () => {
                                             )}
                                         </div> */}
 
-                    {/* Agent Session Comm */}
-                    {/* <div className="col-md-6> mb-3">
+                      {/* Agent Session Comm */}
+                      {/* <div className="col-md-6> mb-3">
                                             <label className="form-label">Clint Session Comm (%)</label>
                                             <input
                                                 type="text"
@@ -1145,11 +1145,11 @@ const CreateSuperAgentAdmin = () => {
                                                 <div className="invalid-feedback d-block">{errors.agentSessionComm}</div>
                                             )}
                                         </div> */}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* <div className="col-md-12 mb-3">
+                {/* <div className="col-md-12 mb-3">
                 <div className="d-flex justify-content-between mb-2">
                   <label className="fw-bold mb-0">RATIO (CRICKET) :</label>
 
@@ -1158,7 +1158,7 @@ const CreateSuperAgentAdmin = () => {
                   </small>
                 </div>
 
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -1195,7 +1195,7 @@ const CreateSuperAgentAdmin = () => {
                 </div>
               </div> */}
 
-              {/* <div className="col-md-12 mb-3">
+                {/* <div className="col-md-12 mb-3">
                 <div className="d-flex justify-content-between mb-2">
                   <label className="fw-bold mb-0">RATIO (Session) :</label>
 
@@ -1204,7 +1204,7 @@ const CreateSuperAgentAdmin = () => {
                   </small>
                 </div>
 
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -1247,7 +1247,7 @@ const CreateSuperAgentAdmin = () => {
                     AVAILABLE PARTNERSHIP: {formData.myFootballComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -1289,7 +1289,7 @@ const CreateSuperAgentAdmin = () => {
                     AVAILABLE PARTNERSHIP: {formData.myTennisComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -1331,7 +1331,7 @@ const CreateSuperAgentAdmin = () => {
                     AVAILABLE PARTNERSHIP: {formData.myHorseRacingComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -1375,7 +1375,7 @@ const CreateSuperAgentAdmin = () => {
                     AVAILABLE PARTNERSHIP: {formData.myGreyhoundRacingComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -1417,7 +1417,7 @@ const CreateSuperAgentAdmin = () => {
                     AVAILABLE PARTNERSHIP: {formData.myPoliticsComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -1459,7 +1459,7 @@ const CreateSuperAgentAdmin = () => {
                     AVAILABLE PARTNERSHIP: {formData.myCasinoComm}
                   </small>
                 </div>
-                <div className="row">
+                <div className="row gy-2">
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -1494,30 +1494,31 @@ const CreateSuperAgentAdmin = () => {
                 </div>
               </div> */}
 
-              {/* Submit Button */}
-              <div className="col-12 text-center mt-4">
-                <div className="d-flex justify-content-start">
-                  <button
-                    type="submit"
-                    className="btn btn-primary px-5"
-                    disabled={!isFormValid || isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <span
-                          className="spinner-border spinner-border-sm me-2"
-                          role="status"
-                          aria-hidden="true"
-                        ></span>
-                        Creating...
-                      </>
-                    ) : (
-                      "SUBMIT"
-                    )}
-                  </button>
+                {/* Submit Button */}
+                <div className="col-12 text-center mt-md-3">
+                  <div className="d-flex justify-content-start">
+                    <button
+                      type="submit"
+                      className="btn btn-primary px-5"
+                      disabled={!isFormValid || isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <span
+                            className="spinner-border spinner-border-sm me-2"
+                            role="status"
+                            aria-hidden="true"
+                          ></span>
+                          Creating...
+                        </>
+                      ) : (
+                        "SUBMIT"
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </form>
         </div>
       </div>

@@ -1231,8 +1231,8 @@ export default function Dashboard() {
                             <td>{item.sr_no}</td>
                             <td>
                               <div className="d-flex justify-content-between align-items-center bg-white">
-                                <span className="bg-white text-dark">{item.mobile_number}</span>
-                                <FaRegCopy onClick={() => copyToClipboard(item.mobile_number)} title="Copy to clipboard" />
+                                <span className="bg-white text-dark">{item.phone_number}</span>
+                                <FaRegCopy onClick={() => copyToClipboard(item.phone_number)} title="Copy to clipboard" />
                               </div>{" "}
                             </td>
                           </tr>

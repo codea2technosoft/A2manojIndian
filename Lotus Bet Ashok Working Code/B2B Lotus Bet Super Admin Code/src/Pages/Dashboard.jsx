@@ -16,7 +16,7 @@ import {
 import { getDashboardClientList, getAllEvents } from "../Server/api";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { IoClose } from "react-icons/io5";
-import Loader from '../Common/Loader';
+import Loader from "../Common/Loader";
 import {
   FaUserTie,
   FaGamepad,
@@ -32,7 +32,11 @@ import {
   FaInfoCircle,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
-import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdOutlineKeyboardArrowRight } from "react-icons/md";
+import {
+  MdKeyboardDoubleArrowLeft,
+  MdKeyboardDoubleArrowRight,
+  MdOutlineKeyboardArrowRight,
+} from "react-icons/md";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import cricket from "../asset/image/cricket.png";
 import football from "../asset/image/football.png";
@@ -126,7 +130,7 @@ const formatMatchDate = (date) => {
   return `${formattedDay} ${formattedMonth} ${formattedTime}`;
 };
 
-const getCardConfig = () => {
+const getCardConfig = (plData) => {
   const coins = getSafeValue("coins", 0);
   const runningPl = getSafeValue("running_pl", 0);
   const uplinePl = getSafeValue("upline_pl", 0);
@@ -140,24 +144,63 @@ const getCardConfig = () => {
       icon: <FaSyncAlt />,
       bg: "#6394c9",
     },
-    {
-      label: "UPLINE PL",
-      value: uplinePl,
-      valueIcon: uplinePl >= 0 ? <FaCircleArrowUp /> : <FaCircleArrowDown />,
-      icon: <FaSyncAlt />,
-      bg: uplinePl >= 0 ? "#28a745" : "#fa0e0e",
-    },
+    // {
+    //   label: "UPLINE PL",
+    //   value: uplinePl,
+    //   valueIcon: uplinePl >= 0 ? <FaCircleArrowUp /> : <FaCircleArrowDown />,
+    //   icon: <FaSyncAlt />,
+    //   bg: uplinePl >= 0 ? "#28a745" : "#fa0e0e",
+    // },
+    // {
+    //   label: "RUNNING PL",
+    //   value: plData?.running_pl,
+    //   valueIcon: runningPl >= 0 ? <FaCircleArrowUp /> : <FaCircleArrowDown />,
+    //   icon: <FaSyncAlt />,
+    //   bg: plData.running_pl >= 0 ? "#28a745" : "#fa0e0e",
+    // },
+
+    // {
+    //   label: "RUNNING PL",
+    //   value: plData?.running_pl || 0,
+    //   valueIcon:
+    //     (plData?.running_pl || 0) >= 0 ? (
+    //       <FaCircleArrowUp />
+    //     ) : (
+    //       <FaCircleArrowDown />
+    //     ),
+    //   icon: <FaSyncAlt />,
+    //   bg: (plData?.running_pl || 0) >= 0 ? "#28a745" : "#fa0e0e",
+    // },
     {
       label: "RUNNING PL",
-      value: runningPl,
-      valueIcon: runningPl >= 0 ? <FaCircleArrowUp /> : <FaCircleArrowDown />,
+      value: Number(plData?.running_pl || 0).toFixed(2),
+      valueIcon:
+        Number(plData?.running_pl || 0) >= 0 ? (
+          <FaCircleArrowUp />
+        ) : (
+          <FaCircleArrowDown />
+        ),
       icon: <FaSyncAlt />,
-      bg: runningPl >= 0 ? "#28a745" : "#fa0e0e",
+      bg: Number(plData?.running_pl || 0) >= 0 ? "#28a745" : "#fa0e0e",
     },
+
+    // {
+    //   label: "LIFETIME PL",
+    //   value: plData.lifetime_pl,
+    //   valueIcon: plData.lifetime_pl >= 0 ? <FaCircleArrowUp /> : <FaCircleArrowDown />,
+    //   icon: <FaSyncAlt />,
+    //   bg: "#6b00ff",
+    // },
+
     {
       label: "LIFETIME PL",
-      value: lifetimePl,
-      valueIcon: lifetimePl >= 0 ? <FaCircleArrowUp /> : <FaCircleArrowDown />,
+      value: plData?.lifetime_pl || 0,
+      valueIcon:
+        (plData?.lifetime_pl || 0) >= 0 ? (
+          <FaCircleArrowUp />
+        ) : (
+          <FaCircleArrowDown />
+        ),
       icon: <FaSyncAlt />,
       bg: "#6b00ff",
     },
@@ -282,7 +325,7 @@ const SportSection = ({
 
       if (!marketIds) return;
 
-      const oddsUrl = `https://cricketapinew.shyammatka.co.in/get-match-odds-list?id=${marketIds}&sport_id=${sportId}`;
+      const oddsUrl = `https://cricketfancylive.shyammatka.co.in/get-match-odds-list?id=${marketIds}&sport_id=${sportId}`;
       console.log("Fetching odds from:", oddsUrl);
 
       const response = await axios.get(oddsUrl);
@@ -353,11 +396,11 @@ const SportSection = ({
       text: confirmMessage,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#28a745",  // ✅ GREEN COLOR
+      confirmButtonColor: "#28a745", // ✅ GREEN COLOR
       cancelButtonColor: "#d33",
       confirmButtonText: "Submit",
       cancelButtonText: "Cancel",
-    })
+    });
 
     if (!result.isConfirmed) {
       return;
@@ -454,82 +497,93 @@ const SportSection = ({
         onClick={(e) => handleMatchClick(eventId, seriesId, e)}
       >
         <td className="event_id w-100">
-          <div className="d-flex justify-content-between gap-1">
-            <div className="d-flex justify-content-between align-items-center gap-1">
-              <div
-                onClick={(e) =>
-                  handleToggleStatus(game._id, game.status || 0, e)
-                }
-                style={{ cursor: "pointer" }}
-                title={isLocked ? "Click to unlock" : "Click to lock"}
-              >
-                {updating === game._id ? (
-                  <span
-                    className="spinner-border spinner-border-sm text-primary"
-                    role="status"
-                  >
-                    <span className="visually-hidden">Loading...</span>
-                  </span>
-                ) : isLocked ? (
-                  <FaLock
-                    className="lockIcon locked"
-                    style={{ color: "#ff3b3b" }}
-                  />
-                ) : (
-                  <FaLockOpen
-                    className="lockIcon unlocked"
-                    style={{ color: "#6fd96f" }}
-                  />
-                )}
-              </div>
-              <div>
-                <div className="event_name">
-                  <FaRegPlayCircle className="play_btn" />
-                  {game.name}
+          <div className="row">
+            <div className="col-md-5">
+              <div className="d-flex justify-content-start align-items-center gap-1">
+                <div
+                  className="ms-1"
+                  onClick={(e) =>
+                    handleToggleStatus(game._id, game.status || 0, e)
+                  }
+                  style={{ cursor: "pointer" }}
+                  title={isLocked ? "Click to unlock" : "Click to lock"}
+                >
+                  {updating === game._id ? (
+                    <span
+                      className="spinner-border spinner-border-sm text-primary"
+                      role="status"
+                    >
+                      <span className="visually-hidden">Loading...</span>
+                    </span>
+                  ) : isLocked ? (
+                    <FaLock
+                      className="lockIcon locked"
+                      style={{ color: "#ff3b3b" }}
+                    />
+                  ) : (
+                    <FaLockOpen
+                      className="lockIcon unlocked"
+                      style={{ color: "#6fd96f" }}
+                    />
+                  )}
                 </div>
-                <span className="d-block time">
-                  ({formatMatchDate(game.date_time || "-")})
-                </span>
+                <div className="matchName">
+                  <div className="event_name">
+                    <div className="game_name_main">
+                      <FaRegPlayCircle className="play_btn" />
+                      {game.name}
+                    </div>
+                    <span className="d-block time">
+                      ({formatMatchDate(game.date_time || "-")})
+                    </span>
+                  </div>
 
-                {Number(game.total_exposure) !== 0 && (
-                  <span
-                    className="d-block time"
-                    style={{
-                      color: Number(game.total_exposure) > 0 ? "green" : "red",
-                      fontWeight: "600",
-                    }}
-                  >
-                    
-                    {Number(game.total_exposure) > 0
-                      ? `${game.total_exposure}`
-                      : game.total_exposure}
-                    
-                  </span>
-                )}
-
+                  {Number(game.total_exposure) !== 0 && (
+                    <span
+                      className="d-block time"
+                      style={{
+                        color:
+                          Number(game.total_exposure) > 0 ? "green" : "red",
+                        fontWeight: "600",
+                      }}
+                    >
+                      {Number(game.total_exposure) > 0
+                        ? `+${game.total_exposure}`
+                        : game.total_exposure}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
-            <div className="other_option">
-              <span className="my_badge bm_badge">BM</span>
-              {sportId === "4" && (
-                <span className="my_badge fancy_badge">FANCY</span>
-              )}
-              <FaTv className="my_badge tv" />
+            <div className="col-md-2">
+              <div className="other_option">
+                <span className="my_badge bm_badge">BM</span>
+                {sportId === "4" && (
+                  <span className="my_badge fancy_badge">FANCY</span>
+                )}
+                <FaTv className="my_badge tv" />
+              </div>
+            </div>
+
+            <div className="col-md-5">
+              <div className="odds_btns_div">
+                <div className="odds_btn">
+                  {oddsDisplay.map((value, idx) => (
+                    <button
+                      key={idx}
+                      className={`${idx % 2 === 0 ? "back" : "lay"}`}
+                    >
+                      {value !== null ? value : "-"}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </td>
-        <td className="w-100 py-0 box_padding px-0" style={{ padding: "2px" }}>
-          <div className="odds_btns_div">
-            {oddsDisplay.map((value, idx) => (
-              <button
-                key={idx}
-                className={`odds_btn ${idx % 2 === 0 ? "back" : "lay"}`}
-              >
-                {value !== null ? value : "-"}
-              </button>
-            ))}
-          </div>
-        </td>
+        {/* <td className="w-100 py-0 box_padding px-0" style={{ padding: "2px" }}>
+         
+        </td> */}
       </tr>
     );
   };
@@ -630,6 +684,13 @@ export default function Dashboard() {
   const [modalTitle, setModalTitle] = useState("");
   const [games, setGames] = useState([]);
   const [error, setError] = useState("");
+
+  const [plData, setPlData] = useState({
+    running_pl: 0,
+    lifetime_pl: 0,
+    upline_pl: 0,
+  });
+
   const [pagination, setPagination] = useState({
     currentPage: 1,
     itemsPerPage: 100,
@@ -665,7 +726,7 @@ export default function Dashboard() {
     date_wise: [],
   });
 
-  const [cardValues, setCardValues] = useState({
+  const [, setCardValues] = useState({
     balance: 0,
     running_pl: 0,
     upline_pl: 0,
@@ -719,6 +780,7 @@ export default function Dashboard() {
 
         const [dashboardRes, eventsRes] = await Promise.all([
           getDashboardClientList(admin_id),
+
           getAllEvents(sportId, seriesId, {
             page: pagination.currentPage,
             limit: pagination.itemsPerPage,
@@ -734,6 +796,7 @@ export default function Dashboard() {
         // ✅ Process dashboard data
         if (dashboardRes?.data?.success) {
           const adminDetails = dashboardRes.data.data.admin_details || {};
+          const plData = dashboardRes.data.data.pl_data || {};
 
           const coins = adminDetails.coins || 0;
           const runningPl = adminDetails.running_pl || 0;
@@ -746,6 +809,7 @@ export default function Dashboard() {
           localStorage.setItem("lifetime_pl", lifetimePl.toString());
 
           setAdminProfile(adminDetails);
+          setPlData(plData);
           setRole2Count(dashboardRes.data.data.role_2_count || 0);
           setCounts(dashboardRes.data.data.counts || {});
           updateCardValues();
@@ -1003,15 +1067,15 @@ export default function Dashboard() {
         },
         {
           label: "Super Agent",
-          route: "/super-agent-ledger",
+          route: "/settlement",
           icon: <FaUsers size={16} />,
         },
         {
           label: "Agent",
-          route: "/agent-ledger",
+          route: "/settlement/agent-ledger",
           icon: <FaUserTie size={16} />,
         },
-        { label: "User", route: "/agent-ledger", icon: <FaUsers size={16} /> },
+        { label: "User", route: "/settlement/agent-ledger", icon: <FaUsers size={16} /> },
       ],
     },
     {
@@ -1192,7 +1256,7 @@ export default function Dashboard() {
     );
   };
 
-  const cardConfig = getCardConfig();
+  const cardConfig = getCardConfig(plData);
 
   const getCurrentViewData = () => {
     if (activeTab === "inplay") {
@@ -1270,14 +1334,14 @@ export default function Dashboard() {
   const sortedSportIds = SPORT_ORDER.filter((id) => allSportIds.includes(id));
 
   // ✅ If loading, show loader
-  if (loading) {
-    return (
-      <div className="text-center mt-5">
-        <h5>Loading dashboard data...</h5>
-        <Loader />
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="text-center mt-5">
+  //       <h5>Loading dashboard data...</h5>
+  //       <Loader />
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
@@ -1295,7 +1359,7 @@ export default function Dashboard() {
       <div className={`content  ${open ? "open" : ""}`}>
         <div className="row g-2 mt-0">
           {cardConfig.map((item, index) => (
-            <div key={index} className="col-12 col-sm-6 col-md-3">
+            <div key={index} className="col-6 col-sm-6 col-md-4">
               <div
                 className="card_dashboard shadow-sm"
                 style={{
@@ -1313,7 +1377,9 @@ export default function Dashboard() {
                       <div className="d-flex align-items-center gap-3 mb-2">
                         <h5>{item.value}</h5>
                         <h6>
-                          {item.valueIcon && <span className="d-flex">{item.valueIcon}</span>}
+                          {item.valueIcon && (
+                            <span className="d-flex">{item.valueIcon}</span>
+                          )}
                         </h6>
                       </div>
                       <h6>{item.label}</h6>
@@ -1414,11 +1480,13 @@ export default function Dashboard() {
             </ul>
           </div>
           <div className="all_matches">
-            {gamesLoading ? (
-              <div className="text-center p-4">
-                <div className="spinner-border text-primary" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </div>
+            {loading ? (
+              <div className="table_loader text-center py-5">
+                <Loader />
+              </div>
+            ) : gamesLoading ? (
+              <div className="text-center table_loader p-4">
+                <Loader />
                 <p className="mt-2">Loading matches...</p>
               </div>
             ) : sortedSportIds.length === 0 ? (
@@ -1500,7 +1568,6 @@ export default function Dashboard() {
           </div>
         </div>
       )}
-
 
       <GameDetailsModal
         game={detailsOpen ? selectedGame : null}

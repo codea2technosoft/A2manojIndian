@@ -8,11 +8,13 @@ import {
 } from "../../Server/api";
 import { FaRegEdit } from "react-icons/fa";
 import { RiDeleteBin3Fill } from "react-icons/ri";
+import Loader from "../../Common/Loader";
 
 const Slider = () => {
   const [settings, setSettings] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [form, setForm] = useState({
     id: "",
@@ -24,7 +26,7 @@ const Slider = () => {
     order: 0,
   });
 
-  const sliderLists = async () => {
+  const sliderLists = async (showLoading = true) => {
     try {
       const res = await getAllSliders();
 
@@ -36,6 +38,7 @@ const Slider = () => {
     } catch (error) {
       console.error("Error fetching sliders:", error);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -180,7 +183,13 @@ const Slider = () => {
             </thead>
 
             <tbody>
-              {settings.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan="7">
+                    <Loader />
+                  </td>
+                </tr>
+              ) : settings.length > 0 ? (
                 settings.map((item, index) => (
                   <tr key={item._id}>
                     <td>{index + 1}.</td>
@@ -226,7 +235,7 @@ const Slider = () => {
               ) : (
                 <tr>
                   <td colSpan="7" className="text-center">
-                    No sliders found.
+                    No sliders found
                   </td>
                 </tr>
               )}
@@ -327,13 +336,16 @@ const Slider = () => {
 
                 <div className="modal-footer">
                   <button
-                    className="btn btn-danger"
+                    className="btn btn-primary py-2"
+                    onClick={handleSubmit}
+                  >
+                    {isEditMode ? "Update" : "Submit"}
+                  </button>
+                  <button
+                    className="btn btn-dark"
                     onClick={() => setModalOpen(false)}
                   >
                     Cancel
-                  </button>
-                  <button className="btn btn-primary py-2" onClick={handleSubmit}>
-                    {isEditMode ? "Update" : "Submit"}
                   </button>
                 </div>
               </div>

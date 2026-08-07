@@ -223,7 +223,7 @@ function InActiveAgentLists() {
     <>
       <div className="card agentmaster">
         <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
-          <h5 className="mb-0">Inactive Agent List</h5>
+          <h5 className="mb-0">Inactive Master List</h5>
           <div className="d-flex gap-2">
             <button
               className="btn btn-outline-light"
@@ -303,7 +303,7 @@ function InActiveAgentLists() {
                   <th className="text-center">#</th>
                   <th>Code</th>
                   <th>Name</th>
-                  <th>Super Admin</th>
+                  {/* <th>Super Admin</th>
                   <th>Date of Joining</th>
                   <th>Password</th>
                   <th>OTP</th>
@@ -311,7 +311,7 @@ function InActiveAgentLists() {
                   <th>Commission Type</th>
                   <th>Match Comm(%)</th>
                   <th>Session Comm(%)</th>
-                  <th>Chips</th>
+                  <th>Chips</th> */}
                   <th>Status</th>
                 </tr>
               </thead>
@@ -322,7 +322,7 @@ function InActiveAgentLists() {
                       <td className="text-center">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                       <td>{row.admin_id || "N/A"}</td>
                       <td>{row.username || "N/A"}</td>
-                      <td>
+                      {/* <td>
                         <div>{row.super_admin_id || "N/A"}</div>
                         <small>{row.parent_username || "N/A"}</small>
                       </td>
@@ -349,9 +349,9 @@ function InActiveAgentLists() {
                       </td>
                       <td className="text-center">{row.match_comm || "0"}</td>
                       <td className="text-center">{row.session_comm || "0"}</td>
-                      <td className="text-center">₹{row.coins || "0"}</td>
+                      <td className="text-center">₹{row.coins || "0"}</td> */}
                       <td>
-                        <span className="badge bg-danger me-2">Inactive</span>
+                        {/* <span className="badge bg-danger me-2">Inactive</span> */}
                         <Button
                           variant="success"
                           size="sm"
@@ -395,7 +395,7 @@ function InActiveAgentLists() {
                       }}
                     ></button>
                   </div>
-                  <div className="modal-body">
+                  {/* <div className="modal-body">
                     <p className="mb-2">
                       <strong>Master Username:</strong> {selectedAgent.username}
                     </p>
@@ -410,7 +410,26 @@ function InActiveAgentLists() {
                         {selectedAgent.active === 1 ? "Inactive" : "Active"}
                       </strong>
                     </p>
+                  </div> */}
+
+                  <div className="modal-body">
+                    <p className="mb-2">
+                      <strong>Master Name :</strong> {selectedAgent.username}
+                    </p>
+
+                    <p className="mb-2">
+                      <strong>Master Code :</strong>{" "}
+                      {selectedAgent.code || selectedAgent.admin_id}
+                    </p>
+
+                    <p>
+                      Status change to :
+                      <strong>
+                         {selectedAgent.active === 1 ? "Inactive" : "Active"}
+                      </strong>
+                    </p>
                   </div>
+
 
                   <div className="modal-footer">
                     <button

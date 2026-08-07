@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../viewmatchAndFancy/Eventcss.scss"
+
 function GetEventBets() {
   const admin_id = localStorage.getItem("admin_id");
   const event_id = localStorage.getItem("event_id");
@@ -347,7 +348,7 @@ function GetEventBets() {
                     </table>
                   </div>
                   <div className="no-data-message text-center py-5">
-                    <h4 className="text-muted">NO DATA FOUND</h4>
+                    <h5 className="text-muted">NO DATA FOUND</h5>
                     <p className="text-muted">
                       {selectedBetType !== "all" ?
                         `No bets found for bet type: ${selectedBetType}` :

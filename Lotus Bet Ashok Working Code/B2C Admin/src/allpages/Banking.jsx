@@ -1392,16 +1392,37 @@ const Banking = () => {
     setWithdrawErrors({});
   };
 
+  // // Handle log click
+  // const handleLogClick = (adminId) => {
+  //   console.log('View logs for:', adminId);
+  //   window.open(`/agentwisebanking-debit-credit-log?agentId=${adminId}`, '_blank');
+  // };
+
   // Handle log click
-  const handleLogClick = (adminId) => {
-    console.log('View logs for:', adminId);
-    window.open(`/agentwisebanking-debit-credit-log?agentId=${adminId}`, '_blank');
-  };
+const handleLogClick = (adminId) => {
+  console.log('View logs for:', adminId);
+  window.open(
+    `/agentwisebanking-debit-credit-log?agentId=${adminId}`,
+    '_blank',
+    'width=1200,height=800,scrollbars=yes,resizable=yes'
+  );
+};
+
 
   // Handle header Logs button click
-  const handleHeaderLogsClick = () => {
-    window.open('/Agentbankingtransctionhistory', '_blank');
-  };
+  // const handleHeaderLogsClick = () => {
+  //   window.open('/Agentbankingtransctionhistory', '_blank');
+  // };
+
+  // Handle header Logs button click
+const handleHeaderLogsClick = () => {
+  window.open(
+    '/Agentbankingtransctionhistory',
+    '_blank',
+    'width=1200,height=800,scrollbars=yes,resizable=yes'
+  );
+};
+
 
   // Handle recall
   const handleRecall = (id, game) => {

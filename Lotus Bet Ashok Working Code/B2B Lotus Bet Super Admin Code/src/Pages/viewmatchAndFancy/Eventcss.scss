@@ -52,6 +52,9 @@ $greencolor: #0f0;
   padding: 15px;
   background: #fff;
   border-radius: 8px;
+  @media screen and (max-width: 768px) {
+    padding: 5px;
+  }
   .totalnewall {
     color: rgb(16, 143, 16);
     display: inline-block;
@@ -5553,7 +5556,6 @@ $greencolor: #0f0;
     }
 
     .table tr th {
-      background: #000;
       font-weight: 500;
       font-size: 12px;
     }
@@ -5908,5 +5910,55 @@ $greencolor: #0f0;
     .new_game_design_myxbet .cricketbettingalldesign th.lay-h > span {
       font-size: 10px;
     }
+  }
+}
+
+body.dark-theme {
+  .eventallpagenewallall
+    .new_game_design_myxbet
+    .table
+    thead
+    tr
+    th.market-name-th,
+  .eventallpagenewallall
+    .new_game_design_myxbet
+    .cricketbettingalldesign
+    th.back-h
+    span,
+  .eventallpagenewallall
+    .new_game_design_myxbet
+    .cricketbettingalldesign
+    th.lay-h
+    span,
+  .eventallpagenewallall
+    .new_game_design_myxbet
+    .cricketbettingalldesign
+    .market-name-th,
+  .eventallpagenewallall
+    .new_game_design_myxbet
+    .cricketbettingalldesign
+    .skyDetailsRow
+    td.selaction_name,
+  .cricketbettingalldesign.eventsallbetshow .skyDetailsRow td.selaction_name a {
+    background: #222;
+    color: $whitecolor;
+  }
+  .cricketbettingalldesign.eventsallbetshow .small,
+  .cricketbettingalldesign.eventsallbetshow small {
+    color: $whitecolor;
+  }
+
+  .cricketbettingalldesign.eventsallbetshow .skyDetailsRow .back1 small,
+  .cricketbettingalldesign.eventsallbetshow .skyDetailsRow .back1 span,
+  .cricketbettingalldesign.eventsallbetshow .skyDetailsRow .lay3 small,
+  .cricketbettingalldesign.eventsallbetshow .skyDetailsRow .lay3 span {
+    color: $black;
+  }
+  .eventallpagenewallall .ladderimage img {
+    filter: invert(1);
+  }
+  .eventallpagenewallall .card {
+    border: 1px solid #444;
+    border-radius: 0;
   }
 }

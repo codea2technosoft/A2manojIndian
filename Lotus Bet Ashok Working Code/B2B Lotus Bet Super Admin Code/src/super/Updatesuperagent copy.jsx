@@ -507,7 +507,7 @@ const CreateSuperAgentAdmin = () => {
 
                             {/* MATCH AND SHARE INFO Section */}
                             <div className="col-12 my-4">
-                                <h5 className="border-bottom pb-2">MATCH AND SHARE INFO</h5>
+                                <h5 className="heading2 border-bottom pb-2">MATCH AND SHARE INFO</h5>
                             </div>
 
                             {/* MY MATCH SHARE */}

@@ -43,7 +43,7 @@ const FancyResult = () => {
     try {
       const confirm = await Swal.fire({
         title: "Are you sure?",
-        text: "You want to delete this record!",
+        text: "Do you really want to cancel this bet?, this action cannot be revert.",
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Yes, Delete",

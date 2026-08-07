@@ -443,7 +443,7 @@ const Complete = ({ userId }) => {
                                 <td>{(currentPage - 1) * limit + index + 1}</td>
                                 <td>{item.user_name || "N/A"}</td>
                                 <td>{item.account_holder_name || "N/A"}</td>
-                                <td>₹{Number(item.amount || 0).toFixed(2)}</td>
+                                <td>{Number(item.amount || 0).toFixed(2)}</td>
                                 <td>{item.account_number || "N/A"}</td>
                                 <td>{item.ifsc_code || "N/A"}</td>
                                 <td>{item.agent_name || "N/A"}</td>

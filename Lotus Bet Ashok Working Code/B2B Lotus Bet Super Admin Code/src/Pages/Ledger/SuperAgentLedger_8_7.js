@@ -555,7 +555,6 @@ function SuperAgentLedger() {
                     <label >Super Master </label>
                     <div
                       className="form-control"
-                      style={{ backgroundColor: "#f5f5f5" }}
                     >
                       {selectedAgent?.username || "ramrajgg"}
                     </div>

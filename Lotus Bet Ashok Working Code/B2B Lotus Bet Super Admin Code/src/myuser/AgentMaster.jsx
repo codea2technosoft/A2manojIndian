@@ -377,15 +377,15 @@ function AgentMaster() {
           setPaginationData(response.data.pagination);
           setTotalItems(
             response.data.pagination.total_records ||
-              response.data.pagination.total,
+            response.data.pagination.total,
           );
           setTotalPages(
             response.data.pagination.total_pages ||
-              response.data.pagination.totalPages,
+            response.data.pagination.totalPages,
           );
           setCurrentPage(
             response.data.pagination.current_page ||
-              response.data.pagination.currentPage,
+            response.data.pagination.currentPage,
           );
           setItemsPerPage(response.data.pagination.limit || limit);
         }
@@ -784,9 +784,9 @@ function AgentMaster() {
           prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? {
-                  ...agent,
-                  chips: (Number(agent.chips) + depositValue).toString(),
-                }
+                ...agent,
+                chips: (Number(agent.chips) + depositValue).toString(),
+              }
               : agent,
           ),
         );
@@ -816,7 +816,7 @@ function AgentMaster() {
         } else {
           showErrorToast(
             error.response.data?.message ||
-              "Failed to deposit amount. Please try again.",
+            "Failed to deposit amount. Please try again.",
           );
         }
       }
@@ -878,9 +878,9 @@ function AgentMaster() {
           prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? {
-                  ...agent,
-                  chips: (Number(agent.chips) - withdrawValue).toString(),
-                }
+                ...agent,
+                chips: (Number(agent.chips) - withdrawValue).toString(),
+              }
               : agent,
           ),
         );
@@ -908,11 +908,11 @@ function AgentMaster() {
   };
 
   const handleViewDetails = (agent) => {
-    navigate(`/Superagentadminview/${agent.admin_id}`);
+    navigate(`/Mastermyuser/Superagentadminview/${agent.admin_id}`);
   };
 
   const handleUpdateSuperAgent = (agent) => {
-    navigate(`/Updatesuperagentmyuser/${agent.admin_id}`);
+    navigate(`/Mastermyuser/update-myuser/${agent.admin_id}`);
     localStorage.setItem("super_agent_idnew", agent.agent_id);
   };
   const handleDeletedUser = () => {
@@ -1030,17 +1030,6 @@ function AgentMaster() {
     }
   };
 
-  if (loading) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "100vh" }}
-      >
-        <Loader />
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="card agentmaster">
@@ -1141,7 +1130,7 @@ function AgentMaster() {
                   </button>
                 )}
               </div>
-            </div> */}
+            </div>  */}
           </div>
           <div className="table-responsive">
             <table className="table table-bordered table-hover">
@@ -1228,7 +1217,15 @@ function AgentMaster() {
                 </tr> */}
               </thead>
               <tbody>
-                {agentData.length > 0 ? (
+                {loading ? (
+                  <tr>
+                    <td colSpan="13">
+                      <div className="d-flex justify-content-center align-items-center py-5 table_loader">
+                        <Loader />
+                      </div>
+                    </td>
+                  </tr>
+                ) : agentData.length > 0 ? (
                   agentData.map((row, index) => (
                     <tr key={row.id}>
                       <td className="text-center">
@@ -1237,11 +1234,18 @@ function AgentMaster() {
                       <td>
                         <span className="badge badge-warning me-1">C</span>
                         {row.name}
-                        <br />[
-                        {row.name?.length > 10
-                          ? `${row.name.substring(0, 10)}`
-                          : row.name}
-                        ]
+                        <br />
+                        <span>
+                          [
+                          {(() => {
+                            const name = row.username || row.name || "";
+                            const firstWord = name.split(" ")[0];
+                            return firstWord.length > 10
+                              ? firstWord.substring(0, 10)
+                              : firstWord;
+                          })()}
+                          ]
+                        </span>
                       </td>
                       <td className="text-center">
                         <button
@@ -1480,7 +1484,7 @@ function AgentMaster() {
                       <td>{row.credit_ref || "-"}</td>
                       <td>{row.coins || "-"}</td>
                       <td>{row.total_amount || "-"}</td>
-                      <td>{row.exposer || "-"}</td>
+                      <td>{Number(row.exposer).toFixed(2) || "-"}</td>
                       {/* <td className="text-center">
   {new Date(row.originalData?.createdAt).toLocaleDateString("en-GB")}
 </td> */}
@@ -1503,7 +1507,33 @@ function AgentMaster() {
                       <td>{row?.reference ? row.reference : "-"}</td> */}
 
                       <td className="text-center">{row.share}</td>
-                      <td className="text-center">{row.master_admin_id}</td>
+
+
+                      {/* <td className="text-center">{row.master_admin_id}</td> */}
+
+                      <td className="text-center">
+                        {row.master_admin_id && row.master_admin_id !== "-" && row.master_admin_id !== "" ? (
+                          row.master_admin_id?.startsWith("SM") ? (
+                            <span
+                              onClick={() => navigate(`/AgentMasternew/${row.master_admin_id}`)}
+                              style={{ cursor: "pointer", color: "#000" }}
+                            >
+                              {row.master_admin_id}
+                            </span>
+                          ) : row.master_admin_id?.startsWith("MA") ? (
+                            <span
+                              onClick={() => navigate(`/Mastermyuser/${row.master_admin_id}`)}
+                              style={{ cursor: "pointer", color: "#000" }}
+                            >
+                              {row.master_admin_id}
+                            </span>
+                          ) : (
+                            row.master_admin_id
+                          )
+                        ) : (
+                          "admin"
+                        )}
+                      </td>
 
                       {/* <td className="text-center">
                         <div className="input-group input-group-sm" style={{ width: "120px" }}>
@@ -1619,9 +1649,11 @@ function AgentMaster() {
                             setShowStatusModal(true);
                           }}
                           title={
-                            row.status === "Active"
-                              ? "Lock User"
-                              : "Unlock User"
+                            // row.status === "Active"
+                            //   ? "Lock User"
+                            //   : "Unlock User"
+                            row.status ? "Inactive" : "Active"
+
                           }
                         >
                           {row.status === "Active" ? (
@@ -1833,7 +1865,7 @@ function AgentMaster() {
                             title="Statement"
                           >
                             <FaFileAlt />
-                          </button>
+                          </button>*/}
 
                           <button
                             className="buttoncommon gradient-8"
@@ -1841,7 +1873,7 @@ function AgentMaster() {
                             title="Inactive Users"
                           >
                             <FaRectangleList />
-                          </button> */}
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -1872,9 +1904,8 @@ function AgentMaster() {
                   {getPageNumbers().map((page) => (
                     <div
                       key={page}
-                      className={`paginationnumber ${
-                        currentPage === page ? "active" : ""
-                      }`}
+                      className={`paginationnumber ${currentPage === page ? "active" : ""
+                        }`}
                       onClick={() => handlePageClick(page)}
                     >
                       {page}
@@ -1928,7 +1959,7 @@ function AgentMaster() {
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className="btn btn-dark"
                     onClick={() => {
                       setShowStatusModal(false);
                       setSelectedAgent(null);
@@ -1938,7 +1969,7 @@ function AgentMaster() {
                   </button>
                   <button
                     type="button"
-                    className="btn btn-success"
+                    className="btn btn-theme"
                     onClick={handleStatusChange}
                   >
                     Confirm
@@ -2289,8 +2320,7 @@ function AgentMaster() {
                         type={showPasswords.oldPassword ? "text" : "password"}
                         className="form-control"
                         value={selectedAgent.password}
-                        readOnly
-                        style={{ backgroundColor: "#f5f5f5" }}
+                        disabled
                       />
                       <button
                         className="btn btn-outline-secondary"
@@ -2306,7 +2336,7 @@ function AgentMaster() {
                     </div>
                     <small className="text-muted">Current password</small>
                   </div>
-                  <div >
+                  <div>
                     <label className="form-label">New Password</label>
                     <div className="input-group">
                       <input
@@ -2353,7 +2383,6 @@ function AgentMaster() {
                   >
                     Cancel
                   </button>
-                  
                 </div>
               </div>
             </div>
@@ -2529,7 +2558,17 @@ function AgentMaster() {
                     />
                   </div>
                   <div>
-                    <label className="form-label">Withdraw Amount </label>
+                    <div className="d-flex align-items-center justify-content-between">
+                      <label className="form-label text-uppercase">
+                        Withdraw Amount{" "}
+                      </label>
+                      <div className="text-muted remaining text-uppercase">
+                        Remaining balance :
+                        {(
+                          Number(selectedAgent.credit) - Number(withdrawAmount)
+                        ).toLocaleString()}
+                      </div>
+                    </div>
                     <input
                       type="text"
                       className="form-control"
@@ -2539,20 +2578,20 @@ function AgentMaster() {
                       placeholder="Enter amount to withdraw"
                       min="1"
                       step="0.01"
-                      max={selectedAgent.chips}
+                      max={selectedAgent.credit}
                     />
                     {/* <div className="form-text">
                       Maximum withdrawable amount: {selectedAgent.credit}
                     </div> */}
                   </div>
-                  {withdrawAmount && !isNaN(withdrawAmount) && (
+                  {/* {withdrawAmount && !isNaN(withdrawAmount) && (
                     <div className="alert alert-info mt-2">
                       <strong>New Balance:</strong>
                       {(
                         Number(selectedAgent.credit) - Number(withdrawAmount)
                       ).toLocaleString()}
                     </div>
-                  )}
+                  )} */}
                   {withdrawAmount &&
                     Number(withdrawAmount) > Number(selectedAgent.credit) && (
                       <div className="alert alert-danger mt-2">
@@ -2871,7 +2910,8 @@ function AgentMaster() {
 
                     <div className="col-6">
                       <Link
-                        to={`/icasino-setting/${selectedAgent?.admin_id}`}
+                       // to={`/icasino-setting/${selectedAgent?.admin_id}`}
+                        to={`#`}
                         className="btn gradient-2 w-100"
                         onClick={() => setShowSettingModal(false)}
                       >

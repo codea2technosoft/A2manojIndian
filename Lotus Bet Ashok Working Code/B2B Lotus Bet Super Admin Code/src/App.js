@@ -1,5 +1,5 @@
-import React from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import {
   BrowserRouter as Router,
   Routes,
@@ -79,7 +79,7 @@ import ActiveAllGames from "./Pages/ActiveAllGames/ActiveAllGames";
 import Cricket from "./Pages/GameList/Cricket";
 import ViewEvent from "./Pages/GameList/ViewEvent";
 import ViewMarket from "./Pages/GameList/ViewMarket.js";
-import InActiveEvents from "./Pages/EventManagment/InActiveEvents ";
+import InActiveEvents from "./Pages/EventManagment/InActiveEvents";
 import ActiveEvents from "./Pages/EventManagment/ActiveEvents";
 import CompletedEvents from "./Pages/EventManagment/CompletedEvents";
 import FancyManagment from "./Pages/FancyManagment/FancyManagment";
@@ -217,6 +217,15 @@ import HorseGreyhundDetails from "./Pages/ActiveAllGames/HorseGreyhundDetails";
 const App = () => {
   const token = localStorage.getItem("token");
   const isLoggedIn = localStorage.getItem("isLoggedIn");
+  function ScrollToTop() {
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, [pathname]);
+
+    return null;
+  }
   if (!token || !isLoggedIn) {
     return (
       <Router>
@@ -229,6 +238,7 @@ const App = () => {
   }
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/userchat" element={<Userchat />} />
@@ -411,11 +421,11 @@ const App = () => {
           }
         />
         <Route
-          path="/CreateSuperAgent/:id"
+          path="/agent_lists/create-new-master/:id"
           element={
             <ProtectedRoute
               element={CreatesuperAgentt}
-              path="/CreateSuperAgent/:id"
+              path="/agent_lists/create-new-master/:id"
             />
           }
         />
@@ -504,54 +514,54 @@ const App = () => {
           }
         />
         <Route
-          path="/super-agent-ledger"
+          path="/settlement"
           element={
             <ProtectedRoute
               element={SuperAgentLedger}
-              path="/super-agent-ledger"
+              path="/settlement"
             />
           }
         />
 
         <Route
-          path="/super-agent-ledger-settlement-report/:admin_id"
+          path="/settlement/super-agent-ledger-settlement-report/:admin_id"
           element={
             <ProtectedRoute
               element={SuperAgentSettlementReport}
-              path="/super-agent-ledger-settlement-report/:admin_id"
+              path="/settlement/super-agent-ledger-settlement-report/:admin_id"
             />
           }
         />
 
         <Route
-          path="/agent-settlement-report/:admin_id"
+          path="/settlement/agent-settlement-report/:admin_id"
           element={
             <ProtectedRoute
               element={AgentSettlementReport}
-              path="/agent-settlement-report/:admin_id"
+              path="/settlement/agent-settlement-report/:admin_id"
             />
           }
         />
 
         <Route
-          path="/user-settlement-report/:admin_id"
+          path="/settlement/user-settlement-report/:admin_id"
           element={
             <ProtectedRoute
               element={UserSettlementReport}
-              path="/user-settlement-report/:admin_id"
+              path="/settlement/user-settlement-report/:admin_id"
             />
           }
         />
 
         <Route
-          path="/agent-ledger"
+          path="/settlement/agent-ledger"
           element={
-            <ProtectedRoute element={AgentLedger} path="/agent-ledger" />
+            <ProtectedRoute element={AgentLedger} path="/settlement/agent-ledger" />
           }
         />
         <Route
-          path="/user-ledger"
-          element={<ProtectedRoute element={UserLedger} path="/user-ledger" />}
+          path="/settlement/user-ledger"
+          element={<ProtectedRoute element={UserLedger} path="/settlement/user-ledger" />}
         />
 
         <Route
@@ -621,11 +631,11 @@ const App = () => {
         />
 
         <Route
-          path="/CreateAgentmyuser/:id"
+          path="/AgentMasternew/create-user/:id"
           element={
             <ProtectedRoute
               element={CreateAgentmyuser}
-              path="/CreateAgentmyuser/:id"
+              path="/AgentMasternew/create-user/:id"
             />
           }
         />
@@ -697,29 +707,29 @@ const App = () => {
         <Route path="/GaneRuleModal" element={<GaneRuleModal />} />
 
         <Route
-          path="/Updatesuperagent/:id"
+          path="/agent_lists/update-super-master/:id"
           element={
             <ProtectedRoute
               element={Updatesuperagent}
-              path="/Updatesuperagent/:id"
+              path="/agent_lists/update-super-master/:id"
             />
           }
         />
         <Route
-          path="/Updatesuperagentnew/:id"
+          path="/AgentMasternew/update-master/:id"
           element={
             <ProtectedRoute
               element={Updatesuperagentnew}
-              path="/Updatesuperagentnew/:id"
+              path="/AgentMasternew/update-master/:id"
             />
           }
         />
         <Route
-          path="/Updatesuperagentmyuser/:id"
+          path="/Mastermyuser/update-myuser/:id"
           element={
             <ProtectedRoute
               element={Updatesuperagentmyuser}
-              path="/Updatesuperagentmyuser/:id"
+              path="/Mastermyuser/update-myuser/:id"
             />
           }
         />
@@ -1567,7 +1577,7 @@ const App = () => {
         />
 
         <Route
-          path="/bet-history/:eventId/:marketId?"
+          path="/reports/bet-history/:eventId/:marketId?"
           element={
             <ProtectedRoute
               element={MarketAnalysisBetHistory}

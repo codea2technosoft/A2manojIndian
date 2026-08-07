@@ -93,26 +93,44 @@ const SportGreyhundRacing = () => {
   const formatDisplayDate = (date) => {
     if (!date) return "N/A";
 
-    const d = new Date(date);
+    let d;
+
+    // Date object / timestamp
+    if (date instanceof Date || typeof date === "number") {
+      d = new Date(date);
+    }
+
+    // String date
+    else if (typeof date === "string") {
+      let value = date.trim();
+
+      // DD-MM-YYYY or DD/MM/YYYY
+      const dmyMatch = value.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
+
+      if (dmyMatch) {
+        const [, day, month, year] = dmyMatch;
+
+        d = new Date(Number(year), Number(month) - 1, Number(day));
+      } else {
+        // ISO, YYYY-MM-DD, YYYY-MM-DD HH:mm:ss, etc.
+        d = new Date(value.replace(" ", "T"));
+      }
+    }
+
+    if (!d || isNaN(d.getTime())) {
+      return "N/A";
+    }
 
     const day = d.getDate();
-    const month = d.toLocaleString("en-GB", { month: "short" });
 
-    const suffix = (day) => {
-      if (day > 3 && day < 21) return "th";
-      switch (day % 10) {
-        case 1:
-          return "st";
-        case 2:
-          return "nd";
-        case 3:
-          return "rd";
-        default:
-          return "th";
-      }
-    };
+    const suffix =
+      day > 3 && day < 21 ? "th" : ["th", "st", "nd", "rd"][day % 10] || "th";
 
-    return `${day}${suffix(day)} ${month}`;
+    const month = d.toLocaleString("en-US", {
+      month: "short",
+    });
+
+    return `${day}${suffix} ${month}`;
   };
 
   // ✅ Handle Race Time Click - Navigate to new page with both event_id and market_id
@@ -143,17 +161,6 @@ const SportGreyhundRacing = () => {
   };
 
   const getCountryName = (code) => countryNames[code] || code;
-
-  if (loading) {
-    return (
-      <div className="card">
-        <div className="card-body text-center">
-          <Loader />
-          <p className="mt-2">Loading Games...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -190,10 +197,18 @@ const SportGreyhundRacing = () => {
           )}
 
           {/* ✅ Matches List */}
-          {matchesLoading ? (
-            <div className="text-center py-5">
-              <Loader />
-              <p>Loading matches...</p>
+          {loading ? (
+            <div className="card table_loader">
+              <div className="card-body text-center py-5">
+                <Loader />
+              </div>
+            </div>
+          ) : matchesLoading ? (
+            <div className="card table_loader">
+              <div className="text-center py-5">
+                <Loader />
+                {/* <p>Loading matches...</p> */}
+              </div>
             </div>
           ) : matches.length === 0 ? (
             <div className="text-center py-5">

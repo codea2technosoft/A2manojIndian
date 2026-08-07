@@ -8,6 +8,7 @@ import { FaEye, FaChartBar, FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import Loader from "../../Common/Loader";
 
 function AgentLedger() {
   const [searchParams] = useSearchParams();
@@ -67,6 +68,7 @@ function AgentLedger() {
   }, [superagentId, fromDate, toDate]);
 
   const fetchMasters = async () => {
+    setLoading(true);
     try {
       setIsFiltering(true);
       const res = await getChildList({
@@ -89,6 +91,7 @@ function AgentLedger() {
     } catch (err) {
       console.log(err);
     } finally {
+      setLoading(false);
       setIsFiltering(false);
     }
   };
@@ -228,7 +231,7 @@ function AgentLedger() {
   return (
     <>
       <div className="card py-1">
-        <div className="card-header border-0 bg-primary-yellow d-flex justify-content-between align-items-center">
+        <div className="card-header border-0 flex-wrap-mobile bg-primary-yellow d-flex justify-content-between align-items-md-center gap-2">
           <h3 className="card-title mb-0">Balance Sheet</h3>
           <div className="d-flex gap-2 align-items-center">
             <input
@@ -274,171 +277,180 @@ function AgentLedger() {
 
       <div className="mt-4">
         <div className="card-body">
-          <div className="row g-4">
-            {/* In Plus (Profit) */}
-            <div className="col-md-6">
-              <div className="card ledger-card">
-                <div className="ledger-header card-header py-2 lena">
-                  <h3 className="card-title mb-0">Client In Plus (Profit)</h3>
-                  <span className="text-success">{totals.lena.toFixed(2)}</span>
-                </div>
+          {loading ? (
+            <div className="py-5">
+              <Loader />
+            </div>
+          ) : (
+            <div className="row g-4">
+              {/* In Plus (Profit) */}
+              <div className="col-md-6">
+                <div className="card ledger-card">
+                  <div className="ledger-header card-header py-2 lena">
+                    <h3 className="card-title mb-0">Client In Plus (Profit)</h3>
+                    <span className="text-success">
+                      {totals.lena.toFixed(2)}
+                    </span>
+                  </div>
 
-                <div className="card-body">
-                  <div className="table-responsive height_scroll">
-                    <table className="table table-bordered table-hover table-striped align-middle mb-0">
-                      <thead className="table-light sticky_top">
-                        <tr>
-                          <th>Username</th>
-                          <th>Amount</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {lenaList.length === 0 ? (
+                  <div className="card-body">
+                    <div className="table-responsive height_scroll">
+                      <table className="table table-bordered table-hover table-striped align-middle mb-0">
+                        <thead className="table-light sticky_top">
                           <tr>
-                            <td colSpan="3" className="text-center py-4">
-                              No Data
-                            </td>
+                            <th>Username</th>
+                            <th>Amount</th>
+                            <th>Action</th>
                           </tr>
-                        ) : (
-                          lenaList.map((m, index) => (
-                            <tr key={m.id || index}>
-                              <td>
-                                <div
-                                  className="d-flex align-items-center gap-2 hover_user"
-                                  onClick={() =>
-                                    navigate(
-                                      `/reports/user-ledger?master_id=${m.admin_id}`,
-                                    )
-                                  }
-                                >
-                                  {/* <FaEye
+                        </thead>
+
+                        <tbody>
+                          {lenaList.length === 0 ? (
+                            <tr>
+                              <td colSpan="3" className="text-center py-4">
+                                No Data
+                              </td>
+                            </tr>
+                          ) : (
+                            lenaList.map((m, index) => (
+                              <tr key={m.id || index}>
+                                <td>
+                                  <div
+                                    className="d-flex align-items-center gap-2 hover_user"
+                                    onClick={() =>
+                                      navigate(
+                                        `/reports/user-ledger?master_id=${m.admin_id}`,
+                                      )
+                                    }
+                                  >
+                                    {/* <FaEye
                                     className="action-icon"
                                     style={{ cursor: "pointer" }}
                                   /> */}
-                                  <span>{m.username}</span>
-                                </div>
-                              </td>
+                                    <span>{m.username}</span>
+                                  </div>
+                                </td>
 
-                              <td className="fw-bold text-success">
-                                {Number(m.amount || 0).toFixed(2)}
-                              </td>
+                                <td className="fw-bold text-success">
+                                  {Number(m.amount || 0).toFixed(2)}
+                                </td>
 
-                              <td className="text-center">
-                                <button
-                                  className="btn btn-sm btn-danger"
-                                  onClick={() =>
-                                    navigate(
-                                      `/reports/agent-settlement-report/${m.admin_id}`,
-                                    )
-                                  }
-                                  title="History"
-                                >
-                                  H
-                                </button>
+                                <td className="text-center">
+                                  <button
+                                    className="btn btn-sm btn-danger"
+                                    onClick={() =>
+                                      navigate(
+                                        `/reports/agent-settlement-report/${m.admin_id}`,
+                                      )
+                                    }
+                                    title="History"
+                                  >
+                                    H
+                                  </button>
 
-                                {/* <button
+                                  {/* <button
                   className="btn btn-sm btn-success ms-2"
                   onClick={() => handleSendClick(m, "lena")}
                   title="Send"
                 >
                   S
                 </button> */}
-                              </td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* In Minus (Loss) */}
-            <div className="col-md-6">
-              <div className="card ledger-card">
-                <div className="ledger-header card-header py-2 dena">
-                  <h3 className="card-title mb-0">Client In Minus (Loss)</h3>
-                  <span className="text-danger">{totals.dena.toFixed(2)}</span>
-                </div>
+              {/* In Minus (Loss) */}
+              <div className="col-md-6">
+                <div className="card ledger-card">
+                  <div className="ledger-header card-header py-2 dena">
+                    <h3 className="card-title mb-0">Client In Minus (Loss)</h3>
+                    <span className="text-danger">
+                      {totals.dena.toFixed(2)}
+                    </span>
+                  </div>
 
-                <div className="card-body">
-                  <div className="table-responsive height_scroll">
-                    <table className="table table-bordered table-hover table-striped align-middle mb-0">
-                      <thead className="table-light sticky_top">
-                        <tr>
-                          <th>Username</th>
-                          <th>Amount</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {denaList.length === 0 ? (
+                  <div className="card-body">
+                    <div className="table-responsive height_scroll">
+                      <table className="table table-bordered table-hover table-striped align-middle mb-0">
+                        <thead className="table-light sticky_top">
                           <tr>
-                            <td colSpan="3" className="text-center py-4">
-                              No Data
-                            </td>
+                            <th>Username</th>
+                            <th>Amount</th>
+                            <th>Action</th>
                           </tr>
-                        ) : (
-                          denaList.map((m, index) => (
-                            <tr key={m.admin_id || index}>
-                              <td>
-                                <div
-                                  className="d-flex align-items-center gap-2 hover_user"
-                                  onClick={() =>
-                                    navigate(
-                                      `/reports/user-ledger?master_id=${m.admin_id}`,
-                                    )
-                                  }
-                                >
-                                  {/* <FaEye
+                        </thead>
+
+                        <tbody>
+                          {denaList.length === 0 ? (
+                            <tr>
+                              <td colSpan="3" className="text-center py-4">
+                                No Data
+                              </td>
+                            </tr>
+                          ) : (
+                            denaList.map((m, index) => (
+                              <tr key={m.admin_id || index}>
+                                <td>
+                                  <div
+                                    className="d-flex align-items-center gap-2 hover_user"
+                                    onClick={() =>
+                                      navigate(
+                                        `/reports/user-ledger?master_id=${m.admin_id}`,
+                                      )
+                                    }
+                                  >
+                                    {/* <FaEye
                                     className="action-icon"
                                     style={{ cursor: "pointer" }}
                                   /> */}
-                                  <span>{m.username}</span>
-                                </div>
-                              </td>
+                                    <span>{m.username}</span>
+                                  </div>
+                                </td>
 
-                              <td className="fw-bold text-danger">
-                                {Number(m.amount || 0).toFixed(2)}
-                              </td>
+                                <td className="fw-bold text-danger">
+                                  {Number(m.amount || 0).toFixed(2)}
+                                </td>
 
-                              <td>
-                                <button
-                                  className="btn btn-sm btn-danger"
-                                  onClick={() =>
-                                    navigate(
-                                      `/reports/agent-settlement-report/${m.admin_id}`,
-                                    )
-                                  }
-                                  title="Statement"
-                                >
-                                  S
-                                </button>
+                                <td>
+                                  <button
+                                    className="btn btn-sm btn-danger"
+                                    onClick={() =>
+                                      navigate(
+                                        `/reports/agent-settlement-report/${m.admin_id}`,
+                                      )
+                                    }
+                                    title="Statement"
+                                  >
+                                    S
+                                  </button>
 
-                                {/* <button
+                                  {/* <button
                   className="btn btn-sm btn-success ms-2"
                   onClick={() => handleSendClick(m, "dena")}
                   title="Send"
                 >
                   S
                 </button> */}
-                              </td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* CLEAR */}
-            {/* <div className="col-md-4">
+              {/* CLEAR */}
+              {/* <div className="col-md-4">
             <div className="card ledger-card">
               <div className="position_sticky">
                 <div className="ledger-header clear">
@@ -505,10 +517,11 @@ function AgentLedger() {
               </div>
             </div>
           </div> */}
-          </div>
+            </div>
+          )}
         </div>
 
-         {showSendModal && (
+        {showSendModal && (
           <div
             className="modal show d-block"
             tabIndex="-1"
@@ -531,83 +544,83 @@ function AgentLedger() {
                   ></button>
                 </div>
                 <div className="modal-body">
-                 <div className="form-group mb-3">
-                <label >CLIENT</label>
-                <div
-                  className="form-control"
-                  style={{ backgroundColor: "#f5f5f5" }}
-                >
-                  {selectedAgent?.username || "ramrajgg"}
-                </div>
-              </div>
+                  <div className="form-group mb-3">
+                    <label>CLIENT</label>
+                    <div
+                      className="form-control"
+                      style={{ backgroundColor: "#f5f5f5" }}
+                    >
+                      {selectedAgent?.username || "ramrajgg"}
+                    </div>
+                  </div>
 
-              <div className="form-group mb-3">
-                <label >AMOUNT</label>
-                <input
-                  type="number"
-                  name="amount"
-                  className="form-control"
-                  placeholder="Enter amount"
-                  value={transactionData.amount}
-                  onChange={handleTransactionChange}
-                  required
-                />
-              </div>
+                  <div className="form-group mb-3">
+                    <label>AMOUNT</label>
+                    <input
+                      type="number"
+                      name="amount"
+                      className="form-control"
+                      placeholder="Enter amount"
+                      value={transactionData.amount}
+                      onChange={handleTransactionChange}
+                      required
+                    />
+                  </div>
 
-              <div className="form-group mb-3">
-                <label >COLLECTION</label>
-                <select
-                  name="collection"
-                  className="form-control"
-                  value={transactionData.collection}
-                  onChange={handleTransactionChange}
-                >
-                  <option value="CASH">CASH</option>
-                  <option value="UPI">UPI</option>
-                  <option value="BANK">BANK</option>
-                  <option value="OTHER">OTHER</option>
-                </select>
-              </div>
+                  <div className="form-group mb-3">
+                    <label>COLLECTION</label>
+                    <select
+                      name="collection"
+                      className="form-control"
+                      value={transactionData.collection}
+                      onChange={handleTransactionChange}
+                    >
+                      <option value="CASH">CASH</option>
+                      <option value="UPI">UPI</option>
+                      <option value="BANK">BANK</option>
+                      <option value="OTHER">OTHER</option>
+                    </select>
+                  </div>
 
-              <div className="form-group mb-3">
-                <label >PAYMENT TYPE</label>
-                <select
-                  name="payment_type"
-                  className="form-control"
-                  value={transactionData.payment_type}
-                  onChange={handleTransactionChange}
-                >
-                  {/* <option value="cr">Payment Diya</option>
+                  <div className="form-group mb-3">
+                    <label>PAYMENT TYPE</label>
+                    <select
+                      name="payment_type"
+                      className="form-control"
+                      value={transactionData.payment_type}
+                      onChange={handleTransactionChange}
+                    >
+                      {/* <option value="cr">Payment Diya</option>
                 <option value="dr">Payment Liya</option> */}
 
-                  <option value="cr">Credit</option>
-                  <option value="dr">Debit</option>
-                </select>
-              </div>
+                      <option value="cr">Credit</option>
+                      <option value="dr">Debit</option>
+                    </select>
+                  </div>
 
-              <div className="form-group mb-3">
-                <label >DATE</label>
-                <input
-                  type="date"
-                  name="date"
-                  className="form-control"
-                  value={transactionData.date}
-                  onChange={handleTransactionChange}
-                  required
-                />
-              </div>
+                  <div className="form-group mb-3">
+                    <label>DATE</label>
+                    <input
+                      type="date"
+                      name="date"
+                      className="form-control"
+                      value={transactionData.date}
+                      onChange={handleTransactionChange}
+                      required
+                    />
+                  </div>
 
-              <div className="form-group mb-3">
-                <label >COMMENT</label>
-                <input
-                  type="text"
-                  name="comment"
-                  className="form-control"
-                  placeholder="Enter comment"
-                  value={transactionData.comment}
-                  onChange={handleTransactionChange}
-                />
-              </div>
+                  <div className="form-group mb-3">
+                    <label>COMMENT</label>
+                    <input
+                      type="text"
+                      name="comment"
+                      className="form-control"
+                      placeholder="Enter comment"
+                      value={transactionData.comment}
+                      onChange={handleTransactionChange}
+                    />
+                  </div>
                 </div>
                 <div className="modal-footer">
                   <button

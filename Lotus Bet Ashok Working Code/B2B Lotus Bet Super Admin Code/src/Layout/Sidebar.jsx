@@ -34,9 +34,17 @@ import logo from "../asset/image/logo.png";
 
 const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
   const [activeParent, setActiveParent] = useState(null);
-  const [activeDropdowns, setActiveDropdowns] = useState({});
+  const [activeDropdowns, setActiveDropdowns] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("activeSidebarDropdowns") || "{}");
+    } catch {
+      return {};
+    }
+  });
   const [sideBarClose, setSideBarClose] = useState(false);
-  const [activeItem, setActiveItem] = useState(null);
+  const [activeItem, setActiveItem] = useState(
+    () => localStorage.getItem("activeSidebarItem") || null,
+  );
   const location = useLocation();
   const navigate = useNavigate();
   const isMobileview = window.innerWidth <= 991;
@@ -73,8 +81,8 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
   };
 
   const findActiveItemAndParents = (items, pathname, parentChain = []) => {
-    for (let item of items) {
-      // ✅ Check if current item matches
+    for (const item of items) {
+      // Exact match
       if (item.path === pathname) {
         return {
           activeId: item.id,
@@ -82,8 +90,20 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         };
       }
 
-      // 🔁 Check children recursively
-      if (item.children && item.children.length > 0) {
+      // Detail page / nested page
+      if (
+        item.path &&
+        item.path !== "#" &&
+        pathname.startsWith(item.path + "/")
+      ) {
+        return {
+          activeId: item.id,
+          parents: parentChain,
+        };
+      }
+
+      // Children recursively
+      if (item.children?.length > 0) {
         const found = findActiveItemAndParents(item.children, pathname, [
           ...parentChain,
           item.id,
@@ -92,37 +112,33 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         if (found) return found;
       }
     }
+
     return null;
   };
 
-  // 🔄 Find active item when location changes
   useEffect(() => {
-    console.log("Current pathname:", location.pathname);
-
     for (const section of menuItems) {
       const result = findActiveItemAndParents(section.items, location.pathname);
 
       if (result) {
-        console.log("Found active item:", result);
         setActiveItem(result.activeId);
 
-        // Open all parent dropdowns
         const newDropdowns = {};
+
         result.parents.forEach((parentId) => {
           newDropdowns[parentId] = true;
         });
 
         setActiveDropdowns(newDropdowns);
+
         return;
       }
     }
 
-    // If no match found
-    setActiveItem(null);
-    setActiveDropdowns({});
+    // ❌ Yahan active clear nahi karna
+    // Detail/other page par previous active preserve rahega
   }, [location.pathname]);
 
-  // 🔄 Handle mobile view
   useEffect(() => {
     if (isMobileview) {
       setSideBarClose(true);
@@ -131,36 +147,49 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
     }
   }, [isMobileview]);
 
-  // 📂 Toggle dropdown
   const toggleDropdown = (id) => {
-    setActiveDropdowns((prev) => ({
-      // ...prev,
-      [id]: !prev[id],
-    }));
+    setActiveDropdowns((prev) => {
+      const updated = {
+        ...prev,
+        [id]: !prev[id],
+      };
+
+      localStorage.setItem("activeSidebarDropdowns", JSON.stringify(updated));
+
+      return updated;
+    });
   };
 
-  // 🎯 Handle item click
   const handleItemClick = (item, parentId = null, e) => {
     if (e) e.preventDefault();
+
     if (sideBarClose) {
       onToggleSidebar();
     }
 
+    // Child active save
     setActiveItem(item.id);
+    localStorage.setItem("activeSidebarItem", item.id);
 
     if (item.onClick) {
-      item.onClick?.();
+      item.onClick();
     } else if (item.path && item.path !== "#") {
       navigate(item.path);
     }
+
     handleReloadLogic(item.id);
 
-    // If this is a child item, ensure parent dropdown is open
     if (parentId) {
-      setActiveDropdowns((prev) => ({
-        ...prev,
-        [parentId]: true,
-      }));
+      setActiveDropdowns((prev) => {
+        const updated = {
+          ...prev,
+          [parentId]: true,
+        };
+
+        localStorage.setItem("activeSidebarDropdowns", JSON.stringify(updated));
+
+        return updated;
+      });
     }
   };
 
@@ -196,23 +225,25 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
     return () => observer.disconnect();
   }, []);
-
-  // 🔄 Render menu item recursively
   const renderMenuItem = (item, level = 0, parentId = null) => {
     const isDropdownOpen = activeDropdowns[item.id];
     const isActive = activeItem === item.id;
     const currentPath = location.pathname;
+
     const checkIfActive = (menuItem) => {
-      if (menuItem.path === currentPath) return true;
-      if (menuItem.children) {
+      if (activeItem === menuItem.id) {
+        return true;
+      }
+
+      if (menuItem.children?.length > 0) {
         return menuItem.children.some(checkIfActive);
       }
+
       return false;
     };
 
     const isItemOrChildActive = checkIfActive(item);
 
-    // Check if item or any of its children are permitted
     const canShowItem =
       isPermitted(item.id) ||
       (item.dropdown && item.children?.some((child) => isPermitted(child.id)));
@@ -223,11 +254,11 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
       <li
         key={item.id}
         className={`
-          menu-item 
-          ${isActive ? "active" : ""}
-          ${level > 0 ? "sub-item" : ""}
-          level-${level}
-        `}
+  menu-item 
+  ${isItemOrChildActive ? "active" : ""}
+  ${level > 0 ? "sub-item" : ""}
+  level-${level}
+`}
       >
         {/* <Link
           to={item.dropdown ? "#" : item.path || "#"}
@@ -481,7 +512,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
           id: "settlement",
           title: "Settlement",
           icon: <FaBalanceScale />,
-          path: "/super-agent-ledger",
+          path: "/settlement",
         },
 
         {
@@ -527,7 +558,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
           ],
         },
 
-          {
+        {
           id: "GameReports",
           title: "Reports",
           dropdown: true,
@@ -576,7 +607,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
             {
               id: "settlement",
               title: "Settlement",
-              path: "/super-agent-ledger",
+              path: "/settlement",
             },
 
             {
@@ -589,7 +620,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
         {
           id: "casinomanagement",
-          title: "Casino Settings" ,
+          title: "Casino Settings",
           dropdown: true,
           icon: <MdCasino />,
 
@@ -601,8 +632,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
             },
           ],
         },
-
-      
 
         {
           id: "Game_Management",
@@ -667,13 +696,12 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
           icon: <FaGlobe />,
         },
 
-         {
+        {
           id: "slider",
           title: "Slider",
           path: "/slider_lists",
           icon: <FaImages />,
         },
-
 
         // {
         //   id: "sportbetting",
@@ -991,7 +1019,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         //   ],
         // },
 
-       
         // {
         //   id: "Sub_Admin",
         //   title: "Sub Admin",
@@ -1168,8 +1195,6 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
 
         //   ],
         // },
-
-       
 
         {
           id: "logout",

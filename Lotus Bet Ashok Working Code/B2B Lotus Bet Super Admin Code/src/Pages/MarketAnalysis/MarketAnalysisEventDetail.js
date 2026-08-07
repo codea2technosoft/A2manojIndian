@@ -144,7 +144,7 @@ function MarketAnalysisEventDetail() {
 
   // ✅ बेट हिस्ट्री पेज पर जाना
   const handleBetHistoryClick = () => {
-    navigate(`/bet-history/12670/${marketId}`);
+    navigate(`/reports/bet-history/12670/${marketId}`);
   };
 
   const handlePageChange = (newPage) => {

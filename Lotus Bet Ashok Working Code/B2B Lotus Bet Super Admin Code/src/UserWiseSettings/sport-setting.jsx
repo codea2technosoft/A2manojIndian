@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import Loader from "../Common/Loader";
 import { getSportSettingNames, updateSportSettingStatus } from "../Server/api";
 
@@ -28,18 +28,33 @@ function SportSetting() {
 
       if (response.data && response.data.success) {
         const data = response.data.data;
-        
+
         const settingsObj = {};
-        const sportKeys = ['football', 'cricket', 'tennis', 'horse_racing', 'greyhound_racing', 'kabaddi', 'i_casino', 'casino', 'politics'];
-        
-        sportKeys.forEach(key => {
-          const label = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        const sportKeys = [
+          "football",
+          "cricket",
+          "tennis",
+          "horse_racing",
+          "greyhound_racing",
+          "kabaddi",
+          "i_casino",
+          "casino",
+          "politics",
+        ];
+
+        sportKeys.forEach((key) => {
+          const label = key
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (l) => l.toUpperCase());
           settingsObj[key] = {
             label: label,
-            status: data[key] === true || data[key] === 1 || data[key] === "1" ? 1 : 0
+            status:
+              data[key] === true || data[key] === 1 || data[key] === "1"
+                ? 1
+                : 0,
           };
         });
-        
+
         setSettings(settingsObj);
       } else {
         toast.warning("Using default settings");
@@ -74,15 +89,15 @@ function SportSetting() {
       ...settings,
       [sportKey]: {
         ...settings[sportKey],
-        status: settings[sportKey].status === 1 ? 0 : 1
-      }
+        status: settings[sportKey].status === 1 ? 0 : 1,
+      },
     });
   };
 
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
-      
+
       const payload = {
         admin_id: adminId,
         football: settings.football?.status || 0,
@@ -100,47 +115,40 @@ function SportSetting() {
       console.log("Update Response:", response);
 
       const responseData = response.data || response;
-      
+
       if (responseData.success) {
         // SweetAlert se success message
         await Swal.fire({
-          icon: 'success',
-          title: 'Success!',
-          text: responseData.message || 'Sport settings updated successfully!',
+          icon: "success",
+          title: "Success!",
+          text: responseData.message || "Sport settings updated successfully!",
           timer: 2000,
-          showConfirmButton: false
+          showConfirmButton: false,
         });
         await fetchSportSettings();
       } else {
         await Swal.fire({
-          icon: 'error',
-          title: 'Error!',
-          text: responseData.message || 'Failed to update settings',
-          confirmButtonColor: '#d33'
+          icon: "error",
+          title: "Error!",
+          text: responseData.message || "Failed to update settings",
+          confirmButtonColor: "#d33",
         });
       }
     } catch (error) {
       console.error("Error updating sport settings:", error);
       await Swal.fire({
-        icon: 'error',
-        title: 'Error!',
-        text: error.response?.data?.message || error.message || 'Error updating settings',
-        confirmButtonColor: '#d33'
+        icon: "error",
+        title: "Error!",
+        text:
+          error.response?.data?.message ||
+          error.message ||
+          "Error updating settings",
+        confirmButtonColor: "#d33",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="card">
-        <div className="card-body text-center">
-          <Loader />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -168,141 +176,151 @@ function SportSetting() {
         </div>
 
         <div className="card-body">
-          <div className="row">
-            {/* Left Column */}
-            <div className="col-md-6">
-              <div className="py-2 d-flex justify-content-between align-items-center w-50">
-                <div className="sport_name">Football:</div>
-                <div className="form-check form-switch m-0">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={settings.football?.status === 1}
-                    onChange={() => handleToggle('football')}
-                  />
-                </div>
-              </div>
-
-              <div className="py-2 d-flex justify-content-between align-items-center w-50">
-                <div className="sport_name">Cricket:</div>
-                <div className="form-check form-switch m-0">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={settings.cricket?.status === 1}
-                    onChange={() => handleToggle('cricket')}
-                  />
-                </div>
-              </div>
-
-              <div className="py-2 d-flex justify-content-between align-items-center w-50">
-                <div className="sport_name">Greyhound Racing:</div>
-                <div className="form-check form-switch m-0">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={settings.greyhound_racing?.status === 1}
-                    onChange={() => handleToggle('greyhound_racing')}
-                  />
-                </div>
-              </div>
-
-              <div className="py-2 d-flex justify-content-between align-items-center w-50">
-                <div className="sport_name">I Casino:</div>
-                <div className="form-check form-switch m-0">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={settings.i_casino?.status === 1}
-                    onChange={() => handleToggle('i_casino')}
-                  />
-                </div>
-              </div>
-
-              <div className="py-2 d-flex justify-content-between align-items-center w-50">
-                <div className="sport_name">Politics:</div>
-                <div className="form-check form-switch m-0">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={settings.politics?.status === 1}
-                    onChange={() => handleToggle('politics')}
-                  />
-                </div>
+          {loading ? (
+            <div className="table_loader">
+              <div className="py-5 text-center">
+                <Loader />
               </div>
             </div>
+          ) : (
+            <div className="row">
+              {/* Left Column */}
+              <div className="col-md-6">
+                <div className="py-2 d-flex justify-content-between align-items-center w-50">
+                  <div className="sport_name">Football:</div>
+                  <div className="form-check form-switch m-0">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={settings.football?.status === 1}
+                      onChange={() => handleToggle("football")}
+                    />
+                  </div>
+                </div>
 
-            {/* Right Column */}
-            <div className="col-md-6">
-              <div className="py-2 d-flex justify-content-between align-items-center w-50">
-                <div className="sport_name">Tennis:</div>
-                <div className="form-check form-switch m-0">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={settings.tennis?.status === 1}
-                    onChange={() => handleToggle('tennis')}
-                  />
+                <div className="py-2 d-flex justify-content-between align-items-center w-50">
+                  <div className="sport_name">Cricket:</div>
+                  <div className="form-check form-switch m-0">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={settings.cricket?.status === 1}
+                      onChange={() => handleToggle("cricket")}
+                    />
+                  </div>
+                </div>
+
+                <div className="py-2 d-flex justify-content-between align-items-center w-50">
+                  <div className="sport_name">Greyhound Racing:</div>
+                  <div className="form-check form-switch m-0">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={settings.greyhound_racing?.status === 1}
+                      onChange={() => handleToggle("greyhound_racing")}
+                    />
+                  </div>
+                </div>
+
+                <div className="py-2 d-flex justify-content-between align-items-center w-50">
+                  <div className="sport_name">I Casino:</div>
+                  <div className="form-check form-switch m-0">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={settings.i_casino?.status === 1}
+                      onChange={() => handleToggle("i_casino")}
+                    />
+                  </div>
+                </div>
+
+                <div className="py-2 d-flex justify-content-between align-items-center w-50">
+                  <div className="sport_name">Politics:</div>
+                  <div className="form-check form-switch m-0">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={settings.politics?.status === 1}
+                      onChange={() => handleToggle("politics")}
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="py-2 d-flex justify-content-between align-items-center w-50">
-                <div className="sport_name">Horse Racing:</div>
-                <div className="form-check form-switch m-0">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={settings.horse_racing?.status === 1}
-                    onChange={() => handleToggle('horse_racing')}
-                  />
+              {/* Right Column */}
+              <div className="col-md-6">
+                <div className="py-2 d-flex justify-content-between align-items-center w-50">
+                  <div className="sport_name">Tennis:</div>
+                  <div className="form-check form-switch m-0">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={settings.tennis?.status === 1}
+                      onChange={() => handleToggle("tennis")}
+                    />
+                  </div>
+                </div>
+
+                <div className="py-2 d-flex justify-content-between align-items-center w-50">
+                  <div className="sport_name">Horse Racing:</div>
+                  <div className="form-check form-switch m-0">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={settings.horse_racing?.status === 1}
+                      onChange={() => handleToggle("horse_racing")}
+                    />
+                  </div>
+                </div>
+
+                <div className="py-2 d-flex justify-content-between align-items-center w-50">
+                  <div className="sport_name">Kabaddi:</div>
+                  <div className="form-check form-switch m-0">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={settings.kabaddi?.status === 1}
+                      onChange={() => handleToggle("kabaddi")}
+                    />
+                  </div>
+                </div>
+
+                <div className="py-2 d-flex justify-content-between align-items-center w-50">
+                  <div className="sport_name">Casino:</div>
+                  <div className="form-check form-switch m-0">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={settings.casino?.status === 1}
+                      onChange={() => handleToggle("casino")}
+                    />
+                  </div>
                 </div>
               </div>
-
-              <div className="py-2 d-flex justify-content-between align-items-center w-50">
-                <div className="sport_name">Kabaddi:</div>
-                <div className="form-check form-switch m-0">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={settings.kabaddi?.status === 1}
-                    onChange={() => handleToggle('kabaddi')}
-                  />
-                </div>
-              </div>
-
-              <div className="py-2 d-flex justify-content-between align-items-center w-50">
-                <div className="sport_name">Casino:</div>
-                <div className="form-check form-switch m-0">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={settings.casino?.status === 1}
-                    onChange={() => handleToggle('casino')}
-                  />
-                </div>
+              {/* Submit Button */}
+              <div className="d-flex gap-2 justify-content-start mt-4">
+                <button
+                  className="btn btn-primary text-dark py-2 px-4"
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <span
+                        className="spinner-border spinner-border-sm me-2"
+                        role="status"
+                      >
+                        <span className="visually-hidden">Loading...</span>
+                      </span>
+                      Submitting...
+                    </>
+                  ) : (
+                    "Submit"
+                  )}
+                </button>
               </div>
             </div>
-          </div>
-
-          {/* Submit Button */}
-          <div className="d-flex gap-2 justify-content-start mt-4">
-            <button 
-              className="btn btn-primary text-dark py-2 px-4" 
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </span>
-                  Submitting...
-                </>
-              ) : (
-                'Submit'
-              )}
-            </button>
-          </div>
+          )}
         </div>
       </div>
     </>

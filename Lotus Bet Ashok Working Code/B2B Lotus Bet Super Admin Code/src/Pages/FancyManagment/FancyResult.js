@@ -17,6 +17,8 @@ import {
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { MdRefresh } from "react-icons/md";
+import Loader from "../../Common/Loader";
+
 const FancyResult = () => {
   const { eventId } = useParams();
   const [isSearching, setIsSearching] = useState(false);
@@ -426,6 +428,7 @@ const FancyResult = () => {
       setBtnLoader("delete_" + f.fancy_id, false);
     }
   };
+
   return (
     <div className="card">
       <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
@@ -433,7 +436,7 @@ const FancyResult = () => {
 
         <div className="d-flex flex-nowrap gap-2">
           <button
-            className="backbutton"
+            className="btn btn-dark gradient-10 border-0"
             onClick={() => (window.location.href = window.location.href)}
           >
             <MdRefresh size={20} />
@@ -449,10 +452,10 @@ const FancyResult = () => {
       </div>
       <div className="card-body">
         {fancies.length > 0 && (
-          <div className="row mb-3 align-items-center gy-2">
+          <div className="row mb-2 align-items-center gy-2">
             <div className="col-md-6">
               <div className="d-flex">
-                 <div className="input-group me-2" style={{ width: "500px" }}>
+                <div className="input-group me-2" style={{ width: "500px" }}>
                   <input
                     type="text"
                     className="form-control"
@@ -470,7 +473,7 @@ const FancyResult = () => {
                     <FiSearch />
                   </button>
 
-                  {(searchTerm || hasActiveFilters) && (
+                  {/* {(searchTerm || hasActiveFilters) && (
                     <button
                       className="btn btn-outline-danger"
                       type="button"
@@ -478,7 +481,7 @@ const FancyResult = () => {
                     >
                       Clear
                     </button>
-                  )}
+                  )} */}
                 </div>
 
                 {hasActiveFilters && (
@@ -505,27 +508,35 @@ const FancyResult = () => {
           </div>
         )}
 
-        {loading ? (
-          <p>Loading...</p>
-        ) : fancies.length === 0 ? (
-          <p className="text-center">No Fancy Found.</p>
-        ) : (
-          <div className="table-responsive">
-            <table className="table table-striped table-hover">
-              <thead className="table-dark">
+        <div className="table-responsive">
+          <table className="table table-striped table-hover">
+            <thead className="table-dark">
+              <tr>
+                <th>#</th>
+                <th>Fancy</th>
+                {/* <th>ID</th> */}
+                {/* <th>Stake</th> */}
+                {/* <th>Odd</th> */}
+                <th>Status</th>
+                <th>Value</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
                 <tr>
-                  <th>#</th>
-                  <th>Fancy</th>
-                  {/* <th>ID</th> */}
-                  {/* <th>Stake</th> */}
-                  {/* <th>Odd</th> */}
-                  <th>Status</th>
-                  <th>Value</th>
-                  <th>Actions</th>
+                  <td colSpan="5">
+                    <Loader />
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {fancies.map((f, i) => (
+              ) : fancies.length === 0 ? (
+                <tr>
+                  <td colSpan="5">
+                    <p className="text-center py-5 fs-6">No Fancy Found</p>
+                  </td>
+                </tr>
+              ) : (
+                fancies.map((f, i) => (
                   <tr key={f._id}>
                     <td>{i + 1}</td>
                     <td>{f.name}</td>
@@ -578,7 +589,7 @@ const FancyResult = () => {
                       </button>
                       {/* //view// */}
                       <button
-                        className="btn btn-info btn-sm me-1"
+                        className="btn gradient-10 btn-rounded me-1"
                         disabled={btnLoading["view_" + f.fancy_id]}
                         onClick={() => handleViewFancy(f)}
                       >
@@ -607,7 +618,7 @@ const FancyResult = () => {
                       {btnLoading["rollback_" + f.fancy_id] ? "..." : "Rollback"}
                     </button> */}
                       <button
-                        className="btn btn-danger "
+                        className="btn btn-danger btn-rounded"
                         disabled={btnLoading["delete_" + f.fancy_id]}
                         onClick={() => handleBetDelete(f)}
                       >
@@ -619,12 +630,13 @@ const FancyResult = () => {
                       </button>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
+
       {showModal && (
         <div
           className="modal fade show"

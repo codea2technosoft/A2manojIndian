@@ -56,6 +56,7 @@ import {
 } from "../Server/api";
 import Loader from "../Common/Loader";
 
+
 function AgentMasterClone() {
   const navigate = useNavigate();
   const COPY_API_URL = process.env.REACT_APP_COPY_API_URL;
@@ -415,15 +416,15 @@ function AgentMasterClone() {
           setPaginationData(response.data.pagination);
           setTotalItems(
             response.data.pagination.total_records ||
-              response.data.pagination.total,
+            response.data.pagination.total,
           );
           setTotalPages(
             response.data.pagination.total_pages ||
-              response.data.pagination.totalPages,
+            response.data.pagination.totalPages,
           );
           setCurrentPage(
             response.data.pagination.current_page ||
-              response.data.pagination.currentPage,
+            response.data.pagination.currentPage,
           );
           setItemsPerPage(response.data.pagination.limit || limit);
         }
@@ -777,9 +778,9 @@ function AgentMasterClone() {
           prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? {
-                  ...agent,
-                  chips: (Number(agent.chips) + depositValue).toString(),
-                }
+                ...agent,
+                chips: (Number(agent.chips) + depositValue).toString(),
+              }
               : agent,
           ),
         );
@@ -903,9 +904,9 @@ function AgentMasterClone() {
           prevData.map((agent) =>
             agent.id === selectedAgent.id
               ? {
-                  ...agent,
-                  chips: (Number(agent.chips) - withdrawValue).toString(),
-                }
+                ...agent,
+                chips: (Number(agent.chips) - withdrawValue).toString(),
+              }
               : agent,
           ),
         );
@@ -946,7 +947,7 @@ function AgentMasterClone() {
     const masterID = agent?.originalData?.master_admin_id;
     localStorage.setItem("master_admin_id", masterID);
     console.log("Saved Master Admin ID:", masterID);
-    navigate(`/Updatesuperagent/${agent.admin_id}`);
+    navigate(`/agent_lists/update-super-master/${agent.admin_id}`);
   };
 
   //  const handleUpdateSuperAgent = (agent) => {
@@ -1188,17 +1189,6 @@ function AgentMasterClone() {
   //   navigate("/AgentMasternew");
   // };
 
-  if (loading) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "100vh" }}
-      >
-        <Loader />
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="card agentmaster">
@@ -1216,11 +1206,11 @@ function AgentMasterClone() {
           <div className="row mb-1">
             <div className="col-md-6">
               <div className="d-flex">
-                <div className="input-group me-2" style={{ width: "500px" }}>
+                <div className="input-group" style={{ width: "500px" }}>
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="Search Super agent..."
+                    placeholder="Search Super Master, Masters and Users..."
                     value={searchInput}
                     onChange={handleSearchInputChange}
                     onKeyPress={handleSearchKeyPress}
@@ -1311,9 +1301,9 @@ function AgentMasterClone() {
                       <span>Username</span>
                     </div>
                   </th>
-                  <th rowSpan={2} className="text-center align-middle">
+                  {/* <th rowSpan={2} className="text-center align-middle">
                     Copy
-                  </th>
+                  </th> */}
 
                   {/* Code */}
                   <th rowSpan={2} className="position-relative">
@@ -1371,13 +1361,32 @@ function AgentMasterClone() {
                 </tr> */}
               </thead>
               <tbody>
-                {agentData.length > 0 ? (
-                  agentData.map((row, index) => (
-                    <tr key={row.id}>
-                      <td className="text-center">
-                        {(currentPage - 1) * itemsPerPage + index + 1}
-                      </td>
-                      {/* <td>
+                {loading ? (
+                  <tr>
+                    <td colSpan="11">
+                      <div className="d-flex justify-content-center align-items-center py-5 table_loader">
+                        <Loader />
+                      </div>
+                    </td>
+                  </tr>
+                ) : agentData.length > 0 ? (
+                  [...agentData]
+                    .sort((a, b) => {
+                      const getPriority = (adminId) => {
+                        if (adminId?.startsWith("SM")) return 1;
+                        if (adminId?.startsWith("MA")) return 2;
+                        if (adminId?.startsWith("US")) return 3;
+                        return 2;
+                      };
+
+                      return getPriority(a.admin_id) - getPriority(b.admin_id);
+                    })
+                    .map((row, index) => (
+                      <tr key={row.id}>
+                        <td className="text-center">
+                          {(currentPage - 1) * itemsPerPage + index + 1}
+                        </td>
+                        {/* <td>
                         <div
                           onClick={() => handleMasterClick(row)}
                           className="text-green"
@@ -1400,52 +1409,52 @@ function AgentMasterClone() {
                         </span>
                       </td> */}
 
-                      <td>
-                        {row.admin_id?.startsWith("US") ? (
-                          <div className="text-dark">
-                            <span className="badge badge-warning me-1">
-                              {row.admin_id?.startsWith("US")
-                                ? "C"
-                                : row.admin_id?.startsWith("AG")
-                                  ? "M"
-                                  : row.admin_id?.startsWith("SA")
-                                    ? "S"
-                                    : "-"}
-                            </span>
-                            {row.username || row.name}
-                          </div>
-                        ) : (
-                          <div
-                            onClick={() => handleMasterClick(row)}
-                            className="text-green"
-                            style={{ cursor: "pointer" }}
-                          >
-                            <span className="badge badge-warning me-1">
-                              {row.admin_id?.startsWith("US")
-                                ? "C"
-                                : row.admin_id?.startsWith("MA")
-                                  ? "M"
-                                  : row.admin_id?.startsWith("SM")
-                                    ? "S"
-                                    : "-"}
-                            </span>
-                            {row.username || row.name}
-                          </div>
-                        )}
+                        <td>
+                          {row.admin_id?.startsWith("US") ? (
+                            <div className="">
+                              <span className="badge badge-warning me-1">
+                                {row.admin_id?.startsWith("US")
+                                  ? "C"
+                                  : row.admin_id?.startsWith("AG")
+                                    ? "M"
+                                    : row.admin_id?.startsWith("SA")
+                                      ? "S"
+                                      : "-"}
+                              </span>
+                              {row.username || row.name}
+                            </div>
+                          ) : (
+                            <div
+                              onClick={() => handleMasterClick(row)}
+                              className="text-green"
+                              style={{ cursor: "pointer" }}
+                            >
+                              <span className="badge badge-warning me-1">
+                                {row.admin_id?.startsWith("US")
+                                  ? "C"
+                                  : row.admin_id?.startsWith("MA")
+                                    ? "M"
+                                    : row.admin_id?.startsWith("SM")
+                                      ? "S"
+                                      : "-"}
+                              </span>
+                              {row.username || row.name}
+                            </div>
+                          )}
 
-                        <span>
-                          [
-                          {(() => {
-                            const name = row.username || row.name || "";
-                            const firstWord = name.split(" ")[0];
-                            return firstWord.length > 10
-                              ? firstWord.substring(0, 10)
-                              : firstWord;
-                          })()}
-                          ]
-                        </span>
-                      </td>
-                      <td className="text-center">
+                          <span>
+                            [
+                            {(() => {
+                              const name = row.username || row.name || "";
+                              const firstWord = name.split(" ")[0];
+                              return firstWord.length > 10
+                                ? firstWord.substring(0, 10)
+                                : firstWord;
+                            })()}
+                            ]
+                          </span>
+                        </td>
+                        {/* <td className="text-center">
                         <button
                           className="viewdetailsbutton"
                           onClick={() => handleCopyData(row)}
@@ -1453,21 +1462,21 @@ function AgentMasterClone() {
                         >
                           <FiCopy size={14} />
                         </button>
-                      </td>
+                      </td> */}
 
-                      {/* <td>{row.code}</td> */}
-                      <td>{row.admin_id || "N/A"}</td>
-                      <td>{row.credit_ref || "-erwrwerwer"}</td>
-                      <td>{row.coins || "-"}</td>
-                      <td>
-                        {row.total_amount !== undefined
-                          ? `${row.total_amount.toFixed(2)}`
-                          : "0"}
-                      </td>
+                        {/* <td>{row.code}</td> */}
+                        <td>{row.admin_id || "N/A"}</td>
+                        <td>{row.credit_ref || "-erwrwerwer"}</td>
+                        <td>{row.coins || "-"}</td>
+                        <td>
+                          {row.total_amount !== undefined
+                            ? `${row.total_amount.toFixed(2)}`
+                            : "0"}
+                        </td>
 
-                      {/* <td>{row.exposer || "-"}</td> */}
+                        {/* <td>{row.exposer || "-"}</td> */}
 
-                      {/* <td className="text-center">
+                        {/* <td className="text-center">
                         <span
                           onClick={() => handleMasterClick(row.admin_id, row.role)}
                           title="View Details"
@@ -1478,15 +1487,15 @@ function AgentMasterClone() {
                         </span>
                       </td> */}
 
-                      {/* <td className="text-center">
+                        {/* <td className="text-center">
                         <span>{row.originalData?.parent_username}</span>
                         <br />
                         <span>{row.originalData?.master_admin_id}</span>
                       </td> */}
 
-                      {/* <td className="text-center">{row.doj}</td>
+                        {/* <td className="text-center">{row.doj}</td>
                       <td>{row?.reference ? row.reference : "-"}</td> */}
-                      {/* <td className="text-center">
+                        {/* <td className="text-center">
                         <div className="d-flex" style={{ width: "120px" }}>
                           <input
                             type={showPassword[row.admin_id] ? "text" : "password"}
@@ -1525,24 +1534,50 @@ function AgentMasterClone() {
                         </div>
                       </td> */}
 
-                      <td className="text-center">{row.share}</td>
-                      <td className="text-center">{row.master_admin_id}</td>
-                      {/* <td className="text-center">
+                        <td className="text-center">{row.share}</td>
+                        {/* <td className="text-center">{row.master_admin_id}</td> */}
+
+                        <td className="text-center">
+                          {row.master_admin_id && row.master_admin_id !== "-" && row.master_admin_id !== "" ? (
+                            row.master_admin_id?.startsWith("SM") ? (
+                              <span
+                                onClick={() => navigate(`/AgentMasternew/${row.master_admin_id}`)}
+                                style={{ cursor: "pointer", color: "#000" }}
+                              >
+                                {row.master_admin_id}
+                              </span>
+                            ) : row.master_admin_id?.startsWith("MA") ? (
+                              <span
+                                onClick={() => navigate(`/Mastermyuser/${row.master_admin_id}`)}
+                                style={{ cursor: "pointer", color: "#000" }}
+                              >
+                                {row.master_admin_id}
+                              </span>
+                            ) : (
+                              row.master_admin_id
+                            )
+                          ) : (
+                            "admin"
+                          )}
+                        </td>
+
+
+                        {/* <td className="text-center">
                         {String(row.commission_type) === "1" ? "BBB" :
                           String(row.commission_type) === "0" ? "NOS" :
                             "N/A"}
                       </td> */}
-                      {/* <td className="text-center">
+                        {/* <td className="text-center">
                         {String(row.commission_type) === "1"
                           ? "BBB"
                           : String(row.commission_type) === "0"
                             ? "NOS"
                             : "N/A"}
                       </td> */}
-                      {/* <td className="text-center">{row.commMatch}</td>
+                        {/* <td className="text-center">{row.commMatch}</td>
                       <td className="text-center">{row.commSession}</td> */}
 
-                      {/* <td className="text-center">
+                        {/* <td className="text-center">
                         <div className="d-flex align-items-center justify-content-center">
                           <div className="me-2 w-50">₹{row.chips}</div>
                           <button
@@ -1575,30 +1610,30 @@ function AgentMasterClone() {
                         </div>
                       </td> */}
 
-                      <td className="text-center">
-                        <span
-                          // className={`${row.status === "Active" ? "activebadge" : "inactivebadge"}`}
+                        <td className="text-center">
+                          <span
+                            // className={`${row.status === "Active" ? "activebadge" : "inactivebadge"}`}
 
-                          onClick={() => {
-                            setSelectedAgent(row);
-                            setShowStatusModal(true);
-                          }}
-                          title={row.active ? "Inactive" : "Active"}
-                        >
-                          {/* {row.status} */}
+                            onClick={() => {
+                              setSelectedAgent(row);
+                              setShowStatusModal(true);
+                            }}
+                            title={row.active ? "Inactive" : "Active"}
+                          >
+                            {/* {row.status} */}
 
-                          {row.active ? (
-                            <>
-                              <FaUnlockAlt className="lock_button text-success" />
-                            </>
-                          ) : (
-                            <>
-                              <FaLock className="lock_button text-danger" />
-                            </>
-                          )}
-                        </span>
-                      </td>
-                      {/* <td className="text-center">
+                            {row.active ? (
+                              <>
+                                <FaUnlockAlt className="lock_button text-success" />
+                              </>
+                            ) : (
+                              <>
+                                <FaLock className="lock_button text-danger" />
+                              </>
+                            )}
+                          </span>
+                        </td>
+                        {/* <td className="text-center">
                         <span
 
                           onClick={() => {
@@ -1620,7 +1655,7 @@ function AgentMasterClone() {
                         </span>
                       </td> */}
 
-                      {/* <td className="text-center">
+                        {/* <td className="text-center">
                         <span
                           onClick={() => handleBetToggle(row)}
                           style={{ cursor: "pointer" }}
@@ -1634,66 +1669,66 @@ function AgentMasterClone() {
                         </span>
                       </td> */}
 
-                      <td className="text-center">
-                        <span
-                          onClick={() => handleBetToggle(row)}
-                          style={{ cursor: "pointer" }}
-                          title={
-                            row.bet_block === 1
-                              ? "Click to Block Bet"
-                              : "Click to Unblock Bet"
-                          }
-                        >
-                          {row.bet_block === 1 ? (
-                            <FaUnlockAlt
-                              className="lock_button text-success"
-                              title="Bet Open"
-                            />
-                          ) : (
-                            <FaLock
-                              className="lock_button text-danger"
-                              title="Bet Locked"
-                            />
-                          )}
-                        </span>
-                      </td>
+                        <td className="text-center">
+                          <span
+                            onClick={() => handleBetToggle(row)}
+                            style={{ cursor: "pointer" }}
+                            title={
+                              row.bet_block === 1
+                                ? "Click to Block Bet"
+                                : "Click to Unblock Bet"
+                            }
+                          >
+                            {row.bet_block === 1 ? (
+                              <FaUnlockAlt
+                                className="lock_button text-success"
+                                title="Bet Open"
+                              />
+                            ) : (
+                              <FaLock
+                                className="lock_button text-danger"
+                                title="Bet Locked"
+                              />
+                            )}
+                          </span>
+                        </td>
 
-                      {/* <td className="text-center">
+                        {/* <td className="text-center">
                         <span className={`badge ${Number(row.is_blocked) === 1 ? "bg-danger" : "bg-success"}`}>
                           {Number(row.is_blocked) === 1 ? "Blocked" : "Active"}
                         </span>
                       </td> */}
 
-                      <td className="text-center">
-                        <div className="d-flex gap-1 justify-content-center">
-                          <div className="position-relative d-inline-block">
-                            {/* <button
+                        <td className="text-start">
+                          <div className="d-flex gap-1 justify-content-start">
+                            <div className="position-relative d-inline-block">
+                              {/* <button
                               className="buttoncommon gradient-7"
                               onClick={() => toggleOptionMenu(row.admin_id)}
                             >
                               +
                             </button> */}
 
-                            {!row.admin_id?.startsWith("US") && (
-                              <button
-                                className="buttoncommon gradient-7"
-                                onClick={() => toggleOptionMenu(row.admin_id)}
-                              >
-                                <FaPlus />
-                              </button>
-                            )}
+                              {!row.admin_id?.startsWith("US") && (
+                                <button
+                                  className="buttoncommon gradient-7"
+                                  onClick={() => toggleOptionMenu(row.admin_id)}
+                                >
+                                  <FaPlus />
+                                </button>
+                              )}
 
-                            {optionMenu === row.admin_id && (
-                              <div
-                                className="dropdown-menu show"
-                                style={{
-                                  position: "absolute",
-                                  top: "100%",
-                                  right: 0,
-                                  zIndex: 9999,
-                                }}
-                              >
-                                {/* <button
+                              {optionMenu === row.admin_id && (
+                                <div
+                                  className="dropdown-menu show"
+                                  style={{
+                                    position: "absolute",
+                                    top: "100%",
+                                    right: 0,
+                                    zIndex: 9999,
+                                  }}
+                                >
+                                  {/* <button
                                   className="dropdown-item"
                                   onClick={() => {
                                     navigate(`/create-master`);
@@ -1703,7 +1738,7 @@ function AgentMasterClone() {
                                   Super Master
                                 </button> */}
 
-                                {/* <button
+                                  {/* <button
                                   className="dropdown-item"
                                   onClick={() => {
                                     navigate(`/SelectSuperagent`);
@@ -1713,7 +1748,7 @@ function AgentMasterClone() {
                                   Master
                                 </button> */}
 
-                                {/* <button
+                                  {/* <button
                                   className="dropdown-item"
                                   onClick={() => {
                                     const selectedAdminId = row.admin_id;
@@ -1725,38 +1760,38 @@ function AgentMasterClone() {
                                 >
                                   Master
                                 </button> */}
-                                {row.admin_id?.startsWith("SM") && (
-                                  <button
-                                    className="dropdown-item"
-                                    onClick={() => {
-                                      const selectedAdminId = row.admin_id;
-                                      navigate(
-                                        `/CreateSuperAgent/${selectedAdminId}`,
-                                      );
-                                      setOptionMenu(null);
-                                    }}
-                                  >
-                                    Master
-                                  </button>
-                                )}
+                                  {row.admin_id?.startsWith("SM") && (
+                                    <button
+                                      className="dropdown-item"
+                                      onClick={() => {
+                                        const selectedAdminId = row.admin_id;
+                                        navigate(
+                                          `/agent_lists/create-new-master/${selectedAdminId}`,
+                                        );
+                                        setOptionMenu(null);
+                                      }}
+                                    >
+                                      Master
+                                    </button>
+                                  )}
 
-                                {/* ✅ MA (Master) ke liye CLIENT button */}
-                                {row.admin_id?.startsWith("MA") && (
-                                  <button
-                                    className="dropdown-item"
-                                    onClick={() => {
-                                      const selectedAdminId = row.admin_id;
-                                      navigate(
-                                        `/CreateAgentmyuser/${selectedAdminId}`,
-                                      );
-                                      setOptionMenu(null);
-                                    }}
-                                  >
-                                    Client
-                                  </button>
-                                )}
+                                  {/* ✅ MA (Master) ke liye CLIENT button */}
+                                  {row.admin_id?.startsWith("MA") && (
+                                    <button
+                                      className="dropdown-item"
+                                      onClick={() => {
+                                        const selectedAdminId = row.admin_id;
+                                        navigate(
+                                          `/AgentMasternew/create-user/${selectedAdminId}`,
+                                        );
+                                        setOptionMenu(null);
+                                      }}
+                                    >
+                                      Client
+                                    </button>
+                                  )}
 
-                                {/* <button
+                                  {/* <button
                                   className="dropdown-item"
                                   onClick={() => {
                                     navigate(`/Clientmasternew`);
@@ -1765,31 +1800,31 @@ function AgentMasterClone() {
                                 >
                                   Client
                                 </button> */}
-                              </div>
-                            )}
-                          </div>
+                                </div>
+                              )}
+                            </div>
 
-                          <button
-                            className="buttoncommon  gradient-9"
-                            onClick={() => handleUpdateSuperAgent(row)}
-                            title="Edit Profile"
-                          >
-                            <FaRegEdit />
-                          </button>
+                            <button
+                              className="buttoncommon  gradient-9"
+                              onClick={() => handleUpdateSuperAgent(row)}
+                              title="Edit Profile"
+                            >
+                              <FaRegEdit />
+                            </button>
 
-                          <button
-                            className="buttoncommon gradient-10"
-                            onClick={() => {
-                              setSelectedAgent(row);
-                              setDepositAmount("");
-                              setShowDepositModal(true);
-                            }}
-                            title=" Deposit"
-                          >
-                            D
-                          </button>
+                            <button
+                              className="buttoncommon gradient-10"
+                              onClick={() => {
+                                setSelectedAgent(row);
+                                setDepositAmount("");
+                                setShowDepositModal(true);
+                              }}
+                              title=" Deposit"
+                            >
+                              D
+                            </button>
 
-                          {/* <div className="dropdown position-relative">
+                            {/* <div className="dropdown position-relative">
                             <div className="dropdown-toggle newtoggle">
                               <div
                                 className="buttoncommon gradient-2"
@@ -2010,39 +2045,39 @@ function AgentMasterClone() {
                             </div>
                           </div> */}
 
-                          <button
-                            className="buttoncommon gradient-2"
-                            // onClick={() => {
-                            //   setSelectedAgent(row);
-                            //   setWithdrawAmount("");
-                            //   setShowWithdrawModal(true);
-                            // }}
-                            onClick={() => {
-                              setSelectedAgent(row);
-                              setWithdrawAmount("");
-                              setShowWithdrawModal(true);
-                            }}
-                            title="Withdraw"
-                          >
-                            W
-                          </button>
+                            <button
+                              className="buttoncommon gradient-2"
+                              // onClick={() => {
+                              //   setSelectedAgent(row);
+                              //   setWithdrawAmount("");
+                              //   setShowWithdrawModal(true);
+                              // }}
+                              onClick={() => {
+                                setSelectedAgent(row);
+                                setWithdrawAmount("");
+                                setShowWithdrawModal(true);
+                              }}
+                              title="Withdraw"
+                            >
+                              W
+                            </button>
 
-                          <button
-                            className="buttoncommon gradient-6"
-                            onClick={() => {
-                              setSelectedAgent(row);
-                              setPasswordData({
-                                oldPassword: "",
-                                newPassword: "",
-                              });
-                              setShowPasswordModal(true);
-                            }}
-                            title="Reset Password"
-                          >
-                            P
-                          </button>
+                            <button
+                              className="buttoncommon gradient-6"
+                              onClick={() => {
+                                setSelectedAgent(row);
+                                setPasswordData({
+                                  oldPassword: "",
+                                  newPassword: "",
+                                });
+                                setShowPasswordModal(true);
+                              }}
+                              title="Reset Password"
+                            >
+                              P
+                            </button>
 
-                          {/* <button
+                            {/* <button
                             className="btn gradient-8 btn-rounded"
                             onClick={() => {
                               setShowReportModal(true);
@@ -2052,18 +2087,18 @@ function AgentMasterClone() {
                             <span>R</span>
                           </button> */}
 
-                          <button
-                            className="btn gradient-8 btn-rounded"
-                            onClick={() => {
-                              setSelectedAgent(row); // ✅ YEH ADD KARO - row ko selectedAgent set karo
-                              setShowReportModal(true);
-                            }}
-                            title="REPORTS"
-                          >
-                            <span>R</span>
-                          </button>
+                            <button
+                              className="btn gradient-8 btn-rounded"
+                              onClick={() => {
+                                setSelectedAgent(row); // ✅ YEH ADD KARO - row ko selectedAgent set karo
+                                setShowReportModal(true);
+                              }}
+                              title="REPORTS"
+                            >
+                              <span>R</span>
+                            </button>
 
-                          {/* <button
+                            {/* <button
                             className="btn gradient-4 btn-rounded"
                             onClick={() => {
                               setShowSettingModal(true);
@@ -2073,18 +2108,18 @@ function AgentMasterClone() {
                             <FaCogs />
                           </button> */}
 
-                          <button
-                            className="btn gradient-4 btn-rounded"
-                            onClick={() => {
-                              setSelectedAgent(row); // ✅ YEH ADD KARO
-                              setShowSettingModal(true);
-                            }}
-                            title="SETTINGS"
-                          >
-                            <FaCogs />
-                          </button>
+                            <button
+                              className="btn gradient-4 btn-rounded"
+                              onClick={() => {
+                                setSelectedAgent(row); // ✅ YEH ADD KARO
+                                setShowSettingModal(true);
+                              }}
+                              title="SETTINGS"
+                            >
+                              <FaCogs />
+                            </button>
 
-                          {/* <button
+                            {/* <button
                             className="buttoncommon gradient-6"
                             onClick={() =>
                               navigate(`/Superagenttransaction/${row.admin_id}`)
@@ -2102,7 +2137,7 @@ function AgentMasterClone() {
                             <FiUserCheck />
                           </button> */}
 
-                          {/* <button
+                            {/* <button
                             className={`buttoncommon ${row.active ? "gradient-3" : "gradient-4"}`}
                             onClick={() => {
                               setSelectedAgent(row);
@@ -2123,7 +2158,7 @@ function AgentMasterClone() {
                             )}
                           </button> */}
 
-                          {/* <button
+                            {/* <button
                             className={`btn btn-sm btn-rounded ${Number(row.is_blocked)
                               ? "btn-success"
                               : "btn-danger"
@@ -2152,10 +2187,10 @@ function AgentMasterClone() {
                           >
                             <FaRectangleList />
                           </button> */}
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                          </div>
+                        </td>
+                      </tr>
+                    ))
                 ) : (
                   <tr>
                     <td colSpan="16" className="text-center text-muted">
@@ -2184,9 +2219,8 @@ function AgentMasterClone() {
                   {getPageNumbers().map((page) => (
                     <div
                       key={page}
-                      className={`paginationnumber ${
-                        currentPage === page ? "active" : ""
-                      }`}
+                      className={`paginationnumber ${currentPage === page ? "active" : ""
+                        }`}
                       onClick={() => handlePageClick(page)}
                     >
                       {page}
@@ -2572,7 +2606,8 @@ function AgentMasterClone() {
 
                     <div className="col-6">
                       <Link
-                        to={`/icasino-setting/${selectedAgent?.admin_id}`}
+                        // to={`/icasino-setting/${selectedAgent?.admin_id}`}
+                         to={`#`}
                         className="btn gradient-2 w-100"
                         onClick={() => setShowSettingModal(false)}
                       >
@@ -2776,7 +2811,6 @@ function AgentMasterClone() {
                         className="form-control"
                         value={selectedAgent.password}
                         readOnly
-                        style={{ backgroundColor: "#f5f5f5" }}
                       />
                       <button
                         className="btn btn-outline-secondary"
@@ -2794,7 +2828,7 @@ function AgentMasterClone() {
                   </div>
 
                   {/* New Password - User input */}
-                  <div >
+                  <div>
                     <label className="form-label">New Password</label>
                     <div className="input-group">
                       <input
@@ -3019,7 +3053,17 @@ function AgentMasterClone() {
                     />
                   </div>
                   <div>
-                    <label className="form-label">Withdraw Amount </label>
+                    <div className="d-flex align-items-center justify-content-between">
+                      <label className="form-label text-uppercase">
+                        Withdraw Amount{" "}
+                      </label>
+                      <div className="text-muted remaining text-uppercase">
+                        Remaining balance :
+                        {(
+                          Number(selectedAgent.chips) - Number(withdrawAmount)
+                        ).toLocaleString()}
+                      </div>
+                    </div>
                     <input
                       type="text"
                       className="form-control"
@@ -3035,14 +3079,14 @@ function AgentMasterClone() {
                       Maximum withdrawable amount: {selectedAgent.chips}
                     </div> */}
                   </div>
-                  {withdrawAmount && !isNaN(withdrawAmount) && (
+                  {/* {withdrawAmount && !isNaN(withdrawAmount) && (
                     <div className="alert alert-info mt-2">
                       <strong>New Balance:</strong>
                       {(
                         Number(selectedAgent.chips) - Number(withdrawAmount)
                       ).toLocaleString()}
                     </div>
-                  )}
+                  )} */}
                   {withdrawAmount &&
                     Number(withdrawAmount) > Number(selectedAgent.chips) && (
                       <div className="alert alert-danger mt-2">

@@ -82,13 +82,13 @@ function YourComponent() {
   const handleUplineChange = (selectedOption) => {
     setSelectedUpline(selectedOption);
     if (selectedOption) {
-      navigate(`/CreateAgentmyuser/${selectedOption.value}`);
+      navigate(`/AgentMasternew/create-user/${selectedOption.value}`);
     }
   };
 
   // Handle click on username (alternative method)
   const handleUsernameClick = (adminId) => {
-    navigate(`/Updatesuperagent/${adminId}`);
+    navigate(`/agent_lists/update-super-master/${adminId}`);
   };
 
   // Call fetchUplineList when component mounts

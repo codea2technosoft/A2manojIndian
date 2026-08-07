@@ -276,11 +276,27 @@ table .bg-theme {
   background: rgb(180, 0, 212) !important;
 }
 
+input[type="date"] {
+  @media screen and (max-width: 768px) {
+    background: #fff
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 14px;
+    padding-right: 10px;
+  }
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+}
+
 input.form-control,
 select.form-control,
 textarea.form-control,
 select.form-select {
-  // height: 32px;
   font-size: 14px;
 
   &:hover,
@@ -292,8 +308,12 @@ select.form-select {
 }
 
 .height_scroll {
-  height: 60vh;
-  overflow-y: scroll;
+  min-height: 50vh;
+  max-height: 60vh;
+  overflow-y: auto;
+  @media (max-width: 768px) {
+    min-height: 30vh;
+  }
 }
 
 .custom-dropdown {
@@ -439,14 +459,21 @@ table .bet_btn.btn-rounded {
 }
 
 /* Header */
-.card .ledger-header {
-  background-color: $whitecolor;
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 16px;
-  font-weight: 700;
-  font-size: 15px;
-  align-items: center;
+.card {
+  .ledger-header {
+    background-color: $whitecolor;
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 16px;
+    font-weight: 700;
+    font-size: 15px;
+    align-items: center;
+  }
+  .card-body {
+    @media screen and (max-width: 768px) {
+      padding: 8px;
+    }
+  }
 }
 
 .ledger-header.lena {
@@ -548,6 +575,9 @@ table .bet_btn.btn-rounded {
   position: relative;
   background: $whitecolor;
   display: flex;
+  @media screen and (max-width: 768px) {
+    margin: 0;
+  }
   &::after {
     content: "";
     position: absolute;
@@ -728,12 +758,14 @@ ul {
         line-height: 1.5;
       }
     }
-    .modal-footer{
+    .modal-footer {
       justify-content: start;
-      .btn{
+      .btn {
         text-transform: uppercase;
         font-size: 14px;
         font-weight: 700;
+        padding: 8px 10px;
+        border: 0;
       }
     }
   }
@@ -1137,7 +1169,7 @@ li div.custum_new_ul {
 
 .table tr td > * {
   font-size: 12px;
-  font-weight: 500;
+  // font-weight: 500;
 }
 
 // table button end
@@ -2029,6 +2061,22 @@ $whitecolor: $whitecolor;
 }
 
 .darkmode {
+  &.modebtn {
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid #ccc;
+    padding: 0px 0 5px;
+    .form-switch {
+      input.form-check-input {
+        width: 60px !important;
+        height: 31px !important;
+        &:checked {
+          background-color: $primarycolor;
+          border-color: $primarycolor;
+        }
+      }
+    }
+  }
   .mic-button img {
     width: 100%;
     height: 100%;
@@ -2329,7 +2377,7 @@ select.form-select:active {
   }
   .footer {
     padding-right: 250px;
-    @media screen and (max-width: 768px) {
+    @media screen and (max-width: 991.9px) {
       padding-right: 0;
     }
   }
@@ -2388,6 +2436,12 @@ input.form-control {
   font-size: 0.8125rem;
 }
 
+input[type="date"]::-webkit-calendar-picker-indicator {
+  @media screen and (max-width: 768px) {
+    display: auto !important;
+  }
+}
+
 .input-group {
   .btn-warning {
     color: $whitecolor;
@@ -2439,7 +2493,7 @@ input.form-control {
 
 .table th,
 .table td {
-  padding: 6.8px 13px !important;
+  padding: 8px !important;
   font-size: 14px;
   text-align: left;
   vertical-align: middle;
@@ -2550,7 +2604,7 @@ input.form-control {
 @media (max-width: 768px) {
   .table td {
     position: relative;
-    padding: 3px !important;
+    // padding: 3px 5px !important;
     // max-width: 160px;
     width: 100%;
   }
@@ -2637,6 +2691,11 @@ input.form-control {
     color: $darkcolor;
     font-size: 22px;
   }
+  @media screen and (max-width: 768px) {
+    position: absolute;
+    left: 50px;
+    top: 24px;
+  }
 }
 
 .form-select-sm {
@@ -2684,7 +2743,7 @@ input.form-control {
 #header {
   top: 0;
   position: fixed;
-  z-index: 5;
+  z-index: 9;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -2934,10 +2993,15 @@ input.form-control {
 
 // footer
 .minheight {
-  min-height: calc(100vh - 80px);
+  min-height: calc(100vh - 44px);
   padding-bottom: 60px;
   padding-top: 80px;
   background: #f0f1f6;
+  @media (max-width: 768px) {
+    .container-fluid {
+      padding: 0px 5px;
+    }
+  }
 }
 
 label {
@@ -2981,6 +3045,19 @@ label {
   &:hover {
     background: $secondarycolor;
   }
+
+  @media screen and (max-width: 768px) {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
+
+.sport_setting {
+  .w-50 {
+    @media screen and (max-width: 768px) {
+      width: 100% !important;
+    }
+  }
 }
 
 .btn.generate_btn {
@@ -3013,18 +3090,15 @@ label {
   }
 }
 
-.form-check-input {
-  // border-color: #ff0000 !important;
-  // background-color: #ff0000 !important;
-  width: 35px !important;
-  height: 18px !important;
-}
-
-.form-check-input:checked {
-  background-color: $success-bg !important;
-  border-color: $success-bg !important;
-  width: 35px !important;
-  height: 18px;
+.form-check.form-switch {
+  .form-check-input {
+    width: 35px;
+    height: 18px;
+    &:checked {
+      background-color: $success-bg;
+      border-color: $success-bg;
+    }
+  }
 }
 
 .notification {
@@ -3043,6 +3117,9 @@ label {
   align-items: center;
   gap: 12px;
   position: relative;
+  @media screen and (max-width: 768px) {
+    gap: 6px;
+  }
 }
 
 /* Dark Mode Icon */
@@ -3053,7 +3130,7 @@ label {
 }
 
 .darkmode:hover {
-  color: $whitecolor;
+  // color: $whitecolor;
 }
 
 /* Notification Placeholder */
@@ -3135,6 +3212,9 @@ label {
   font-size: 0.95rem;
   cursor: pointer;
   transition: background 0.3s;
+  @media screen and (max-width: 768px) {
+    font-size: 12px;
+  }
 }
 
 .dropdown-item:hover {
@@ -3156,17 +3236,94 @@ label {
   }
 }
 
+.text-muted.remaining {
+  font-size: 10px;
+}
+
 /* Dark Theme */
 body.dark-theme {
   background-color: #15191f;
   color: #e0e0e0;
+  .allreport .report_design {
+    span {
+      color: $darkcolor;
+    }
+  }
+
+  .minheight,
+  .competition-title {
+    background: $darkcolor;
+  }
+
+  .btn.btn_collpse {
+    border: 2px solid $darkcolor;
+  }
+
+  .dropdown-item.balancedesign {
+    background: $lightdark;
+    color: $whitecolor;
+  }
+
+  .market_name {
+    background: $tooltip-bg;
+  }
+
+  .main-menu .logo-box {
+    background: $lightcolor;
+  }
+  .search-box {
+    background: $lightcolor;
+    input {
+      background: $lightcolor;
+    }
+  }
+
+  .allreport_dropdown {
+    background: #222;
+    ul li a {
+      color: $whitecolor;
+    }
+  }
+
+  .sidebar .main-menu,
+  .eventallpagenewallall {
+    background-color: $lightdark;
+  }
 
   .bg-white {
     background-color: transparent !important;
   }
 
-  .textwhitenew {
+  div:where(.swal2-container) div:where(.swal2-popup) {
+    background: #232323;
+  }
+
+  .textwhitenew,
+  .sports-tabs .nav .nav-link,
+  td.event_id .event_name {
     color: $whitecolor;
+    img {
+      filter: invert(1);
+    }
+  }
+
+  .sport-section {
+    .table th,
+    .table td {
+      border: 1px solid $tooltip-bg;
+    }
+  }
+
+  td .lay {
+    border-color: $tooltip-bg;
+  }
+
+  .sports-tabs .nav .nav-link.active,
+  .sport-title {
+    color: $darkcolor;
+    img {
+      filter: none;
+    }
   }
 
   .table tbody tr:hover {
@@ -3174,7 +3331,9 @@ body.dark-theme {
     transition: background-color 0.3s ease;
   }
 
-  .css-1dimb5e-singleValue {
+  .css-1dimb5e-singleValue,
+  iframe body,
+  .sport_setting .sport_name {
     color: $whitecolor;
   }
 
@@ -3216,15 +3375,23 @@ body.dark-theme {
   }
 
   input {
-    color: #000;
+    color: $darkcolor;
   }
 
   .modal-content {
-    background: $darkcolor;
+    background: #232323;
+    .modal-body {
+      label {
+        color: #999;
+      }
+    }
+    .btn-dark {
+      background: $tooltip-bg;
+    }
   }
 
   .inputmessage_design {
-    color: #000;
+    color: $darkcolor;
   }
 
   select {
@@ -3247,6 +3414,13 @@ body.dark-theme {
     color: #e0e0e0;
   }
 
+  .hover_user {
+    color: $whitecolor;
+    &:hover {
+      color: $primarycolor;
+    }
+  }
+
   .chat_header_icon.chat_new {
     svg {
       color: #e0e0e0;
@@ -3261,10 +3435,20 @@ body.dark-theme {
     cursor: pointer;
     background-color: transparent;
     border-radius: 0.5rem;
-    overflow: hidden;
+    // overflow: hidden;
+    th {
+      color: $darkcolor;
+      border-color: #444;
+    }
 
     td {
-      color: #fff !important;
+      color: #fff;
+      background: transparent;
+      border-color: #444;
+      border-bottom: 1px solid #444;
+      .text-dark {
+        color: $whitecolor !important;
+      }
 
       .form-check-label {
         color: $whitecolor;
@@ -3287,15 +3471,24 @@ body.dark-theme {
   .bg-primary-yellow {
     background: transparent;
   }
-
-  .table tr th {
-    background: transparent;
-    color: $whitecolor;
+  .country-tabs .nav.nav-tabs .nav-link.active {
+    color: $darkcolor;
   }
 
   .form-control {
     color: $whitecolor;
-    background: transparent;
+    background: #444;
+    border-color: #555;
+    &::placeholder {
+      color: #aaa !important;
+      font-size: 12px;
+    }
+  }
+  .dropdown-menu.show {
+    background: $tooltip-bg;
+    button {
+      color: $whitecolor;
+    }
   }
 
   textarea,
@@ -3304,6 +3497,7 @@ body.dark-theme {
   .form-control:focus {
     color: $whitecolor;
     background: #2e3543;
+    border: 1px solid $tooltip-bg;
   }
 
   input.form-control::placeholder,
@@ -3311,31 +3505,21 @@ body.dark-theme {
     color: $whitecolor;
   }
 
-  .table th,
-  .table td {
-    padding: 6px;
-    font-size: 14px;
-    text-align: center;
-    vertical-align: middle;
-    border: 1px solid #dee2e6;
-    background: transparent;
-    color: #000;
-  }
-
-  .card {
-    background: #2a3f54;
-
-    .card-body {
-      background: #2e3543;
-    }
-  }
-
-  .footer {
-    background: #2e3543;
+  .card,
+  .footer,
+  .ledger-header {
+    background: $lightdark;
   }
 
   #header {
-    background: #2e3543;
+    background: $lightcolor;
+  }
+
+  .bgHeader {
+    background: $primarycolor;
+    .card-title {
+      color: $darkcolor;
+    }
   }
 
   .breadcrumb-item.active,
@@ -3346,12 +3530,26 @@ body.dark-theme {
   .darkmode {
     color: $whitecolor;
   }
+  .text-muted,
+  .new_label {
+    color: $colo1 !important;
+  }
 
+  .country-tabs .nav.nav-tabs .nav-link,
+  .matches-list .horse .game_time,
+  .matches-list .horse .event_name,
+  .matches-list .horse .event_date {
+    color: $whitecolor;
+  }
   .logo-light {
     // background: $whitecolor;
     padding: 7px;
   }
-
+  .card-header,
+  .matches-list,
+  .matches-list .horse {
+    border-color: $tooltip-bg;
+  }
   .bet_tab {
     .nav-tabs {
       .nav-item {
@@ -3365,15 +3563,17 @@ body.dark-theme {
       }
     }
   }
-}
+  .profile-dropdown {
+    background-color: #2a2a2a;
+    border-color: #444;
+  }
+  .dropdown-item:hover {
+    background-color: #3a3a3a;
+  }
 
-body.dark-theme .profile-dropdown {
-  background-color: #2a2a2a;
-  border-color: #444;
-}
-
-body.dark-theme .dropdown-item:hover {
-  background-color: #3a3a3a;
+  .modal-body {
+    color: $whitecolor;
+  }
 }
 
 .desktop_device {
@@ -3445,7 +3645,7 @@ body.dark-theme .dropdown-item:hover {
   .main-menu {
     width: 250px;
     height: 100vh;
-    background-color: $darkcolor;
+    background-color: $whitecolor;
     position: fixed;
     z-index: 9;
     padding: 0px;
@@ -3713,7 +3913,7 @@ body.dark-theme .dropdown-item:hover {
 
   .card-title {
     font-weight: 600;
-    font-size: 14px;
+    // font-size: 14px;
     padding: 0px;
   }
 
@@ -4046,6 +4246,16 @@ td.event_id {
     color: #6fd96f;
   }
 
+  .matchName {
+    display: flex;
+    gap: 2px;
+    flex-direction: column;
+    align-items: start;
+    @media screen and (max-width: 768px) {
+      flex-direction: column;
+      align-items: start;
+    }
+  }
   .event_name {
     color: #555;
     font-weight: 400;
@@ -4053,6 +4263,20 @@ td.event_id {
     align-items: center;
     font-size: 14px;
     gap: 2px;
+    line-height: normal;
+    flex-direction: column;
+    align-items: start;
+    text-align: start;
+    @media screen and (max-width: 768px) {
+      font-size: 12px;
+      flex-direction: row;
+      align-items: center;
+    }
+    .game_name_main {
+      display: flex;
+      gap: 3px;
+      align-items: center;
+    }
   }
 
   .play_btn {
@@ -4068,8 +4292,12 @@ td.event_id {
   .other_option {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: end;
     gap: 2px;
+    padding-right: 5%;
+    @media screen and (max-width: 768px) {
+      justify-content: start;
+    }
 
     .my_badge {
       padding: 2px 5px;
@@ -4101,7 +4329,18 @@ td.event_id {
 
 .sport-section {
   .table tr td.event_id {
-    padding: 2px 12px 2px 5px !important;
+    // padding: 2px 12px 2px 5px !important;
+    line-height: 12px;
+    padding: 0 !important;
+    white-space: normal;
+    .row {
+      align-items: center;
+      margin: 0;
+      padding: 0 1px;
+      @media screen and (max-width: 768px) {
+        gap: 3px;
+      }
+    }
   }
 }
 
@@ -4110,31 +4349,34 @@ td {
     display: flex;
     gap: 0px;
     border-bottom: 1px solid $whitecolor;
-    height: 40px;
+    height: 46px;
   }
 
   .odds_btn {
     display: flex;
+    width: 33.33333%;
+    display: inline-flex;
+    margin: 0 0px;
   }
 
   .back {
     background: #cceaf8;
     border: none;
-    padding: 10px 20px;
+    // padding: 10px 20px;
     font-size: 13px;
     cursor: pointer;
-    min-width: 70px;
+    min-width: 50%;
     justify-content: center;
   }
 
   .lay {
     background: #ffd8d9;
     border: none;
-    padding: 10px 20px;
+    // padding: 10px 20px;
     font-size: 13px;
     cursor: pointer;
     justify-content: center;
-    min-width: 70px;
+    min-width: 50%;
     border-right: 2px solid #fcfcfc;
   }
 }
@@ -4142,6 +4384,18 @@ td {
 .sport {
   .sportIcon {
     width: 22px;
+  }
+}
+
+.event_id {
+  .row {
+    .col-md-6,
+    .col-md-4,
+    .col-md-3,
+    .col-md-2,
+    .col-md-5 {
+      padding: 0;
+    }
   }
 }
 
@@ -4180,6 +4434,9 @@ td {
       font-size: 14px;
       color: $darkcolor;
       border-radius: 0;
+      @media screen and (max-width: 768px) {
+        padding: 5px;
+      }
       &:hover {
         color: $primarycolor;
         border-color: $primarycolor;
@@ -4215,6 +4472,9 @@ td {
     font-size: 14px;
     display: flex;
     align-items: center;
+    @media (max-width: 768px) {
+      padding: 0 3px;
+    }
     svg {
       font-size: 22px;
       color: #abafb3;
@@ -4225,7 +4485,7 @@ td {
     right: 0;
     min-width: 230px;
     width: 100%;
-    z-index: 69999;
+    z-index: 999;
     background: $whitecolor;
     color: $darkcolor;
     box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.15);
@@ -4279,12 +4539,42 @@ td {
   @media (max-width: 991px) {
     margin-left: 5px;
   }
+  @media screen and (max-width: 768px) {
+    margin-left: 30px;
+  }
 }
+
 .search-wrapper {
   position: relative;
   width: 200px;
-  @media screen and (max-width: 768px) {
+  .search_close {
     display: none;
+  }
+  @media screen and (max-width: 768px) {
+    width: 35px;
+    &.active {
+      width: 200px;
+      position: absolute;
+      background: $whitecolor;
+      z-index: 1;
+      top: 30%;
+      left: 28%;
+    }
+    .search_close {
+      display: block;
+      position: absolute;
+      right: 8px;
+      top: 46%;
+      transform: translateY(-50%);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 18px;
+      color: #666;
+      &:hover {
+        color: red;
+      }
+    }
   }
   .search-box {
     display: flex;
@@ -4299,6 +4589,9 @@ td {
     padding: 0 10px;
     color: #777;
     font-size: 18px;
+    @media screen and (max-width: 768px) {
+      font-size: 14px;
+    }
   }
 
   .search-box input {
@@ -4308,6 +4601,9 @@ td {
     outline: none;
     padding-right: 15px;
     font-size: 15px;
+    @media screen and (max-width: 768px) {
+      height: 30px;
+    }
   }
   .search-box input::placeholder {
     font-size: 14px;
@@ -4318,25 +4614,24 @@ td {
     background: $whitecolor;
     top: 105%;
     left: 0;
-    border-radius: 10px;
+    border-radius: 5px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     max-height: 320px;
     overflow-y: auto;
     z-index: 999;
-  }
-
-  .search-item {
-    display: block;
-    padding: 12px 18px;
-    color: #333;
-    text-decoration: none;
-    border-bottom: 1px solid #eee;
-    transition: 0.3s;
-  }
-
-  .search-item:hover {
-    background: #0d6efd;
-    color: $whitecolor;
+    font-size: 14px;
+    white-space: nowrap;
+    min-width: 320px;
+    .search-item {
+      display: block;
+      padding: 6px 20px;
+      color: $darkcolor;
+      text-decoration: none;
+      transition: 0.3s;
+      &:hover {
+        background: $primarycolor;
+      }
+    }
   }
 
   .no-result {
@@ -4361,6 +4656,20 @@ td {
   }
 }
 
+.heading2 {
+  font-size: 18px;
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+label,
+.new_label {
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+}
+
 // loader design
 .fullloader {
   width: 100%;
@@ -4373,7 +4682,10 @@ td {
   top: 50%;
   left: 60%;
   transform: translate(-50%, -50%);
-  z-index: 9999;
+  z-index: 8;
+  @media screen and (max-width: 768px) {
+    left: 50%;
+  }
 
   .loader {
     display: flex;
@@ -4457,6 +4769,14 @@ label small,
 
 .card-header.bgHeader {
   background: $primarycolor;
+}
+
+.card-header {
+  .btn {
+    @media screen and (max-width: 768px) {
+      font-size: 14px;
+    }
+  }
 }
 
 .modal-dialog-centered {
@@ -4603,6 +4923,7 @@ label small,
     box-shadow: inset 0 0 0 1px #eee;
     border: none;
     transition: all 0.4s ease-in-out;
+    white-space: nowrap;
     &:hover,
     &.active {
       background: $primarycolor;
@@ -4613,7 +4934,7 @@ label small,
 
 .market_name {
   font-size: 14px;
-  background: #f1f1f1;
+  background: $lightcolor;
   padding: 10px 8px;
 }
 
@@ -4640,6 +4961,11 @@ label small,
         background: $primarycolor;
         color: $whitecolor;
       }
+    }
+
+    @media screen and (max-width: 768px) {
+      flex-wrap: nowrap;
+      overflow-x: scroll;
     }
   }
 }
@@ -4681,6 +5007,9 @@ label small,
     display: flex;
     align-items: center;
     width: 100%;
+    @media screen and (max-width: 768px) {
+      font-size: 15px;
+    }
   }
   .bet_table {
     text-transform: uppercase;
@@ -4713,6 +5042,32 @@ label small,
       padding: 10px 20px !important;
       font-size: 13px;
       color: $darkcolor;
+    }
+  }
+}
+
+.table_loader {
+  position: relative;
+  .fullloader {
+    position: absolute;
+    left: 50%;
+    height: max-content;
+  }
+}
+
+.market-analysis-container {
+  .event-group-header {
+    .event-title {
+      font-size: 18px;
+    }
+  }
+  .event-sections {
+    table tr {
+      @media (max-width: 768px) {
+        td {
+          color: $darkcolor;
+        }
+      }
     }
   }
 }

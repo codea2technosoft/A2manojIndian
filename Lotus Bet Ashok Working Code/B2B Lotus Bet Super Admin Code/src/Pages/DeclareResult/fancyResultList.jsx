@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 import moment from "moment";
 import {
+  MdKeyboardDoubleArrowLeft,
+  MdKeyboardDoubleArrowRight,
   MdOutlineKeyboardArrowLeft,
   MdOutlineKeyboardArrowRight,
 } from "react-icons/md";
@@ -13,6 +15,7 @@ import {
 } from "../../Server/api";
 import Swal from "sweetalert2";
 import { Navigate } from "react-router";
+import Loader from "../../Common/Loader";
 
 function FancyResultList() {
   const [fancyResultList, setfancyResultList] = useState([]);
@@ -28,6 +31,8 @@ function FancyResultList() {
     status: "",
   });
   const navigate = useNavigate();
+
+  const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -140,8 +145,10 @@ function FancyResultList() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="text-center">
-                    Loading...
+                  <td colSpan="8" className="table_loader">
+                    <div className="py-5 text-center">
+                    <Loader />
+                    </div>
                   </td>
                 </tr>
               ) : fancyResultList.length > 0 ? (
@@ -185,44 +192,36 @@ function FancyResultList() {
             </tbody>
           </table>
         </div>
-      </div>
-      {totalPages > 1 && (
-        <div className="d-flex justify-content-between align-items-center mt-4">
-          <div className="sohwingallentries">
-            Showing {(page - 1) * limit + 1} to {Math.min(page * limit, total)}{" "}
-            of {total}
-          </div>
-          <div className="paginationall d-flex align-items-center gap-1">
-            <button
-              disabled={page === 1}
-              onClick={handlePrev}
-              className="d-flex justify-content-center align-items-center"
-            >
-              <MdOutlineKeyboardArrowLeft />
-            </button>
-            <div className="d-flex gap-1">
-              {getPageNumbers().map((pageNo) => (
-                <div
-                  key={pageNo}
-                  className={`paginationnumber ${
-                    pageNo === page ? "active" : ""
-                  }`}
-                  onClick={() => handlePageClick(pageNo)}
-                >
-                  {pageNo}
-                </div>
-              ))}
+        
+        {totalPages > 0 && (
+          <div className="d-flex justify-content-center align-items-center mb-3">
+            <div className="paginationall d-flex align-items-center gap-1">
+              <button disabled={currentPage === 1} onClick={handlePrev}>
+                <MdKeyboardDoubleArrowLeft /> Previous
+              </button>
+
+              <div className="d-flex gap-1">
+                {getPageNumbers().map((page) => (
+                  <div
+                    key={page}
+                    className={`paginationnumber ${currentPage === page ? "active" : ""}`}
+                    onClick={() => handlePageClick(page)}
+                  >
+                    {page}
+                  </div>
+                ))}
+              </div>
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={handleNext}
+              >
+                Next <MdKeyboardDoubleArrowRight />
+              </button>
             </div>
-            <button
-              disabled={page === totalPages}
-              onClick={handleNext}
-              className="d-flex justify-content-center align-items-center"
-            >
-              <MdOutlineKeyboardArrowRight />
-            </button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

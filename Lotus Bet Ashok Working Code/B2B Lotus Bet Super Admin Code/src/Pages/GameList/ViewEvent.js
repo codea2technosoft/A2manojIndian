@@ -1,6 +1,10 @@
 import { Link, useParams, useLocation } from "react-router-dom"; // ✅ useLocation add karo
 import React, { useState, useEffect } from "react";
-import { MdFilterListAlt } from "react-icons/md";
+import {
+  MdFilterListAlt,
+  MdKeyboardDoubleArrowLeft,
+  MdKeyboardDoubleArrowRight,
+} from "react-icons/md";
 // import { useNavigate } from "react-router-dom";
 // import { Link } from "react-router";
 import axios from "axios";
@@ -13,7 +17,10 @@ import {
   getExternalEvents,
   importMarket,
 } from "../../Server/api";
-// import { FaEye } from "react-icons/fa";
+import Loader from "../../Common/Loader";
+import { FaLock, FaSearch, FaUnlock } from "react-icons/fa";
+import { FiDownload } from "react-icons/fi";
+
 function ViewEvent() {
   // const navigate = useNavigate();
   const [filter, setFilter] = useState(false);
@@ -28,6 +35,9 @@ function ViewEvent() {
   const sportId = searchParams.get("sportId");
   const seriesId = searchParams.get("seriesId");
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   const [filters, setFilters] = useState({
     status: "",
     search: "",
@@ -39,6 +49,41 @@ function ViewEvent() {
     total: 0,
     totalPages: 0,
   });
+
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+  };
+
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxVisiblePages = 2;
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      let start = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+      let end = Math.min(totalPages, start + maxVisiblePages - 1);
+
+      if (end - start + 1 < maxVisiblePages) {
+        start = Math.max(1, end - maxVisiblePages + 1);
+      }
+
+      for (let i = start; i <= end; i++) {
+        pageNumbers.push(i);
+      }
+    }
+    return pageNumbers;
+  };
 
   const fetchEvents = async (
     page = pagination.page,
@@ -212,26 +257,32 @@ function ViewEvent() {
     );
   };
 
-  // Loading state
-  if (loading)
+  const StatusLock = ({ gameId, status, disabled }) => {
+    const isActive = status === 1;
+
     return (
-      <div className="text-center mt-3">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-        <p className="mt-2">Loading games...</p>
-      </div>
+      <span
+        className="fs-6"
+        onClick={() => {
+          if (!disabled) {
+            toggleEventStatusHandler(gameId, status);
+          }
+        }}
+        style={{
+          cursor: disabled ? "not-allowed" : "pointer",
+          opacity: disabled ? 0.5 : 1,
+        }}
+        title={isActive ? "Click to Inactive" : "Click to Active"}
+      >
+        {isActive ? (
+          <FaUnlock className="text-success" />
+        ) : (
+          <FaLock className="text-danger" />
+        )}
+      </span>
     );
-  // Error state
-  if (error)
-    return (
-      <div className="text-center mt-3 text-danger">
-        <p>{error}</p>
-        <button className="btn btn-primary" onClick={fetchEvents}>
-          Retry
-        </button>
-      </div>
-    );
+  };
+
   return (
     <div className="event">
       {toast.show && (
@@ -242,12 +293,12 @@ function ViewEvent() {
           <h3 className="card-title mb-0">All Event List</h3>
           <div className="gap-2 d-flex">
             {/* <button className="btn btn-info me-2" onClick={handleRefresh}>Refresh</button> */}
-            <button
+            {/* <button
               className="btn btn-light"
               onClick={() => setFilter((prev) => !prev)}
             >
               <MdFilterListAlt /> Filter
-            </button>
+            </button> */}
             <button
               className="btn btn-outline-light"
               onClick={() => window.history.back()}
@@ -256,167 +307,202 @@ function ViewEvent() {
             </button>
           </div>
         </div>
-        {filter && (
-          <div className="card-body border-bottom">
-            <div className="row g-3">
-              <div className="col-md-4">
-                <label className="form-label">Status</label>
-                <select
-                  className="form-select"
-                  value={filters.status}
-                  onChange={(e) =>
-                    setFilters((prev) => ({ ...prev, status: e.target.value }))
-                  }
-                >
-                  <option value="">All Status</option>
-                  <option value="1">Active</option>
-                  <option value="0">Inactive</option>
-                </select>
-              </div>
-              <div className="col-md-4">
-                <label className="form-label">Search</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Search matches..."
-                  value={filters.search}
-                  onChange={(e) =>
-                    setFilters((prev) => ({ ...prev, search: e.target.value }))
-                  }
-                />
-              </div>
-              <div className="col-md-4 d-flex align-items-end gap-2">
-                <button className="btn btn-success" onClick={applyFilters}>
-                  Apply
-                </button>
-                <button className="btn btn-danger" onClick={resetFilters}>
-                  Reset
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* {filter && (
+          <div className="card-body border-bottom"> */}
+
+        {/* </div>
+        )} */}
 
         {/* Table */}
-        <div className="card-body table-responsive">
-          <table className="table table-bordered table-hover">
-            <thead className="table-dark">
-              <tr>
-                <th>Sr</th>
-                <th>Teams Name</th>
-                <th>Date&Time</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {events.length > 0 ? (
-                events.map((events, index) => (
-                  <tr key={events._id}>
-                    <td>
-                      {(pagination.page - 1) * pagination.limit + index + 1}
+        <div className="card-body">
+          <div className="row gy-2 align-items-center">
+            <div className="col-md-3">
+              <select
+                className="form-select"
+                value={filters.status}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, status: e.target.value }))
+                }
+              >
+                <option value="">All Status</option>
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+              </select>
+            </div>
+            <div className="col-md-3">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search matches..."
+                value={filters.search}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, search: e.target.value }))
+                }
+              />
+            </div>
+            <div className="col-md-3 d-flex align-items-end gap-2">
+              <button className="btn btn-primary" onClick={applyFilters}>
+                <FaSearch />
+              </button>
+              {/* <button className="btn btn-danger" onClick={resetFilters}>
+                Reset
+              </button> */}
+            </div>
+          </div>
+          <div className="table-responsive mt-2">
+            <table className="table table-bordered table-hover">
+              <thead className="table-dark">
+                <tr>
+                  <th>Sr</th>
+                  <th>Teams Name</th>
+                  <th>Date&Time</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan="5" className="table_loader">
+                      <div className="text-center py-5">
+                        <Loader />
+                      </div>
                     </td>
-                    <td>
-                      <strong>{events.name}</strong>
-                    </td>
-                    <td>
-                      {" "}
-                      <strong>{events.date_time}</strong>
-                    </td>
-                    <td>{getStatusBadge(events.status)}</td>
-                    <td className="d-flex align-items-center gap-2">
-                      {/* <button className="btn btn-import">Import Market</button> */}
-                      <button
-                        className="importbutton"
-                        onClick={() => handleImportMarket(events.event_id)}
-                        disabled={importingMarket === events.event_id}
-                      >
-                        {importingMarket === events.event_id ? (
-                          <>
-                            <span className="spinner-border spinner-border-sm me-2" />
-                            Importing...
-                          </>
-                        ) : (
-                          "Import Market"
-                        )}
-                      </button>
-                      <ToggleSwitch
-                        gameId={events._id || events.id || events.event_id}
-                        status={events.status}
-                        disabled={
-                          updating ===
-                          (events._id || events.id || events.event_id)
-                        }
-                      />
-                      {updating === events._id && (
-                        <div
-                          className="spinner-border spinner-border-sm text-primary"
-                          role="status"
+                  </tr>
+                ) : error ? (
+                  <tr>
+                    <td colSpan="5">
+                      <div className="text-center mt-3 text-danger">
+                        <p>{error}</p>
+                        <button
+                          className="btn btn-primary"
+                          onClick={fetchEvents}
                         >
-                          <span className="visually-hidden">Loading...</span>
-                        </div>
-                      )}
-                      {/* <button
+                          Retry
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ) : events.length > 0 ? (
+                  events.map((events, index) => (
+                    <tr key={events._id}>
+                      <td>
+                        {(pagination.page - 1) * pagination.limit + index + 1}
+                      </td>
+                      <td>
+                        <strong>{events.name}</strong>
+                      </td>
+                      <td>
+                        {" "}
+                        <strong>{events.date_time}</strong>
+                      </td>
+                      {/* <td>{getStatusBadge(events.status)}</td> */}
+                      <td>
+                        <StatusLock
+                          gameId={events._id || events.id || events.event_id}
+                          status={events.status}
+                          disabled={
+                            updating ===
+                            (events._id || events.id || events.event_id)
+                          }
+                        />
+
+                        {updating ===
+                          (events._id || events.id || events.event_id) && (
+                          <div
+                            className="spinner-border spinner-border-sm text-warning"
+                            role="status"
+                          >
+                            <span className="visually-hidden">Loading...</span>
+                          </div>
+                        )}
+                      </td>
+                      <td className="d-flex align-items-center gap-2">
+                        {/* <button className="btn btn-import">Import Market</button> */}
+                        <button
+                          className="btn gradient-9 btn-rounded"
+                          onClick={() => handleImportMarket(events.event_id)}
+                          disabled={importingMarket === events.event_id}
+                          title="Import Market"
+                        >
+                          {importingMarket === events.event_id ? (
+                            <>
+                              <span className="spinner-border spinner-border-sm" />
+                              {/* Importing... */}
+                            </>
+                          ) : (
+                            <FiDownload className="fs-6" />
+                          )}
+                        </button>
+                        {/* <ToggleSwitch
+                          gameId={events._id || events.id || events.event_id}
+                          status={events.status}
+                          disabled={
+                            updating ===
+                            (events._id || events.id || events.event_id)
+                          }
+                        />
+                        {updating === events._id && (
+                          <div
+                            className="spinner-border spinner-border-sm text-primary"
+                            role="status"
+                          >
+                            <span className="visually-hidden">Loading...</span>
+                          </div>
+                        )} */}
+                        {/* <button
                       className="btn btn-sm btn-primary"
                       onClick={() => handleView(game)}
                     >
                       <FaEye />
                     </button> */}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="text-center py-4">
+                      No games found
+                      <br />
+                      <button className="btn btn-primary" onClick={fetchEvents}>
+                        Refresh
+                      </button>
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" className="text-center py-4">
-                    No games found
-                    <br />
-                    <button className="refreshbuttonall" onClick={fetchEvents}>
-                      Refresh
-                    </button>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-        {pagination.total > 0 && (
-          <div className="card-footer">
-            <div className="d-flex justify-content-between align-items-center mt-4">
-              <div className="sohwingallentries">
-                {/* Page {pagination.page} of */}
-                {/* {pagination.totalPages}  */}
-                {/* {pagination.total} */}
-                {/* of{" "} {totalItems} entries */}
-              </div>
+                )}
+              </tbody>
+            </table>
+          </div>
 
+          {totalPages > 1 && (
+            <div className="d-flex justify-content-center align-items-center mt-4">
               <div className="paginationall d-flex align-items-center gap-1">
-                <button
-                  onClick={() =>
-                    pagination.page > 1 && handlePageChange(pagination.page - 1)
-                  }
-                  disabled={pagination.page === 1}
-                  className=""
-                >
-                  <MdOutlineKeyboardArrowLeft />
+                <button disabled={currentPage === 1} onClick={handlePrev}>
+                  <MdKeyboardDoubleArrowLeft /> Previous
                 </button>
-                <div className="paginationnumber">
-                  {pagination.page}
-                  {/* {pagination.total} */}
+
+                <div className="d-flex gap-1">
+                  {getPageNumbers().map((page) => (
+                    <div
+                      key={page}
+                      className={`paginationnumber ${currentPage === page ? "active" : ""}`}
+                      onClick={() => handlePageClick(page)}
+                    >
+                      {page}
+                    </div>
+                  ))}
                 </div>
+
                 <button
-                  onClick={() =>
-                    pagination.page < pagination.totalPages &&
-                    handlePageChange(pagination.page + 1)
-                  }
-                  disabled={pagination.page === pagination.totalPages}
-                  className=""
+                  disabled={currentPage === totalPages}
+                  onClick={handleNext}
                 >
-                  <MdOutlineKeyboardArrowRight />
+                  Next <MdKeyboardDoubleArrowRight />
                 </button>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

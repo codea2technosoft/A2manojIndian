@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 
-import { MdFilterListAlt } from "react-icons/md";
+import {
+  MdFilterListAlt,
+  MdKeyboardDoubleArrowLeft,
+  MdKeyboardDoubleArrowRight,
+} from "react-icons/md";
 import Toast from "../../User/Toast";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
@@ -19,12 +23,16 @@ import {
   FaDownload,
   FaSpinner,
   FaList,
+  FaSearch,
+  FaUnlock,
+  FaLock,
 } from "react-icons/fa";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import Loader from "../../Common/Loader";
 function Cricketlist() {
   const actionRef = useRef(null);
   const navigate = useNavigate();
@@ -56,6 +64,17 @@ function Cricketlist() {
     total: 0,
     totalPages: 0,
   });
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
 
   const fetchGames = async (
     page = pagination.page,
@@ -366,118 +385,11 @@ function Cricketlist() {
     }
   };
 
-  if (loading)
-    return (
-      <div className="text-center mt-3">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-        <p className="mt-2">Loading games...</p>
-      </div>
-    );
-
-  // Error state
-  if (error)
-    return (
-      <div className="text-center mt-3 text-danger">
-        <p>{error}</p>
-        <button className="btn btn-primary" onClick={fetchGames}>
-          Retry
-        </button>
-      </div>
-    );
-
   return (
     <div className="cricket">
       {toast.show && (
         <Toast message={toast.message} type={toast.type} onClose={hideToast} />
       )}
-
-      <Modal
-        show={showMatchesModal}
-        onHide={() => setShowMatchesModal(false)}
-        size="lg"
-        centered
-      >
-        <Modal.Header closeButton className="bg-primary-yellow">
-          <Modal.Title>
-            {selectedSeries?.name || "Series"} Matches
-            {selectedSeries?.id && (
-              <div className="small text-light text-start mt-1">
-                Series ID: {selectedSeries.id}
-              </div>
-            )}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {loadingMatches ? (
-            <div className="text-center p-4">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-              <p className="mt-2">Loading matches...</p>
-            </div>
-          ) : seriesMatches.length > 0 ? (
-            <div className="table-responsive">
-              <table className="table table-bordered table-hover">
-                <thead className="table-dark">
-                  <tr>
-                    <th>Sr</th>
-                    <th>Match Name</th>
-                    <th>Country</th>
-                    <th>Date & Time</th>
-                    <th>Markets</th>
-                    <th>Event ID</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {seriesMatches.map((match, index) => (
-                    <tr key={match.event?.id || index}>
-                      <td>{index + 1}</td>
-                      <td>
-                        <strong>{match.event?.name || "N/A"}</strong>
-                      </td>
-                      <td>{match.event?.countryCode || "N/A"}</td>
-                      <td>
-                        {match.event?.openDate
-                          ? formatDate(match.event.openDate)
-                          : "N/A"}
-                      </td>
-                      <td>
-                        <span className="badge bg-info d-inline">
-                          {match.marketCount || 0}
-                        </span>
-                      </td>
-                      <td>
-                        <code className="small">
-                          {match.event?.id || "N/A"}
-                        </code>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="text-center p-4">
-              <p className="text-muted">No matches found for this series</p>
-            </div>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <div className="d-flex justify-content-between w-100">
-            <div className="text-muted small">
-              Total Matches: {seriesMatches.length}
-            </div>
-            <Button
-              variant="danger"
-              onClick={() => setShowMatchesModal(false)}
-            >
-              Close
-            </Button>
-          </div>
-        </Modal.Footer>
-      </Modal>
 
       <div className="card">
         <div className="card-header d-flex bg-primary-yellow justify-content-between align-items-center">
@@ -490,21 +402,21 @@ function Cricketlist() {
 
             <button
               title="Refresh Matches"
-              className="btn btn-light"
+              className="btn btn-dark gradient-10 border-0"
               onClick={handleRefresh}
               disabled={loading}
             >
               {loading ? <FaSpinner className="fa-spin" /> : <FaDownload />}
             </button>
 
-            <button
+            {/* <button
               className="btn btn-light"
               onClick={() => setFilter((prev) => !prev)}
             >
               <MdFilterListAlt /> Filter
-            </button>
+            </button> */}
 
-            <select
+            {/* <select
               className="form-select"
               style={{ width: "90px" }}
               value={pagination.limit}
@@ -515,16 +427,19 @@ function Cricketlist() {
               <option value={30}>30</option>
               <option value={40}>40</option>
               <option value={50}>50</option>
-            </select>
-            <button className="btn btn-dark" onClick={() => navigate(-1)}>
+            </select> */}
+            <button
+              className="btn btn-outline-light"
+              onClick={() => navigate(-1)}
+            >
               Back
             </button>
           </div>
         </div>
-
+        {/* 
         {filter && (
-          <div className="card-body border-bottom">
-            {/* <div className="d-flex justify-content-between align-items-center mb-3">
+          <div className="card-body border-bottom"> */}
+        {/* <div className="d-flex justify-content-between align-items-center mb-3">
               <h6 className="mb-0">Filter Matches</h6>
 
               <button
@@ -535,84 +450,133 @@ function Cricketlist() {
               </button>
             </div> */}
 
-            <div className="row g-3">
-              <div className="col-md-4">
-                <label className="form-label">Status</label>
-                <select
-                  className="form-select"
-                  value={filters.status}
-                  onChange={(e) =>
-                    setFilters((prev) => ({ ...prev, status: e.target.value }))
-                  }
-                >
-                  <option value="">All Status</option>
-                  <option value="1">Active</option>
-                  <option value="0">Inactive</option>
-                </select>
-              </div>
-              <div className="col-md-4">
-                <label className="form-label">Search</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Search matches..."
-                  value={filters.search}
-                  onChange={(e) =>
-                    setFilters((prev) => ({ ...prev, search: e.target.value }))
-                  }
-                />
-              </div>
-              <div className="col-md-4 d-flex align-items-end gap-2">
-                <button className="btn btn-primary" onClick={applyFilters}>
-                  Apply
-                </button>
-                <button className="btn btn-secondary" onClick={resetFilters}>
-                  Reset
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* </div>
+        )} */}
 
         {/* Table */}
-        <div className="card-body table-responsive">
-          <table className="table table-bordered table-hover">
-            <thead className="table-dark">
-              <tr>
-                <th>Sr</th>
-                <th>Match lists</th>
-                {/* <th>Series ID</th> */}
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {games.length > 0 ? (
-                games.map((game, index) => (
-                  <tr key={game._id}>
-                    <td>
-                      {(pagination.page - 1) * pagination.limit + index + 1}
+        <div className="card-body">
+          <div className="row g-3 align-items-center">
+            <div className="col-md-3">
+              {/* <label className="form-label">Status</label> */}
+              <select
+                className="form-select"
+                value={filters.status}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, status: e.target.value }))
+                }
+              >
+                <option value="">All Status</option>
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+              </select>
+            </div>
+            <div className="col-md-3">
+              {/* <label className="form-label">Search</label> */}
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search matches..."
+                value={filters.search}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, search: e.target.value }))
+                }
+              />
+            </div>
+            <div className="col-md-3 d-flex align-items-end gap-2">
+              <button className="btn btn-primary" onClick={applyFilters}>
+                <FaSearch />
+              </button>
+              {/* <button className="btn btn-secondary" onClick={resetFilters}>
+                  Reset
+                </button> */}
+            </div>
+          </div>
+          <div className="table-responsive mt-2">
+            <table className="table table-bordered table-hover">
+              <thead className="table-dark">
+                <tr>
+                  <th>Sr</th>
+                  <th>Match lists</th>
+                  {/* <th>Series ID</th> */}
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan="4" className="table_loader">
+                      <div className="text-center py-5">
+                        <Loader />
+                      </div>
                     </td>
-                    <td>
-                      <strong>{game.name}</strong>
+                  </tr>
+                ) : error ? (
+                  <tr>
+                    <td colSpan="4">
+                      <div className="text-center mt-3 text-danger">
+                        <p>{error}</p>
+                        <button
+                          className="btn btn-primary"
+                          onClick={fetchGames}
+                        >
+                          Retry
+                        </button>
+                      </div>
                     </td>
-                    {/* <td>
+                  </tr>
+                ) : games.length > 0 ? (
+                  games.map((game, index) => (
+                    <tr key={game._id}>
+                      <td>
+                        {(pagination.page - 1) * pagination.limit + index + 1}
+                      </td>
+                      <td>
+                        <strong>{game.name}</strong>
+                      </td>
+                      {/* <td>
                     <code>{game.series_id}</code>
                     <div className="text-muted small mt-1">
                       Markets: {game.marketCount || 0}
                     </div>
                   </td> */}
-                    <td>
-                      {/* {getStatusBadge(game.status)} */}
-                      <div className="">
-                        {game.status === 1 ? (
-                          <span className="activebadge">Active</span>
-                        ) : (
-                          <span className="inactivebadge">Inactive</span>
-                        )}
-                      </div>
-                    </td>
-                    {/* <td>
+                      <td>
+                        {/* {getStatusBadge(game.status)} */}
+                        {/* <div className="">
+                          {game.status === 1 ? (
+                            <span className="activebadge">Active</span>
+                          ) : (
+                            <span className="inactivebadge">Inactive</span>
+                          )}
+                        </div> */}
+
+                        <div className="d-flex align-items-center gap-2">
+                          <span
+                            className={` ${
+                              game.status === 1 ? "text-success" : "text-danger"
+                            }`}
+                            onClick={() =>
+                              toggleGameStatus(game._id, game.status)
+                            }
+                            disabled={updating === game._id}
+                          >
+                            {game.status === 1 ? (
+                              <>
+                                <FaUnlock className="me-1" title="Active" />
+                              </>
+                            ) : (
+                              <>
+                                <FaLock className="me-1" title="InActive" />
+                              </>
+                            )}
+                          </span>
+
+                          {updating === game._id && (
+                            <div className="spinner-border spinner-border-sm text-primary"></div>
+                          )}
+                        </div>
+                      </td>
+                      {/* <td>
                     <div className="d-flex flex-wrap align-items-center gap-2">
                       <button
                         className="viewbutton"
@@ -670,12 +634,12 @@ function Cricketlist() {
                       </button>
                     </div>
                   </td> */}
-                    <td
-                      className="d-flex align-items-center gap-2 "
-                      ref={actionRef}
-                    >
-                      <div className="actions">
-                        {/* <button
+                      <td
+                        className="d-flex align-items-center gap-2 "
+                        ref={actionRef}
+                      >
+                        <div className="actions">
+                          {/* <button
                           className="actionbutton edit"
                           onClick={() => deleteMatchHandler(game._id)}
                           title="Delete"
@@ -683,59 +647,59 @@ function Cricketlist() {
                           <FaTrashAlt />
                         </button> */}
 
-                        <button
-                          className="actionbutton edit"
-                          onClick={() => handleImportEvent(game)}
-                          title="Import"
-                          disabled={
-                            importing === game._id ||
-                            !game.sport_id ||
-                            !game.series_id
-                          }
-                        >
-                          {importing === game._id ? (
-                            <FaSpinner className="spinner fa-spin" />
-                          ) : (
-                            <FaDownload />
-                          )}
-                        </button>
-
-                        <button
-                          className="actionbutton delete"
-                          onClick={() => handleView(game)}
-                          title="View Details"
-                        >
-                          <FaEye />
-                        </button>
-                        <div className="d-flex align-items-center gap-1">
-                          <ToggleSwitch
-                            gameId={game._id}
-                            status={game.status}
-                            disabled={updating === game._id}
-                          />
-                          {updating === game._id && (
-                            <div className="spinner-border spinner-border-sm text-primary" />
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="d-flex flex-wrap align-items-center gap-2 position-relative">
-                        <div
-                          className="dropdown position-relative"
-                          ref={actionRef}
-                        >
                           <button
-                            className="btn btn-icon btn-sm"
-                            onClick={() => toggleAction(game._id)}
-                            aria-expanded={actionOpen === game._id}
+                            className="btn gradient-10 btn-rounded"
+                            onClick={() => handleImportEvent(game)}
+                            title="Import"
+                            disabled={
+                              importing === game._id ||
+                              !game.sport_id ||
+                              !game.series_id
+                            }
                           >
-                            <BsThreeDotsVertical />
+                            {importing === game._id ? (
+                              <FaSpinner className="spinner fa-spin" />
+                            ) : (
+                              <FaDownload />
+                            )}
                           </button>
 
-                          {actionOpen === game._id && (
-                            <ul className="dropdown-menu_csut dropdown-menu-end show">
-                              <li>
-                                {/* <button
+                          <button
+                            className="btn gradient-7 btn-rounded"
+                            onClick={() => handleView(game)}
+                            title="View Details"
+                          >
+                            <FaEye />
+                          </button>
+                          {/* <div className="d-flex align-items-center gap-1">
+                            <ToggleSwitch
+                              gameId={game._id}
+                              status={game.status}
+                              disabled={updating === game._id}
+                            />
+                            {updating === game._id && (
+                              <div className="spinner-border spinner-border-sm text-primary" />
+                            )}
+                          </div> */}
+                        </div>
+
+                        <div className="d-flex flex-wrap align-items-center gap-2 position-relative">
+                          <div
+                            className="dropdown position-relative"
+                            ref={actionRef}
+                          >
+                            <button
+                              className="btn btn-icon btn-sm"
+                              onClick={() => toggleAction(game._id)}
+                              aria-expanded={actionOpen === game._id}
+                            >
+                              <BsThreeDotsVertical />
+                            </button>
+
+                            {actionOpen === game._id && (
+                              <ul className="dropdown-menu_csut dropdown-menu-end show">
+                                <li>
+                                  {/* <button
                                   className="dropdownmenu_li"
                                   onClick={() => {
                                     handleImportEvent(game);
@@ -759,102 +723,166 @@ function Cricketlist() {
                                   )}
                                 </button> */}
 
-                                <button
-                                  className="dropdownmenu_li text-danger"
-                                  onClick={() => {
-                                    deleteMatchHandler(game._id);
-                                    setActionOpen(null);
-                                  }}
-                                >
-                                  <FaTrashAlt /> Delete
-                                </button>
-                              </li>
-                              <li>
-                                <button
-                                  className="dropdownmenu_li"
-                                  onClick={() =>
-                                    fetchSeriesMatches(
-                                      game.series_id,
-                                      game.name,
-                                    )
-                                  }
-                                  title="View Series Matches"
-                                  disabled={loadingMatches}
-                                >
-                                  <FaList /> View Matches
-                                </button>
-                              </li>
-                            </ul>
-                          )}
+                                  <button
+                                    className="dropdownmenu_li text-danger"
+                                    onClick={() => {
+                                      deleteMatchHandler(game._id);
+                                      setActionOpen(null);
+                                    }}
+                                  >
+                                    <FaTrashAlt /> Delete
+                                  </button>
+                                </li>
+                                <li>
+                                  <button
+                                    className="dropdownmenu_li"
+                                    onClick={() =>
+                                      fetchSeriesMatches(
+                                        game.series_id,
+                                        game.name,
+                                      )
+                                    }
+                                    title="View Series Matches"
+                                    disabled={loadingMatches}
+                                  >
+                                    <FaList /> View Matches
+                                  </button>
+                                </li>
+                              </ul>
+                            )}
+                          </div>
                         </div>
-                      </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="text-center py-4">
+                      <div className="text-muted">No matches found</div>
+                      <button
+                        className="btn btn-primary mt-2"
+                        onClick={fetchGames}
+                      >
+                        Refresh
+                      </button>
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" className="text-center py-4">
-                    <div className="text-muted">No matches found</div>
-                    <button
-                      className="btn btn-primary mt-2"
-                      onClick={fetchGames}
-                    >
-                      Refresh
-                    </button>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                )}
+              </tbody>
+            </table>
+          </div>
 
-        {pagination.total > pagination.limit && (
-          <div className="card-footer">
-            <div className="d-flex justify-content-between align-items-center mt-4">
-              <div className="sohwingallentries">
-                Page {pagination.page} of
-                {/* {pagination.totalPages}  */}
-                {pagination.total}
-                {/* of{" "} {totalItems} entries */}
-              </div>
-
+          {totalPages > 1 && (
+            <div className="d-flex justify-content-center align-items-center mt-4">
               <div className="paginationall d-flex align-items-center gap-1">
-                <button
-                  onClick={() =>
-                    pagination.page > 1 && handlePageChange(pagination.page - 1)
-                  }
-                  disabled={pagination.page === 1}
-                  className=""
-                >
-                  <MdOutlineKeyboardArrowLeft />
+                <button disabled={currentPage === 1} onClick={handlePrev}>
+                  <MdKeyboardDoubleArrowLeft /> Previous
                 </button>
 
                 <div className="d-flex gap-1">
                   {getPageNumbers().map((page) => (
-                    <button
+                    <div
                       key={page}
-                      className={`btn ${page === pagination.current_page ? "btn-primary" : "btn-light"}`}
+                      className={`paginationnumber ${currentPage === page ? "active" : ""}`}
                       onClick={() => handlePageClick(page)}
                     >
                       {page}
-                    </button>
+                    </div>
                   ))}
                 </div>
+
                 <button
-                  onClick={() =>
-                    pagination.page < pagination.totalPages &&
-                    handlePageChange(pagination.page + 1)
-                  }
-                  disabled={pagination.page === pagination.totalPages}
-                  className=""
+                  disabled={currentPage === totalPages}
+                  onClick={handleNext}
                 >
-                  <MdOutlineKeyboardArrowRight />
+                  Next <MdKeyboardDoubleArrowRight />
                 </button>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
+
+      <Modal
+        show={showMatchesModal}
+        onHide={() => setShowMatchesModal(false)}
+        size="lg"
+        centered
+      >
+        <Modal.Header closeButton className="bg-primary-yellow">
+          <Modal.Title>
+            {selectedSeries?.name || "Series"} Matches
+            {selectedSeries?.id && (
+              <div className="small text-light text-start mt-1">
+                Series ID: {selectedSeries.id}
+              </div>
+            )}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {loadingMatches ? (
+            <div className="text-center p-4">
+              <Loader />
+              <p className="mt-2">Loading matches...</p>
+            </div>
+          ) : seriesMatches.length > 0 ? (
+            <div className="table-responsive">
+              <table className="table table-bordered table-hover">
+                <thead className="table-dark">
+                  <tr>
+                    <th>Sr</th>
+                    <th>Match Name</th>
+                    <th>Country</th>
+                    <th>Date & Time</th>
+                    <th>Markets</th>
+                    <th>Event ID</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {seriesMatches.map((match, index) => (
+                    <tr key={match.event?.id || index}>
+                      <td>{index + 1}</td>
+                      <td>
+                        <strong>{match.event?.name || "N/A"}</strong>
+                      </td>
+                      <td>{match.event?.countryCode || "N/A"}</td>
+                      <td>
+                        {match.event?.openDate
+                          ? formatDate(match.event.openDate)
+                          : "N/A"}
+                      </td>
+                      <td>
+                        <span className="badge bg-info d-inline">
+                          {match.marketCount || 0}
+                        </span>
+                      </td>
+                      <td>
+                        <code className="small">
+                          {match.event?.id || "N/A"}
+                        </code>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center p-4">
+              <p className="text-muted">No matches found for this series</p>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <div className="d-flex justify-content-between w-100">
+            <div className="text-muted small">
+              Total Matches: {seriesMatches.length}
+            </div>
+            <Button variant="danger" onClick={() => setShowMatchesModal(false)}>
+              Close
+            </Button>
+          </div>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
