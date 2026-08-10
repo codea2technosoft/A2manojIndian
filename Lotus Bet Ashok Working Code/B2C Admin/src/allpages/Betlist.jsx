@@ -53,9 +53,9 @@ function Betlist() {
       // ✅ FIXED: Directly access response.data since that's where your data is
       if (response && response.data) {
         const responseData = response.data;
-        
+
         console.log('Response Data:', responseData);
-        
+
         // ✅ Get bets data - it's directly in response.data
         if (Array.isArray(responseData)) {
           setBetData(responseData);
@@ -282,7 +282,7 @@ function Betlist() {
                       <option value="lottery">Lottery</option>
                     </select>
                   </div>
-                  <div className="bet-sec">
+                  {/* <div className="bet-sec">
                     <label className="form-label">Bet Status:</label>
                     <select
                       name="bet_status"
@@ -296,7 +296,7 @@ function Betlist() {
                       <option value="active">Active</option>
                       <option value="unsettled">Unsettled</option>
                     </select>
-                  </div>
+                  </div> */}
                   <div className="bet-sec bet-period">
                     <label className="form-label">From</label>
                     <input
@@ -382,45 +382,69 @@ function Betlist() {
                         <th scope="col">IP Address</th>
                         <th scope="col">Market</th>
                         <th scope="col">Selection</th>
+                        <th scope="col">Bet Type</th>
                         <th scope="col">Type</th>
+                        
                         <th scope="col">Odds req.</th>
                         <th scope="col">Stake</th>
                         <th scope="col">Liability</th>
-                        <th scope="col">Profit/Loss</th>
+                        <th scope="col">Status</th>
                       </tr>
                     </thead>
                     <tbody>
                       {betData && betData.length > 0 ? (
                         betData.map((bet, index) => (
                           <tr key={bet._id || bet.bet_id || index} bgcolor={getRowColor(bet)}>
-                            <td>{bet.pl_id || bet.user?.username || 'N/A'}</td>
-                            <td>{bet.bet_id || bet._id || 'N/A'}</td>
+                            <td>{bet.pl_id || bet.user?.username || '-'}</td>
+                            <td>{bet.bet_id || bet._id || '-'}</td>
                             <td>{formatDate(bet.bet_placed || bet.created_at)}</td>
-                            <td>{bet.ip_address || bet.user?.ip_address || 'N/A'}</td>
+                            <td>{bet.ip_address || bet.user?.ip_address || '-'}</td>
                             <td className="text-start">
-                              {bet.game_name || bet.market || 'N/A'}
+                              {bet.game_name || bet.market || '-'}
                               <span className="angle_unicode" style={{ background: "transparent" }}>
                                 ▸
                               </span>
                               <strong style={{ background: "transparent" }}>
-                                {bet.team || 'N/A'}
+                                {bet.team || '-'}
                               </strong>
                               <span className="angle_unicode" style={{ background: "transparent" }}>
                                 ▸
                               </span>
-                              {bet.bet_type || 'Match Odds'}
+                              {bet.bet_type || '-'}
                             </td>
-                            <td>{bet.selection || bet.team || 'N/A'}</td>
-                            <td>{bet.bet_on || bet.type || 'N/A'}</td>
-                            <td>{bet.odd || bet.odds_req || 'N/A'}</td>
-                            <td>{bet.stake || 'N/A'}</td>
-                            <td>{bet.liability !== undefined ? bet.liability.toFixed(2) : 'N/A'}</td>
-                            <td className="text-end">
+                            <td>{bet.selection || bet.team || '-'}</td>
+                            <td>{bet.bet_type || '-'}</td>
+                            <td>{bet.type || '-'}</td>
+                            
+                            <td>{bet.odd || bet.odds_req || '-'}</td>
+                            <td>{bet.stake || '-'}</td>
+                            <td>{bet.liability !== undefined ? bet.liability.toFixed(2) : '-'}</td>
+                            {/* <td className="text-end">
                               <span
                                 className={bet.profit_loss !== undefined && bet.profit_loss < 0 ? 'text-danger' : 'text-success'}
                                 style={{ background: "transparent" }}
                               >
                                 {bet.profit_loss !== undefined ? formatProfitLoss(bet.profit_loss) : 'N/A'}
+                              </span>
+                            </td> */}
+
+
+                            <td className="text-end">
+                              <span
+                                className={
+                                  bet.is_settled === 1 && bet.match_status === "1"
+                                    ? "text-success"
+                                    : bet.is_settled === 1 && bet.match_status === "2"
+                                      ? "text-danger"
+                                      : "text-warning"
+                                }
+                                style={{ background: "transparent" }}
+                              >
+                                {bet.is_settled === 1 && bet.match_status === "1"
+                                  ? "Win"
+                                  : bet.is_settled === 1 && bet.match_status === "2"
+                                    ? "Loss"
+                                    : ""}
                               </span>
                             </td>
                           </tr>

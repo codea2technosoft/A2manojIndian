@@ -7,18 +7,18 @@ import {
 function Matchbetdetails() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  
+
   // URL se params receive kar raha hai
   const marketId = searchParams.get('market_id');
   const eventId = searchParams.get('event_id');
   const adminId = searchParams.get('admin_id') || localStorage.getItem("admin_id");
-   const betTypeFromUrl = searchParams.get('bet_type') || 'fancy';  // ✅ bet_type receive
+  const betTypeFromUrl = searchParams.get('bet_type') || 'fancy';  // ✅ bet_type receive
   const role = searchParams.get('role') || localStorage.getItem("role") || 3;
-  
+
   const [loading, setLoading] = useState(false);
   const [betsData, setBetsData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-   const [betType, setBetType] = useState(betTypeFromUrl);  // ✅ betType state
+  const [betType, setBetType] = useState(betTypeFromUrl);  // ✅ betType state
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 50,
@@ -42,7 +42,7 @@ function Matchbetdetails() {
     try {
       const payload = {
         fancy_id: marketId,
-         bet_type: betType,
+        bet_type: betType,
         search: searchTerm,
         page: page,
         limit: pagination.limit
@@ -54,7 +54,7 @@ function Matchbetdetails() {
       console.log("Fancy Settled Response:", response);
 
       const responseData = response?.data || response || {};
-      
+
       // Response me 'market' array hai
       const dataList = responseData.market || [];
 
@@ -67,7 +67,7 @@ function Matchbetdetails() {
 
       dataList.forEach(item => {
         const betWinAmount = parseFloat(item.bet_win_amount || 0);
-        
+
         if (betWinAmount > 0) {
           totalWin += betWinAmount;
         } else if (betWinAmount < 0) {
@@ -232,8 +232,8 @@ function Matchbetdetails() {
                         </thead>
                         <tbody>
                           {/* Total Row */}
-                          <tr style={{ fontWeight: 'bold', backgroundColor: '#f8f9fa' }}>
-                            {/* <td colSpan="9" className="text-end">Total</td> */}
+                          {/* <tr style={{ fontWeight: 'bold', backgroundColor: '#f8f9fa' }}>
+                           
                             <td>
                               <span className={summary.total_profit < 0 ? 'text-danger' : 'text-success'}>
                                 {summary.total_profit?.toFixed(2) || '0.00'}
@@ -241,19 +241,22 @@ function Matchbetdetails() {
                             </td>
                             <td></td>
                             <td></td>
-                          </tr>
+                          </tr> */}
 
                           {/* Data Rows */}
                           {betsData && betsData.length > 0 ? (
                             betsData.map((item, index) => (
                               <tr key={item._id || index} className={item.bet_on === 'back' ? 'back-bg-row' : 'lay-bg-row'}>
-                                <td>{item.game_name || item.sport_id || '-'}</td>
+                                <td>
+                                  {item.game_name || '-'} - sportID  {item.sport_id || '-'}
+                                </td>
                                 <td>
                                   {item.team ? item.team.split('>')[0]?.trim() || item.market_name || '-' : '-'}
                                 </td>
                                 <td>{item.username || item.user_id || '-'}</td>
                                 {/* ✅ Type column - lay = Yes, back = No */}
-                                <td>{getTypeDisplay(item.bet_on)}</td>
+                                {/* <td>{getTypeDisplay(item.bet_on)}</td> */}
+                                <td>{item.bet_on}</td>
                                 <td>{item.team || item.selection || '-'}</td>
                                 <td>{item.odd || item.odds || '0.00'}</td>
                                 <td>{item.stake || '0.00'}</td>
@@ -264,7 +267,9 @@ function Matchbetdetails() {
                                     {item.bet_win_amount?.toFixed(2) || '0.00'}
                                   </span>
                                 </td>
-                                <td>{item.result_val || '-'}</td>
+                                <td>
+                                  {item.is_settled === 1 ? "Yes" : "-"}
+                                </td>
                                 <td>
                                   <span className={getStatusColor(item)}>
                                     {getStatusText(item)}

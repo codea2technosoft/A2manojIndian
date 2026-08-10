@@ -5,6 +5,7 @@ import {
     getBetHistoryUserPlReport,
 } from "../../Server/api";
 
+
 const BettingHistory = () => {
     const [searchParams] = useSearchParams();
     const [activeTab, setActiveTab] = useState('Exchange');
@@ -26,7 +27,7 @@ const BettingHistory = () => {
             'Exchange': { sport_id: '', bet_type: '' },
             'FancyBet': { sport_id: '4', bet_type: 'fancy' },
             'BookMaker': { sport_id: '4', bet_type: 'bookmaker' },
-            'casino': { sport_id: '', bet_type: 'casino' },
+            'casino': { sport_id: '10', bet_type: 'casino' },
             'Toss': { sport_id: '', bet_type: 'toss' },
             'Tie': { sport_id: '', bet_type: 'tie' },
             'lottery': { sport_id: '', bet_type: 'lottery' },

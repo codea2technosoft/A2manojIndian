@@ -68,10 +68,10 @@ function Bettingprofitloss() {
     //     { value: 'voided', label: 'Voided' }
     // ];
 
-     const betStatusOptions = [
+    const betStatusOptions = [
         // { value: 'all', label: 'SelectAll' },
         // { value: 'matched', label: 'Matched' },
-         { value: '0', label: 'UnSettled' },//pending bets
+        { value: '0', label: 'UnSettled' },//pending bets
         { value: '1', label: 'Settled' },
         { value: '2', label: 'Cancelled' },
         // { value: 'voided', label: 'Voided' }
@@ -85,7 +85,7 @@ function Bettingprofitloss() {
             'Exchange': { sport_id: '', bet_type: '' },
             'FancyBet': { sport_id: '4', bet_type: 'fancy' },
             'BookMaker': { sport_id: '4', bet_type: 'bookmaker' },
-            'casino': { sport_id: '', bet_type: 'casino' },
+            'casino': { sport_id: '10', bet_type: 'casino' },
             'Toss': { sport_id: '', bet_type: 'toss' },
             'Tie': { sport_id: '', bet_type: 'tie' },
             // 'Indian Casino': { sport_id: '', bet_type: 'casino' },
@@ -313,9 +313,11 @@ function Bettingprofitloss() {
                 user_name: item.user_name || item.pl_id || item.user?.username || 'N/A',
                 bet_id: item.bet_id || item._id || 'N/A',
                 selection: item.selection || item.team || 'N/A',
-                odds: item.bet_on || 0,
+                // odds: item.bet_on || 0,
+                odds: item.odds || item.bet_on || 0,  // ✅ FIXED - use odds field
                 stake: item.stake || 0,
-                type: item.bet_on || '-',
+                // type: item.bet_on || '-',
+                type: item.type || item.bet_type || item.bet_on || '-',  // ✅ FIXED - get type from item.type
                 placed: item.bet_placed || item.created_at ?
                     new Date(item.bet_placed || item.created_at).toLocaleString() :
                     'N/A',
@@ -356,15 +358,15 @@ function Bettingprofitloss() {
 
         if (item.bets && item.bets.length > 0) {
             const mappedDetails = item.bets.map((bet) => ({
-                user_name: bet.user_name || bet.pl_id || 'N/A',
-                bet_id: bet.bet_id || bet._id || 'N/A',
-                selection: bet.selection || bet.team || 'N/A',
-                odds: bet.bet_on || 0,
+                user_name: bet.user_name || bet.pl_id || '-',
+                bet_id: bet.bet_id || bet._id || '-',
+                selection: bet.selection || bet.team || '-',
+                odds: bet.odds || bet.bet_on || 0,  // ✅ FIXED - use odds field
                 stake: bet.stake || 0,
-                type: bet.bet_type || '-',
+                 type: bet.type || bet.bet_type || '-',  // ✅ FIXED - get type from bet.type
                 placed: bet.placed || bet.bet_placed || bet.created_at ?
                     new Date(bet.placed || bet.bet_placed || bet.created_at).toLocaleString() :
-                    'N/A',
+                    '-',
                 profit_loss: bet.profit_loss || bet.pl || 0,
             }));
 
@@ -725,7 +727,7 @@ function Bettingprofitloss() {
             <form className="bet_status">
                 <div className="row">
                     <div className="col-md-12">
-                        <div className="row">
+                        <div className="d-flex gap-3">
                             {/* <div className="mb-sm-0 mb-3 col-lg-4 col-sm-6 col-12">
                                 <div className="bet-sec">
                                     <label className="mt-2 me-2 form-label">Bet Status:</label>
@@ -744,7 +746,7 @@ function Bettingprofitloss() {
                             </div> */}
 
 
-                            <div className="mb-sm-0 mb-3 col-lg-4 col-sm-6 col-12">
+                            {/* <div className="mb-sm-0 mb-3 col-lg-4 col-sm-6 col-12">
                                 <div className="bet-sec">
                                     <label className="mt-2 me-2 form-label">Bet Status:</label>
                                     <select
@@ -752,7 +754,7 @@ function Bettingprofitloss() {
                                         value={betStatus}
                                         onChange={(e) => setBetStatus(e.target.value)}
                                     >
-                                        <option value="all">All Status</option> {/* ✅ YAHAN ADD KARO */}
+                                        <option value="all">All Status</option> 
                                         {betStatusOptions.map(option => (
                                             <option key={option.value} value={option.value}>
                                                 {option.label}
@@ -760,33 +762,33 @@ function Bettingprofitloss() {
                                         ))}
                                     </select>
                                 </div>
-                            </div>
-                            <div className="mb-sm-0 mb-3 col-lg-4 col-sm-6 col-12">
-                                <div className="bet-sec bet-period">
-                                    <label className="form-label">From Date</label>
-                                    <div className="form-group">
-                                        <input
-                                            type="date"
-                                            className="form-control"
-                                            value={startDate || ''}
-                                            onChange={(e) => setStartDate(e.target.value || null)}
-                                        />
-                                    </div>
+                            </div> */}
+                            {/* <div className="mb-sm-0 mb-3 col-lg-4 col-sm-6 col-12"> */}
+                            <div className="bet-sec bet-period">
+                                <label className="form-label">From Date</label>
+                                <div className="">
+                                    <input
+                                        type="date"
+                                        className="form-control"
+                                        value={startDate || ''}
+                                        onChange={(e) => setStartDate(e.target.value || null)}
+                                    />
                                 </div>
                             </div>
-                            <div className="mb-sm-0 mb-3 col-lg-4 col-sm-6 col-12">
-                                <div className="bet-sec bet-period">
-                                    <label className="form-label">To Date</label>
-                                    <div className="form-group">
-                                        <input
-                                            type="date"
-                                            className="form-control"
-                                            value={endDate || ''}
-                                            onChange={(e) => setEndDate(e.target.value || null)}
-                                        />
-                                    </div>
+                            {/* </div> */}
+                            {/* <div className="mb-sm-0 mb-3 col-lg-4 col-sm-6 col-12"> */}
+                            <div className="bet-sec bet-period">
+                                <label className="form-label">To Date</label>
+                                <div className="">
+                                    <input
+                                        type="date"
+                                        className="form-control"
+                                        value={endDate || ''}
+                                        onChange={(e) => setEndDate(e.target.value || null)}
+                                    />
                                 </div>
                             </div>
+                            {/* </div> */}
                         </div>
                     </div>
                 </div>

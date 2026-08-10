@@ -9,11 +9,11 @@ function BetListLive() {
     const [betData, setBetData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchParams, setSearchParams] = useState({
-        sport: 'all',
-        marketType: 'all',
-        orderBy: 'amount',
-        orderDirection: 'desc',
-        betStatus: 'active'
+        sport: '',
+        marketType: '',
+        orderBy: '',
+        orderDirection: '',
+        betStatus: ''
     });
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -28,14 +28,14 @@ function BetListLive() {
             const params = {
                 sport: searchParams.sport !== 'all' ? searchParams.sport : '',
                 market_type: searchParams.marketType !== 'all' ? searchParams.marketType : '',
-                bet_status: searchParams.betStatus || 'active',
+                bet_status: searchParams.betStatus,
                 from_date: '',
                 to_date: '',
                 bet_on: '',
                 team: '',
                 keyword: '',
-                order_by: searchParams.orderBy === 'amount' ? 'stake' : 'time',
-                order_direction: searchParams.orderDirection || 'desc',
+                order_by: searchParams.orderBy,
+                order_direction: searchParams.orderDirection,
                 page: currentPage,
                 limit: limit,
                 // ✅ Add user_id if needed
@@ -82,19 +82,21 @@ function BetListLive() {
 
             // ✅ Map data to match table structure
             const mappedData = bets.map((item) => ({
-                user: item.pl_id || item.user?.username || item.user_id || 'N/A',
-                id: item.bet_id || item._id || 'N/A',
+                user: item.pl_id || item.user?.username || item.user_id || '-',
+                id: item.bet_id || item._id || '-',
                 date: item.bet_placed || item.created_at ?
                     moment(item.bet_placed || item.created_at).local().format('M/D/YYYY, h:mm:ss A') :
-                    'N/A',
-                ip: item.ip_address || item.ip || 'N/A',
-                match: item.market || item.game_name || 'N/A',
-                selection: item.selection || item.team || 'N/A',
-                type: item.type || item.bet_on || 'N/A',
+                    '-',
+                ip: item.ip_address || item.ip || '-',
+                match: item.market || item.game_name || '-',
+                selection: item.selection || item.team || '-',
+                bet_type: item.bet_type || '-',  // ✅ ADD THIS LINE
+                type: item.type || item.bet_on || '-',
                 odds: item.odds_req || item.odd || 0,
                 stake: item.stake || 0,
                 total: item.liability || 0,
                 profit: item.profit_loss || 0,
+                match_status: item.match_status || '3',
             }));
 
             setBetData(mappedData);
@@ -136,11 +138,11 @@ function BetListLive() {
     // ✅ Handle reset - Reset all filters and page
     const handleReset = () => {
         setSearchParams({
-            sport: 'all',
-            marketType: 'all',
-            orderBy: 'amount',
-            orderDirection: 'desc',
-            betStatus: 'active'
+            sport: '',
+            marketType: '',
+            orderBy: '',
+            orderDirection: '',
+            betStatus: ''
         });
         setCurrentPage(1);
         // fetchBetList will be called automatically due to useEffect
@@ -223,8 +225,8 @@ function BetListLive() {
                                             value={searchParams.orderBy}
                                             onChange={handleFilterChange}
                                         >
-                                            <option value="amount">Stake</option>
-                                            <option value="timeInserted">Time</option>
+                                            <option value="stake">Stake</option>
+                                            <option value="time">Time</option>
                                         </select>
                                     </div>
                                     <div className="bet-sec bet-period">
@@ -240,7 +242,7 @@ function BetListLive() {
                                             <option value="desc">Descending</option>
                                         </select>
                                     </div>
-                                    <div className="bet-sec">
+                                    {/* <div className="bet-sec">
                                         <label className="form-label">Bet Status:</label>
                                         <select
                                             name="betStatus"
@@ -254,7 +256,7 @@ function BetListLive() {
                                             <option value="active">Active</option>
                                             <option value="unsettled">Unsettled</option>
                                         </select>
-                                    </div>
+                                    </div> */}
                                 </div>
                                 <div className="betList-bottom">
                                     <div className="betlist_btn" style={{ display: "flex" }}>
@@ -318,11 +320,12 @@ function BetListLive() {
                                                     <th scope="col">IP Address</th>
                                                     <th scope="col">Market</th>
                                                     <th scope="col">Selection</th>
+                                                    <th scope="col">Bet Type</th>
                                                     <th scope="col">Type</th>
                                                     <th scope="col">Odds req.</th>
                                                     <th scope="col">Stake</th>
                                                     <th scope="col">Liability</th>
-                                                    <th scope="col">Profit/Loss</th>
+                                                    <th scope="col">Status</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -341,18 +344,23 @@ function BetListLive() {
                                                                 <td>{item.ip}</td>
                                                                 <td className="text-start">{item.match}</td>
                                                                 <td>{item.selection}</td>
+                                                                <td>{item.bet_type || '-'}</td>
                                                                 <td>{item.type}</td>
                                                                 <td>{item.odds}</td>
                                                                 <td>{Number(item.stake || 0).toFixed(2)}</td>
                                                                 <td>{Number(item.total || 0).toFixed(2)}</td>
-                                                                <td>
+                                                                {/* <td>
                                                                     <span className={profit >= 0 ? "text-success" : "text-danger"}>
                                                                         {profit >= 0
                                                                             ? Number(profit).toFixed(2)
                                                                             : `-(${Math.abs(Number(profit)).toFixed(2)})`}
                                                                     </span>
-                                                                </td>
-                                                            </tr>
+                                                                </td> */}
+                                                                <td className="text-end">
+                                                                    <span style={{ color: item.match_status == "3" ? "red" : "transparent" }}>
+                                                                        {item.match_status == "3" ? "Pending" : ""}
+                                                                    </span>
+                                                                </td>                                            </tr>
                                                         );
                                                     })
                                                 ) : (
