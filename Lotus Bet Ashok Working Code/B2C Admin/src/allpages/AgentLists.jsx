@@ -1225,8 +1225,8 @@ function AgentLists() {
                     </td>
                     <td className="text-end">{agent.available_balance.toFixed(2) || "0.00"}</td>
                     <td className="text-end">{agent.total_player_balance.toFixed(2) || "0.00"}</td>
-                    <td className={`text-end  ${Number(agent.total_amount) <= 0 ? "ul-t" : "ul-t2"}`}>
-                      <span>{agent.total_amount || "0.00"}</span>
+                    <td className={`text-end  ${Number(agent.total_amount.toFixed(2)) <= 0 ? "ul-t" : "ul-t2"}`}>
+                      <span>{agent.total_amount.toFixed(2) || "0.00"}</span>
                     </td>
                     <td className="text-end">
                       <span style={{ color: "green" }}>{(agent.current_pl.toFixed(2)) || "0.00"}</span>

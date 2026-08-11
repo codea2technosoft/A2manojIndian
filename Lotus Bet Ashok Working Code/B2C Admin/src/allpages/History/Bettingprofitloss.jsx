@@ -35,6 +35,8 @@ function Bettingprofitloss() {
         'FancyBet',
         'BookMaker',
         'casino',
+        'Greyhound',
+        'HorseRacing',
         'Toss',
         'Tie',
         // 'Indian Casino',
@@ -47,6 +49,8 @@ function Bettingprofitloss() {
         FancyBet: ['Market', 'Settled Date', 'Profit / Loss', ''],
         BookMaker: ['Market', 'Settled Date', 'Profit / Loss', ''],
         casino: ['Market', 'Profit / Loss', ''],
+        Greyhound: ['Market', 'Settled Date', 'Profit / Loss', ''],
+        HorseRacing: ['Market', 'Settled Date', 'Profit / Loss', ''],
         Toss: ['Market', 'Settled Date', 'Profit / Loss', ''],
         Tie: ['Market', 'Settled Date', 'Profit / Loss', ''],
         // 'Indian Casino': ['Market', 'Profit / Loss', ''],
@@ -86,6 +90,10 @@ function Bettingprofitloss() {
             'FancyBet': { sport_id: '4', bet_type: 'fancy' },
             'BookMaker': { sport_id: '4', bet_type: 'bookmaker' },
             'casino': { sport_id: '10', bet_type: 'casino' },
+            'Greyhound': { sport_id: '8', bet_type: '' },      // ✅ ADD KAR
+            'HorseRacing': { sport_id: '7', bet_type: '' },    // ✅ ADD K
+            //          'Greyhound': { sport: '8', bet_type: 'greyhound', bet_status: 'pending' },
+            //   'HorseRacing': { sport: '7', bet_type: 'horseracing', bet_status: 'pending' },
             'Toss': { sport_id: '', bet_type: 'toss' },
             'Tie': { sport_id: '', bet_type: 'tie' },
             // 'Indian Casino': { sport_id: '', bet_type: 'casino' },
@@ -363,7 +371,7 @@ function Bettingprofitloss() {
                 selection: bet.selection || bet.team || '-',
                 odds: bet.odds || bet.bet_on || 0,  // ✅ FIXED - use odds field
                 stake: bet.stake || 0,
-                 type: bet.type || bet.bet_type || '-',  // ✅ FIXED - get type from bet.type
+                type: bet.type || bet.bet_type || '-',  // ✅ FIXED - get type from bet.type
                 placed: bet.placed || bet.bet_placed || bet.created_at ?
                     new Date(bet.placed || bet.bet_placed || bet.created_at).toLocaleString() :
                     '-',
@@ -603,6 +611,8 @@ function Bettingprofitloss() {
                 'FancyBet': ['market', 'settled_date', 'profit_loss'],
                 'BookMaker': ['market', 'settled_date', 'profit_loss'],
                 'casino': ['market', 'profit_loss'],
+                'Greyhound': ['market', 'settled_date', 'profit_loss'],      // ✅ ADD KAR
+                'HorseRacing': ['market', 'settled_date', 'profit_loss'],    // ✅ AD
                 'Toss': ['market', 'settled_date', 'profit_loss'],
                 'Tie': ['market', 'settled_date', 'profit_loss'],
                 // 'Indian Casino': ['market', 'profit_loss'],

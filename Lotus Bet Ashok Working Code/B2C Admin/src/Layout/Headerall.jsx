@@ -464,8 +464,8 @@ export default function Header({ depositPending = 0, withdrawPending = 0 }) {
                             <ul className={activeDropdown === "Sport Management" ? "show" : ""}>
                                 <li><a href="/sports">Sports</a></li>
                                 <li><a href="/cricket">cricket</a></li>
-                                <li><a href="/view_match">View Match</a></li>
-                                <li><a href="/declare_result">Declare Result</a></li>
+                                <li><a href="/view_match">Declare Fancy Results </a></li>
+                                <li><a href="/declare_result">Declare Cricket Results </a></li>
                             </ul>
                         </li>
                     </ul>
