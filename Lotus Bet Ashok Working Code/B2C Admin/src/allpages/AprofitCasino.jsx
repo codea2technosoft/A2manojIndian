@@ -21,7 +21,7 @@ function AprofitCasino() {
   });
   const [pagination, setPagination] = useState({
     current_page: 1,
-    per_page: 50,
+    per_page: 100,
     total_records: 0,
     total_pages: 1
   });
@@ -157,7 +157,7 @@ function AprofitCasino() {
     setError(null);
     setPagination({
       current_page: 1,
-      per_page: 50,
+      per_page: 100,
       total_records: 0,
       total_pages: 1
     });
@@ -217,6 +217,8 @@ function AprofitCasino() {
                               <option value="1">Soccer</option>
                               <option value="2">Tennis</option>
                               <option value="10">International Casino</option>
+                              <option value="8">GreyHund</option>
+                              <option value="7">Horse Racing</option>
                               {/* <option value="12">India Casino</option> */}
                             </select>
                           </div>

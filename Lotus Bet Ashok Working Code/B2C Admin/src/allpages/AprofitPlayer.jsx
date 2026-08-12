@@ -9,7 +9,7 @@ function AprofitPlayer() {
   const [error, setError] = useState(null);
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: 20,
+    limit: 100,
     total: 0,
     totalPages: 0
   });
@@ -46,7 +46,7 @@ function AprofitPlayer() {
     last: "",
     sport_id: "",
     page: 1,
-    limit: 20
+    limit: 100
   });
 
   // ✅ Initial fetch on component mount

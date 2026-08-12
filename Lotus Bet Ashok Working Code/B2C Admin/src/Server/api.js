@@ -165,10 +165,19 @@ export const getMarketsByEvent = (event_id) =>
 export const getSelectionsByMarket = (market_id) =>
   API.get(`/get-selections`, { params: { market_id } });
 
+export const getSelectionsHorceLists = (market_id) =>
+  API.get(`/get-selections-horce`, { params: { market_id } });
+
+
 
 // 🔹 Declare Result API
 export const declareMatchResult = (payload) => {
   return API.post("/match-result-settled", payload);
+};
+
+//////declared horse racing and greyhund result
+export const declaresetHorseracinggreyHundResult = (payload) => {
+  return API.post("/set-result-new-horce", payload);
 };
 
 
@@ -177,6 +186,10 @@ export const getCompletedMatchList = (payload) =>
 
 export const getAllMatchResultList = (payload) =>
   API.post("/complete-match-settled-result-list", payload);
+
+export const getCompleteMatchSettledResultListHorse = (payload) =>
+  API.post("/complete-match-settled-result-list-horce", payload);
+
 
 
 export const getMatchBetCompletedHistory = (payload) =>
@@ -721,6 +734,25 @@ export const getChildList_list = (role) =>
 
 export const getInactiveMasterList = (payload) =>
   API.post("/get-user-inactive-list", payload);
+
+
+// export const getseriesHorseCountryNameList = (payload) =>
+//   API.get("/series-horse-country-name", payload);
+
+// export const getseriesHorseCountryMarketNameList = (payload) =>
+//   API.get("/series-horse-country-market-name", payload);
+
+export const getseriesHorseCountryNameList = (payload) =>
+  API.get("/series-horse-country-name", { params: payload });
+
+export const getseriesHorseCountryMarketNameList = (payload) =>
+  API.get("/series-horse-country-match-list", { params: payload });
+
+export const getseriesHorseSelectionstNameList = (payload) =>
+  API.get("/get-event-horse-datatimes", { params: payload });
+
+
+
 
 export const UserInactiveList = (payload) =>
   API.post("/get-agent-user-inactive-list", payload);

@@ -186,7 +186,7 @@ function MainMarket() {
           title: res.data.message,
           confirmButtonText: "OK",
         });
-        fetchGames(); 
+        fetchGames();
         if (alertRes.isConfirmed) {
           fetchMatchResultList(page);
         }
@@ -324,7 +324,7 @@ function MainMarket() {
   };
   const handlePrev = () => {
     if (page > 1) setPage(page - 1);
-  };             
+  };
   const handleNext = () => {
     if (page < totalPages) setPage(page + 1);
   };
@@ -335,7 +335,7 @@ function MainMarket() {
   const matchOptions = events.map(event => ({
     value: event.id || event.event_id,
     // label: event.name,
-     label: `${event.name} (${event.time || ''})`, // ✅ Time add karo
+    label: `${event.name} (${event.time || ''})`, // ✅ Time add karo
     market_id: event.market_id
   }));
   return (
@@ -351,7 +351,7 @@ function MainMarket() {
             <div className="form-design-fillter gap-2 d-flex justify-content-between align-items-end flex-md-nowrap flex-wrap">
 
               {/* 🔹 Select Sport */}
-              <div className="form_latest_design w-100">
+              {/* <div className="form_latest_design w-100">
                 <label className="form-label">
                   Select Sport <span style={{ color: "red" }}>*</span>
                 </label>
@@ -380,7 +380,49 @@ function MainMarket() {
                   }}
                   placeholder="Select Sport"
                 />
+              </div> */}
+              <div className="form_latest_design w-100">
+                <label className="form-label">
+                  Select Sport <span style={{ color: "red" }}>*</span>
+                </label>
+
+                <Select
+                  options={games
+                    .filter((game) => game.id !== 7 && game.id !== 8 && game.id !== 10)
+                    .map((game) => ({
+                      value: game.id,
+                      label: game.name,
+                    }))
+                  }
+
+                  value={games
+                    .filter((game) => game.id !== 7 && game.id !== 8 && game.id !== 10)
+                    .map((game) => ({
+                      value: game.id,
+                      label: game.name,
+                    }))
+                    .find((opt) => opt.value === selectedSportId)
+                  }
+
+                  onChange={(selectedOption) => {
+                    const sportId = selectedOption?.value;
+
+                    setSelectedSportId(sportId);
+
+                    setSelectedMatch(null);
+                    setSelectedEventId(null);
+                    setSelectedMarket("");
+                    setSelectedTeam("");
+                    setTeamList([]);
+                    setEvents([]);
+
+                    fetchEvents(sportId);
+                  }}
+
+                  placeholder="Select Sport"
+                />
               </div>
+
 
               {/* 🔹 Select Match - Updated with new API call */}
               <div className="form_latest_design w-100">
@@ -409,7 +451,7 @@ function MainMarket() {
                   isDisabled={loadingGames}
                   isLoading={loadingGames}
                 />
-        
+
               </div>
               {/* 🔹 Select Market
               <div className="form_latest_design">
@@ -503,10 +545,15 @@ function MainMarket() {
                           </span>
                         </td>
                         <td>
-                          {/* <span className={item.result === 1 ? "text-success" : "text-danger"}>
-                            {item.result === 1 ? "Win" : "Lose"}
-                          </span> */}
-                          {item.result}
+                          <span
+                            className={
+                              item.result === 1
+                                ? "text-success fw-bold"
+                                : "text-danger fw-bold"
+                            }
+                          >
+                            {item.result === 1 ? "Declared" : "Not Declared"}
+                          </span>
                         </td>
                         {/* <td>
                           <button
@@ -518,16 +565,16 @@ function MainMarket() {
                           </button>
                         </td> */}
                         {/* <td>
-  {item.lenadena_settle === 1 && (
-    <button
-      className="btn btn-warning btn-sm"
-      disabled={btnLoading[item._id]}
-      onClick={() => handleRollbacklenadenasettled(item)}
-    >
-      {btnLoading[item._id] ? "Processing..." : "settled"}
-    </button>
-  )}
-</td> */}
+                        {item.lenadena_settle === 1 && (
+                          <button
+                            className="btn btn-warning btn-sm"
+                            disabled={btnLoading[item._id]}
+                            onClick={() => handleRollbacklenadenasettled(item)}
+                          >
+                            {btnLoading[item._id] ? "Processing..." : "settled"}
+                          </button>
+                        )}
+                      </td> */}
 
                         {/* <td>
                           {item.lenadena_settle === 0 ? (

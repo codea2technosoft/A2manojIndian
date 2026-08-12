@@ -12,7 +12,7 @@ function Myaccountstatement() {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: 10,
+    limit: 100,
     total: 0,
     totalPages: 0
   });
@@ -25,7 +25,7 @@ function Myaccountstatement() {
     totalRecords: 0
   });
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 100;
 
   // Fetch Account Statement
   const fetchAccountStatement = async (page = 1) => {

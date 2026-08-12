@@ -42,6 +42,7 @@ import WithdrawPendingApporve from "./Pages/Withdrawal/withdrawPendingApporve";
 import Ledger from "./Pages/Withdrawal/Ledger";
 import BetHistoryUserwaise from "./Pages/BetHistory/betHistoryUserwaise";
 import DeclareResult from "./Pages/DeclareResult/MainMarket";
+import DeclareResultHorseGreyhund from "./Pages/DeclareResultHorseGreyhund/HorseRacingAndGreyhund";
 import KingJackPortMarketDeclare from "./Pages/DeclareResult/KingJackPortMarket";
 import Banners from "./Pages/Banners/Banners";
 import AppSetting from "./Pages/AppSettings/AppSetting";
@@ -1098,6 +1099,12 @@ const App = () => {
           path="/declare_result"
           element={<ProtectedRoute element={DeclareResult} path="/declare_main" />}
         />
+
+         <Route
+          path="/declare_result_horsegreyhund"
+          element={<ProtectedRoute element={DeclareResultHorseGreyhund} path="/declare_result_horsegreyhund" />}
+        />
+
 
         <Route
           path="/fancy-result-list"
