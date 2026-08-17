@@ -1,0 +1,266 @@
+.dark-theme .main-menu .logo-box {
+  padding: 19px 0 20px;
+  background: #2e3543;
+}
+
+.sidebar-open .main-menu {
+  width: 250px;
+  background-color: #2A3F54;
+  overflow-y: auto;
+  z-index: 9;
+  height: 100vh;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+}
+
+.main-menu {
+  width: 70px;
+  background-color: #2A3F54;
+  overflow-y: auto;
+  z-index: 9;
+  height: 100vh;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  transition: width 0.3s ease;
+}
+
+.main-menu:hover {
+  width: 250px;
+}
+
+.main-menu:hover .menu-arrow,
+.main-menu:hover .menu-text {
+  display: block;
+}
+
+.main-menu.active {
+  width: 250px;
+}
+
+.main-menu .logo-box {
+  padding: 10px;
+  background: #ededed;
+  border-bottom: 1px solid #e9ecef;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  display: flex;
+  align-items: center;
+}
+
+.main-menu .logo-box .logo-light,
+.main-menu .logo-box .logo-dark {
+  display: block;
+  text-align: center;
+}
+
+.main-menu .logo-box .logo-light .logo-lg,
+.main-menu .logo-box .logo-dark .logo-lg {
+  height: 40px;
+}
+
+.main-menu .logo-box .logo-light .logo-sm,
+.main-menu .logo-box .logo-dark .logo-sm {
+  height: 24px;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .main-menu .logo-box .logo-lg {
+    display: block;
+  }
+  .main-menu .logo-box .logo-sm {
+    display: inline-block;
+  }
+}
+
+.main-menu .sidebar-content {
+  padding: 0;
+}
+
+.main-menu .sidebar-content .app-menu {
+  list-style: none;
+  padding: 8px;
+  margin: 0;
+}
+
+.main-menu .sidebar-content .app-menu .menu-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6c757d;
+  padding: 12px 24px 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0px 0 5px;
+  padding-left: 15px;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item {
+  margin-bottom: 5px;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .menu-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 15px;
+  color: #b9c0c9;
+  text-decoration: none;
+  border-radius: 4px;
+  background: linear-gradient(#334556, #2C4257), #2A3F54;
+  transition: background-color, color 0.3s ease;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .menu-link.waves-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .menu-link.waves-effect::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(0, 123, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s 0.3s ease;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .menu-link.waves-effect:hover::after {
+  width: 200%;
+  height: 200%;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .menu-link .menu-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .menu-link .menu-icon svg {
+  stroke: currentColor;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .menu-link .menu-text {
+  flex-grow: 1;
+  font-weight: 500;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .menu-link .badge {
+  padding: 3px 7px;
+  font-size: 11px;
+  color: white;
+  border-radius: 10px;
+  line-height: 1;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .menu-link .badge.bg-info {
+  background-color: #17a2b8;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .menu-link .badge.bg-blue {
+  background-color: #007bff;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .menu-link .badge.bg-danger {
+  background-color: #dc3545;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .menu-link[aria-expanded="true"] .menu-arrow {
+  transform: rotate(90deg);
+}
+
+.main-menu .sidebar-content .app-menu .menu-item.active > .menu-link {
+  background-color: #1ABB9C;
+  color: #fff;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .collapse.show {
+  display: block;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .collapse .sub-menu {
+  list-style: none;
+  padding: 0 0 0 0px;
+  margin: 5px 0;
+  border-right: 5px solid #1ABB9C;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .collapse .sub-menu .menu-item {
+  margin-bottom: 2px;
+  position: relative;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .collapse .sub-menu .menu-item::before {
+  background: #425668;
+  bottom: auto;
+  content: "";
+  height: 8px;
+  left: 23px;
+  margin-top: 15px;
+  position: absolute;
+  right: auto;
+  width: 8px;
+  z-index: 1;
+  border-radius: 50%;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .collapse .sub-menu .menu-item::after {
+  border-left: 1px solid #425668;
+  bottom: 0;
+  content: "";
+  left: 27px;
+  position: absolute;
+  top: 0;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .collapse .sub-menu .menu-item .menu-link {
+  font-size: 14px;
+  padding: 8px 15px 8px 37px;
+  color: #fff;
+  position: relative;
+}
+
+.main-menu .sidebar-content .app-menu .menu-item .collapse .sub-menu .menu-item .menu-link:hover {
+  color: #fff;
+}
+
+.main-menu::-webkit-scrollbar {
+  display: none;
+}
+
+.sidebar_toggle .main-menu:hover {
+  width: 250px;
+}
+
+.sidebar_toggle .main-menu:hover .menu-arrow,
+.sidebar_toggle .main-menu:hover .menu-text {
+  display: block;
+}
+
+.sidebar_toggle .menu-item .menu-text,
+.sidebar_toggle .menu-item .menu-arrow {
+  display: none;
+}
+
+.sidebar_toggle .togglebutton {
+  margin-left: 75px;
+}
+
+.sidebar_toggle .page-content {
+  padding-left: 75px;
+}
+
+@media (max-width: 768px) {
+  .sidebar_toggle .menu-item .menu-text,
+  .sidebar_toggle .menu-item .menu-arrow {
+    display: block;
+  }
+}

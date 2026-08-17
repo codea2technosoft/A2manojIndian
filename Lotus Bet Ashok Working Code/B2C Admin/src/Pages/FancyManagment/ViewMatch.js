@@ -274,9 +274,9 @@ function ViewMatch() {
         <Toast message={toast.message} type={toast.type} onClose={hideToast} />
       )}
 
-      <div className="card">
-        <div className="card-header flex-wrap-mobile d-flex justify-content-between align-items-md-center">
-          <h3 className="card-title">All Matches List</h3>
+      <div className="allcommon ">
+        <div className="py-3 flex-wrap-mobile d-flex justify-content-between align-items-md-center">
+          <h3 className="page-title">All Matches List</h3>
           {/* <div>
                         <button
                             type="button"
@@ -294,13 +294,14 @@ function ViewMatch() {
                             <MdFilterListAlt /> Filter
                         </button>
                     </div> */}
-        </div>
 
-        <div className="card-body ">
           {events.length > 0 && (
-            <div className="col-md-6">
+            <div className="col-md-3">
               <div className="d-flex">
-                <div className="input-group mb-2" style={{ width: "350px" }}>
+                <div
+                  className="input-group flex-nowrap mb-2"
+                  style={{ width: "350px" }}
+                >
                   <input
                     type="text"
                     className="form-control"
@@ -338,7 +339,9 @@ function ViewMatch() {
               )}
             </div>
           )}
+        </div>
 
+        <div className="card-body ">
           <div className="table-responsive">
             <table className="table table-bordered table-hover">
               <thead className="table-dark">
@@ -364,7 +367,7 @@ function ViewMatch() {
                       <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
 
                       <td>
-                        <span className="fs-5">{game.name}</span>
+                        <span className="fs-6">{game.name}</span>
                         <br />
                         <span className="text-success">{game.series_name}</span>
                       </td>
@@ -373,7 +376,8 @@ function ViewMatch() {
 
                       <td>{getStatusBadge(game.status)}</td>
 
-                      <td className="d-flex align-items-center gap-2">
+                      <td className="">
+                        {/* <td className="d-flex align-items-center gap-2"> */}
                         <button
                           className="importbutton"
                           onClick={() => handleViewResult(game)}

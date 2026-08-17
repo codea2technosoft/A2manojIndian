@@ -1,30 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { getAgentsSettlementList, submitBankingAgentLenaDena } from "../Server/api";
-import Swal from 'sweetalert2';
+import React, { useState, useEffect } from "react";
+import {
+  getAgentsSettlementList,
+  submitBankingAgentLenaDena,
+} from "../Server/api";
+import Swal from "sweetalert2";
 
 function Settlement() {
   // State for creditors (dena) and debtors (lena) data
-  const [creditors, setCreditors] = useState([]);  // dena - positive
-  const [debtors, setDebtors] = useState([]);      // lena - negative
+  const [creditors, setCreditors] = useState([]); // dena - positive
+  const [debtors, setDebtors] = useState([]); // lena - negative
   const [loading, setLoading] = useState(false);
   const [totalData, setTotalData] = useState(null);
 
   // State for settle amounts
   const [settleAmounts, setSettleAmounts] = useState({});
   const [remarks, setRemarks] = useState({});
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
   const [submitLoading, setSubmitLoading] = useState(false);
 
   // Get user data from localStorage
   const getUserData = () => {
     try {
-      const userData = localStorage.getItem('user');
+      const userData = localStorage.getItem("user");
       if (userData) {
         return JSON.parse(userData);
       }
       return null;
     } catch (error) {
-      console.error('Error parsing user data:', error);
+      console.error("Error parsing user data:", error);
       return null;
     }
   };
@@ -35,14 +38,14 @@ function Settlement() {
     try {
       const userData = getUserData();
       const payload = {
-        admin_id: userData?.admin_id || 'admin',
+        admin_id: userData?.admin_id || "admin",
         role: 2,
       };
 
-      console.log('Fetching settlement data with payload:', payload);
+      console.log("Fetching settlement data with payload:", payload);
 
       const response = await getAgentsSettlementList(payload);
-      console.log('Settlement API Response:', response);
+      console.log("Settlement API Response:", response);
 
       const apiData = response?.data;
 
@@ -62,14 +65,19 @@ function Settlement() {
         const debtorsList = data.lena || [];
         setDebtors(debtorsList);
 
-        console.log('Creditors (dena):', creditorsList.length, 'Debtors (lena):', debtorsList.length);
+        console.log(
+          "Creditors (dena):",
+          creditorsList.length,
+          "Debtors (lena):",
+          debtorsList.length,
+        );
       } else {
         setCreditors([]);
         setDebtors([]);
-        console.log('No settlement data available');
+        console.log("No settlement data available");
       }
     } catch (err) {
-      console.error('Error fetching settlement data:', err);
+      console.error("Error fetching settlement data:", err);
       setCreditors([]);
       setDebtors([]);
     } finally {
@@ -84,32 +92,32 @@ function Settlement() {
 
   // Handle settle amount change
   const handleSettleAmountChange = (adminId, value) => {
-    setSettleAmounts(prev => ({
+    setSettleAmounts((prev) => ({
       ...prev,
-      [adminId]: value
+      [adminId]: value,
     }));
   };
 
   // Handle remark change
   const handleRemarkChange = (adminId, value) => {
-    setRemarks(prev => ({
+    setRemarks((prev) => ({
       ...prev,
-      [adminId]: value
+      [adminId]: value,
     }));
   };
 
   // Handle Full Settle click
   const handleFullSettle = (adminId) => {
     // Find the member in creditors or debtors
-    let member = creditors.find(item => item.admin_id === adminId);
+    let member = creditors.find((item) => item.admin_id === adminId);
     if (!member) {
-      member = debtors.find(item => item.admin_id === adminId);
+      member = debtors.find((item) => item.admin_id === adminId);
     }
     if (member) {
       const amount = Math.abs(parseFloat(member.total_amount) || 0);
-      setSettleAmounts(prev => ({
+      setSettleAmounts((prev) => ({
         ...prev,
-        [adminId]: amount
+        [adminId]: amount,
       }));
     }
   };
@@ -120,11 +128,11 @@ function Settlement() {
 
     if (!password) {
       Swal.fire({
-        icon: 'warning',
-        title: 'Password Required',
-        text: 'Please enter password',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'OK'
+        icon: "warning",
+        title: "Password Required",
+        text: "Please enter password",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK",
       });
       return;
     }
@@ -134,88 +142,95 @@ function Settlement() {
     let hasError = false;
 
     // Check creditors (dena) - type: "credit"
-    creditors.forEach(member => {
+    creditors.forEach((member) => {
       const amount = parseFloat(settleAmounts[member.admin_id]);
       if (amount && amount > 0) {
-        const remark = remarks[member.admin_id] || `Settlement for ${member.username}`;
+        const remark =
+          remarks[member.admin_id] || `Settlement for ${member.username}`;
         transactions.push({
           admin_id: member.admin_id,
           amount: amount,
-          type: "debit",  // dena = debit
-          remark: remark
+          type: "debit", // dena = debit
+          remark: remark,
         });
       }
     });
 
     // Check debtors (lena) - type: "debit"
-    debtors.forEach(member => {
+    debtors.forEach((member) => {
       const amount = parseFloat(settleAmounts[member.admin_id]);
       if (amount && amount > 0) {
-        const remark = remarks[member.admin_id] || `Settlement for ${member.username}`;
+        const remark =
+          remarks[member.admin_id] || `Settlement for ${member.username}`;
         transactions.push({
           admin_id: member.admin_id,
           amount: amount,
-          type: "credit",  // lena = credit
-          remark: remark
+          type: "credit", // lena = credit
+          remark: remark,
         });
       }
     });
 
     if (transactions.length === 0) {
       Swal.fire({
-        icon: 'warning',
-        title: 'No Settlements',
-        text: 'Please add at least one settlement amount',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'OK'
+        icon: "warning",
+        title: "No Settlements",
+        text: "Please add at least one settlement amount",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK",
       });
       return;
     }
 
     const userData = getUserData();
     const payload = {
-      admin_id: userData?.admin_id || 'admin',
+      admin_id: userData?.admin_id || "admin",
       password: password,
       // role: userData?.role || 1,
       role: 2,
-      transactions: transactions
+      transactions: transactions,
     };
 
-    console.log('Submitting settlement payload:', payload);
+    console.log("Submitting settlement payload:", payload);
 
     setSubmitLoading(true);
     try {
       const response = await submitBankingAgentLenaDena(payload);
-      console.log('Settlement submitted successfully:', response);
+      console.log("Settlement submitted successfully:", response);
 
-      const successMessage = response?.data?.message || response?.message || 'Settlements processed successfully';
+      const successMessage =
+        response?.data?.message ||
+        response?.message ||
+        "Settlements processed successfully";
 
       Swal.fire({
-        icon: 'success',
-        title: 'Success!',
+        icon: "success",
+        title: "Success!",
         text: successMessage,
-        confirmButtonColor: '#28a745',
-        confirmButtonText: 'OK',
+        confirmButtonColor: "#28a745",
+        confirmButtonText: "OK",
         timer: 2000,
         timerProgressBar: true,
-        showConfirmButton: false
+        showConfirmButton: false,
       });
 
       // Reset form
       setSettleAmounts({});
       setRemarks({});
-      setPassword('');
+      setPassword("");
       fetchSettlementData();
-
     } catch (error) {
-      console.error('Error submitting settlements:', error);
-      const errorMessage = error?.response?.data?.message || error?.message || 'Failed to submit settlements. Please try again.';
+      console.error("Error submitting settlements:", error);
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to submit settlements. Please try again.";
       Swal.fire({
-        icon: 'error',
-        title: 'Error!',
+        icon: "error",
+        title: "Error!",
         text: errorMessage,
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'OK'
+        confirmButtonColor: "#d33",
+        confirmButtonText: "OK",
       });
     } finally {
       setSubmitLoading(false);
@@ -226,22 +241,22 @@ function Settlement() {
   const handleClearAll = () => {
     setSettleAmounts({});
     setRemarks({});
-    setPassword('');
+    setPassword("");
   };
 
   // Format amount
   const formatAmount = (amount) => {
-    if (amount === undefined || amount === null) return '0.00';
-    return parseFloat(amount).toLocaleString('en-IN', {
+    if (amount === undefined || amount === null) return "0.00";
+    return parseFloat(amount).toLocaleString("en-IN", {
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     });
   };
 
   // Loading state
   if (loading) {
     return (
-      <div className='allcommon'>
+      <div className="allcommon">
         <section className="main-inner-outer py-4">
           <div className="container-fluid">
             <div className="find-member-sec search_banking_detail">
@@ -261,158 +276,60 @@ function Settlement() {
   }
 
   return (
-    <div className='allcommon'>
+    <div className="allcommon">
       <section className="main-inner-outer">
-          <div className="find-member-sec search_banking_detail">
-            <div className="db-sec">
-              <h2 className="common-heading page-title">Settlement List</h2>
-            </div>
-            <div className="row">
-              <div className="col-md-6 col-12">
-                <div className='headinggreen'>
-                  Creditors Account (dena hai)
-                </div>
+        <div className="find-member-sec search_banking_detail">
+          <div className="db-sec">
+            <h2 className="common-heading page-title">Settlement List</h2>
+          </div>
+          <div className="row">
+            <div className="col-md-6 col-12">
+              <div className="headinggreen">Creditors Account (dena hai)</div>
+              <div className="table-responsive">
                 <div className="table-responsive">
-                  <div className="table-responsive">
-                    <table className="banking_detail_table table-color table">
-                      <thead>
-                        <tr>
-                          <th scope="col" style={{ background: "lightgrey" ,whiteSpace:"normal",color:"#000",fontSize:"11px"}}>
-                            Account
-                          </th>
-                          <th
-                            scope="col"
-                            style={{ textAlign: "right", background: "lightgrey" ,whiteSpace:"normal",color:"#000",fontSize:"11px"}}
-                          >
-                            Client (P/L)
-                          </th>
-                          <th
-                            scope="col"
-                            style={{ textAlign: "right", background: "lightgrey" ,whiteSpace:"normal",color:"#000",fontSize:"11px"}}
-                          >
-                            Short Balance
-                          </th>
-                          <th
-                            scope="col"
-                            style={{ textAlign: "right", background: "lightgrey" ,whiteSpace:"normal",color:"#000",fontSize:"11px"}}
-                          >
-                            Settle Amount
-                          </th>
-                          <th
-                            scope="col"
-                            style={{ textAlign: "right", background: "lightgrey" ,whiteSpace:"normal",color:"#000",fontSize:"11px"}}
-                          >
-                            Remark
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {creditors && creditors.length > 0 ? (
-                          creditors.map((item) => {
-                            const adminId = item.admin_id;
-                            const amount = parseFloat(item.total_amount) || 0;
-                            return (
-                              <tr key={adminId}>
-                                <td>{item.username || '-'}</td>
-                                <td style={{ color: "green", textAlign: "right" }}>
-                                  {formatAmount(amount)}
-                                </td>
-                                <td style={{ textAlign: "right", color: "black" }}>
-                                  {formatAmount(0)}
-                                </td>
-                                <td style={{ textAlign: "right" }}>
-                                  <div>
-                                    <input
-                                      type="number"
-                                      placeholder="Amount"
-                                      value={settleAmounts[adminId] || ''}
-                                      onChange={(e) => handleSettleAmountChange(adminId, e.target.value)}
-                                    />
-                                    <button
-                                      className='fullsettle'
-                                      onClick={() => handleFullSettle(adminId)}
-                                    >
-                                      Full Settle
-                                    </button>
-                                  </div>
-                                </td>
-                                <td style={{ textAlign: "right" }}>
-                                  <div>
-                                    <input
-                                      type="text"
-                                      placeholder="Remarks"
-                                      value={remarks[adminId] || ''}
-                                      onChange={(e) => handleRemarkChange(adminId, e.target.value)}
-                                    />
-                                  </div>
-                                </td>
-                              </tr>
-                            );
-                          })
-                        ) : (
-                          <tr>
-                            <td colSpan="5" className="text-center py-4">
-                              No creditors found
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-6 col-12">
-                <div className='headingred'>
-                  Debtors Account (lena hai)
-                </div>
-                <div className="table-responsive">
-                  <table className="banking_detail_table table-color table">
+                  <table className="banking_detail_table table-color table settle_table">
                     <thead>
                       <tr>
-                        <th scope="col" style={{ background: "lightgrey",color:"#000",fontSize:"11px" }}>
-                          Account
-                        </th>
-                        <th
-                          scope="col"
-                          style={{ textAlign: "right", background: "lightgrey",color:"#000",fontSize:"11px" }}
-                        >
-                          Client (P/L)
-                        </th>
-                        <th
-                          scope="col"
-                          style={{ textAlign: "right", background: "lightgrey",color:"#000",fontSize:"11px" }}
-                        >
-                          Settle Amount
-                        </th>
-                        <th
-                          scope="col"
-                          style={{ textAlign: "right", background: "lightgrey",color:"#000",fontSize:"11px" }}
-                        >
-                          Remark
-                        </th>
+                        <th scope="col">Account</th>
+                        <th scope="col">Client (P/L)</th>
+                        <th scope="col">Short Balance</th>
+                        <th scope="col">Settle Amount</th>
+                        <th scope="col">Remark</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {debtors && debtors.length > 0 ? (
-                        debtors.map((item) => {
+                      {creditors && creditors.length > 0 ? (
+                        creditors.map((item) => {
                           const adminId = item.admin_id;
                           const amount = parseFloat(item.total_amount) || 0;
                           return (
                             <tr key={adminId}>
-                              <td>{item.username || '-'}</td>
-                              <td style={{ color: "red", textAlign: "right" }}>
-                                {formatAmount(Math.abs(amount))}
+                              <td>{item.username || "-"}</td>
+                              <td
+                                style={{ color: "green", textAlign: "right" }}
+                              >
+                                {formatAmount(amount)}
+                              </td>
+                              <td
+                                style={{ textAlign: "right", color: "black" }}
+                              >
+                                {formatAmount(0)}
                               </td>
                               <td style={{ textAlign: "right" }}>
                                 <div>
-                                  <input
+                                  <input className="userinput"
                                     type="number"
                                     placeholder="Amount"
-                                    value={settleAmounts[adminId] || ''}
-                                    onChange={(e) => handleSettleAmountChange(adminId, e.target.value)}
+                                    value={settleAmounts[adminId] || ""}
+                                    onChange={(e) =>
+                                      handleSettleAmountChange(
+                                        adminId,
+                                        e.target.value,
+                                      )
+                                    }
                                   />
                                   <button
-                                    className='fullsettlered'
+                                    className="fullsettle"
                                     onClick={() => handleFullSettle(adminId)}
                                   >
                                     Full Settle
@@ -421,11 +338,16 @@ function Settlement() {
                               </td>
                               <td style={{ textAlign: "right" }}>
                                 <div>
-                                  <input
+                                  <input className="userinput"
                                     type="text"
                                     placeholder="Remarks"
-                                    value={remarks[adminId] || ''}
-                                    onChange={(e) => handleRemarkChange(adminId, e.target.value)}
+                                    value={remarks[adminId] || ""}
+                                    onChange={(e) =>
+                                      handleRemarkChange(
+                                        adminId,
+                                        e.target.value,
+                                      )
+                                    }
                                   />
                                 </div>
                               </td>
@@ -434,16 +356,88 @@ function Settlement() {
                         })
                       ) : (
                         <tr>
-                          <td colSpan="4" className="text-center py-4">
-                            No debtors found
+                          <td colSpan="5" className="text-center py-4">
+                            No creditors found
                           </td>
                         </tr>
                       )}
                     </tbody>
                   </table>
-                </div>                  </div>
+                </div>
+              </div>
             </div>
-            {/* <div className="inner-wrapper">
+            <div className="col-md-6 col-12">
+              <div className="headingred">Debtors Account (lena hai)</div>
+              <div className="table-responsive">
+                <table className="banking_detail_table table-color table settle_table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Account</th>
+                      <th scope="col">Client (P/L)</th>
+                      <th scope="col">Settle Amount</th>
+                      <th scope="col">Remark</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {debtors && debtors.length > 0 ? (
+                      debtors.map((item) => {
+                        const adminId = item.admin_id;
+                        const amount = parseFloat(item.total_amount) || 0;
+                        return (
+                          <tr key={adminId}>
+                            <td>{item.username || "-"}</td>
+                            <td style={{ color: "red", textAlign: "right" }}>
+                              {formatAmount(Math.abs(amount))}
+                            </td>
+                            <td style={{ textAlign: "right" }}>
+                              <div>
+                                <input className="userinput"
+                                  type="number"
+                                  placeholder="Amount"
+                                  value={settleAmounts[adminId] || ""}
+                                  onChange={(e) =>
+                                    handleSettleAmountChange(
+                                      adminId,
+                                      e.target.value,
+                                    )
+                                  }
+                                />
+                                <button
+                                  className="fullsettlered"
+                                  onClick={() => handleFullSettle(adminId)}
+                                >
+                                  Full Settle
+                                </button>
+                              </div>
+                            </td>
+                            <td style={{ textAlign: "right" }}>
+                              <div>
+                                <input className="userinput"
+                                  type="text"
+                                  placeholder="Remarks"
+                                  value={remarks[adminId] || ""}
+                                  onChange={(e) =>
+                                    handleRemarkChange(adminId, e.target.value)
+                                  }
+                                />
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    ) : (
+                      <tr>
+                        <td colSpan="4" className="text-center py-4">
+                          No debtors found
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>{" "}
+            </div>
+          </div>
+          {/* <div className="inner-wrapper">
               <div
                 className="common-container"
                 style={{
@@ -458,39 +452,42 @@ function Settlement() {
              
               </div>
             </div> */}
-            <div
-              className="paymoney d-flex justify-content-center align-items-center"
-              style={{ paddingTop: 0 }}
+          <div
+            className="paymoney d-flex justify-content-center align-items-center"
+            style={{ paddingTop: 0 }}
+          >
+            <form
+              className="paymoney_form justify-content-center"
+              onSubmit={handleSubmitSettlement}
             >
-              <form className="paymoney_form justify-content-center" onSubmit={handleSubmitSettlement}>
-                <input
-                  placeholder="Password"
-                  name="password"
-                  type="password"
-                  className="form-control"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <button
-                  type="submit"
-                  className="btn green-btn"
-                  style={{ color: "black", marginRight: 5 }}
-                  disabled={submitLoading}
-                >
-                  {submitLoading ? 'Processing...' : 'Submit Payment'}
-                </button>
-                <button
-                  className="clear_btn btn"
-                  type="button"
-                  onClick={handleClearAll}
-                >
-                  Clear All
-                </button>
-              </form>
-            </div>
-            <div />
+              <input
+                placeholder="Password"
+                name="password"
+                type="password"
+                className="form-control"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="submit"
+                className="btn green-btn"
+                style={{ color: "black", marginRight: 5 }}
+                disabled={submitLoading}
+              >
+                {submitLoading ? "Processing..." : "Submit Payment"}
+              </button>
+              <button
+                className="clear_btn btn"
+                type="button"
+                onClick={handleClearAll}
+              >
+                Clear All
+              </button>
+            </form>
           </div>
+          <div />
+        </div>
         {/* <div className="container-fluid">
         </div> */}
       </section>

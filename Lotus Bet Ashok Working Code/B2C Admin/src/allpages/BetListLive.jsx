@@ -311,7 +311,7 @@ function BetListLive() {
                                     )} */}
 
                                     <div className="table-responsive">
-                                        <table className="all-bets-dialog-tabel table">
+                                        <table className="betlist_table all-bets-dialog-tabel table">
                                             <thead>
                                                 <tr>
                                                     <th scope="col">PL ID</th>

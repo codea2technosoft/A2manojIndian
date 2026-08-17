@@ -279,19 +279,19 @@ function ViewEvent() {
       {toast.show && (
         <Toast message={toast.message} type={toast.type} onClose={hideToast} />
       )}
-      <div className="card">
-        <div className="card-header gap-2 flex-wrap-mobile d-flex justify-content-between align-items-center">
-          <h3 className="card-title">All Event List</h3>
+      <div className="allcommon">
+        <div className="py-3 gap-2 flex-wrap-mobile d-flex justify-content-between align-items-center">
+          <h3 className="page-title">All Event List</h3>
           <div className="d-flex gap-2">
             {/* <button className="btn btn-info me-2" onClick={handleRefresh}>Refresh</button> */}
             <button
-              className="btn btn-light"
+              className="btn btn-dark"
               onClick={() => window.history.back()}
             >
               Back
             </button>
             <button
-              className="btn btn-light"
+              className="btn btn-light theme_dark_btn"
               onClick={() => setFilter((prev) => !prev)}
             >
               <MdFilterListAlt /> Filter
@@ -299,7 +299,7 @@ function ViewEvent() {
           </div>
         </div>
         {filter && (
-          <div className="card-body border-bottom">
+          <div className="card-body border-bottom pb-3">
             <div className="row g-3">
               <div className="col-md-5">
                 <label className="form-label">Status</label>

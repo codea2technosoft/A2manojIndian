@@ -203,7 +203,7 @@ function AprofitCasino() {
                   <div className="row">
                     <div className="col-xl-12 col-md-12">
                       <div className="row">
-                        <div className="mb-lg-0 mb-3 col-lg-2 col-sm-6">
+                        <div className="mb-lg-0 mb-3 col-lg-3 col-sm-6">
                           <div className="bet-sec">
                             <label className="form-label">Sports:</label>
                             <select

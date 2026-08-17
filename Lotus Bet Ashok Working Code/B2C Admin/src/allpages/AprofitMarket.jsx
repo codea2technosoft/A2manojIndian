@@ -264,66 +264,277 @@ function AprofitMarket() {
     const handleToDateChange = (e) => setToDate(e.target.value);
     const handleToTimeChange = (e) => setToTime(e.target.value);
 
-    // ✅ Render sub-table for expanded row
-    const renderSubTable = (item) => {
-        if (!item.bets || item.bets.length === 0) {
-            return (
-                <tr>
-                    <td colSpan="7" className="text-center">No bets available</td>
-                </tr>
-            );
-        }
+// const renderSubTable = (item) => {
+//     if (!item.bets || item.bets.length === 0) {
+//         return (
+//             <tr>
+//                 <td colSpan="7" className="text-center">No bets available</td>
+//             </tr>
+//         );
+//     }
 
-        const groupedBets = item.bets.reduce((acc, bet) => {
-            const key = bet.bet_type || bet.type || 'unknown';
-            if (!acc[key]) acc[key] = [];
-            acc[key].push(bet);
-            return acc;
-        }, {});
+//     const groupedBets = item.bets.reduce((acc, bet) => {
+//         const key = bet.bet_type || bet.type || 'unknown';
+//         if (!acc[key]) acc[key] = [];
+//         acc[key].push(bet);
+//         return acc;
+//     }, {});
 
-        return Object.keys(groupedBets).map((betType, index) => {
-            const bets = groupedBets[betType];
-            const totalProfitLoss = bets.reduce((sum, bet) => sum + (parseFloat(bet.profit_loss) || 0), 0);
+//     return Object.keys(groupedBets).map((betType, index) => {
+//         const bets = groupedBets[betType];
+        
+//         // ✅ Total P/L
+//         const totalProfitLoss = bets.reduce((sum, bet) => sum + (parseFloat(bet.profit_loss) || 0), 0);
+        
+//         // ✅ Total Commission - YAHAN SE COMMISSION AA RAHA HAI
+//         const totalCommission = bets.reduce((sum, bet) => {
+//             // commission ya amount_commission dono mein se koi ek
+//             const comm = parseFloat(bet.commission) || parseFloat(bet.amount_commission) || 0;
+//             return sum + comm;
+//         }, 0);
 
-            const userIds = bets.map(bet => bet.user_id).filter(id => id);
-            const uniqueUserIds = [...new Set(userIds)];
-            const userIdParam = uniqueUserIds.length > 0 ? `?user_id=${uniqueUserIds[0]}` : '';
+//         const userIds = bets.map(bet => bet.user_id).filter(id => id);
+//         const uniqueUserIds = [...new Set(userIds)];
+//         const userIdParam = uniqueUserIds.length > 0 ? `?user_id=${uniqueUserIds[0]}` : '';
 
-            return (
-                <tr key={index}>
-                    <td>{betType.charAt(0).toUpperCase() + betType.slice(1)}</td>
-                    <td>{bets.length}</td>
-                    <td>
-                        <span className={totalProfitLoss >= 0 ? 'text-success' : 'text-danger'}>
-                            {formatNumber(totalProfitLoss)}
-                        </span>
-                    </td>
-                    <td>
-                        <span className={totalProfitLoss >= 0 ? 'text-danger' : 'text-success'}>
-                            {formatNumber(-totalProfitLoss)}
-                        </span>
-                    </td>
-                    <td>0.00</td>
-                    <td>
-                        <span className={totalProfitLoss >= 0 ? 'text-success' : 'text-danger'}>
-                            {formatNumber(totalProfitLoss)}
-                        </span>
-                    </td>
-                    <td style={{ minWidth: "120px" }}>
-                        <Link
-                            style={{ padding: "5px", textDecoration: "none" }}
-                            className="me-0 theme_light_btn theme_dark_btn"
-                            to={`/match-market-bets/${item.id}${userIdParam}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Show Bets
-                        </Link>
-                    </td>
-                </tr>
-            );
-        });
-    };
+//         return (
+//             <tr key={index}>
+//                 <td>{betType.charAt(0).toUpperCase() + betType.slice(1)}</td>
+//                 <td>{bets.length}</td>
+//                 <td>
+//                     <span className={totalProfitLoss >= 0 ? 'text-success' : 'text-danger'}>
+//                         {formatNumber(totalProfitLoss)}
+//                     </span>
+//                 </td>
+//                 <td>
+//                     <span className={totalProfitLoss >= 0 ? 'text-danger' : 'text-success'}>
+//                         {formatNumber(-totalProfitLoss)}
+//                     </span>
+//                 </td>
+//                 <td>
+//                     {/* ✅ Commission yahan show karo */}
+//                     <span className="text-primary">
+//                         {formatNumber(totalCommission)}
+//                     </span>
+//                 </td>
+//                 <td>
+//                     <span className={totalProfitLoss >= 0 ? 'text-success' : 'text-danger'}>
+//                         {formatNumber(totalProfitLoss)}
+//                     </span>
+//                 </td>
+//                 <td style={{ minWidth: "120px" }}>
+//                     <Link
+//                         style={{ padding: "5px", textDecoration: "none" }}
+//                         className="me-0 theme_light_btn theme_dark_btn"
+//                         // to={`/match-market-bets/${item.id}${userIdParam}`}
+//                         to={`/match-market-bets/${item.id}?event_id=${item.event_id || item.id}&bet_type=${item.bet_type || 'all'}${userIdParam ? '&' + userIdParam.replace('?', '') : ''}`}
+//                         target="_blank"
+//                         rel="noopener noreferrer"
+//                     >
+//                         Show Bets
+//                     </Link>
+//                 </td>
+//             </tr>
+//         );
+//     });
+// };
+// const renderSubTable = (item) => {
+//     if (!item.bets || item.bets.length === 0) {
+//         return (
+//             <tr>
+//                 <td colSpan="7" className="text-center">No bets available</td>
+//             </tr>
+//         );
+//     }
+
+//     const groupedBets = item.bets.reduce((acc, bet) => {
+//         const key = bet.bet_type || bet.type || 'unknown';
+//         if (!acc[key]) acc[key] = [];
+//         acc[key].push(bet);
+//         return acc;
+//     }, {});
+
+//     return Object.keys(groupedBets).map((betType, index) => {
+//         const bets = groupedBets[betType];
+        
+//         // ✅ Total P/L
+//         const totalProfitLoss = bets.reduce((sum, bet) => sum + (parseFloat(bet.profit_loss) || 0), 0);
+        
+//         // ✅ Total Commission
+//         const totalCommission = bets.reduce((sum, bet) => {
+//             const comm = parseFloat(bet.commission) || parseFloat(bet.amount_commission) || 0;
+//             return sum + comm;
+//         }, 0);
+
+//         const userIds = bets.map(bet => bet.user_id).filter(id => id);
+//         const uniqueUserIds = [...new Set(userIds)];
+//         const userIdParam = uniqueUserIds.length > 0 ? `user_id=${uniqueUserIds[0]}` : '';
+
+//         // ✅ Build URL with all params
+//         const buildUrl = () => {
+//             let url = `/match-market-bets/${item.id}`;
+//             const params = [];
+            
+//             // ✅ Add event_id
+//             if (item.event_id) {
+//                 params.push(`event_id=${item.event_id}`);
+//             }
+            
+//             // ✅ Add bet_type
+//             if (item.bet_type) {
+//                 params.push(`bet_type=${item.bet_type}`);
+//             }
+            
+//             // ✅ Add user_id
+//             if (userIdParam) {
+//                 params.push(userIdParam);
+//             }
+            
+//             if (params.length > 0) {
+//                 url += `?${params.join('&')}`;
+//             }
+            
+//             return url;
+//         };
+
+//         return (
+//             <tr key={index}>
+//                 <td>{betType.charAt(0).toUpperCase() + betType.slice(1)}</td>
+//                 <td>{bets.length}</td>
+//                 <td>
+//                     <span className={totalProfitLoss >= 0 ? 'text-success' : 'text-danger'}>
+//                         {formatNumber(totalProfitLoss)}
+//                     </span>
+//                 </td>
+//                 <td>
+//                     <span className={totalProfitLoss >= 0 ? 'text-danger' : 'text-success'}>
+//                         {formatNumber(-totalProfitLoss)}
+//                     </span>
+//                 </td>
+//                 <td>
+//                     <span className="text-primary">
+//                         {formatNumber(totalCommission)}
+//                     </span>
+//                 </td>
+//                 <td>
+//                     <span className={totalProfitLoss >= 0 ? 'text-success' : 'text-danger'}>
+//                         {formatNumber(totalProfitLoss)}
+//                     </span>
+//                 </td>
+//                 <td style={{ minWidth: "120px" }}>
+//                     <Link
+//                         style={{ padding: "5px", textDecoration: "none" }}
+//                         className="me-0 theme_light_btn theme_dark_btn"
+//                         to={buildUrl()}
+//                         target="_blank"
+//                         rel="noopener noreferrer"
+//                     >
+//                         Show Bets
+//                     </Link>
+//                 </td>
+//             </tr>
+//         );
+//     });
+// };
+
+const renderSubTable = (item) => {
+    if (!item.bets || item.bets.length === 0) {
+        return (
+            <tr>
+                <td colSpan="7" className="text-center">No bets available</td>
+            </tr>
+        );
+    }
+
+    const groupedBets = item.bets.reduce((acc, bet) => {
+        const key = bet.bet_type || bet.type || 'unknown';
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(bet);
+        return acc;
+    }, {});
+
+    return Object.keys(groupedBets).map((betType, index) => {
+        const bets = groupedBets[betType];
+        
+        const totalProfitLoss = bets.reduce((sum, bet) => sum + (parseFloat(bet.profit_loss) || 0), 0);
+        
+        const totalCommission = bets.reduce((sum, bet) => {
+            const comm = parseFloat(bet.commission) || parseFloat(bet.amount_commission) || 0;
+            return sum + comm;
+        }, 0);
+
+        // ✅ Sabse pehla user_id nikaalo
+        const userIds = bets.map(bet => bet.user_id).filter(id => id);
+        const uniqueUserIds = [...new Set(userIds)];
+        const firstUserId = uniqueUserIds.length > 0 ? uniqueUserIds[0] : null;
+
+        // ✅ URL build karo
+        const buildUrl = () => {
+            let url = `/match-market-bets/${item.id}`;
+            const params = [];
+            
+            // ✅ event_id
+            if (item.event_id) {
+                params.push(`event_id=${item.event_id}`);
+            }
+            
+            // ✅ bet_type
+            if (item.bet_type) {
+                params.push(`bet_type=${item.bet_type}`);
+            }
+            
+            // ✅ user_id - YAHAN SE USER_ID AA RAHA HAI
+            if (firstUserId) {
+                params.push(`user_id=${firstUserId}`);
+            }
+            
+            if (params.length > 0) {
+                url += `?${params.join('&')}`;
+            }
+            
+            console.log("🔗 Generated URL:", url); // ✅ Debug ke liye
+            return url;
+        };
+
+        return (
+            <tr key={index}>
+                <td>{betType.charAt(0).toUpperCase() + betType.slice(1)}</td>
+                <td>{bets.length}</td>
+                <td>
+                    <span className={totalProfitLoss >= 0 ? 'text-success' : 'text-danger'}>
+                        {formatNumber(totalProfitLoss)}
+                    </span>
+                </td>
+                <td>
+                    <span className={totalProfitLoss >= 0 ? 'text-danger' : 'text-success'}>
+                        {formatNumber(-totalProfitLoss)}
+                    </span>
+                </td>
+                <td>
+                    <span className="text-primary">
+                        {formatNumber(totalCommission)}
+                    </span>
+                </td>
+                <td>
+                    <span className={totalProfitLoss >= 0 ? 'text-success' : 'text-danger'}>
+                        {formatNumber(totalProfitLoss)}
+                    </span>
+                </td>
+                <td style={{ minWidth: "120px" }}>
+                    <Link
+                        style={{ padding: "5px", textDecoration: "none" }}
+                        className="me-0 theme_light_btn theme_dark_btn"
+                        to={buildUrl()}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Show Bets
+                    </Link>
+                </td>
+            </tr>
+        );
+    });
+};
 
     return (
         <div className='allcommon'>

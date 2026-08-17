@@ -477,15 +477,15 @@ export default function AccountStatement() {
 
   return (
     <section>
-      <div className="card">
-        <div className="card-header d-flex align-items-center justify-content-between">
+      <div className="">
+        <div className="py-3 d-flex align-items-center justify-content-between">
           {/* Tabs */}
           <div className="d-flex gap-2">
             {["all", "pl", "account"].map((tab) => (
               <div
                 key={tab}
                 className={`px-3 py-2 rounded cursor-pointer ${
-                  activeTab === tab ? "bg-warning" : "bg-light text-dark"
+                  activeTab === tab ? "btn btn-light theme_dark_btn" : "bg-light text-dark"
                 }`}
                 onClick={() => handleTabChange(tab)}
               >
@@ -494,11 +494,11 @@ export default function AccountStatement() {
             ))}
           </div>
           <div className="d-flex align-items-center gap-2 justify-content-end">
-            <button className="btn btn-light" onClick={() => navigate(-1)}>
+            <button className="btn btn-dark" onClick={() => navigate(-1)}>
               <BsArrowLeft /> Back
             </button>
             <button
-              className="btn btn-light"
+              className="btn btn-light theme_dark_btn"
               onClick={() => setFilter((prev) => !prev)}
             >
               <MdFilterListAlt /> Filter

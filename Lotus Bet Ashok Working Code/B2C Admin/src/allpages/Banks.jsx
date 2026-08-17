@@ -632,8 +632,8 @@ function Banks() {
                     </div>
                   </div>
                 ) : (
-                  <form onSubmit={handleEditSubmit}>
-                    <div className="mb-3">
+                  <form onSubmit={handleEditSubmit} className='row'>
+                    <div className="mb-3 col-12 col-md-6">
                       <label className="form-label">Bank Type</label>
                       <select className="form-select" value="deposit" disabled>
                         <option value="deposit">Deposit</option>
@@ -641,7 +641,7 @@ function Banks() {
                       <small className="text-muted">Bank type is fixed to Deposit</small>
                     </div>
 
-                    <div className="mb-3">
+                    <div className="mb-3 col-12 col-md-6">
                       <label className="form-label">Deposit Type</label>
                       <select
                         name="depositType"
@@ -657,7 +657,7 @@ function Banks() {
                       </select>
                     </div>
 
-                    <div className="mb-3">
+                    <div className="mb-3 col-12 col-md-6">
                       <label className="form-label">Account Name</label>
                       <input
                         name="accountName"
@@ -671,7 +671,7 @@ function Banks() {
 
                     {selectedBank.depositType === 'bankTransfer' && (
                       <>
-                        <div className="mb-3">
+                        <div className="mb-3 col-12 col-md-6">
                           <label className="form-label">IFSC Code</label>
                           <input
                             name="ifsc_code"
@@ -682,7 +682,7 @@ function Banks() {
                             required
                           />
                         </div>
-                        <div className="mb-3">
+                        <div className="mb-3 col-12 col-md-6">
                           <label className="form-label">Bank Name</label>
                           <input
                             name="bank_name"
@@ -693,7 +693,7 @@ function Banks() {
                             required
                           />
                         </div>
-                        <div className="mb-3">
+                        <div className="mb-3 col-12 col-md-6">
                           <label className="form-label">Account Number</label>
                           <input
                             name="account_number"
@@ -709,7 +709,7 @@ function Banks() {
 
                     {(selectedBank.depositType === 'UPI' || selectedBank.depositType === 'QR') && (
                       <>
-                        <div className="mb-3">
+                        <div className="mb-3 col-12 col-md-6">
                           <label className="form-label">UPI ID</label>
                           <input
                             name="upi_id"
@@ -721,7 +721,7 @@ function Banks() {
                           />
                         </div>
                         {selectedBank.depositType === 'QR' && (
-                          <div className="mb-3">
+                          <div className="mb-3 col-12 col-md-6">
                             <label className="form-label">QR Code Image</label>
                             <input
                               name="image"
@@ -744,7 +744,7 @@ function Banks() {
                       </>
                     )}
 
-                    <div className="mb-3">
+                    <div className="mb-3 col-12 col-md-6">
                       <label className="form-label">Deposit Limit</label>
                       <input
                         name="depositLimit"
@@ -756,7 +756,7 @@ function Banks() {
                       />
                     </div>
 
-                    <div className="mb-3">
+                    <div className="mb-3 col-12 col-md-6">
                       <label className="form-label">Deposit Discount</label>
                       <input
                         name="discount"

@@ -1,8 +1,7 @@
-:root{
-  --primary:#3db39e;
+:root {
+  --primary: #3db39e;
 }
 .allcommon {
-
   .fullsettle,
   .fullsettlered {
     color: white;
@@ -46,7 +45,7 @@
   }
 
   .btn-close {
-    background: url('./asset/image/close.png');
+    background: url("./asset/image/close.png");
     background-position: 50%;
     background-repeat: no-repeat;
     background-size: 20px;
@@ -557,11 +556,11 @@
     justify-content: space-between;
   }
 
-  .banking-table>td {
+  .banking-table > td {
     border: 1px solid #5642424f;
   }
 
-  .banking-table>th {
+  .banking-table > th {
     border: 1px solid #555 !important;
   }
 
@@ -855,8 +854,6 @@
   }
 
   .search_banking_detail {
-    background: #fff;
-    width: 98%;
     margin: 1% auto 0;
     padding-top: 2px !important;
     padding: 0.8rem;
@@ -995,7 +992,7 @@
 
   .fa-minus-square {
     margin-left: 4px;
-    color: #3db39e!important;
+    color: #3db39e !important;
     font-size: 14px;
   }
 
@@ -1483,7 +1480,7 @@
     width: 84px;
   }
 
-  .form-control.is-invalid+canvas {
+  .form-control.is-invalid + canvas {
     transform: translateY(-40%);
   }
 
@@ -1589,7 +1586,7 @@
   }
 
   .modal-header {
-    padding: 0 0 10px 0 !important;
+    padding: 0 !important;
   }
 
   .risk-management-table {
@@ -1840,19 +1837,18 @@
     border: 1px solid #bbb;
     color: #333;
     overflow: hidden;
-    border-radius: 5px 0 0 5px;
   }
 
   .dw-toggle .tgl_btn label.bg-red {
     border-radius: 0 5px 5px 0;
   }
 
-  .dw-toggle .tgl_btn input[type="radio"]:checked+.bg-green {
+  .dw-toggle .tgl_btn input[type="radio"]:checked + .bg-green {
     background: #5bab03;
     color: #fff;
   }
 
-  .dw-toggle .tgl_btn input[type="radio"]:checked+.bg-red {
+  .dw-toggle .tgl_btn input[type="radio"]:checked + .bg-red {
     background: #d0021b !important;
     color: #fff;
   }
@@ -1956,7 +1952,6 @@
   .paymoney {
     padding: 20px 15px;
     margin: 20px 0;
-    background: #fff;
   }
 
   .payment_count {
@@ -1969,7 +1964,7 @@
     font-size: 12px;
   }
 
-  .setting_dashboard_block>ul {
+  .setting_dashboard_block > ul {
     display: flex;
     flex-wrap: wrap;
     padding: 0;
@@ -1978,7 +1973,7 @@
     margin: 0 -6px;
   }
 
-  .setting_dashboard_block>ul>li {
+  .setting_dashboard_block > ul > li {
     flex: 0 0 164px;
     max-width: 164px;
     margin: 6px;
@@ -1987,7 +1982,7 @@
     border: 2px solid #333;
   }
 
-  .setting_dashboard_block>ul>li figure {
+  .setting_dashboard_block > ul > li figure {
     margin: 0;
   }
 
@@ -2038,7 +2033,7 @@
     flex: 1;
   }
 
-  .surveliance-setting-sec ul>li {
+  .surveliance-setting-sec ul > li {
     flex: 0 0 14%;
     max-width: calc(14% - 12px);
   }
@@ -2278,6 +2273,7 @@
     color: #333;
     border-color: #ddd;
     text-align: left;
+    text-wrap: nowrap !important;
   }
 
   .account-table .inner_table td {
@@ -2323,7 +2319,7 @@
     margin-bottom: 15px;
   }
 
-  .profit_loss_table>td {
+  .profit_loss_table > td {
     position: relative;
     padding: 0;
     border-top-color: #7e97a7;
@@ -2390,7 +2386,7 @@
     border-top: 1px solid #7e97a7;
   }
 
-  .profit_loss_table>td {
+  .profit_loss_table > td {
     position: relative;
     padding: 0;
     border-top-color: #7e97a7;
@@ -2651,6 +2647,12 @@
 
   .banking_detail_table.table {
     max-width: 100%;
+    tr {
+      th {
+        text-wrap: wrap;
+        text-transform: capitalize;
+      }
+    }
   }
 
   .form-select {
@@ -2749,13 +2751,13 @@
   color: var(--bs-table-striped-color);
 } */
 
-  .batting-table table>tr:nth-of-type(odd) td {
+  .batting-table table > tr:nth-of-type(odd) td {
     background: var(--bs-table-striped-bg);
     color: var(--bs-table-striped-color);
   }
 
-  .batting-table table>tr:nth-of-type(odd) td span,
-  .batting-table table>tr:nth-of-type(odd) td strong {
+  .batting-table table > tr:nth-of-type(odd) td span,
+  .batting-table table > tr:nth-of-type(odd) td strong {
     background-color: transparent;
   }
 
@@ -2763,7 +2765,7 @@
   background-color: transparent;
 } */
 
-  .table-color table tbody>tr:nth-of-type(odd) td {
+  .table-color table tbody > tr:nth-of-type(odd) td {
     background: var(--bs-table-striped-bg);
     color: var(--bs-table-striped-color);
   }
@@ -2966,9 +2968,7 @@
   .banking-table .responsive {
     overflow-x: auto;
     width: 100%;
-    overflow-y: scroll;
     min-height: 100%;
-    /*max-height: 550px;*/
   }
 
   .margin0 {
@@ -3726,7 +3726,8 @@
   .br-full:after,
   .suspended-event:after,
   .suspended-fancy:after {
-    background: url(https://images.staticcontent.io/sex/aimg/fancy.png) rgba(0, 0, 0, 0.5);
+    background: url(https://images.staticcontent.io/sex/aimg/fancy.png)
+      rgba(0, 0, 0, 0.5);
   }
 
   .ask {
@@ -3769,7 +3770,8 @@
   .br-full:after,
   .suspended-event:after,
   .suspended-fancy:after {
-    background: url(https://images.staticcontent.io/sex/aimg/fancy.png) rgba(0, 0, 0, 0.5);
+    background: url(https://images.staticcontent.io/sex/aimg/fancy.png)
+      rgba(0, 0, 0, 0.5);
   }
 
   .suspended-fancy {
@@ -4000,7 +4002,7 @@
     left: 100%;
   }
 
-  .confirm-details>p {
+  .confirm-details > p {
     padding: 0px !important;
     margin: 0px !important;
     font-size: 14px;
@@ -4249,7 +4251,7 @@
     width: 0;
   }
 
-  .checkboxx input:checked~.checkmark1:after {
+  .checkboxx input:checked ~ .checkmark1:after {
     display: block;
   }
 
@@ -4267,7 +4269,7 @@
     transform: rotate(45deg);
   }
 
-  .checkboxx input:checked~.checkmark1 {
+  .checkboxx input:checked ~ .checkmark1 {
     background-color: #000;
   }
 
@@ -4330,8 +4332,6 @@
     background: white;
   }
 
-
-
   @media (max-width: 1399.98px) {
     .bet_status .bet-sec .form-group .form-control {
       font-size: 13px;
@@ -4371,7 +4371,8 @@
     }
 
     .account-table.batting-table table {
-      width: 1200px;
+      // width: 1200px;
+      width: 100%;
     }
 
     .betting-profile-sec form {
@@ -4491,7 +4492,7 @@
     }
 
     /**=================RR=============**/
-    .setting_dashboard_block>ul>li {
+    .setting_dashboard_block > ul > li {
       flex: 0 0 20%;
       max-width: calc(20% - 12px);
     }
@@ -4721,7 +4722,7 @@
       padding: 7px 10px;
     }
 
-    .setting_dashboard_block>ul>li {
+    .setting_dashboard_block > ul > li {
       flex: 0 0 25%;
       max-width: calc(25% - 12px);
     }
@@ -5084,7 +5085,7 @@
       font-size: 10px;
     }
 
-    .batting-table-scroll .table> :not(caption)>*>* {
+    .batting-table-scroll .table > :not(caption) > * > * {
       background-color: transparent;
     }
 
@@ -5257,9 +5258,6 @@
       background: #333;
     }
 
-
-
-
     .find-member-director .btn:hover,
     .theme_light_btn:hover {
       background-color: #000 !important;
@@ -5356,7 +5354,6 @@
       transform: none;
       top: 15%;
     }
-
 
     .change-status-form form {
       flex-direction: column;
@@ -5473,14 +5470,14 @@
       display: inline-block;
     }
 
-    .setting_dashboard_block>ul>li {
+    .setting_dashboard_block > ul > li {
       flex: 0 0 33.333%;
       max-width: calc(33.333% - 12px);
     }
   }
 
   @media (max-width: 479px) {
-    .setting_dashboard_block>ul>li {
+    .setting_dashboard_block > ul > li {
       flex: 0 0 50%;
       max-width: calc(50% - 12px);
     }
@@ -5526,8 +5523,7 @@
     padding: 0.5rem 0.5rem;
   }
 
-
-  @media (max-width:350px) {
+  @media (max-width: 350px) {
     .top-header .col-7 {
       order: 2;
       width: 57%;
@@ -5543,14 +5539,11 @@
     }
 
     .logo img {
-      max-width: 110px !important
+      max-width: 110px !important;
     }
 
     .nav-link {
       padding: 8px 5px 8px 15px;
     }
-
-
-
   }
 }

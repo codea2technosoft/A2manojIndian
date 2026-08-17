@@ -499,18 +499,18 @@ const FancyResult = () => {
   };
 
   return (
-    <div className="card">
-      <div className="card-header d-flex align-items-md-center gap-2 flex-wrap-mobile justify-content-between">
-        <h3 className="card-title">Fancy Result Management</h3>
+    <div className="allcommon">
+      <div className="py-3 d-flex align-items-md-center gap-2 flex-wrap-mobile justify-content-between">
+        <h3 className="page-title">Fancy Result Management</h3>
         <div className="gap-2 d-flex">
           <button
-            className="btn btn-light"
+            className="btn btn-dark"
             onClick={() => (window.location.href = window.location.href)}
           >
             <MdRefresh size={20} />
           </button>
 
-          <button className="btn btn-light" onClick={() => navigate(-1)}>
+          <button className="btn btn-light theme_dark_btn" onClick={() => navigate(-1)}>
             ← Back
           </button>
         </div>
@@ -520,7 +520,7 @@ const FancyResult = () => {
           <div className="row mb-3 align-items-center">
             <div className="col-md-6">
               <div className="d-flex">
-                <div className="input-group me-2" style={{ width: "300px" }}>
+                <div className="input-group flex-nowrap me-2" style={{ width: "300px" }}>
                   <input
                     type="text"
                     className="form-control"

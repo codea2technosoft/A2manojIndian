@@ -9,7 +9,7 @@ import { io } from "socket.io-client";
 import { IoChatbubbleEllipsesSharp } from "react-icons/io5";
 import Swal from "sweetalert2";
 import { Modal, Button, Form } from "react-bootstrap";
-import axios from "axios"; // Add axios import
+import axios from "axios"; 
 import { encryptData, decryptData, generateHMAC } from "../Utils/encryption";
 import { addSuperAdminCoins } from "../Server/api";
 
@@ -476,7 +476,7 @@ function Header({ onToggleSidebar }) {
           </a>
         </div>
 
-        <div className=" d-xl-block  d-md-block d-sm-none d-none">
+        <div className="d-xl-block d-md-block d-sm-none d-none">
           <div className="togglebutton">
             <AiOutlineMenu onClick={onToggleSidebar} />
           </div>

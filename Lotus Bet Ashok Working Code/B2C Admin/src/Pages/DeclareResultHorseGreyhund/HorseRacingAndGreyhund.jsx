@@ -1,10 +1,12 @@
-
 import React, { useState, useEffect } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import Select from "react-select";
 import Swal from "sweetalert2";
 import moment from "moment";
-import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from "react-icons/md";
+import {
+  MdOutlineKeyboardArrowLeft,
+  MdOutlineKeyboardArrowRight,
+} from "react-icons/md";
 import {
   getmatchEvents,
   getSelectionsByMarket,
@@ -14,7 +16,7 @@ import {
   lenadenasettled,
   getseriesHorseCountryNameList,
   getseriesHorseCountryMarketNameList,
-  getseriesHorseSelectionstNameList
+  getseriesHorseSelectionstNameList,
 } from "../../Server/api";
 import { getAllGames } from "../../Server/game.service";
 
@@ -34,14 +36,14 @@ function HorseRacingAndGreyhund() {
   const [selectedMarket, setSelectedMarket] = useState("");
   const [selectedTeam, setSelectedTeam] = useState("");
   const [selectedSportId, setSelectedSportId] = useState("");
-  const [error, setError] = useState("")
+  const [error, setError] = useState("");
   const [btnLoading, setBtnLoading] = useState({});
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(100);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const admin_id = localStorage.getItem("admin_id")
+  const admin_id = localStorage.getItem("admin_id");
   const [loadingSelections, setLoadingSelections] = useState(false);
   const [declareLoading, setDeclareLoading] = useState(false);
   const [filters, setFilters] = useState({
@@ -70,7 +72,7 @@ function HorseRacingAndGreyhund() {
     timing: "",
     selection: "",
     timing_market_id: "",
-    timing_event_id: ""
+    timing_event_id: "",
   });
 
   const fetchGames = async () => {
@@ -124,18 +126,20 @@ function HorseRacingAndGreyhund() {
       setLoadingCountries(true);
       resetAllDependentStates();
 
-      const response = await getseriesHorseCountryNameList({ sport_id: sportId });
+      const response = await getseriesHorseCountryNameList({
+        sport_id: sportId,
+      });
       if (response && response.data) {
         if (response.data.success && response.data.data) {
           const dataArray = response.data.data;
 
           if (Array.isArray(dataArray) && dataArray.length > 0) {
-            const formattedCountries = dataArray.map(item => ({
+            const formattedCountries = dataArray.map((item) => ({
               value: item.name,
               label: item.name,
               raw: item,
               sport_id: item.sport_id,
-              country_id: item._id
+              country_id: item._id,
             }));
             setCountryNames(formattedCountries);
             console.log("Formatted countries:", formattedCountries);
@@ -154,7 +158,7 @@ function HorseRacingAndGreyhund() {
       Swal.fire({
         icon: "error",
         title: "Error fetching countries",
-        text: err.message || "Please try again"
+        text: err.message || "Please try again",
       });
     } finally {
       setLoadingCountries(false);
@@ -172,11 +176,16 @@ function HorseRacingAndGreyhund() {
       setSelectionList([]);
       setSelectedSelection(null);
 
-      console.log("Fetching market names for sport_id:", sportId, "country:", countryName);
+      console.log(
+        "Fetching market names for sport_id:",
+        sportId,
+        "country:",
+        countryName,
+      );
 
       const response = await getseriesHorseCountryMarketNameList({
         sport_id: sportId,
-        country_code: countryName
+        country_code: countryName,
       });
 
       if (response && response.data) {
@@ -184,7 +193,7 @@ function HorseRacingAndGreyhund() {
           const dataArray = response.data.data;
 
           if (Array.isArray(dataArray) && dataArray.length > 0) {
-            const formattedMarkets = dataArray.map(item => ({
+            const formattedMarkets = dataArray.map((item) => ({
               value: item.event_id,
               label: item.name,
               raw: item,
@@ -192,7 +201,7 @@ function HorseRacingAndGreyhund() {
               market_id: item._id,
               name: item.name,
               countryCode: item.countryCode,
-              sport_id: item.sport_id
+              sport_id: item.sport_id,
             }));
             setCountryMarketNames(formattedMarkets);
             console.log("Formatted markets:", formattedMarkets);
@@ -211,7 +220,7 @@ function HorseRacingAndGreyhund() {
       Swal.fire({
         icon: "error",
         title: "Error fetching markets",
-        text: err.message || "Please try again"
+        text: err.message || "Please try again",
       });
     } finally {
       setLoadingCountryMarkets(false);
@@ -231,20 +240,20 @@ function HorseRacingAndGreyhund() {
       setSelectionList([]);
       setSelectedSelection(null);
 
-      setMatchData(prev => ({
+      setMatchData((prev) => ({
         ...prev,
         timing: "",
         timing_market_id: "",
         timing_event_id: "",
         team_id: "",
-        team_name: ""
+        team_name: "",
       }));
 
       console.log("Fetching timings for:", { sportId, countryCode, name });
       const response = await getseriesHorseSelectionstNameList({
         sport_id: sportId,
         country_code: countryCode,
-        name: name
+        name: name,
       });
 
       if (response && response.data) {
@@ -258,7 +267,7 @@ function HorseRacingAndGreyhund() {
               time: item.time,
               marketid: item.marketid,
               event_id: item.event_id || item.marketid,
-              timing_id: item._id || item.marketid || index
+              timing_id: item._id || item.marketid || index,
             }));
             setTimingList(formattedTimings);
             console.log("Formatted timings:", formattedTimings);
@@ -266,7 +275,7 @@ function HorseRacingAndGreyhund() {
             setTimingList([]);
             Swal.fire({
               icon: "info",
-              title: "No timings available for this market"
+              title: "No timings available for this market",
             });
           }
         } else {
@@ -274,7 +283,7 @@ function HorseRacingAndGreyhund() {
           if (response.data && response.data.message) {
             Swal.fire({
               icon: "info",
-              title: response.data.message || "No timings available"
+              title: response.data.message || "No timings available",
             });
           }
         }
@@ -287,7 +296,7 @@ function HorseRacingAndGreyhund() {
       Swal.fire({
         icon: "error",
         title: "Error fetching timings",
-        text: err.message || "Please try again"
+        text: err.message || "Please try again",
       });
     } finally {
       setLoadingTimings(false);
@@ -301,21 +310,26 @@ function HorseRacingAndGreyhund() {
       setSelectedSelection(null);
 
       const res = await getSelectionsByMarket(marketid);
-      if (res && res.data && res.data.success && Array.isArray(res.data.teams)) {
+      if (
+        res &&
+        res.data &&
+        res.data.success &&
+        Array.isArray(res.data.teams)
+      ) {
         const formattedSelections = res.data.teams.map((t) => ({
           value: t.team_id,
           label: t.team_name,
           team_id: t.team_id,
           team_name: t.team_name,
           raw: t,
-          market_id: t.market_id
+          market_id: t.market_id,
         }));
-        setSelectionList(formattedSelections);;
+        setSelectionList(formattedSelections);
       } else {
         setSelectionList([]);
         Swal.fire({
           icon: "info",
-          title: "No selections found for this timing"
+          title: "No selections found for this timing",
         });
       }
     } catch (err) {
@@ -324,7 +338,7 @@ function HorseRacingAndGreyhund() {
       Swal.fire({
         icon: "error",
         title: "Error fetching selections",
-        text: err.message || "Please try again"
+        text: err.message || "Please try again",
       });
     } finally {
       setLoadingSelectionsList(false);
@@ -346,7 +360,7 @@ function HorseRacingAndGreyhund() {
       timing: "",
       selection: "",
       timing_market_id: "",
-      timing_event_id: ""
+      timing_event_id: "",
     });
   };
 
@@ -384,7 +398,7 @@ function HorseRacingAndGreyhund() {
       timing: "",
       selection: "",
       timing_market_id: "",
-      timing_event_id: ""
+      timing_event_id: "",
     });
 
     if (countryName && selectedSportId) {
@@ -405,20 +419,16 @@ function HorseRacingAndGreyhund() {
       timing: "",
       selection: "",
       timing_market_id: "",
-      timing_event_id: ""
+      timing_event_id: "",
     });
 
     if (selectedOption && selectedCountry && selectedSportId) {
-      setMatchData(prev => ({
+      setMatchData((prev) => ({
         ...prev,
         event_id: selectedOption.event_id,
-        market_id: selectedOption.market_id
+        market_id: selectedOption.market_id,
       }));
-      fetchTimings(
-        selectedSportId,
-        selectedCountry,
-        selectedOption.name
-      );
+      fetchTimings(selectedSportId, selectedCountry, selectedOption.name);
     }
   };
 
@@ -426,13 +436,13 @@ function HorseRacingAndGreyhund() {
     setSelectedTiming(selectedOption);
     setSelectionList([]);
     setSelectedSelection(null);
-    setMatchData(prev => ({
+    setMatchData((prev) => ({
       ...prev,
       timing: selectedOption?.time || selectedOption?.label || "",
       timing_market_id: selectedOption?.marketid || "",
       timing_event_id: selectedOption?.event_id || "",
       team_id: "",
-      team_name: ""
+      team_name: "",
     }));
 
     if (selectedOption && selectedOption.marketid) {
@@ -445,11 +455,11 @@ function HorseRacingAndGreyhund() {
 
     if (selectedOption) {
       setSelectedTeam(selectedOption.value);
-      setMatchData(prev => ({
+      setMatchData((prev) => ({
         ...prev,
         team_id: selectedOption.value,
         team_name: selectedOption.team_name || selectedOption.label,
-        selection: selectedOption.value
+        selection: selectedOption.value,
       }));
     }
   };
@@ -475,7 +485,8 @@ function HorseRacingAndGreyhund() {
       Swal.fire({ icon: "warning", title: "Please select Selection" });
       return;
     }
-    const timingToSend = matchData.timing || selectedTiming?.time || selectedTiming?.label || "";
+    const timingToSend =
+      matchData.timing || selectedTiming?.time || selectedTiming?.label || "";
     const payload = {
       sport_id: selectedSportId,
       country: selectedCountry,
@@ -486,7 +497,7 @@ function HorseRacingAndGreyhund() {
       timing_event_id: matchData.timing_event_id,
       selection: selectedSelection?.value,
       team_id: matchData.team_id,
-      team_name: matchData.team_name
+      team_name: matchData.team_name,
     };
     const confirm = await Swal.fire({
       title: "Are you sure?",
@@ -522,7 +533,7 @@ function HorseRacingAndGreyhund() {
       Swal.fire({
         icon: "error",
         title: "Server error",
-        text: err.message || "Please try again"
+        text: err.message || "Please try again",
       });
     } finally {
       setDeclareLoading(false);
@@ -546,7 +557,7 @@ function HorseRacingAndGreyhund() {
       timing: "",
       selection: "",
       timing_market_id: "",
-      timing_event_id: ""
+      timing_event_id: "",
     });
   };
 
@@ -625,118 +636,205 @@ function HorseRacingAndGreyhund() {
     setPage(pageNo);
   };
 
-  const matchOptions = events.map(event => ({
+  const matchOptions = events.map((event) => ({
     value: event.id || event.event_id,
-    label: `${event.name} (${event.time || ''})`,
-    market_id: event.market_id
+    label: `${event.name} (${event.time || ""})`,
+    market_id: event.market_id,
   }));
 
   return (
     <div className="marketname">
-      <div className="card">
-        <div className="card-header bg-primary-yellow">
+      <div className="allcommon ">
+        <div className="py-3">
           <div className="d-flex justify-content-between align-items-center">
-            <h3 className="card-title mb-0">Declared GreyHund & Horse Racing Result</h3>
+            <h2 className="page-title mb-0">
+              Declared GreyHund & Horse Racing Result
+            </h2>
           </div>
         </div>
         <div className="card-body">
           <form noValidate className="needs-validation">
-            <div className="form-design-fillter gap-2 d-flex justify-content-between align-items-end flex-md-nowrap flex-wrap">
-              <div className="form_latest_design w-100">
-                <label className="form-label">
-                  Select Sport <span style={{ color: "red" }}>*</span>
-                </label>
-                <Select
-                  options={[
-                    { value: 7, label: "Horse Racing" },
-                    { value: 8, label: "Greyhound" },
-                  ]}
-                  value={[
-                    { value: 7, label: "Horse Racing" },
-                    { value: 8, label: "Greyhound" },
-                  ].find((opt) => opt.value === selectedSportId)}
-                  onChange={handleSportChange}
-                  placeholder="Select Sport"
-                />
-              </div>
-              <div className="form_latest_design w-100">
-                <label className="form-label">
-                  Select Country <span style={{ color: "red" }}>*</span>
-                </label>
-                <Select
-                  options={countryNames}
-                  value={countryNames.find(opt => opt.value === selectedCountry)}
-                  onChange={handleCountryChange}
-                  placeholder={loadingCountries ? "Loading countries..." : "Select Country"}
-                  isDisabled={!selectedSportId || loadingCountries}
-                  isLoading={loadingCountries}
-                  noOptionsMessage={() => loadingCountries ? "Loading..." : "No countries available"}
-                />
+            <div className="row g-3 align-items-end pb-3">
+              {/* Select Sport */}
+              <div className="col-12 col-md-2">
+                <div className="form_latest_design w-100">
+                  <label className="form-label">
+                    Select Sport <span style={{ color: "red" }}>*</span>
+                  </label>
+
+                  <select
+                    className="form-select"
+                    value={selectedSportId || ""}
+                    onChange={(e) => {
+                      const selected = [
+                        { value: 7, label: "Horse Racing" },
+                        { value: 8, label: "Greyhound" },
+                      ].find((opt) => String(opt.value) === e.target.value);
+
+                      handleSportChange(selected);
+                    }}
+                  >
+                    <option value="">Select Sport</option>
+
+                    <option value="7">Horse Racing</option>
+                    <option value="8">Greyhound</option>
+                  </select>
+                </div>
               </div>
 
-              <div className="form_latest_design w-100">
-                <label className="form-label">
-                  Select Market <span style={{ color: "red" }}>*</span>
-                </label>
-                <Select
-                  options={countryMarketNames}
-                  value={countryMarketNames.find(opt => opt.value === selectedCountryMarket)}
-                  onChange={handleCountryMarketChange}
-                  placeholder={loadingCountryMarkets ? "Loading markets..." : "Select Market"}
-                  isDisabled={!selectedCountry || loadingCountryMarkets}
-                  isLoading={loadingCountryMarkets}
-                  noOptionsMessage={() => loadingCountryMarkets ? "Loading..." : "No markets available"}
-                />
+              {/* Select Country */}
+              <div className="col-12 col-md-2">
+                <div className="form_latest_design w-100">
+                  <label className="form-label">
+                    Select Country <span style={{ color: "red" }}>*</span>
+                  </label>
+
+                  <select
+                    className="form-select"
+                    value={selectedCountry || ""}
+                    disabled={!selectedSportId || loadingCountries}
+                    onChange={(e) => {
+                      const selected = countryNames.find(
+                        (opt) => String(opt.value) === e.target.value,
+                      );
+
+                      handleCountryChange(selected);
+                    }}
+                  >
+                    <option value="">
+                      {loadingCountries
+                        ? "Loading countries..."
+                        : "Select Country"}
+                    </option>
+
+                    {!loadingCountries &&
+                      countryNames.map((country) => (
+                        <option key={country.value} value={country.value}>
+                          {country.label}
+                        </option>
+                      ))}
+                  </select>
+                </div>
               </div>
 
-              <div className="form_latest_design w-100">
-                <label className="form-label">
-                  Select Timing <span style={{ color: "red" }}>*</span>
-                </label>
-                <Select
-                  options={[
-                    { value: "", label: "Select Timing", isDisabled: true },
-                    ...timingList
-                  ]}
-                  value={selectedTiming}
-                  onChange={handleTimingChange}
-                  placeholder="Select Timing"
-                  isDisabled={!selectedCountryMarket || loadingTimings}
-                  isLoading={loadingTimings}
-                  noOptionsMessage={() => loadingTimings ? "Loading..." : "No timings available"}
-                  formatOptionLabel={(option) => (
-                    <div>
-                      <span>{option.time || option.label}</span>
-                    </div>
-                  )}
-                />
-              </div>
-              <div className="form_latest_design w-100">
-                <label className="form-label">
-                  Select Selection <span style={{ color: "red" }}>*</span>
-                </label>
-                <Select
-                  options={selectionList}
-                  value={selectedSelection}
-                  onChange={handleSelectionChange}
-                  placeholder={loadingSelectionsList ? "Loading selections..." : "Select Selection"}
-                  isDisabled={!selectedTiming || loadingSelectionsList}
-                  isLoading={loadingSelectionsList}
-                  noOptionsMessage={() => loadingSelectionsList ? "Loading..." : "No selections available"}
-                />
+              {/* Select Market */}
+              <div className="col-12 col-md-2">
+                <div className="form_latest_design w-100">
+                  <label className="form-label">
+                    Select Market <span style={{ color: "red" }}>*</span>
+                  </label>
+
+                  <select
+                    className="form-select"
+                    value={selectedCountryMarket || ""}
+                    disabled={!selectedCountry || loadingCountryMarkets}
+                    onChange={(e) => {
+                      const selected = countryMarketNames.find(
+                        (opt) => String(opt.value) === e.target.value,
+                      );
+
+                      handleCountryMarketChange(selected);
+                    }}
+                  >
+                    <option value="">
+                      {loadingCountryMarkets
+                        ? "Loading markets..."
+                        : "Select Market"}
+                    </option>
+
+                    {!loadingCountryMarkets &&
+                      countryMarketNames.map((market) => (
+                        <option key={market.value} value={market.value}>
+                          {market.label}
+                        </option>
+                      ))}
+                  </select>
+                </div>
               </div>
 
-              <div className="buttonsubmit">
-                <button
-                  className={`btn btn-success w-auto h-auto ${isButtonDisabled ? "disabled-button" : ""}`}
-                  type="button"
-                  disabled={declareLoading}
-                  onClick={handleDeclareResult}
-                >
-                  {declareLoading ? "Processing..." : "Declare"}
-                </button>
+              {/* Select Timing */}
+              <div className="col-12 col-md-2">
+                <div className="form_latest_design w-100">
+                  <label className="form-label">
+                    Select Timing <span style={{ color: "red" }}>*</span>
+                  </label>
+
+                  <select
+                    className="form-select"
+                    value={selectedTiming?.value || ""}
+                    disabled={!selectedCountryMarket || loadingTimings}
+                    onChange={(e) => {
+                      const selected = timingList.find(
+                        (opt) => String(opt.value) === e.target.value,
+                      );
+
+                      handleTimingChange(selected);
+                    }}
+                  >
+                    <option value="">
+                      {loadingTimings ? "Loading timings..." : "Select Timing"}
+                    </option>
+
+                    {!loadingTimings &&
+                      timingList.map((timing) => (
+                        <option key={timing.value} value={timing.value}>
+                          {timing.time || timing.label}
+                        </option>
+                      ))}
+                  </select>
+                </div>
               </div>
 
+              {/* Select Selection */}
+              <div className="col-12 col-md-2">
+                <div className="form_latest_design w-100">
+                  <label className="form-label">
+                    Select Selection <span style={{ color: "red" }}>*</span>
+                  </label>
+
+                  <select
+                    className="form-select"
+                    value={selectedSelection?.value || ""}
+                    disabled={!selectedTiming || loadingSelectionsList}
+                    onChange={(e) => {
+                      const selected = selectionList.find(
+                        (opt) => String(opt.value) === e.target.value,
+                      );
+
+                      handleSelectionChange(selected);
+                    }}
+                  >
+                    <option value="">
+                      {loadingSelectionsList
+                        ? "Loading selections..."
+                        : "Select Selection"}
+                    </option>
+
+                    {!loadingSelectionsList &&
+                      selectionList.map((selection) => (
+                        <option key={selection.value} value={selection.value}>
+                          {selection.label}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Declare Button */}
+              <div className="col-12 col-md-2">
+                <div className="buttonsubmit w-100">
+                  <button
+                    className={`btn btn-light theme_dark_btn w-100 ${
+                      isButtonDisabled ? "disabled-button" : ""
+                    }`}
+                    type="button"
+                    disabled={declareLoading}
+                    onClick={handleDeclareResult}
+                  >
+                    {declareLoading ? "Processing..." : "Declare"}
+                  </button>
+                </div>
+              </div>
             </div>
           </form>
         </div>
@@ -744,9 +842,7 @@ function HorseRacingAndGreyhund() {
         <div className="card-body">
           <div className="card">
             <div className="card-header bg-primary-yellow">
-              <h5 className="card-title mb-0">
-                Declared Match Result List
-              </h5>
+              <h5 className="card-title mb-0">Declared Match Result List</h5>
             </div>
             <div className="card-body table-responsive">
               <table className="table table-bordered">
@@ -764,18 +860,26 @@ function HorseRacingAndGreyhund() {
                 <tbody>
                   {loadingTable ? (
                     <tr>
-                      <td colSpan="7" className="text-center">Loading...</td>
+                      <td colSpan="7" className="text-center">
+                        Loading...
+                      </td>
                     </tr>
                   ) : marketData.length > 0 ? (
                     marketData.map((item, index) => (
                       <tr key={item._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>{moment(item.created_at).format("DD-MM-YYYY HH:mm")}</td>
+                        <td>
+                          {moment(item.created_at).format("DD-MM-YYYY HH:mm")}
+                        </td>
                         <td>{item.game_name || "-"}</td>
                         <td>{item.team_name || "-"}</td>
                         <td>{item.full_team_name}</td>
                         <td>
-                          <span className={item.status === 1 ? "text-success" : "text-danger"}>
+                          <span
+                            className={
+                              item.status === 1 ? "text-success" : "text-danger"
+                            }
+                          >
                             {item.status === 1 ? "Active" : "Inactive"}
                           </span>
                         </td>
@@ -794,7 +898,9 @@ function HorseRacingAndGreyhund() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="7" className="text-center">No Data Found</td>
+                      <td colSpan="7" className="text-center">
+                        No Data Found
+                      </td>
                     </tr>
                   )}
                 </tbody>

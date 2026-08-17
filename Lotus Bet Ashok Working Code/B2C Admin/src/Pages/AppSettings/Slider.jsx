@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { getAllSliders, createSlider, updateSlider, deleteSlider } from "../../Server/api";
+import {
+  getAllSliders,
+  createSlider,
+  updateSlider,
+  deleteSlider,
+} from "../../Server/api";
 import { FaRegEdit } from "react-icons/fa";
 import { RiDeleteBin3Fill } from "react-icons/ri";
 
@@ -16,7 +21,7 @@ const Slider = () => {
     title: "",
     description: "",
     status: "1",
-    order: 0
+    order: 0,
   });
 
   const sliderLists = async () => {
@@ -44,7 +49,7 @@ const Slider = () => {
       setForm((prev) => ({
         ...prev,
         file: files[0],
-        image: files[0] ? URL.createObjectURL(files[0]) : prev.image // Preview for new file
+        image: files[0] ? URL.createObjectURL(files[0]) : prev.image, // Preview for new file
       }));
     } else {
       setForm((prev) => ({ ...prev, [name]: value }));
@@ -59,7 +64,7 @@ const Slider = () => {
       title: "",
       description: "",
       status: "1",
-      order: 0
+      order: 0,
     });
     setIsEditMode(false);
     setModalOpen(true);
@@ -68,12 +73,12 @@ const Slider = () => {
   const handleEditClick = (item) => {
     setForm({
       id: item._id,
-      image: item.image || "",   // String
+      image: item.image || "", // String
       file: null,
       title: item.title || "",
       description: item.description || "",
       status: item.status || "1",
-      order: item.order || 0
+      order: item.order || 0,
     });
     setIsEditMode(true);
     setModalOpen(true);
@@ -115,7 +120,6 @@ const Slider = () => {
       formData.append("image", form.file);
     }
 
-
     formData.append("id", form.id);
     formData.append("title", form.title);
     formData.append("description", form.description);
@@ -152,190 +156,199 @@ const Slider = () => {
   return (
     <div className="allcommon">
       <div className="main-inner-outer py-4">
-<div class="db-sec d-flex justify-content-between align-items-center w-100 mb-2">
-  <h2 class="common-heading">Banner</h2>
-  <button type="button" class="btn btn-primary allbluebutton" onClick={handleAddClick}>+ Add Banner</button>
-  </div>
-
-    <div className="card">
-    
-
-      <div className="card-body p-0 pt-2">
-        <div className="table-responsive">
-          <table className="table table-bordered">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Order</th>
-                <th>Slider Image</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {settings.length > 0 ? (
-                settings.map((item, index) => (
-                  <tr key={item._id}>
-                    <td>{index + 1}.</td>
-                    <td>{item.title || "-"}</td>
-                    <td>{item.description || "-"}</td>
-                    <td>
-                      <span className={`badge ${item.status === "1" ? "activebadge" : "inactivebadge"}`}>
-                        {item.status === "1" ? "Active" : "Inactive"}
-                      </span>
-                    </td>
-                    <td>{item.order}</td>
-                    <td>
-                      <img
-                        src={item.image}
-                        alt="slider"
-                        style={{
-                          width: 150,
-                          height: 100,
-                          objectFit: "contain",
-                        }}
-                      />
-
-                    </td>
-                    <td className="">
-                      <div className="actions">
-
-                        <button
-                          className="actionbutton edit"
-                          onClick={() => handleEditClick(item)}
-                        >
-                          <FaRegEdit />
-                        </button>
-                        <button
-                          className="actionbutton delete"
-                          onClick={() => handleDeleteClick(item._id)}
-                        >
-                          <RiDeleteBin3Fill />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="7" className="text-center">
-                    No sliders found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        <div class="db-sec d-flex justify-content-between align-items-center w-100 mb-2">
+          <h2 class="common-heading">Banner</h2>
+          <button
+            type="button"
+            class="btn btn-primary theme_dark_btn"
+            onClick={handleAddClick}
+          >
+            + Add Banner
+          </button>
         </div>
 
-        {/* Modal */}
-        {modalOpen && (
-          <div className="modal d-block" style={{ background: "#00000080" }}>
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">
-                    {isEditMode ? "Edit Slider" : "Add Slider"}
-                  </h5>
-                  <button className="btn-close" onClick={() => setModalOpen(false)}></button>
-                </div>
+        <div className="card">
+          <div className="card-body p-0 pt-2">
+            <div className="table-responsive">
+              <table className="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Order</th>
+                    <th>Slider Image</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
 
-                <div className="modal-body">
-                  <div className="mb-3">
-                    <label className="form-label">Title</label>
-                    <input
-                      type="text"
-                      name="title"
-                      className="form-control"
-                      value={form.title}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                  <div className="mb-3">
-                    <label className="form-label">Description</label>
-                    <textarea
-                      name="description"
-                      className="form-control"
-                      value={form.description}
-                      onChange={handleChange}
-                      rows="3"
-                    />
-                  </div>
-
-                  <div className="mb-3">
-                    <label className="form-label">Status</label>
-                    <select
-                      name="status"
-                      className="form-control"
-                      value={form.status}
-                      onChange={handleChange}
-                    >
-                      <option value="1">Active</option>
-                      <option value="0">Inactive</option>
-                    </select>
-                  </div>
-
-                  <div className="mb-3">
-                    <label className="form-label">Order</label>
-                    <input
-                      type="number"
-                      name="order"
-                      className="form-control"
-                      value={form.order}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                  <label className="form-label">Image (JPG PNG)</label>
-                  <input
-                    type="file"
-                    name="file"
-                    className="form-control"
-                    accept="image/*"
-                    onChange={handleChange}
-                    key={modalOpen ? "file-input" : "reset"}
-                  />
-
-                  {/* Show preview for new file */}
-                  {form.file && form.file instanceof File && (
-                    <img
-                      src={URL.createObjectURL(form.file)}
-                      style={{ width: 80, height: 60 }}
-                      alt="Preview"
-                    />
+                <tbody>
+                  {settings.length > 0 ? (
+                    settings.map((item, index) => (
+                      <tr key={item._id}>
+                        <td>{index + 1}.</td>
+                        <td>{item.title || "-"}</td>
+                        <td>{item.description || "-"}</td>
+                        <td>
+                          <span
+                            className={`badge ${item.status === "1" ? "activebadge" : "inactivebadge"}`}
+                          >
+                            {item.status === "1" ? "Active" : "Inactive"}
+                          </span>
+                        </td>
+                        <td>{item.order}</td>
+                        <td>
+                          <img
+                            src={item.image}
+                            alt="slider"
+                            style={{
+                              width: 150,
+                              height: 100,
+                              objectFit: "contain",
+                            }}
+                          />
+                        </td>
+                        <td className="">
+                          <div className="actions">
+                            <button
+                              className="actionbutton edit"
+                              onClick={() => handleEditClick(item)}
+                            >
+                              <FaRegEdit />
+                            </button>
+                            <button
+                              className="actionbutton delete"
+                              onClick={() => handleDeleteClick(item._id)}
+                            >
+                              <RiDeleteBin3Fill />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="7" className="text-center">
+                        No sliders found.
+                      </td>
+                    </tr>
                   )}
+                </tbody>
+              </table>
+            </div>
 
-                  {/* Show current image in edit mode */}
-                  {isEditMode && form.image && !form.file && (
-                    <img
-                      src={form.image}
-                      style={{ width: 80, height: 60 }}
-                      alt="Current"
-                    />
-                  )}
+            {/* Modal */}
+            {modalOpen && (
+              <div
+                className="modal d-block"
+                style={{ background: "#00000080" }}
+              >
+                <div className="modal-dialog">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h5 className="modal-title">
+                        {isEditMode ? "Edit Slider" : "Add Slider"}
+                      </h5>
+                      <button
+                        className="btn-close"
+                        onClick={() => setModalOpen(false)}
+                      ></button>
+                    </div>
 
+                    <div className="modal-body">
+                      <div className="mb-3">
+                        <label className="form-label">Title</label>
+                        <input
+                          type="text"
+                          name="title"
+                          className="form-control"
+                          value={form.title}
+                          onChange={handleChange}
+                        />
+                      </div>
 
-                </div>
+                      <div className="mb-3">
+                        <label className="form-label">Description</label>
+                        <textarea
+                          name="description"
+                          className="form-control"
+                          value={form.description}
+                          onChange={handleChange}
+                          rows="3"
+                        />
+                      </div>
 
-                <div className="modal-footer">
+                      <div className="mb-3">
+                        <label className="form-label">Status</label>
+                        <select
+                          name="status"
+                          className="form-control"
+                          value={form.status}
+                          onChange={handleChange}
+                        >
+                          <option value="1">Active</option>
+                          <option value="0">Inactive</option>
+                        </select>
+                      </div>
 
-                  
-                  <button className="theme_dark_btn px-5 btn btn-primary" onClick={handleSubmit}>
-                    {isEditMode ? "Update" : "Submit"}
-                  </button>
-                  {/* <button className="btn btn-sm btn-danger" onClick={() => setModalOpen(false)}>
+                      <div className="mb-3">
+                        <label className="form-label">Order</label>
+                        <input
+                          type="number"
+                          name="order"
+                          className="form-control"
+                          value={form.order}
+                          onChange={handleChange}
+                        />
+                      </div>
+
+                      <label className="form-label">Image (JPG PNG)</label>
+                      <input
+                        type="file"
+                        name="file"
+                        className="form-control"
+                        accept="image/*"
+                        onChange={handleChange}
+                        key={modalOpen ? "file-input" : "reset"}
+                      />
+
+                      {/* Show preview for new file */}
+                      {form.file && form.file instanceof File && (
+                        <img
+                          src={URL.createObjectURL(form.file)}
+                          style={{ width: 80, height: 60 }}
+                          alt="Preview"
+                        />
+                      )}
+
+                      {/* Show current image in edit mode */}
+                      {isEditMode && form.image && !form.file && (
+                        <img
+                          src={form.image}
+                          style={{ width: 80, height: 60 }}
+                          alt="Current"
+                        />
+                      )}
+                    </div>
+
+                    <div className="modal-footer">
+                      <button
+                        className="theme_dark_btn px-5 btn btn-primary"
+                        onClick={handleSubmit}
+                      >
+                        {isEditMode ? "Update" : "Submit"}
+                      </button>
+                      {/* <button className="btn btn-sm btn-danger" onClick={() => setModalOpen(false)}>
                     Cancel
                   </button> */}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
-        )}
-      </div>
-    </div>
+        </div>
       </div>
     </div>
   );

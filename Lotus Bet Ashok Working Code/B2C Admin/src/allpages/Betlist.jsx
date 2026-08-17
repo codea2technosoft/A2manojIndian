@@ -373,7 +373,7 @@ function Betlist() {
                 {loading ? (
                   <div className="text-center py-5">Loading bets...</div>
                 ) : (
-                  <table className="all-bets-dialog-tabel table">
+                  <table className="betlist_table all-bets-dialog-tabel table">
                     <thead>
                       <tr>
                         <th scope="col">PL ID</th>
@@ -460,6 +460,7 @@ function Betlist() {
                   </table>
                 )}
               </div>
+              
               {betData && betData.length > 0 && pagination.totalPages > 1 && (
                 <div className="bottom-pagination">
                   <ul role="navigation" aria-label="Pagination">

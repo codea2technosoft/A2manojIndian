@@ -381,12 +381,12 @@ function Cricketlist() {
 
   return (
     <section>
-      <div className="card">
-        <div className="card-header d-flex gap-2 justify-content-between align-items-md-center flex-wrap-mobile">
-          <h3 className="card-title">All Match List</h3>
+      <div className="allcommon">
+        <div className="py-3 d-flex gap-2 justify-content-between align-items-md-center flex-wrap-mobile">
+          <h3 className="page-title">All Match List</h3>
           <div className="d-flex gap-2">
             <button
-              className="btn btn-light"
+              className="btn btn-dark"
               onClick={handleRefresh}
               disabled={loading}
             >
@@ -405,7 +405,7 @@ function Cricketlist() {
               )}
             </button>
             <button
-              className="btn btn-light"
+              className="btn btn-light theme_dark_btn"
               onClick={() => setFilter((prev) => !prev)}
             >
               <MdFilterListAlt /> Filter
@@ -414,7 +414,7 @@ function Cricketlist() {
         </div>
 
         {filter && (
-          <div className="card-body border-bottom">
+          <div className="card-body border-bottom pb-3">
             {/* <div className="d-flex justify-content-between align-items-center mb-3">
               <h6 className="mb-0">Filter Matches</h6>
 

@@ -283,13 +283,7 @@ const Pending = ({ userId }) => {
                             <tr key={item._id}>
                               <td>{(currentPage - 1) * limit + index + 1}</td>
                               <td>
-                                <span
-                                  style={{
-                                    textDecoration: "underline",
-                                    cursor: "pointer",
-                                    color: "blue",
-                                    fontSize: 14
-                                  }}
+                                <span className="user_11"
                                   onClick={() => handleActionLedger(item.user_id, item.admin_id)}
                                 >
                                   {ucWords(item.user_name)}

@@ -436,9 +436,9 @@ function Internationalreport() {
                                 <tr>
                                     <th scope="col">UID</th>
                                     <th scope="col">Player P/L</th>
-                                    <th scope="col">DownLine P/L</th>
+                                    {/* <th scope="col">DownLine P/L</th>
                                     <th scope="col">Agent Comm. P/L</th>
-                                    <th scope="col">Upline P/L</th>
+                                    <th scope="col">Upline P/L</th> */}
                                 </tr>
                             </thead>
                             <tbody>
@@ -462,27 +462,27 @@ function Internationalreport() {
                                                         {item.name || ''}
                                                     </td>
                                                     <td><span className={getColorClass(item.player_pl)}>{formatNumber(item.player_pl)}</span></td>
-                                                    <td><span className={getColorClass(item.downline_pl)}>{formatNumber(item.downline_pl)}</span></td>
+                                                    {/* <td><span className={getColorClass(item.downline_pl)}>{formatNumber(item.downline_pl)}</span></td>
                                                     <td><span>{formatNumber(item.agent_commission || item.agent_comm)}</span></td>
-                                                    <td><span className={getColorClass(item.upline_pl)}>{formatNumber(item.upline_pl)}</span></td>
+                                                    <td><span className={getColorClass(item.upline_pl)}>{formatNumber(item.upline_pl)}</span></td> */}
                                                 </tr>
                                                 {item.children && item.children.length > 0 && expandedRows[item.uid || item.id] && (
                                                     <tr className="expand">
-                                                        <td colSpan={9} className="expand_wrap" style={{ background: 'lightgrey' }}>
-                                                            <table style={{ width: '100%', background: 'lightgrey' }}>
-                                                                <tbody style={{ background: 'lightgrey' }}>
+                                                        <td colSpan={9} className="expand_wrap lightgrey" >
+                                                            <table className='w-100'>
+                                                                <tbody>
                                                                     {item.children.map((child) => (
                                                                         <tr key={child.admin_id || child.uid}>
-                                                                            <td className="text-start">
+                                                                            <td className="text-start" style={{width:'66.92%'}}>
                                                                                 <a href="#" className="text-primary">
                                                                                     <span>CL</span>
                                                                                 </a>
                                                                                 {child.username || child.name || ''}
                                                                             </td>
                                                                             <td><span className={getColorClass(child.player_pl)}>{formatNumber(child.player_pl)}</span></td>
-                                                                            <td><span className={getColorClass(child.downline_pl)}>{formatNumber(child.downline_pl)}</span></td>
+                                                                            {/* <td><span className={getColorClass(child.downline_pl)}>{formatNumber(child.downline_pl)}</span></td>
                                                                             <td><span>{formatNumber(child.agent_commission || child.agent_comm)}</span></td>
-                                                                            <td><span className={getColorClass(child.upline_pl)}>{formatNumber(child.upline_pl)}</span></td>
+                                                                            <td><span className={getColorClass(child.upline_pl)}>{formatNumber(child.upline_pl)}</span></td> */}
                                                                         </tr>
                                                                     ))}
                                                                 </tbody>
@@ -496,9 +496,9 @@ function Internationalreport() {
                                             <tr className="total-table-balance-none">
                                                 <td><strong>Total</strong></td>
                                                 <td><strong><span className={getColorClass(totals.player_pl)}>{formatNumber(totals.player_pl)}</span></strong></td>
-                                                <td><strong><span className={getColorClass(totals.downline_pl)}>{formatNumber(totals.downline_pl)}</span></strong></td>
+                                                {/* <td><strong><span className={getColorClass(totals.downline_pl)}>{formatNumber(totals.downline_pl)}</span></strong></td>
                                                 <td><strong>{formatNumber(totals.agent_commission || totals.agent_comm)}</strong></td>
-                                                <td><strong><span className={getColorClass(totals.upline_pl)}>{formatNumber(totals.upline_pl)}</span></strong></td>
+                                                <td><strong><span className={getColorClass(totals.upline_pl)}>{formatNumber(totals.upline_pl)}</span></strong></td> */}
                                             </tr>
                                         )}
                                     </>
@@ -534,9 +534,9 @@ function Internationalreport() {
                                 <tr>
                                     <th scope="col">SportName</th>
                                     <th scope="col">Player P/L</th>
-                                    <th scope="col">DownLine P/L</th>
+                                    {/* <th scope="col">DownLine P/L</th>
                                     <th scope="col">Agent Comm. P/L</th>
-                                    <th scope="col">Upline P/L</th>
+                                    <th scope="col">Upline P/L</th> */}
                                 </tr>
                             </thead>
                             <tbody>
@@ -549,18 +549,18 @@ function Internationalreport() {
                                                     {item.name || item.uid}
                                                 </td>
                                                 <td><span className={getColorClass(item.player_pl)}>{formatNumber(item.player_pl)}</span></td>
-                                                <td><span className={getColorClass(item.downline_pl)}>{formatNumber(item.downline_pl)}</span></td>
+                                                {/* <td><span className={getColorClass(item.downline_pl)}>{formatNumber(item.downline_pl)}</span></td>
                                                 <td><span>{formatNumber(item.agent_commission || item.agent_comm)}</span></td>
-                                                <td><span className={getColorClass(item.upline_pl)}>{formatNumber(item.upline_pl)}</span></td>
+                                                <td><span className={getColorClass(item.upline_pl)}>{formatNumber(item.upline_pl)}</span></td> */}
                                             </tr>
                                         ))}
                                         {totals && (
                                             <tr className="total-table-balance-none">
                                                 <td><strong>Total</strong></td>
                                                 <td><strong><span className={getColorClass(totals.player_pl)}>{formatNumber(totals.player_pl)}</span></strong></td>
-                                                <td><strong><span className={getColorClass(totals.downline_pl)}>{formatNumber(totals.downline_pl)}</span></strong></td>
+                                                {/* <td><strong><span className={getColorClass(totals.downline_pl)}>{formatNumber(totals.downline_pl)}</span></strong></td>
                                                 <td><strong>{formatNumber(totals.agent_commission || totals.agent_comm)}</strong></td>
-                                                <td><strong><span className={getColorClass(totals.upline_pl)}>{formatNumber(totals.upline_pl)}</span></strong></td>
+                                                <td><strong><span className={getColorClass(totals.upline_pl)}>{formatNumber(totals.upline_pl)}</span></strong></td> */}
                                             </tr>
                                         )}
                                     </>
@@ -596,9 +596,9 @@ function Internationalreport() {
                                 <tr>
                                     <th scope="col">UID</th>
                                     <th scope="col">Player P/L</th>
-                                    <th scope="col">DownLine P/L</th>
+                                    {/* <th scope="col">DownLine P/L</th>
                                     <th scope="col">Agent Comm. P/L</th>
-                                    <th scope="col">Upline P/L</th>
+                                    <th scope="col">Upline P/L</th> */}
                                 </tr>
                             </thead>
                             <tbody>
@@ -613,18 +613,18 @@ function Internationalreport() {
                                                     {item.name || ''}
                                                 </td>
                                                 <td><span className={getColorClass(item.player_pl)}>{formatNumber(item.player_pl)}</span></td>
-                                                <td><span className={getColorClass(item.downline_pl)}>{formatNumber(item.downline_pl)}</span></td>
+                                                {/* <td><span className={getColorClass(item.downline_pl)}>{formatNumber(item.downline_pl)}</span></td>
                                                 <td><span>{formatNumber(item.agent_commission || item.agent_comm)}</span></td>
-                                                <td><span className={getColorClass(item.upline_pl)}>{formatNumber(item.upline_pl)}</span></td>
+                                                <td><span className={getColorClass(item.upline_pl)}>{formatNumber(item.upline_pl)}</span></td> */}
                                             </tr>
                                         ))}
                                         {totals && (
                                             <tr className="total-table-balance-none">
                                                 <td><strong>Total</strong></td>
                                                 <td><strong><span className={getColorClass(totals.player_pl)}>{formatNumber(totals.player_pl)}</span></strong></td>
-                                                <td><strong><span className={getColorClass(totals.downline_pl)}>{formatNumber(totals.downline_pl)}</span></strong></td>
+                                                {/* <td><strong><span className={getColorClass(totals.downline_pl)}>{formatNumber(totals.downline_pl)}</span></strong></td>
                                                 <td><strong>{formatNumber(totals.agent_commission || totals.agent_comm)}</strong></td>
-                                                <td><strong><span className={getColorClass(totals.upline_pl)}>{formatNumber(totals.upline_pl)}</span></strong></td>
+                                                <td><strong><span className={getColorClass(totals.upline_pl)}>{formatNumber(totals.upline_pl)}</span></strong></td> */}
                                             </tr>
                                         )}
                                     </>

@@ -231,7 +231,7 @@ export default function AprofitDownlineuser() {
       <section className="main-inner-outer py-4">
         <div className="container-fluid">
           <div className="row">
-            <div className="db-sec">
+            <div className="db-sec d-flex align-items-center justify-content-between mb-2">
               <h2 className="common-heading">
                 Profit/Loss Report: {agent_id ? `Agent ${agent_id}` : "User"}
               </h2>

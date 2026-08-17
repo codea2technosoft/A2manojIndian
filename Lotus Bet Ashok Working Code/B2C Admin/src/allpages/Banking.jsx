@@ -902,19 +902,20 @@
 
 // export default Banking;
 
-
-
-import React, { useState, useEffect } from 'react';
-import { getBankingAgentListAll, submitMultipleTransactionsAgents } from "../Server/api";
-import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import React, { useState, useEffect } from "react";
+import {
+  getBankingAgentListAll,
+  submitMultipleTransactionsAgents,
+} from "../Server/api";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Banking = () => {
   const navigate = useNavigate();
 
   // State for search and filters
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   // State for expanded rows - track which rows are expanded
   const [expandedRows, setExpandedRows] = useState({});
@@ -931,7 +932,7 @@ const Banking = () => {
   const [tempCreditRef, setTempCreditRef] = useState({});
 
   // State for payment form
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
   const [selectedPayments, setSelectedPayments] = useState([]);
 
   // State for members data from API
@@ -947,32 +948,35 @@ const Banking = () => {
   // Get user data from localStorage
   const getUserData = () => {
     try {
-      const userData = localStorage.getItem('user');
+      const userData = localStorage.getItem("user");
       if (userData) {
         return JSON.parse(userData);
       }
       return null;
     } catch (error) {
-      console.error('Error parsing user data:', error);
+      console.error("Error parsing user data:", error);
       return null;
     }
   };
 
   // Fetch data from API - Modified to accept parameters
-  const fetchBankingData = async (search = searchTerm, status = statusFilter) => {
+  const fetchBankingData = async (
+    search = searchTerm,
+    status = statusFilter,
+  ) => {
     setLoading(true);
     try {
       const payload = {
         admin_id: "admin",
         search: search || "",
-        status: status || ""
+        status: status || "",
       };
 
-      console.log('Sending payload:', payload);
+      console.log("Sending payload:", payload);
 
       const response = await getBankingAgentListAll(payload);
 
-      console.log('API Response:', response);
+      console.log("API Response:", response);
 
       const apiData = response?.data;
 
@@ -986,50 +990,56 @@ const Banking = () => {
         }
 
         const dataArray = apiData.data || [];
-        console.log('Data array length:', dataArray.length);
+        console.log("Data array length:", dataArray.length);
 
         if (Array.isArray(dataArray) && dataArray.length > 0) {
-          const formattedMembers = dataArray.map(item => ({
+          const formattedMembers = dataArray.map((item) => ({
             id: item._id || item.admin_id || item.user_id,
-            name: item.username || item.uid || '',
+            name: item.username || item.uid || "",
             balance: parseFloat(item.balance) || 0,
             coins: parseFloat(item.coins) || 0,
-            availableDW: (parseFloat(item.coins) || 0) + (parseFloat(item.balance) || 0),
-            exposure: parseFloat(item.total_exposure) || parseFloat(item.exposure) || 0,
-            creditReference: parseFloat(item.credit) || parseFloat(item.credit_reference) || parseFloat(item.credit_ref) || 0,
+            availableDW:
+              (parseFloat(item.coins) || 0) + (parseFloat(item.balance) || 0),
+            exposure:
+              parseFloat(item.total_exposure) || parseFloat(item.exposure) || 0,
+            creditReference:
+              parseFloat(item.credit) ||
+              parseFloat(item.credit_reference) ||
+              parseFloat(item.credit_ref) ||
+              0,
             referencePL: parseFloat(item.reference_pl) || 0,
             isExpanded: false,
-            status: item.status || 'Active',
-            phoneNumber: item.phoneNumber || '',
-            email: item.email || '',
-            createdAt: item.created_at || '',
-            admin_id: item.admin_id || '',
-            user_id: item.user_id || '',
-            deposit_withdraw: item.deposit_withdraw || 'D W',
-            remark: item.remark || 'Edit',
+            status: item.status || "Active",
+            phoneNumber: item.phoneNumber || "",
+            email: item.email || "",
+            createdAt: item.created_at || "",
+            admin_id: item.admin_id || "",
+            user_id: item.user_id || "",
+            deposit_withdraw: item.deposit_withdraw || "D W",
+            remark: item.remark || "Edit",
             logs: item.logs || 0,
             totalExposure: item.totalExposure || 0,
             amount: item.amount || 0,
             gameBalances: {
               SABA: 0,
-              'Sky Trader': 0,
-              'Royal Gaming': 0,
+              "Sky Trader": 0,
+              "Royal Gaming": 0,
               BPoker: 0,
-              Casino: 0
-            }
+              Casino: 0,
+            },
           }));
           setMembers(formattedMembers);
-          console.log('Formatted Members count:', formattedMembers.length);
+          console.log("Formatted Members count:", formattedMembers.length);
         } else {
           setMembers([]);
-          console.log('No data available - empty array');
+          console.log("No data available - empty array");
         }
       } else {
         setMembers([]);
-        console.log('Response not successful or no data');
+        console.log("Response not successful or no data");
       }
     } catch (err) {
-      console.error('Error fetching banking data:', err);
+      console.error("Error fetching banking data:", err);
       setMembers([]);
     } finally {
       setLoading(false);
@@ -1042,19 +1052,28 @@ const Banking = () => {
   }, []);
 
   // Calculate totals
-  const totals = members.reduce((acc, member) => ({
-    balance: acc.balance + member.coins,
-    availableDW: acc.availableDW + member.availableDW,
-    exposure: acc.exposure + member.exposure,
-    creditReference: acc.creditReference + member.creditReference,
-    referencePL: acc.referencePL + member.referencePL
-  }), { balance: 0, availableDW: 0, exposure: 0, creditReference: 0, referencePL: 0 });
+  const totals = members.reduce(
+    (acc, member) => ({
+      balance: acc.balance + member.coins,
+      availableDW: acc.availableDW + member.availableDW,
+      exposure: acc.exposure + member.exposure,
+      creditReference: acc.creditReference + member.creditReference,
+      referencePL: acc.referencePL + member.referencePL,
+    }),
+    {
+      balance: 0,
+      availableDW: 0,
+      exposure: 0,
+      creditReference: 0,
+      referencePL: 0,
+    },
+  );
 
   // Toggle row expansion
   const toggleRow = (id) => {
-    setExpandedRows(prev => ({
+    setExpandedRows((prev) => ({
       ...prev,
-      [id]: !prev[id]
+      [id]: !prev[id],
     }));
   };
 
@@ -1063,42 +1082,42 @@ const Banking = () => {
 
   // 🔥 FIX: Handle deposit/withdraw toggle - W click par sirf Full button active
   const handleDWToggle = (id, type) => {
-    setSelectedTransactionType(prev => ({
+    setSelectedTransactionType((prev) => ({
       ...prev,
-      [id]: type
+      [id]: type,
     }));
 
     // 🔥 W (Withdraw) click par Full button active karo (value auto-fill nahi)
-    if (type === 'withdraw') {
-      setfullbutton(prev => ({
+    if (type === "withdraw") {
+      setfullbutton((prev) => ({
         ...prev,
-        [id]: false  // false = enabled (clickable)
+        [id]: false, // false = enabled (clickable)
       }));
-      
+
       // ❌ Value auto-fill nahi karenge
       // Sirf input field empty rakhenge
-      setDwValues(prev => ({
+      setDwValues((prev) => ({
         ...prev,
-        [id]: ''
+        [id]: "",
       }));
-      setWithdrawErrors(prev => ({
+      setWithdrawErrors((prev) => ({
         ...prev,
-        [id]: ''
+        [id]: "",
       }));
-    } else if (type === 'deposit') {
+    } else if (type === "deposit") {
       // D (Deposit) click par Full button disable karo
-      setfullbutton(prev => ({
+      setfullbutton((prev) => ({
         ...prev,
-        [id]: true  // true = disabled
+        [id]: true, // true = disabled
       }));
-      
-      setDwValues(prev => ({
+
+      setDwValues((prev) => ({
         ...prev,
-        [id]: ''
+        [id]: "",
       }));
-      setWithdrawErrors(prev => ({
+      setWithdrawErrors((prev) => ({
         ...prev,
-        [id]: ''
+        [id]: "",
       }));
     }
   };
@@ -1106,76 +1125,80 @@ const Banking = () => {
   // Handle DW value change
   const handleDWValueChange = (id, value) => {
     const numValue = parseFloat(value);
-    setDwValues(prev => ({
+    setDwValues((prev) => ({
       ...prev,
-      [id]: value
+      [id]: value,
     }));
 
-    const member = members.find(m => m.id === id);
+    const member = members.find((m) => m.id === id);
 
-    if (value === '' || value === null || value === undefined) {
-      setWithdrawErrors(prev => ({
+    if (value === "" || value === null || value === undefined) {
+      setWithdrawErrors((prev) => ({
         ...prev,
-        [id]: 'Amount should be greater than 0'
+        [id]: "Amount should be greater than 0",
       }));
       return;
     }
 
     if (isNaN(numValue) || numValue <= 0) {
-      setWithdrawErrors(prev => ({
+      setWithdrawErrors((prev) => ({
         ...prev,
-        [id]: 'Amount should be greater than 0'
+        [id]: "Amount should be greater than 0",
       }));
       return;
     }
 
-    if (member && selectedTransactionType[id] === 'withdraw' && numValue > 0) {
+    if (member && selectedTransactionType[id] === "withdraw" && numValue > 0) {
       if (numValue > member.coins) {
-        setWithdrawErrors(prev => ({
+        setWithdrawErrors((prev) => ({
           ...prev,
-          [id]: 'Withdrawal amount should not be greater than available balance'
+          [id]: "Withdrawal amount should not be greater than available balance",
         }));
       } else {
-        setWithdrawErrors(prev => ({
+        setWithdrawErrors((prev) => ({
           ...prev,
-          [id]: ''
+          [id]: "",
         }));
       }
-    } else if (member && selectedTransactionType[id] === 'deposit' && numValue > 0) {
-      setWithdrawErrors(prev => ({
+    } else if (
+      member &&
+      selectedTransactionType[id] === "deposit" &&
+      numValue > 0
+    ) {
+      setWithdrawErrors((prev) => ({
         ...prev,
-        [id]: ''
+        [id]: "",
       }));
     } else {
-      setWithdrawErrors(prev => ({
+      setWithdrawErrors((prev) => ({
         ...prev,
-        [id]: 'Amount should be greater than 0'
+        [id]: "Amount should be greater than 0",
       }));
     }
   };
 
   // 🔥 FIX: Handle Full button click - coins value auto-fill
   const handleFullClick = (id) => {
-    const member = members.find(m => m.id === id);
+    const member = members.find((m) => m.id === id);
     if (member) {
       // 🔥 Full button click par coins value fill karo
       const coinsValue = member.coins || 0;
-      setDwValues(prev => ({
+      setDwValues((prev) => ({
         ...prev,
-        [id]: coinsValue.toString()
+        [id]: coinsValue.toString(),
       }));
-      
+
       // Validation check for withdraw
-      if (selectedTransactionType[id] === 'withdraw' && coinsValue > 0) {
+      if (selectedTransactionType[id] === "withdraw" && coinsValue > 0) {
         if (coinsValue > member.coins) {
-          setWithdrawErrors(prev => ({
+          setWithdrawErrors((prev) => ({
             ...prev,
-            [id]: 'Withdrawal amount should not be greater than available balance'
+            [id]: "Withdrawal amount should not be greater than available balance",
           }));
         } else {
-          setWithdrawErrors(prev => ({
+          setWithdrawErrors((prev) => ({
             ...prev,
-            [id]: ''
+            [id]: "",
           }));
         }
       }
@@ -1184,30 +1207,30 @@ const Banking = () => {
 
   // Handle remark change
   const handleRemarkChange = (id, value) => {
-    setRemarks(prev => ({
+    setRemarks((prev) => ({
       ...prev,
-      [id]: value
+      [id]: value,
     }));
   };
 
   // Handle credit reference edit
   const handleCreditRefEdit = (id) => {
-    const member = members.find(m => m.id === id);
-    setTempCreditRef(prev => ({
+    const member = members.find((m) => m.id === id);
+    setTempCreditRef((prev) => ({
       ...prev,
-      [id]: member ? member.creditReference : 0
+      [id]: member ? member.creditReference : 0,
     }));
-    setCreditRefs(prev => ({
+    setCreditRefs((prev) => ({
       ...prev,
-      [id]: member ? member.creditReference : 0
+      [id]: member ? member.creditReference : 0,
     }));
     setEditingCreditRef(id);
   };
 
   const handleCreditRefChange = (id, value) => {
-    setCreditRefs(prev => ({
+    setCreditRefs((prev) => ({
       ...prev,
-      [id]: value
+      [id]: value,
     }));
   };
 
@@ -1217,16 +1240,16 @@ const Banking = () => {
   };
 
   const handleCreditRefCancel = (id) => {
-    setCreditRefs(prev => ({
+    setCreditRefs((prev) => ({
       ...prev,
-      [id]: tempCreditRef[id] || 0
+      [id]: tempCreditRef[id] || 0,
     }));
     setEditingCreditRef(null);
   };
 
   // Handle search - FIXED: Pass search term
   const handleSearch = () => {
-    console.log('Searching for:', searchTerm);
+    console.log("Searching for:", searchTerm);
     fetchBankingData(searchTerm, statusFilter);
   };
 
@@ -1239,15 +1262,15 @@ const Banking = () => {
 
   // Handle reset - FIXED: Pass empty values
   const handleReset = () => {
-    setSearchTerm('');
-    setStatusFilter('');
-    fetchBankingData('', '');
+    setSearchTerm("");
+    setStatusFilter("");
+    fetchBankingData("", "");
   };
 
   // Get selected payment count
   const getSelectedPaymentCount = () => {
     let count = 0;
-    members.forEach(member => {
+    members.forEach((member) => {
       if (dwValues[member.id] && parseFloat(dwValues[member.id]) > 0) {
         count++;
       }
@@ -1261,11 +1284,11 @@ const Banking = () => {
 
     if (!password) {
       Swal.fire({
-        icon: 'warning',
-        title: 'Password Required',
-        text: 'Please enter password',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'OK'
+        icon: "warning",
+        title: "Password Required",
+        text: "Please enter password",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK",
       });
       return;
     }
@@ -1273,7 +1296,7 @@ const Banking = () => {
     const transactions = [];
     let hasTypeError = false;
 
-    members.forEach(member => {
+    members.forEach((member) => {
       const amount = parseFloat(dwValues[member.id]);
 
       if (amount && amount > 0) {
@@ -1281,9 +1304,9 @@ const Banking = () => {
 
         if (!type) {
           hasTypeError = true;
-          setWithdrawErrors(prev => ({
+          setWithdrawErrors((prev) => ({
             ...prev,
-            [member.id]: 'Please select Debit or Withdraw type'
+            [member.id]: "Please select Debit or Withdraw type",
           }));
           return;
         }
@@ -1293,29 +1316,29 @@ const Banking = () => {
           admin_id: member.admin_id || member.id,
           amount: amount,
           type: type,
-          remark: remark
+          remark: remark,
         });
       }
     });
 
     if (hasTypeError) {
       Swal.fire({
-        icon: 'error',
-        title: 'Type Selection Required',
-        text: 'Please select Debit or Withdraw type for all entries',
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'OK'
+        icon: "error",
+        title: "Type Selection Required",
+        text: "Please select Debit or Withdraw type for all entries",
+        confirmButtonColor: "#d33",
+        confirmButtonText: "OK",
       });
       return;
     }
 
     if (transactions.length === 0) {
       Swal.fire({
-        icon: 'warning',
-        title: 'No Transactions',
-        text: 'Please select at least one transaction',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'OK'
+        icon: "warning",
+        title: "No Transactions",
+        text: "Please select at least one transaction",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK",
       });
       return;
     }
@@ -1323,60 +1346,65 @@ const Banking = () => {
     const userData = getUserData();
     if (!userData) {
       Swal.fire({
-        icon: 'error',
-        title: 'User Not Found',
-        text: 'User data not found',
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'OK'
+        icon: "error",
+        title: "User Not Found",
+        text: "User data not found",
+        confirmButtonColor: "#d33",
+        confirmButtonText: "OK",
       });
       return;
     }
 
     const payload = {
-      super_admin_id: userData.admin_id || 'admin',
+      super_admin_id: userData.admin_id || "admin",
       master_role: userData.role || 1,
       role: 2,
       password: password,
-      transactions: transactions
+      transactions: transactions,
     };
 
-    console.log('Submitting payload:', payload);
+    console.log("Submitting payload:", payload);
 
     setSubmitLoading(true);
     try {
       const response = await submitMultipleTransactionsAgents(payload);
-      console.log('Payment submitted successfully:', response);
+      console.log("Payment submitted successfully:", response);
 
-      const successMessage = response?.data?.message || response?.message || 'Transactions processed successfully';
+      const successMessage =
+        response?.data?.message ||
+        response?.message ||
+        "Transactions processed successfully";
 
       Swal.fire({
-        icon: 'success',
-        title: 'Success!',
+        icon: "success",
+        title: "Success!",
         text: successMessage,
-        confirmButtonColor: '#28a745',
-        confirmButtonText: 'OK',
+        confirmButtonColor: "#28a745",
+        confirmButtonText: "OK",
         timer: 2000,
         timerProgressBar: true,
-        showConfirmButton: false
+        showConfirmButton: false,
       });
 
       setDwValues({});
       setRemarks({});
-      setPassword('');
+      setPassword("");
       setSelectedTransactionType({});
       setfullbutton({});
       setWithdrawErrors({});
       fetchBankingData(searchTerm, statusFilter);
-
     } catch (error) {
-      console.error('Error submitting payments:', error);
-      const errorMessage = error?.response?.data?.message || error?.message || 'Failed to submit payments. Please try again.';
+      console.error("Error submitting payments:", error);
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to submit payments. Please try again.";
       Swal.fire({
-        icon: 'error',
-        title: 'Error!',
+        icon: "error",
+        title: "Error!",
         text: errorMessage,
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'OK'
+        confirmButtonColor: "#d33",
+        confirmButtonText: "OK",
       });
     } finally {
       setSubmitLoading(false);
@@ -1399,15 +1427,14 @@ const Banking = () => {
   // };
 
   // Handle log click
-const handleLogClick = (adminId) => {
-  console.log('View logs for:', adminId);
-  window.open(
-    `/agentwisebanking-debit-credit-log?agentId=${adminId}`,
-    '_blank',
-    'width=1200,height=800,scrollbars=yes,resizable=yes'
-  );
-};
-
+  const handleLogClick = (adminId) => {
+    console.log("View logs for:", adminId);
+    window.open(
+      `/agentwisebanking-debit-credit-log?agentId=${adminId}`,
+      "_blank",
+      "width=1200,height=800,scrollbars=yes,resizable=yes",
+    );
+  };
 
   // Handle header Logs button click
   // const handleHeaderLogsClick = () => {
@@ -1415,14 +1442,13 @@ const handleLogClick = (adminId) => {
   // };
 
   // Handle header Logs button click
-const handleHeaderLogsClick = () => {
-  window.open(
-    '/Agentbankingtransctionhistory',
-    '_blank',
-    'width=1200,height=800,scrollbars=yes,resizable=yes'
-  );
-};
-
+  const handleHeaderLogsClick = () => {
+    window.open(
+      "/Agentbankingtransctionhistory",
+      "_blank",
+      "width=1200,height=800,scrollbars=yes,resizable=yes",
+    );
+  };
 
   // Handle recall
   const handleRecall = (id, game) => {
@@ -1510,7 +1536,10 @@ const handleHeaderLogsClick = () => {
                   <h6 className="mb-0">Your Balance</h6>
                   <strong>
                     <small>INR</small>
-                    {totals.availableDW.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {totals.availableDW.toLocaleString("en-IN", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
                   </strong>
                 </div>
 
@@ -1521,29 +1550,39 @@ const handleHeaderLogsClick = () => {
                       <thead>
                         <tr>
                           <th scope="col">UID</th>
-                          <th scope="col" style={{ textAlign: 'right' }}>Balance</th>
-                          <th scope="col" style={{ textAlign: 'right' }}>Available D/W</th>
-                          <th scope="col" style={{ textAlign: 'right' }}>Exposure</th>
-                          <th scope="col" style={{ textAlign: 'center' }}>Deposit / Withdraw</th>
-                          <th scope="col" style={{ textAlign: 'right' }}>Credit Reference</th>
-                          <th scope="col" style={{ textAlign: 'right', width: 180 }}>Reference P/L</th>
-                          <th scope="col" style={{ textAlign: 'right', width: '5%' }}>Remark</th>
-                          <th scope="col" style={{ textAlign: 'right', width: 110 }}>
+                          <th scope="col">
+                            Balance
+                          </th>
+                          <th scope="col">
+                            Available D/W
+                          </th>
+                          <th scope="col">
+                            Exposure
+                          </th>
+                          <th scope="col" style={{ textAlign: "center" }}>
+                            Deposit / Withdraw
+                          </th>
+                          <th scope="col">
+                            Credit Reference
+                          </th>
+                          <th scope="col">Reference P/L</th>
+                          <th
+                            scope="col"
+                            style={{ textAlign: "right", width: "5%" }}
+                          >
+                            Remark
+                          </th>
+                          <th scope="col">
                             <button
                               className="btn green-btn"
-                              style={{ padding: '3px 10px' }}
+                              style={{ padding: "3px 10px" }}
                               onClick={handleHeaderLogsClick}
                             >
                               All AG Logs
                             </button>
                           </th>
 
-                             <th scope="col" style={{ textAlign: 'right', width: 110 }}>
-                         
-                             AG Wise Logs
-                    
-                          </th>
-
+                          <th scope="col">AG Wise Logs</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1557,16 +1596,30 @@ const handleHeaderLogsClick = () => {
                                   {member.name}
                                 </td>
                                 <td>
-                                  {member.availableDW.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  {member.availableDW.toLocaleString("en-IN", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  })}
                                   <i
                                     id={`icon_${member.id}`}
-                                    className={`fas ${expandedRows[member.id] ? 'fa-minus-square' : 'fa-plus-square'} pe-2`}
+                                    className={`fas ${expandedRows[member.id] ? "fa-minus-square" : "fa-plus-square"} pe-2`}
                                     onClick={() => toggleRow(member.id)}
-                                    style={{ cursor: 'pointer' }}
+                                    style={{ cursor: "pointer" }}
                                   />
                                 </td>
-                                <td> {member.coins.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                                <td>{member.exposure.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                <td>
+                                  {" "}
+                                  {member.coins.toLocaleString("en-IN", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  })}
+                                </td>
+                                <td>
+                                  {member.exposure.toLocaleString("en-IN", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  })}
+                                </td>
                                 <td className="check_date" />
                                 <td className="border-x" width={320}>
                                   <div className="deposite-withdraw medium_width">
@@ -1575,12 +1628,27 @@ const handleHeaderLogsClick = () => {
                                         <input
                                           type="radio"
                                           name={`DW_${member.id}`}
-                                          checked={selectedTransactionType?.[member.id] === 'deposit'}
+                                          checked={
+                                            selectedTransactionType?.[
+                                              member.id
+                                            ] === "deposit"
+                                          }
                                           onChange={() => {
-                                            handleDWToggle(member.id, 'deposit');
+                                            handleDWToggle(
+                                              member.id,
+                                              "deposit",
+                                            );
                                           }}
                                         />
-                                        <label className={selectedTransactionType?.[member.id] === 'deposit' ? 'bg-green' : ''}>
+                                        <label
+                                          className={
+                                            selectedTransactionType?.[
+                                              member.id
+                                            ] === "deposit"
+                                              ? "bg-green"
+                                              : ""
+                                          }
+                                        >
                                           D
                                         </label>
                                       </div>
@@ -1588,12 +1656,27 @@ const handleHeaderLogsClick = () => {
                                         <input
                                           type="radio"
                                           name={`DW_${member.id}`}
-                                          checked={selectedTransactionType?.[member.id] === 'withdraw'}
+                                          checked={
+                                            selectedTransactionType?.[
+                                              member.id
+                                            ] === "withdraw"
+                                          }
                                           onChange={() => {
-                                            handleDWToggle(member.id, 'withdraw');
+                                            handleDWToggle(
+                                              member.id,
+                                              "withdraw",
+                                            );
                                           }}
                                         />
-                                        <label className={selectedTransactionType?.[member.id] === 'withdraw' ? 'bg-red' : ''}>
+                                        <label
+                                          className={
+                                            selectedTransactionType?.[
+                                              member.id
+                                            ] === "withdraw"
+                                              ? "bg-red"
+                                              : ""
+                                          }
+                                        >
                                           W
                                         </label>
                                       </div>
@@ -1605,47 +1688,87 @@ const handleHeaderLogsClick = () => {
                                         min={1}
                                         className="text-end form-control"
                                         id={`user_${member.id}`}
-                                        value={dwValues[member.id] || ''}
-                                        onChange={(e) => handleDWValueChange(member.id, e.target.value)}
+                                        value={dwValues[member.id] || ""}
+                                        onChange={(e) =>
+                                          handleDWValueChange(
+                                            member.id,
+                                            e.target.value,
+                                          )
+                                        }
                                       />
                                       <span
-                                        className={`dw-graph-position ${selectedTransactionType[member.id] === 'deposit'
-                                          ? 'text-success'
-                                          : selectedTransactionType[member.id] === 'withdraw'
-                                            ? 'text-danger'
-                                            : ''
-                                          }`}
+                                        className={`dw-graph-position ${
+                                          selectedTransactionType[member.id] ===
+                                          "deposit"
+                                            ? "text-success"
+                                            : selectedTransactionType[
+                                                  member.id
+                                                ] === "withdraw"
+                                              ? "text-danger"
+                                              : ""
+                                        }`}
                                       >
-                                        {selectedTransactionType[member.id] === 'deposit' ? '+' :
-                                          selectedTransactionType[member.id] === 'withdraw' ? '-' : ''}
+                                        {selectedTransactionType[member.id] ===
+                                        "deposit"
+                                          ? "+"
+                                          : selectedTransactionType[
+                                                member.id
+                                              ] === "withdraw"
+                                            ? "-"
+                                            : ""}
                                       </span>
                                     </div>
                                     {/* 🔥 FIX: Full button - W click par active, D click par disable */}
                                     <button
-                                      className={`btn ${selectedTransactionType[member.id] === 'withdraw' 
-                                        ? 'theme_light_btn' 
-                                        : 'disabled theme_light_btn'
+                                      className={`btn ${
+                                        selectedTransactionType[member.id] ===
+                                        "withdraw"
+                                          ? "theme_light_btn"
+                                          : "disabled theme_light_btn"
                                       }`}
                                       onClick={() => handleFullClick(member.id)}
-                                      disabled={selectedTransactionType[member.id] !== 'withdraw'}
+                                      disabled={
+                                        selectedTransactionType[member.id] !==
+                                        "withdraw"
+                                      }
                                     >
                                       Full
                                     </button>
                                   </div>
                                   {withdrawErrors[member.id] && (
-                                    <div style={{ color: 'red', fontSize: '12px', marginTop: '5px' }}>
+                                    <div
+                                      style={{
+                                        color: "red",
+                                        fontSize: "12px",
+                                        marginTop: "5px",
+                                      }}
+                                    >
                                       {withdrawErrors[member.id]}
                                     </div>
                                   )}
                                 </td>
                                 <td>
                                   {editingCreditRef === member.id ? (
-                                    <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        gap: "5px",
+                                        alignItems: "center",
+                                      }}
+                                    >
                                       <input
                                         type="number"
-                                        style={{ width: '100px' }}
-                                        value={creditRefs[member.id] || member.creditReference}
-                                        onChange={(e) => handleCreditRefChange(member.id, e.target.value)}
+                                        style={{ width: "100px" }}
+                                        value={
+                                          creditRefs[member.id] ||
+                                          member.creditReference
+                                        }
+                                        onChange={(e) =>
+                                          handleCreditRefChange(
+                                            member.id,
+                                            e.target.value,
+                                          )
+                                        }
                                         autoFocus
                                       />
                                       {/* <button
@@ -1657,20 +1780,33 @@ const handleHeaderLogsClick = () => {
                                       </button> */}
                                       <button
                                         className="btn theme_light_btn"
-                                        onClick={() => handleCreditRefCancel(member.id)}
-                                        style={{ padding: '2px 8px', fontSize: '12px' }}
+                                        onClick={() =>
+                                          handleCreditRefCancel(member.id)
+                                        }
+                                        style={{
+                                          padding: "2px 8px",
+                                          fontSize: "12px",
+                                        }}
                                       >
                                         Cancel
                                       </button>
                                     </div>
                                   ) : (
-                                    <div className='d-flex'>
+                                    <div className="d-inline-flex flex-column gap-1">
                                       <span style={{ marginRight: 10 }}>
-                                        {member.creditReference.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        {member.creditReference.toLocaleString(
+                                          "en-IN",
+                                          {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2,
+                                          },
+                                        )}
                                       </span>
                                       <button
                                         className="btn theme_light_btn"
-                                        onClick={() => handleCreditRefEdit(member.id)}
+                                        onClick={() =>
+                                          handleCreditRefEdit(member.id)
+                                        }
                                       >
                                         Edit
                                       </button>
@@ -1678,8 +1814,21 @@ const handleHeaderLogsClick = () => {
                                   )}
                                 </td>
                                 <td className="border-x">
-                                  <span style={{ color: member.referencePL >= 0 ? 'green' : 'red' }}>
-                                    {member.referencePL.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  <span
+                                    style={{
+                                      color:
+                                        member.referencePL >= 0
+                                          ? "green"
+                                          : "red",
+                                    }}
+                                  >
+                                    {member.referencePL.toLocaleString(
+                                      "en-IN",
+                                      {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                      },
+                                    )}
                                   </span>
                                 </td>
                                 <td>
@@ -1687,15 +1836,24 @@ const handleHeaderLogsClick = () => {
                                     placeholder="Remark"
                                     type="text"
                                     className="form-control"
-                                    value={remarks[member.id] || ''}
-                                    onChange={(e) => handleRemarkChange(member.id, e.target.value)}
+                                    value={remarks[member.id] || ""}
+                                    onChange={(e) =>
+                                      handleRemarkChange(
+                                        member.id,
+                                        e.target.value,
+                                      )
+                                    }
                                   />
                                 </td>
                                 <td>
                                   <button
                                     type="button"
                                     className="btn theme_light_btn"
-                                    onClick={() => handleLogClick(member.admin_id || member.id)}
+                                    onClick={() =>
+                                      handleLogClick(
+                                        member.admin_id || member.id,
+                                      )
+                                    }
                                   >
                                     Log
                                   </button>
@@ -1706,16 +1864,25 @@ const handleHeaderLogsClick = () => {
                               <tr
                                 id={member.id}
                                 className="expand-balance light_blue"
-                                style={{ display: expandedRows[member.id] ? 'contents' : 'none' }}
+                                style={{
+                                  display: expandedRows[member.id]
+                                    ? "contents"
+                                    : "none",
+                                }}
                               >
                                 <td></td>
-                                <td colSpan="10" className="p-0 large_table_data">
+                                <td
+                                  colSpan="10"
+                                  className="p-0 large_table_data"
+                                >
                                   <table className="inner_table">
                                     <tbody>
                                       <tr>
-                                        <th style={{ width: '9%' }}>Game</th>
-                                        <th style={{ width: '11%' }}>Balance</th>
-                                        <th style={{ width: '7%' }}>
+                                        <th rowSpan="1" style={{ width: "9%" }}>Game</th>
+                                        <th style={{ width: "11%" }}>
+                                          Balance
+                                        </th>
+                                        <th style={{ width: "7%" }}>
                                           <a
                                             href="#"
                                             onClick={(e) => {
@@ -1728,24 +1895,26 @@ const handleHeaderLogsClick = () => {
                                         </th>
                                         <th></th>
                                       </tr>
-                                      {Object.entries(member.gameBalances).map(([game, balance]) => (
-                                        <tr key={game}>
-                                          <td>{game}</td>
-                                          <td>{balance}</td>
-                                          <td>
-                                            <a
-                                              href="#"
-                                              onClick={(e) => {
-                                                e.preventDefault();
-                                                handleRecall(member.id, game);
-                                              }}
-                                            >
-                                              Recall
-                                            </a>
-                                          </td>
-                                          <td></td>
-                                        </tr>
-                                      ))}
+                                      {Object.entries(member.gameBalances).map(
+                                        ([game, balance]) => (
+                                          <tr key={game}>
+                                            <td>{game}</td>
+                                            <td>{balance}</td>
+                                            <td>
+                                              <a
+                                                href="#"
+                                                onClick={(e) => {
+                                                  e.preventDefault();
+                                                  handleRecall(member.id, game);
+                                                }}
+                                              >
+                                                Recall
+                                              </a>
+                                            </td>
+                                            <td></td>
+                                          </tr>
+                                        ),
+                                      )}
                                     </tbody>
                                   </table>
                                 </td>
@@ -1764,12 +1933,37 @@ const handleHeaderLogsClick = () => {
                         {members.length > 0 && (
                           <tr style={{ fontWeight: 500 }}>
                             <td>Total</td>
-                            <td>{totals.balance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                            <td>{totals.availableDW.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                            <td>{totals.exposure.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                            <td>
+                              {totals.balance.toLocaleString("en-IN", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}
+                            </td>
+                            <td>
+                              {totals.availableDW.toLocaleString("en-IN", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}
+                            </td>
+                            <td>
+                              {totals.exposure.toLocaleString("en-IN", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}
+                            </td>
                             <td></td>
-                            <td>{totals.creditReference.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                            <td>{totals.referencePL.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                            <td>
+                              {totals.creditReference.toLocaleString("en-IN", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}
+                            </td>
+                            <td>
+                              {totals.referencePL.toLocaleString("en-IN", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}
+                            </td>
                             <td></td>
                             <td></td>
                           </tr>
@@ -1781,7 +1975,9 @@ const handleHeaderLogsClick = () => {
                   {/* Pagination */}
                   <div className="bottom-pagination">
                     <ul role="navigation" aria-label="Pagination">
-                      <li className={`previous ${paginationData?.hasPrev ? '' : 'disabled'}`}>
+                      <li
+                        className={`previous ${paginationData?.hasPrev ? "" : "disabled"}`}
+                      >
                         <a
                           className=""
                           tabIndex={-1}
@@ -1805,7 +2001,9 @@ const handleHeaderLogsClick = () => {
                           {paginationData?.page || 1}
                         </a>
                       </li>
-                      <li className={`next ${paginationData?.hasNext ? '' : 'disabled'}`}>
+                      <li
+                        className={`next ${paginationData?.hasNext ? "" : "disabled"}`}
+                      >
                         <a
                           className=""
                           tabIndex={-1}
@@ -1819,7 +2017,10 @@ const handleHeaderLogsClick = () => {
                       </li>
                     </ul>
                     {paginationData && (
-                      <span className="ms-3 text-muted" style={{ fontSize: '14px' }}>
+                      <span
+                        className="ms-3 text-muted"
+                        style={{ fontSize: "14px" }}
+                      >
                         Total: {paginationData.totalRecords} records
                       </span>
                     )}
@@ -1827,7 +2028,10 @@ const handleHeaderLogsClick = () => {
 
                   {/* Payment Form */}
                   <div className="paymoney d-flex justify-content-center align-items-center">
-                    <form className="paymoney_form justify-content-center" onSubmit={handlePaymentSubmit}>
+                    <form
+                      className="paymoney_form justify-content-center"
+                      onSubmit={handlePaymentSubmit}
+                    >
                       <button
                         className="clear_btn btn"
                         type="button"
@@ -1849,8 +2053,11 @@ const handleHeaderLogsClick = () => {
                         className="btn green-btn"
                         disabled={submitLoading}
                       >
-                        {submitLoading ? 'Processing...' : 'Submit'}
-                        <span className="payment_count">{paymentCount}</span> Payment
+                        {submitLoading ? "Processing..." : "Submit"}
+                        <span className="payment_count">
+                          {paymentCount}
+                        </span>{" "}
+                        Payment
                       </button>
                     </form>
                   </div>

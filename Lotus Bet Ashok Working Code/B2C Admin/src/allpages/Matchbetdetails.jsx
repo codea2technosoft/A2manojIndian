@@ -25,6 +25,8 @@ function Matchbetdetails() {
     total: 0,
     totalPages: 0
   });
+
+  
   const [summary, setSummary] = useState({
     total_win: 0,
     total_loss: 0,
@@ -217,12 +219,15 @@ function Matchbetdetails() {
                         <thead>
                           <tr>
                             <th scope="col">Sports</th>
-                            <th scope="col">Match Name</th>
                             <th scope="col">Client</th>
+                            <th scope="col">Match Name</th>
+                            <th scope="col">Team Name</th>
+                            
                             <th scope="col">Type</th>
-                            <th scope="col">Selection</th>
-                            <th scope="col">Odds</th>
-                            <th scope="col">Stake</th>
+                            {/* <th scope="col">Selection</th> */}
+                            <th scope="col">Commission</th>
+                            {/* <th scope="col">Odds</th>
+                            <th scope="col">Stake</th> */}
                             <th scope="col">Place Time</th>
                             <th scope="col">IP</th>
                             <th scope="col">PnL</th>
@@ -250,25 +255,33 @@ function Matchbetdetails() {
                                 <td>
                                   {item.game_name || '-'} - sportID  {item.sport_id || '-'}
                                 </td>
+                                    <td>{item.admin_id || '-'}</td>
                                 <td>
-                                  {item.team ? item.team.split('>')[0]?.trim() || item.market_name || '-' : '-'}
+                                  {item.market_name ||  '-'}
                                 </td>
-                                <td>{item.username || item.user_id || '-'}</td>
+
+                                <td>
+                                  {item.team_name ||  '-'}
+                                </td>
+
+                                
+                            
                                 {/* ✅ Type column - lay = Yes, back = No */}
                                 {/* <td>{getTypeDisplay(item.bet_on)}</td> */}
-                                <td>{item.bet_on}</td>
-                                <td>{item.team || item.selection || '-'}</td>
-                                <td>{item.odd || item.odds || '0.00'}</td>
-                                <td>{item.stake || '0.00'}</td>
+                                <td>{item.bet_type}</td>
+                                {/* <td>{item.team || item.selection || '-'}</td> */}
+                                <td>{ item.amount_commission || '-'}</td>
+                                {/* <td>{item.odd || item.odds || '0.00'}</td>
+                                <td>{item.stake || '0.00'}</td> */}
                                 <td>{formatDate(item.created_at || item.date_time)}</td>
                                 <td>{item.ip || '-'}</td>
                                 <td>
-                                  <span className={parseFloat(item.bet_win_amount || 0) < 0 ? 'text-danger' : 'text-success'}>
-                                    {item.bet_win_amount?.toFixed(2) || '0.00'}
+                                  <span className={parseFloat(item.amount || 0) < 0 ? 'text-danger' : 'text-success'}>
+                                    {item.amount?.toFixed(2) || '0.00'}
                                   </span>
                                 </td>
                                 <td>
-                                  {item.is_settled === 1 ? "Yes" : "-"}
+                                  {item.is_settled ===1 ? "Yes" : "-"}
                                 </td>
                                 <td>
                                   <span className={getStatusColor(item)}>

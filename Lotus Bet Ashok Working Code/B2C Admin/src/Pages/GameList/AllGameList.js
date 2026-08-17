@@ -119,11 +119,13 @@ function AllGameList() {
       {toast.show && (
         <Toast message={toast.message} type={toast.type} onClose={hideToast} />
       )}
-      <div className="card">
-        <div className="card-header d-flex justify-content-between align-items-center">
-          <h3 className="card-title">All Sports List</h3>
+
+     
+      <div className="allcommon">
+        <div className="py-3 d-flex justify-content-between align-items-center">
+          <h3 className="page-title">All Sports List</h3>
           <div>
-            <button className="btn btn-light" onClick={fetchGames}>
+            <button className="btn btn-light theme_dark_btn" onClick={fetchGames}>
               Refresh
             </button>
             {/* <button
