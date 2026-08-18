@@ -28,21 +28,25 @@ tr {
   border-color: inherit;
   border: 1px solid #dee2e6 !important;
 }
+
 .bg_design_new_all_all {
   &.card-body {
     padding: 0px;
   }
+
   tr {
     th {
       background: #303030 !important;
     }
   }
 }
+
 .newwidthallsames.allcommon {
   .modal-dialog {
     max-width: 800px;
   }
 }
+
 .allbluebutton.btn.btn-primary {
   background: #0d6efd;
   border: 0px solid #0d6efd;
@@ -342,7 +346,7 @@ select.form-select {
   background: rgba(10, 185, 100, 0.2);
 }
 
-.card > * {
+.card>* {
   color: #000;
   background: #fff;
 }
@@ -908,7 +912,7 @@ li div.custum_new_ul {
   border: 1px solid #ccc;
 }
 
-.table tr td > * {
+.table tr td>* {
   font-size: 12px;
 }
 
@@ -1289,6 +1293,7 @@ $bg-color: #f8f9fb;
 $whitecolor: #fff;
 
 .agentmaster {
+
   // fillter table
   .cursor-pointer {
     cursor: pointer;
@@ -1809,10 +1814,12 @@ $whitecolor: #fff;
   border-top: 1px solid #ccc;
   padding: 0px 0 5px;
 }
+
 .darkmode.modebtn .form-switch input.form-check-input {
   width: 60px !important;
   height: 31px !important;
 }
+
 .darkmode.modebtn .form-switch input.form-check-input:checked {
   background-color: #18b0c8 !important;
   border-color: #18b0c8 !important;
@@ -2204,6 +2211,7 @@ input.form-control {
 .card-header.bg-color-black {
   &.bg_new_paeg_all {
     background: #303030;
+
     input.form-control,
     select.form-control,
     textarea.form-control,
@@ -2253,6 +2261,7 @@ input.form-control {
 .pagination {
   li {
     &.active {
+
       button,
       .page-link {
         background-color: $success_light;
@@ -2898,6 +2907,7 @@ input.form-control {
   color: blue;
   font-size: 14px;
 }
+
 .find-member-sec {
   .table-color.settle_table {
     tr {
@@ -2910,12 +2920,11 @@ input.form-control {
 }
 
 ul.bradcumb {
-  background-image: linear-gradient(
-    rgb(255, 255, 255) 0%,
-    rgb(255, 255, 255) 100%
-  ) !important;
+  background-image: linear-gradient(rgb(255, 255, 255) 0%,
+      rgb(255, 255, 255) 100%) !important;
   border: 1px solid rgb(187, 187, 187);
 }
+
 /* Dark Theme */
 body.dark-theme {
   background-color: #15191f;
@@ -2924,6 +2933,7 @@ body.dark-theme {
   td,
   th {
     border-color: $dark_border !important;
+
     a {
       color: #5a9eff;
     }
@@ -2942,6 +2952,7 @@ body.dark-theme {
       color: #fff !important;
     }
   }
+
   .dashboard-header,
   .dashboard-single,
   .dropdown-menu-custom,
@@ -2983,16 +2994,15 @@ body.dark-theme {
   .allcommon .sum-pl dt,
   .allcommon .modal-title-status,
   .allcommon .account-table td a,
-  .riskmangement
-    .risk-management-table
-    .risk-management-table-header
-    .common-heading,
+  .riskmangement .risk-management-table .risk-management-table-header .common-heading,
   .allcommon .find-member-sec form .fa-search,
   .fa-redo-alt,
   .allcommon .bank_balance_detail h6,
   .allcommon .account-table .inner_table th,
   .setting_dashboard_block .common-heading,
-  .btn-icon svg ,.modal-title, .modal span{
+  .btn-icon svg,
+  .modal-title,
+  .modal span {
     color: $whitecolor !important;
   }
 
@@ -3002,10 +3012,12 @@ body.dark-theme {
   }
 
   .allcommon {
+
     .sidebar .sidebar-main ul li a,
     .user_11 {
       color: #5a9eff;
     }
+
     .light_blue td,
     .light_blue th {
       background-color: #212d38 !important;
@@ -3090,6 +3102,81 @@ body.dark-theme {
     background-color: transparent;
   }
 
+  .admin-panel {
+
+    .chat-header,
+    .input-container,
+    .tickets-sidebar,
+    .tickets-sidebar,
+    .tickets-list,
+    .search-input {
+      background: #333;
+    }
+
+    .chat-container {
+      background: url(./asset/image/bgchat.jpg);
+    }
+
+    .no-ticket-selected {
+      background: url(./asset/image/noticket.webp);
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./asset/image/noticket.webp);
+    }
+
+    .user-name,
+    .user-meta,
+    .input-action-btn,
+    .message-input,
+    .message-time,
+    .ticket-id,
+    .user-mobile {
+      color: #fcfcfc;
+    }
+
+    .text-input-wrapper,
+    .stat-item {
+      background: $darkcolor;
+    }
+
+    .message.received .message-bubble,
+    .tickets-sidebar .contactsupport,
+    .tickets-sidebar,
+    .sidebar-stats,
+    .search-box,
+    .ticket-item:hover,
+    .ticket-item.active,
+    .message-input:disabled {
+      background: #575757;
+    }
+
+    .message.sent {
+      .message-bubble {
+        color: $darkcolor;
+      }
+
+      .message-time {
+        color: #555;
+      }
+    }
+
+    .last-message {
+      color: #c1c1c1;
+    }
+
+    .message-count {
+      color: #b2b2b2;
+    }
+
+    .stat-label {
+      color: #b9b9b9;
+    }
+
+    .filter-btn.active {
+      background: #2d2d2d;
+      border-color: #2d2d2d;
+    }
+  }
+
+
   .box1_green {
     margin-bottom: 18px;
 
@@ -3149,6 +3236,7 @@ body.dark-theme {
   .gray-inner_table {
     background-color: #333333 !important;
   }
+
   select {
     background: #2e3543;
     color: #fff;
@@ -3197,6 +3285,7 @@ body.dark-theme {
     td {
       color: $darkcolor !important;
     }
+
     tr {
       &:hover {
         td {
@@ -3733,6 +3822,7 @@ $withdraw-bg: #dc3545;
 }
 
 @media (max-width: 567px) {
+
   .button_add,
   .button_add:hover {
     padding: 5px 11px;

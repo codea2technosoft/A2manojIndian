@@ -169,6 +169,14 @@ function Banks() {
           bank_name: '',
           ifsc_code: ''
         };
+      } else if (newType === 'online') {
+        typeSpecificData = {
+          account_number: '',
+          bank_name: '',
+          ifsc_code: '',
+          upi_id: '',
+          qr_code: ''
+        };
       }
 
       setSelectedBank({
@@ -212,6 +220,7 @@ function Banks() {
           formData.append('image', selectedBank.image);
         }
       }
+      // Online ke liye kuch extra nahi, bas accountName use hoga
 
       Object.keys(payload).forEach(key => {
         formData.append(key, payload[key]);
@@ -360,7 +369,8 @@ function Banks() {
         account_number: '',
         bank_name: '',
         ifsc_code: '',
-        upi_id: ''
+        upi_id: '',
+        image: null
       }));
     } else {
       setAddFormData(prev => ({
@@ -409,6 +419,11 @@ function Banks() {
       }
     }
     
+    // Online ke liye alag validation nahi, bas account_name required hai
+    if (addFormData.depositType === 'online') {
+      // account_name already required hai upar
+    }
+    
     if (!addFormData.depositLimit || addFormData.depositLimit <= 0) {
       newErrors.depositLimit = 'Please enter valid deposit limit';
     }
@@ -436,7 +451,7 @@ function Banks() {
       const formData = new FormData();
 
       const payload = {
-        accountName: addFormData.account_name,
+        accountName: addFormData.account_name, // Online ke liye yehi gateway name hoga
         depositType: addFormData.depositType,
         depositLimit: addFormData.depositLimit,
         depositDiscount: addFormData.discount || '0',
@@ -455,6 +470,7 @@ function Banks() {
           formData.append('image', addFormData.image);
         }
       }
+      // Online ke liye kuch extra nahi, bas accountName send ho raha hai
 
       Object.keys(payload).forEach(key => {
         formData.append(key, payload[key]);
@@ -509,7 +525,7 @@ function Banks() {
                     <thead>
                       <tr>
                         <th scope="col">Sr no.</th>
-                        <th scope="col">Account Name</th>
+                        <th scope="col">Account Name / Gateway Name</th>
                         <th scope="col">Deposit Type</th>
                         <th scope="col">Deposit Detail</th>
                         <th scope="col">Created Date</th>
@@ -536,6 +552,10 @@ function Banks() {
                                   <p>Account Number : {bank.depositDetail.accountNumber}</p>
                                   <p>Bank Name : {bank.depositDetail.bankName}</p>
                                   <p>IFSC Code : {bank.depositDetail.ifscCode}</p>
+                                </div>
+                              ) : bank.depositType === 'online' ? (
+                                <div>
+                                  <p>Gateway Name : {bank.accountName}</p>
                                 </div>
                               ) : (
                                 <div>
@@ -654,15 +674,19 @@ function Banks() {
                         <option value="bankTransfer">Bank Transfer</option>
                         <option value="UPI">UPI</option>
                         <option value="QR">QR</option>
+                        <option value="online">Online</option>
                       </select>
                     </div>
 
                     <div className="mb-3 col-12 col-md-6">
-                      <label className="form-label">Account Name</label>
+                      <label className="form-label">
+                        {selectedBank.depositType === 'online' ? 'Gateway Name' : 'Account Name'}
+                      </label>
                       <input
                         name="accountName"
                         type="text"
                         className="form-control"
+                        placeholder={selectedBank.depositType === 'online' ? 'Enter gateway name' : 'Enter account name'}
                         value={selectedBank.accountName || ''}
                         onChange={handleInputChange}
                         required
@@ -823,20 +847,24 @@ function Banks() {
                       <option value="bankTransfer">Bank Transfer</option>
                       <option value="UPI">UPI</option>
                       <option value="QR">QR</option>
+                      <option value="online">Online</option>
                     </select>
                     {errors.depositType && (
                       <div className="invalid-feedback">{errors.depositType}</div>
                     )}
                   </div>
 
-                  {/* Account Name */}
+                  {/* Account Name / Gateway Name */}
                   <div className="mb-3">
-                    <label className="form-label">Account Name <span className="text-danger">*</span></label>
+                    <label className="form-label">
+                      {addFormData.depositType === 'online' ? 'Gateway Name' : 'Account Name'} 
+                      <span className="text-danger">*</span>
+                    </label>
                     <input
                       name="account_name"
                       type="text"
                       className={`form-control ${errors.account_name ? 'is-invalid' : ''}`}
-                      placeholder="Enter account name"
+                      placeholder={addFormData.depositType === 'online' ? 'Enter gateway name (e.g., Paytm, Razorpay)' : 'Enter account name'}
                       value={addFormData.account_name}
                       onChange={handleAddChange}
                       required
