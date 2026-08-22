@@ -20,6 +20,8 @@ const AccountSummary = () => {
   const [exposureLimit, setExposureLimit] = useState('');
   const [exposurePassword, setExposurePassword] = useState('');
   const [exposureLoading, setExposureLoading] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Check if current page is lifetime-PL
   const location = useLocation();
@@ -51,12 +53,12 @@ const AccountSummary = () => {
   const [submitted, setSubmitted] = useState(false);
 
   // Validation functions
-  const validateOldPasswordField = (password) => {
-    if (!password || password.trim() === "") {
-      return "Please enter Old Password";
-    }
-    return "";
-  };
+  // const validateOldPasswordField = (password) => {
+  //   if (!password || password.trim() === "") {
+  //     return "Please enter Old Password";
+  //   }
+  //   return "";
+  // };
 
   const validateNewPasswordField = (password) => {
     if (!password || password.trim() === "") {
@@ -82,27 +84,37 @@ const AccountSummary = () => {
   };
 
   // Validate all fields before submission
+  // const validateAllFields = () => {
+  //   const oldPassError = validateOldPasswordField(oldPassword);
+  //   const newPassError = validateNewPasswordField(newPassword);
+  //   const confirmPassError = validateConfirmPasswordField(confirmPassword, newPassword);
+
+  //   setOldPasswordError(oldPassError);
+  //   setNewPasswordError(newPassError);
+  //   setConfirmPasswordError(confirmPassError);
+
+  //   if (oldPassword === newPassword && oldPassword !== "") {
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: "Validation Error",
+  //       text: "New password cannot be same as old password",
+  //       confirmButtonText: "OK",
+  //     });
+  //     return false;
+  //   }
+
+  //   return !oldPassError && !newPassError && !confirmPassError;
+  // };
+
   const validateAllFields = () => {
-    const oldPassError = validateOldPasswordField(oldPassword);
-    const newPassError = validateNewPasswordField(newPassword);
-    const confirmPassError = validateConfirmPasswordField(confirmPassword, newPassword);
+  const newPassError = validateNewPasswordField(newPassword);
+  const confirmPassError = validateConfirmPasswordField(confirmPassword, newPassword);
 
-    setOldPasswordError(oldPassError);
-    setNewPasswordError(newPassError);
-    setConfirmPasswordError(confirmPassError);
+  setNewPasswordError(newPassError);
+  setConfirmPasswordError(confirmPassError);
 
-    if (oldPassword === newPassword && oldPassword !== "") {
-      Swal.fire({
-        icon: "error",
-        title: "Validation Error",
-        text: "New password cannot be same as old password",
-        confirmButtonText: "OK",
-      });
-      return false;
-    }
-
-    return !oldPassError && !newPassError && !confirmPassError;
-  };
+  return !newPassError && !confirmPassError;
+};
 
   // Fetch admin profile data
   // Fetch admin profile data - Fix for exposure_limit
@@ -496,70 +508,70 @@ const AccountSummary = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitted(true);
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setSubmitted(true);
 
-    if (!validateAllFields()) {
-      return;
-    }
+  //   if (!validateAllFields()) {
+  //     return;
+  //   }
 
-    setIsLoading(true);
-    try {
-      const payload = {
-        admin_id: adminId,
-        newPassword: newPassword,
-        oldPassword: oldPassword  // ✅ YAHAN ADD KARO
-      };
+  //   setIsLoading(true);
+  //   try {
+  //     const payload = {
+  //       admin_id: adminId,
+  //       newPassword: newPassword,
+  //       oldPassword: oldPassword  
+  //     };
 
-      console.log("Change Password Payload:", payload);
+  //     console.log("Change Password Payload:", payload);
 
-      const response = await changeMasterPasswordAgent(payload);
-      console.log("Change Password Response:", response);
+  //     const response = await changeMasterPasswordAgent(payload);
+  //     console.log("Change Password Response:", response);
 
-      const isSuccess = response?.success || response?.data?.success || false;
-      const messageText = response?.message || response?.data?.message || "Password changed successfully";
+  //     const isSuccess = response?.success || response?.data?.success || false;
+  //     const messageText = response?.message || response?.data?.message || "Password changed successfully";
 
-      if (isSuccess) {
-        setIsOpen(false);
-        Swal.fire({
-          icon: "success",
-          title: "Success",
-          text: messageText,
-          confirmButtonText: "OK",
-        });
-        setOldPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-        setOldPasswordError("");
-        setNewPasswordError("");
-        setConfirmPasswordError("");
-        setSubmitted(false);
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: messageText || "Failed to change password",
-        });
-      }
-    } catch (err) {
-      console.error(err);
-      let errorMessage = "An error occurred while changing password";
-      if (err.response && err.response.data && err.response.data.message) {
-        errorMessage = err.response.data.message;
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: errorMessage,
-        confirmButtonText: "OK",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     if (isSuccess) {
+  //       setIsOpen(false);
+  //       Swal.fire({
+  //         icon: "success",
+  //         title: "Success",
+  //         text: messageText,
+  //         confirmButtonText: "OK",
+  //       });
+  //       setOldPassword("");
+  //       setNewPassword("");
+  //       setConfirmPassword("");
+  //       setOldPasswordError("");
+  //       setNewPasswordError("");
+  //       setConfirmPasswordError("");
+  //       setSubmitted(false);
+  //     } else {
+  //       Swal.fire({
+  //         icon: "error",
+  //         title: "Error",
+  //         text: messageText || "Failed to change password",
+  //       });
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     let errorMessage = "An error occurred while changing password";
+  //     if (err.response && err.response.data && err.response.data.message) {
+  //       errorMessage = err.response.data.message;
+  //     } else if (err.message) {
+  //       errorMessage = err.message;
+  //     }
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: "Error",
+  //       text: errorMessage,
+  //       confirmButtonText: "OK",
+  //     });
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   // Open Exposure Limit Modal
   // const openExposureModal = () => {
@@ -575,6 +587,69 @@ const AccountSummary = () => {
   // };
 
   // Open Exposure Limit Modal
+ 
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setSubmitted(true);
+
+  if (!validateAllFields()) {
+    return;
+  }
+
+  setIsLoading(true);
+  try {
+    const payload = {
+      admin_id: adminId,
+      newPassword: newPassword
+      // ✅ OLD PASSWORD REMOVED FROM PAYLOAD
+    };
+
+    console.log("Change Password Payload:", payload);
+
+    const response = await changeMasterPasswordAgent(payload);
+    console.log("Change Password Response:", response);
+
+    const isSuccess = response?.success || response?.data?.success || false;
+    const messageText = response?.message || response?.data?.message || "Password changed successfully";
+
+    if (isSuccess) {
+      setIsOpen(false);
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: messageText,
+        confirmButtonText: "OK",
+      });
+      setNewPassword("");
+      setConfirmPassword("");
+      setNewPasswordError("");
+      setConfirmPasswordError("");
+      setSubmitted(false);
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: messageText || "Failed to change password",
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    let errorMessage = "An error occurred while changing password";
+    if (err.response && err.response.data && err.response.data.message) {
+      errorMessage = err.response.data.message;
+    } else if (err.message) {
+      errorMessage = err.message;
+    }
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: errorMessage,
+      confirmButtonText: "OK",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
   const openExposureModal = () => {
     // ✅ Exposure limit ka raw value show karo (5000)
     setExposureLimit(userData.exposureLimit || '');
@@ -867,7 +942,7 @@ const AccountSummary = () => {
       </Layout>
 
       {/* Change Password Modal */}
-      <Modal
+      {/* <Modal
         show={isOpen}
         onHide={() => {
           setIsOpen(false);
@@ -902,28 +977,6 @@ const AccountSummary = () => {
                 onSubmit={handleSubmit}
                 noValidate
               >
-                <div className="d-flex mb-2">
-                  <label className="form-label">Old Password</label>
-                  <input
-                    type="password"
-                    name="oldPassword"
-                    className={`form-control ${submitted && oldPasswordError ? 'is-invalid' : ''}`}
-                    placeholder="Enter Old Password"
-                    value={oldPassword}
-                    onChange={(e) => {
-                      setOldPassword(e.target.value);
-                      if (submitted) {
-                        setOldPasswordError(validateOldPasswordField(e.target.value));
-                      }
-                    }}
-                    disabled={isLoading}
-                  />
-                  {submitted && oldPasswordError && (
-                    <div className="invalid-feedback" style={{ display: 'block' }}>
-                      {oldPasswordError}
-                    </div>
-                  )}
-                </div>
 
                 <div className="d-flex mb-2">
                   <label className="form-label">New Password</label>
@@ -1001,7 +1054,289 @@ const AccountSummary = () => {
             </div>
           </div>
         </div>
-      </Modal>
+      </Modal> */}
+
+      {/* Change Password Modal */}
+{/* <Modal
+  show={isOpen}
+  onHide={() => {
+    setIsOpen(false);
+    setSubmitted(false);
+    setNewPasswordError("");
+    setConfirmPasswordError("");
+  }}
+  backdrop="static">
+  <div className="allcommon">
+    <div className="modal-header">
+      <div className="modal-title-status h4 modal-title">
+        Change Password dfasdsad
+      </div>
+      <button
+        type="button"
+        className="btn-close"
+        aria-label="Close"
+        onClick={() => {
+          setIsOpen(false);
+          setSubmitted(false);
+          setNewPasswordError("");
+          setConfirmPasswordError("");
+        }}
+      ></button>
+    </div>
+    <div className="modal-body">
+      <div className="test-status border-0">
+        <form
+          className="change-password-sec"
+          onSubmit={handleSubmit}
+          noValidate
+        >
+
+          <div className="d-flex mb-2">
+            <label className="form-label">New Password</label>
+            <input
+              type="password"
+              name="newPassword"
+              className={`form-control ${submitted && newPasswordError ? 'is-invalid' : ''}`}
+              placeholder="Enter New Password"
+              value={newPassword}
+              onChange={(e) => {
+                setNewPassword(e.target.value);
+                if (submitted) {
+                  setNewPasswordError(validateNewPasswordField(e.target.value));
+                  if (confirmPassword) {
+                    setConfirmPasswordError(validateConfirmPasswordField(confirmPassword, e.target.value));
+                  }
+                }
+              }}
+              disabled={isLoading}
+            />
+            {submitted && newPasswordError && (
+              <div className="invalid-feedback" style={{ display: 'block' }}>
+                {newPasswordError}
+              </div>
+            )}
+          </div>
+
+          <div className="d-flex mb-2">
+            <label className="form-label">Confirm Password</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              className={`form-control ${submitted && confirmPasswordError ? 'is-invalid' : ''}`}
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                if (submitted) {
+                  setConfirmPasswordError(validateConfirmPasswordField(e.target.value, newPassword));
+                }
+              }}
+              disabled={isLoading}
+            />
+            {submitted && confirmPasswordError && (
+              <div className="invalid-feedback" style={{ display: 'block' }}>
+                {confirmPasswordError}
+              </div>
+            )}
+          </div>
+
+          <div className="text-center mt-4">
+            <button
+              type="submit"
+              className="green-btn btn btn-primary"
+              disabled={isLoading}
+            >
+              {isLoading ? "Saving..." : "Change"}
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary ms-2"
+              onClick={() => {
+                setIsOpen(false);
+                setSubmitted(false);
+                setNewPasswordError("");
+                setConfirmPasswordError("");
+              }}
+              disabled={isLoading}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</Modal> */}
+
+<Modal
+  show={isOpen}
+  onHide={() => {
+    setIsOpen(false);
+    setSubmitted(false);
+    setNewPasswordError("");
+    setConfirmPasswordError("");
+    setShowNewPassword(false);  // ✅ Add this
+    setShowConfirmPassword(false);  // ✅ Add this
+  }}
+  backdrop="static">
+  <div className="allcommon">
+    <div className="modal-header">
+      <div className="modal-title-status h4 modal-title">
+        Change Password
+      </div>
+      <button
+        type="button"
+        className="btn-close"
+        aria-label="Close"
+        onClick={() => {
+          setIsOpen(false);
+          setSubmitted(false);
+          setNewPasswordError("");
+          setConfirmPasswordError("");
+          setShowNewPassword(false);  // ✅ Add this
+          setShowConfirmPassword(false);  // ✅ Add this
+        }}
+      ></button>
+    </div>
+    <div className="modal-body">
+      <div className="test-status border-0">
+        <form
+          className="change-password-sec"
+          onSubmit={handleSubmit}
+          noValidate
+        >
+          {/* New Password Field with Eye Icon */}
+          <div className="d-flex mb-2 align-items-center">
+            <label className="form-label" style={{ minWidth: '130px' }}>New Password</label>
+            <div style={{ position: 'relative', flex: 1 }}>
+              <input
+                type={showNewPassword ? "text" : "password"}
+                name="newPassword"
+                className={`form-control ${submitted && newPasswordError ? 'is-invalid' : ''}`}
+                placeholder="Enter New Password"
+                style={{ paddingRight: '40px' }}
+                value={newPassword}
+                onChange={(e) => {
+                  setNewPassword(e.target.value);
+                  if (submitted) {
+                    setNewPasswordError(validateNewPasswordField(e.target.value));
+                    if (confirmPassword) {
+                      setConfirmPasswordError(validateConfirmPasswordField(confirmPassword, e.target.value));
+                    }
+                  }
+                }}
+                disabled={isLoading}
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  zIndex: 10,
+                  color: '#6c757d',
+                  padding: '0',
+                  fontSize: '16px'
+                }}
+              >
+                {showNewPassword ? (
+                  <i className="fas fa-eye-slash"></i>
+                ) : (
+                  <i className="fas fa-eye"></i>
+                )}
+              </button>
+              {submitted && newPasswordError && (
+                <div className="invalid-feedback" style={{ display: 'block' }}>
+                  {newPasswordError}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Confirm Password Field with Eye Icon */}
+          <div className="d-flex mb-2 align-items-center">
+            <label className="form-label" style={{ minWidth: '130px' }}>Confirm Password</label>
+            <div style={{ position: 'relative', flex: 1 }}>
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                className={`form-control ${submitted && confirmPasswordError ? 'is-invalid' : ''}`}
+                placeholder="Confirm Password"
+                style={{ paddingRight: '40px' }}
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  if (submitted) {
+                    setConfirmPasswordError(validateConfirmPasswordField(e.target.value, newPassword));
+                  }
+                }}
+                disabled={isLoading}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  zIndex: 10,
+                  color: '#6c757d',
+                  padding: '0',
+                  fontSize: '16px'
+                }}
+              >
+                {showConfirmPassword ? (
+                  <i className="fas fa-eye-slash"></i>
+                ) : (
+                  <i className="fas fa-eye"></i>
+                )}
+              </button>
+              {submitted && confirmPasswordError && (
+                <div className="invalid-feedback" style={{ display: 'block' }}>
+                  {confirmPasswordError}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="text-center mt-4">
+            <button
+              type="submit"
+              className="green-btn btn btn-primary"
+              disabled={isLoading}
+            >
+              {isLoading ? "Saving..." : "Change"}
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary ms-2"
+              onClick={() => {
+                setIsOpen(false);
+                setSubmitted(false);
+                setNewPasswordError("");
+                setConfirmPasswordError("");
+                setShowNewPassword(false);
+                setShowConfirmPassword(false);
+              }}
+              disabled={isLoading}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</Modal>
 
       {/* Change Exposure Limit Modal */}
       {showExposureModal && (

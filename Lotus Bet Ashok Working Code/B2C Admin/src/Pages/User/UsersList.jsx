@@ -28,7 +28,9 @@ import {
   BetBlockUnblock,
   changeMasterPasswordAgentStatus,
   changeCreditLimitUser,
-  getUserExposure
+  getUserExposure,
+  Add_deposit_amount_by_userTOAdmin,
+  Add_withdraw_amount_by_userTOAdmin
 } from "../../Server/api";
 import { FaPlus, FaMinus, FaEye } from "react-icons/fa";
 
@@ -43,11 +45,31 @@ function UsersList() {
   const [remarks, setRemarks] = useState("");
   const [depositType, setDepositType] = useState("admin");
   const [tableLoading, setTableLoading] = useState(false);
+  const [depositAmount, setDepositAmount] = useState('');
+  const [depositPassword, setDepositPassword] = useState('');
+  const [depositLoading, setDepositLoading] = useState(false);
+  const [depositErrors, setDepositErrors] = useState({});
+  const [showDepositPassword, setShowDepositPassword] = useState(false);
+  const [showWithdrawPassword, setShowWithdrawPassword] = useState(false);
+  const [showCreditPassword, setShowCreditPassword] = useState(false);
+
+  const [withdrawalAmount, setWithdrawalAmount] = useState('');
+  const [withdrawalPassword, setWithdrawalPassword] = useState('');
+  const [withdrawalLoading, setWithdrawalLoading] = useState(false);
+  const [withdrawalErrors, setWithdrawalErrors] = useState({});
+  const [showWithdrawalPassword, setShowWithdrawalPassword] = useState(false);
+
   const navigate = useNavigate();
 
   const [Adduser, setAdduser] = useState(false);
   const AdduserOpenModalall = () => setAdduser(true);
-  const AdduserCloseModalall = () => setAdduser(false);
+  // const AdduserCloseModalall = () => setAdduser(false);
+  const AdduserCloseModalall = () => {
+    setAdduser(false);
+    // ✅ Sirf password visibility reset karo
+    setShowAddUserPassword(false);
+    setShowAddUserConfirmPassword(false);
+  };
   const handleOpenModalall = (user) => {
     setSelectedUser(user);
     setShowModal(true);
@@ -60,8 +82,11 @@ function UsersList() {
     setCreditPassword('');
     setCreditAmountError('');
     setCreditPasswordError('');
+    setShowWithdrawPassword(false);
   };
   const [changestatus, setChangestatus] = useState(false);
+  const [depositbalance, setDepositbalance] = useState(false);
+  const [withdrawalbalance, setWithdrawalbalance] = useState(false);
   const [status, setStatus] = useState("active");
 
   // Password change states
@@ -75,6 +100,8 @@ function UsersList() {
   const [exposureLoading, setExposureLoading] = useState(false);
   const [selectedUserName, setSelectedUserName] = useState('');
 
+  const [showAddUserPassword, setShowAddUserPassword] = useState(false);
+  const [showAddUserConfirmPassword, setShowAddUserConfirmPassword] = useState(false);
   // ===== CREDIT LIMIT EDIT STATES =====
   const [creditModal, setCreditModal] = useState(false);
   const [creditAmount, setCreditAmount] = useState('');
@@ -98,6 +125,7 @@ function UsersList() {
     setCreditPassword('');
     setCreditAmountError('');
     setCreditPasswordError('');
+    setShowCreditPassword(false);
   };
   // ==================================
 
@@ -418,13 +446,46 @@ function UsersList() {
     setStatus("active");
     setChangestatus(true);
   };
+  const Depositmodalhandle = (user) => {
+    setSelectedUserForPassword(user);
+    setNewPassword("");
+    setSelectedUser(user);
+    setStatus("active");
+    setDepositbalance(true);
+  };
+  // const Withdrawalbalancehandle = (user) => {
+  //   setWithdrawalbalance(true);
+  // };
+  const Withdrawalbalancehandle = (user) => {
+    setSelectedUser(user);
+    setWithdrawalbalance(true);
+    setWithdrawalAmount('');
+    setWithdrawalPassword('');
+    setWithdrawalErrors({});
+    setShowWithdrawalPassword(false);
+  };
 
   const Changestatusclose = () => {
     setChangestatus(false);
     setNewPassword("");
     setSelectedUserForPassword(null);
   };
-
+  const Depositbalancehandle = () => {
+    setDepositbalance(false)
+    setSelectedUser(null);
+  }
+  // const Withdrawalbalanceclose = () => {
+  //   setWithdrawalbalance(false)
+  //   setSelectedUser(null);
+  // }
+  const Withdrawalbalanceclose = () => {
+    setWithdrawalbalance(false);
+    setSelectedUser(null);
+    setWithdrawalAmount('');
+    setWithdrawalPassword('');
+    setWithdrawalErrors({});
+    setShowWithdrawalPassword(false);
+  };
   // ===== SERVER SIDE FILTER STATES =====
   const [filters, setFilters] = useState({
     username: "",
@@ -593,6 +654,7 @@ function UsersList() {
     }
   };
 
+
   const handleTransaction = async () => {
     if (!amount || amount <= 0) {
       Swal.fire("Error", "Please enter a valid amount", "error");
@@ -636,6 +698,118 @@ function UsersList() {
       }
     } catch (error) {
       Swal.fire("Error", error.response?.data?.message || "Something went wrong", "error");
+    }
+  };
+
+  // ✅ Deposit Submit Handler
+  const handleDepositSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validation
+    const errors = {};
+    if (!depositAmount || Number(depositAmount) <= 0) {
+      errors.depositAmount = 'Please enter a valid deposit amount';
+    }
+    if (!depositPassword || depositPassword.length < 4) {
+      errors.depositPassword = 'Password must be at least 4 characters';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setDepositErrors(errors);
+      return;
+    }
+
+    if (!selectedUser) {
+      Swal.fire('Error', 'No user selected', 'error');
+      return;
+    }
+
+    try {
+      setDepositLoading(true);
+
+      const payload = {
+        admin_id: selectedUser?.user_id || selectedUser?.admin_id || selectedUser?._id,
+        password: depositPassword,
+        amount: String(Number(depositAmount))
+      };
+
+      console.log('📤 Deposit Payload:', payload);
+
+      const response = await Add_deposit_amount_by_userTOAdmin(payload);
+
+      if (response.data && response.data.success) {
+        Swal.fire('Success!', 'Deposit added successfully!', 'success');
+        // Reset form
+        setDepositAmount('');
+        setDepositPassword('');
+        setDepositErrors({});
+        setDepositbalance(false);
+        setSelectedUser(null);
+        fetchUsers(); // Refresh users list
+      } else {
+        Swal.fire('Error', response.data?.message || 'Failed to add deposit', 'error');
+      }
+    } catch (error) {
+      console.error('❌ Deposit Error:', error);
+      Swal.fire('Error', error.response?.data?.message || 'Something went wrong', 'error');
+    } finally {
+      setDepositLoading(false);
+    }
+  };
+
+  // ✅ Withdrawal Submit Handler
+  const handleWithdrawalSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validation
+    const errors = {};
+    if (!withdrawalAmount || Number(withdrawalAmount) <= 0) {
+      errors.withdrawalAmount = 'Please enter a valid withdrawal amount';
+    }
+    if (!withdrawalPassword || withdrawalPassword.length < 4) {
+      errors.withdrawalPassword = 'Password must be at least 4 characters';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setWithdrawalErrors(errors);
+      return;
+    }
+
+    if (!selectedUser) {
+      Swal.fire('Error', 'No user selected', 'error');
+      return;
+    }
+
+    try {
+      setWithdrawalLoading(true);
+
+      const payload = {
+        admin_id: selectedUser?.user_id || selectedUser?.admin_id || selectedUser?._id,
+        password: withdrawalPassword,
+        amount: String(Number(withdrawalAmount))
+      };
+
+      console.log('📤 Withdrawal Payload:', payload);
+
+      const response = await Add_withdraw_amount_by_userTOAdmin(payload);
+
+      if (response.data && response.data.success) {
+        Swal.fire('Success!', 'Withdrawal successful!', 'success');
+        // Reset form
+        setWithdrawalAmount('');
+        setWithdrawalPassword('');
+        setWithdrawalErrors({});
+        setWithdrawalbalance(false);
+        setSelectedUser(null);
+        fetchUsers(); // Refresh users list
+      } else {
+        Swal.fire('Error', response.data?.message || 'Failed to withdraw', 'error');
+      }
+    } catch (error) {
+      console.error('❌ Withdrawal Error:', error);
+      Swal.fire('Error', error.response?.data?.message || 'Something went wrong', 'error');
+    } finally {
+      setWithdrawalLoading(false);
     }
   };
 
@@ -1022,6 +1196,12 @@ function UsersList() {
                           >
                             <i className="fas fa-user" />
                           </Link>
+                          <a title="Manual Deposit" className="btn hover_none bg-success" onClick={() => Depositmodalhandle(user)}>
+                            <span> D</span>
+                          </a>
+                          <a title="Manual Withdrawal" className="btn hover_none bg-danger" onClick={() => Withdrawalbalancehandle(user)}>
+                            <span>W</span>
+                          </a>
                         </td>
                       </tr>
                     ))
@@ -1200,7 +1380,7 @@ function UsersList() {
                         </div>
                       </div>
 
-                      <div className="mb-2 mb-md-3 col-sm-12">
+                      {/* <div className="mb-2 mb-md-3 col-sm-12">
                         <div className="row">
                           <div className="col-md-4">
                             <label className="form-label">Password</label>
@@ -1221,9 +1401,52 @@ function UsersList() {
                             )}
                           </div>
                         </div>
+                      </div> */}
+                      <div className="mb-2 mb-md-3 col-sm-12">
+                        <div className="row">
+                          <div className="col-md-4">
+                            <label className="form-label">Password</label>
+                          </div>
+                          <div className="col-md-8">
+                            <div style={{ position: 'relative' }}>
+                              <input
+                                placeholder="Enter Password"
+                                name="password"
+                                type={showAddUserPassword ? "text" : "password"}
+                                className="form-control"
+                                style={{ paddingRight: '40px' }}
+                                value={userFormData.password}
+                                onChange={(e) => setUserFormData({ ...userFormData, password: e.target.value })}
+                              />
+                              <span
+                                onClick={() => setShowAddUserPassword(!showAddUserPassword)}
+                                style={{
+                                  position: 'absolute',
+                                  right: '10px',
+                                  top: '50%',
+                                  transform: 'translateY(-50%)',
+                                  cursor: 'pointer',
+                                  zIndex: 10,
+                                  color: '#6c757d'
+                                }}
+                              >
+                                {showAddUserPassword ? (
+                                  <i className="fas fa-eye-slash"></i>
+                                ) : (
+                                  <i className="fas fa-eye"></i>
+                                )}
+                              </span>
+                            </div>
+                            {userErrors.password && (
+                              <div style={{ color: '#dc3545', fontSize: '14px', marginTop: '5px' }}>
+                                {userErrors.password}
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
 
-                      <div className="mb-2 mb-md-3 col-sm-12">
+                      {/* <div className="mb-2 mb-md-3 col-sm-12">
                         <div className="row">
                           <div className="col-md-4">
                             <label className="form-label">Confirm Password</label>
@@ -1244,9 +1467,53 @@ function UsersList() {
                             )}
                           </div>
                         </div>
-                      </div>
+                      </div> */}
 
                       <div className="mb-2 mb-md-3 col-sm-12">
+                        <div className="row">
+                          <div className="col-md-4">
+                            <label className="form-label">Confirm Password</label>
+                          </div>
+                          <div className="col-md-8">
+                            <div style={{ position: 'relative' }}>
+                              <input
+                                placeholder="Confirm Password"
+                                name="confirmPassword"
+                                type={showAddUserConfirmPassword ? "text" : "password"}
+                                className="form-control"
+                                style={{ paddingRight: '40px' }}
+                                value={userFormData.confirmPassword}
+                                onChange={(e) => setUserFormData({ ...userFormData, confirmPassword: e.target.value })}
+                              />
+                              <span
+                                onClick={() => setShowAddUserConfirmPassword(!showAddUserConfirmPassword)}
+                                style={{
+                                  position: 'absolute',
+                                  right: '10px',
+                                  top: '50%',
+                                  transform: 'translateY(-50%)',
+                                  cursor: 'pointer',
+                                  zIndex: 10,
+                                  color: '#6c757d'
+                                }}
+                              >
+                                {showAddUserConfirmPassword ? (
+                                  <i className="fas fa-eye-slash"></i>
+                                ) : (
+                                  <i className="fas fa-eye"></i>
+                                )}
+                              </span>
+                            </div>
+                            {userErrors.confirmPassword && (
+                              <div style={{ color: '#dc3545', fontSize: '14px', marginTop: '5px' }}>
+                                {userErrors.confirmPassword}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* <div className="mb-2 mb-md-3 col-sm-12">
                         <div className="row">
                           <div className="col-md-4">
                             <label className="form-label">Phone</label>
@@ -1259,6 +1526,33 @@ function UsersList() {
                               className="form-control"
                               value={userFormData.phoneNumber}
                               onChange={(e) => setUserFormData({ ...userFormData, phoneNumber: e.target.value })}
+                            />
+                            {userErrors.phoneNumber && (
+                              <div style={{ color: '#dc3545', fontSize: '14px', marginTop: '5px' }}>
+                                {userErrors.phoneNumber}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div> */}
+                      <div className="mb-2 mb-md-3 col-sm-12">
+                        <div className="row">
+                          <div className="col-md-4">
+                            <label className="form-label">Phone</label>
+                          </div>
+                          <div className="col-md-8">
+                            <input
+                              placeholder="Enter Phone Number"
+                              name="phone"
+                              type="text"
+                              className="form-control"
+                              maxLength="10"
+                              value={userFormData.phoneNumber}
+                              onChange={(e) => {
+                                // Sirf numbers allow karo aur max 10 digits
+                                const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                setUserFormData({ ...userFormData, phoneNumber: value });
+                              }}
                             />
                             {userErrors.phoneNumber && (
                               <div style={{ color: '#dc3545', fontSize: '14px', marginTop: '5px' }}>
@@ -1363,7 +1657,7 @@ function UsersList() {
       )}
 
       {/* ✅ CREDIT LIMIT EDIT MODAL */}
-      {creditModal && (
+      {/* {creditModal && (
         <div className="allcommon">
           <div
             className="modal show d-block"
@@ -1452,6 +1746,142 @@ function UsersList() {
                           }}
                           required
                         />
+                        {creditPasswordError && (
+                          <div className="text-danger small mt-1">{creditPasswordError}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-center mt-4">
+                      <button
+                        type="submit"
+                        className="theme_dark_btn btn btn-primary"
+                        disabled={loading || creditAmountError || creditPasswordError}
+                      >
+                        {loading ? "Submitting..." : "Submit"}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )} */}
+
+      {creditModal && (
+        <div className="allcommon">
+          <div
+            className="modal show d-block"
+            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+            onClick={handleCloseCreditModal}
+          >
+            <div
+              className="modal-dialog modal-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="common-heading">Credit Limit Edit</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={handleCloseCreditModal}
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <form className="change-password-sec" onSubmit={handleCreditSubmit}>
+                    <h4 className="h4 mb-3 curent-value">
+                      <label>Current :</label>
+                      <strong>{(selectedUser?.credit || 0).toFixed(2)}</strong>
+                    </h4>
+
+                    <div className="mb-2 d-flex align-items-center">
+                      <label className="me-2" style={{ minWidth: '80px' }}>New</label>
+                      <div style={{ width: '200px' }}>
+                        <input
+                          placeholder="Enter Credit Amount"
+                          name="credit_amount"
+                          type="number"
+                          className={`form-control ${creditAmountError ? 'is-invalid' : ''}`}
+                          value={creditAmount}
+                          onChange={(e) => {
+                            setCreditAmount(e.target.value);
+                            if (e.target.value && Number(e.target.value) > 0) {
+                              setCreditAmountError('');
+                            } else {
+                              setCreditAmountError('Please enter a valid amount');
+                            }
+                          }}
+                          onBlur={(e) => {
+                            if (!e.target.value) {
+                              setCreditAmountError('Please enter Credit Amount');
+                            } else if (Number(e.target.value) <= 0) {
+                              setCreditAmountError('Amount must be greater than 0');
+                            } else {
+                              setCreditAmountError('');
+                            }
+                          }}
+                          required
+                        />
+                        {creditAmountError && (
+                          <div className="text-danger small mt-1">{creditAmountError}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="mb-2 d-flex align-items-center">
+                      <label className="me-2" style={{ minWidth: '80px' }}>Password</label>
+                      <div style={{ position: 'relative', width: '200px' }}>
+                        <input
+                          placeholder="Enter Password"
+                          name="credit_password"
+                          type={showCreditPassword ? "text" : "password"}
+                          className={`form-control ${creditPasswordError ? 'is-invalid' : ''}`}
+                          value={creditPassword}
+                          style={{ paddingRight: '40px' }}
+                          onChange={(e) => {
+                            setCreditPassword(e.target.value);
+                            if (e.target.value && e.target.value.length >= 4) {
+                              setCreditPasswordError('');
+                            } else {
+                              setCreditPasswordError('Password must be at least 4 characters');
+                            }
+                          }}
+                          onBlur={(e) => {
+                            if (!e.target.value) {
+                              setCreditPasswordError('Please enter password');
+                            } else if (e.target.value.length < 4) {
+                              setCreditPasswordError('Password must be at least 4 characters');
+                            } else {
+                              setCreditPasswordError('');
+                            }
+                          }}
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowCreditPassword(!showCreditPassword)}
+                          style={{
+                            position: 'absolute',
+                            right: '10px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            zIndex: 10,
+                            color: '#6c757d',
+                            padding: '0',
+                            fontSize: '16px'
+                          }}
+                        >
+                          {showCreditPassword ? (
+                            <i className="fas fa-eye-slash"></i>
+                          ) : (
+                            <i className="fas fa-eye"></i>
+                          )}
+                        </button>
                         {creditPasswordError && (
                           <div className="text-danger small mt-1">{creditPasswordError}</div>
                         )}
@@ -1570,6 +2000,410 @@ function UsersList() {
                       </button>
                     </form>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* {depositbalance && (
+        <div className="allcommon">
+          <div
+            className="modal show d-block"
+            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+            onClick={Depositbalancehandle}
+          >
+            <div
+              className="modal-dialog modal-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="common-heading">Add Deposit</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={Depositbalancehandle}
+                  ></button>
+                </div>
+                   <div className="modal-body">
+                  <form className="change-password-sec">
+                    <h4 className="h4 mb-3 curent-value">
+                      <label style={{whiteSpace:"nowrap"}}>Current :</label> <strong>{selectedUser?.credit || "0.00"}</strong>
+                    </h4>
+                    <div className="mb-2 d-flex align-items-center">
+                      <label className="me-2">Deposit Amount</label>
+                      <input
+                        placeholder="Enter Deposit Amount"
+                        name="depositamount"
+                        type="number"
+                        className="w-sm-50 form-control"
+                        required
+                      />
+                    </div>
+                    <div className="mb-2 d-flex align-items-center">
+                      <label style={{whiteSpace:"nowrap"}} className="me-2">Password</label>
+                      <input
+                        placeholder="Enter Password"
+                        name="mypassword"
+                        type="password"
+                        className="w-sm-50 form-control"
+                        required
+                      />
+                    </div>
+                    <div className="text-center mt-4">
+                      <button type="submit" className="theme_dark_btn btn btn-primary">
+                        Submit
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )} */}
+
+      {depositbalance && (
+        <div className="allcommon">
+          <div
+            className="modal show d-block"
+            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+            onClick={Depositbalancehandle}
+          >
+            <div
+              className="modal-dialog modal-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="common-heading">Add Manual Deposit</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={Depositbalancehandle}
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <form className="change-password-sec" onSubmit={handleDepositSubmit}>
+                    <h4 className="h4 mb-3 curent-value">
+                      <label style={{ whiteSpace: "nowrap" }}>Current :</label>
+                      {/* <strong className={selectedUser?.credit >= 0 ? "text-success" : "text-danger"}>
+                        {(selectedUser?.credit || 0).toFixed(2)}
+                      </strong> */}
+                      <strong
+                        className={
+                          ((selectedUser?.credit || 0) - (selectedUser?.totalExposure || 0)) >= 0
+                            ? "text-success"
+                            : "text-danger"
+                        }
+                      >
+                        {(
+                          (selectedUser?.credit || 0) -
+                          (selectedUser?.totalExposure || 0)
+                        ).toFixed(2)}
+                      </strong>
+                    </h4>
+                    <div className="mb-2 d-flex align-items-center">
+                      <label className="me-2" style={{ whiteSpace: "nowrap" }}>Deposit Amount</label>
+                      <div className="w-sm-50">
+                        <input
+                          placeholder="Enter Deposit Amount"
+                          name="depositamount"
+                          type="number"
+                          className={`form-control ${depositErrors.depositAmount ? 'is-invalid' : ''}`}
+                          value={depositAmount}
+                          onChange={(e) => {
+                            setDepositAmount(e.target.value);
+                            if (e.target.value && Number(e.target.value) > 0) {
+                              setDepositErrors({ ...depositErrors, depositAmount: '' });
+                            }
+                          }}
+                          required
+                        />
+                        {depositErrors.depositAmount && (
+                          <div className="text-danger small mt-1">{depositErrors.depositAmount}</div>
+                        )}
+                      </div>
+                    </div>
+                    {/* <div className="mb-2 d-flex align-items-center">
+                      <label style={{ whiteSpace: "nowrap" }} className="me-2">Password</label>
+                      <div className="w-sm-50">
+                        <input
+                          placeholder="Enter Password"
+                          name="mypassword"
+                          type="password"
+                          className={`form-control ${depositErrors.depositPassword ? 'is-invalid' : ''}`}
+                          value={depositPassword}
+                          onChange={(e) => {
+                            setDepositPassword(e.target.value);
+                            if (e.target.value && e.target.value.length >= 4) {
+                              setDepositErrors({ ...depositErrors, depositPassword: '' });
+                            }
+                          }}
+                          required
+                        />
+                        {depositErrors.depositPassword && (
+                          <div className="text-danger small mt-1">{depositErrors.depositPassword}</div>
+                        )}
+                      </div>
+                    </div> */}
+                    <div className="mb-2 d-flex align-items-center">
+                      <label style={{ whiteSpace: "nowrap" }} className="me-2">Password</label>
+                      <div className="w-sm-50 position-relative">
+                        <input
+                          placeholder="Enter Password"
+                          name="mypassword"
+                          type={showDepositPassword ? "text" : "password"}
+                          className={`form-control ${depositErrors.depositPassword ? 'is-invalid' : ''}`}
+                          value={depositPassword}
+                          onChange={(e) => {
+                            setDepositPassword(e.target.value);
+                            if (e.target.value && e.target.value.length >= 4) {
+                              setDepositErrors({ ...depositErrors, depositPassword: '' });
+                            }
+                          }}
+                          required
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-link position-absolute top-50 end-0 translate-middle-y"
+                          onClick={() => setShowDepositPassword(!showDepositPassword)}
+                          style={{ textDecoration: 'none', padding: '0 10px' }}
+                        >
+                          {showDepositPassword ? (
+                            <i className="fas fa-eye-slash text-dark"></i>
+                          ) : (
+                            <i className="fas fa-eye text-dark"></i>
+                          )}
+                        </button>
+                        {depositErrors.depositPassword && (
+                          <div className="text-danger small mt-1">{depositErrors.depositPassword}</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-center mt-4">
+                      <button
+                        type="submit"
+                        className="theme_dark_btn btn btn-primary"
+                        disabled={depositLoading}
+                      >
+                        {depositLoading ? 'Submitting...' : 'Submit'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* {withdrawalbalance && (
+        <div className="allcommon">
+          <div
+            className="modal show d-block"
+            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+            onClick={Withdrawalbalanceclose}
+          >
+            <div
+              className="modal-dialog modal-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="common-heading">Add Manual Withdrawal</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={Withdrawalbalanceclose}
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <form className="change-password-sec" onSubmit={handleDepositSubmit}>
+                    <h4 className="h4 mb-3 curent-value">
+                      <label>Current :</label>
+                      <strong className={selectedUser?.credit >= 0 ? "text-success" : "text-danger"}>
+                        {(selectedUser?.credit || 0).toFixed(2)}
+                      </strong>
+                    </h4>
+                    <div className="mb-2 d-flex align-items-center">
+                      <div>
+                        <label className="me-2  w-auto max-auto-auto">Withdrawal Amount</label>
+                      </div>
+                      <div className="w-sm-50">
+                        <input
+                          placeholder="Enter Withdrawal Amount"
+                          name="withdrawalamount"
+                          type="number"
+                          className={`form-control ${depositErrors.depositAmount ? 'is-invalid' : ''}`}
+                          value={depositAmount}
+                          onChange={(e) => {
+                            setDepositAmount(e.target.value);
+                            if (e.target.value && Number(e.target.value) > 0) {
+                              setDepositErrors({ ...depositErrors, depositAmount: '' });
+                            }
+                          }}
+                          required
+                        />
+                        {depositErrors.depositAmount && (
+                          <div className="text-danger small mt-1">{depositErrors.depositAmount}</div>
+                        )}
+                      </div>
+                    </div>
+                  
+                    <div className="mb-2 d-flex align-items-center">
+                      <div>
+                        <label className="me-2 w-auto max-auto-auto">Password</label>
+
+                      </div>
+                      <div className="w-sm-50 position-relative">
+                        <input
+                          placeholder="Enter Password"
+                          name="mypassword"
+                          type={showDepositPassword ? "text" : "password"}
+                          className={`form-control ${depositErrors.depositPassword ? 'is-invalid' : ''}`}
+                          value={depositPassword}
+                          onChange={(e) => {
+                            setDepositPassword(e.target.value);
+                            if (e.target.value && e.target.value.length >= 4) {
+                              setDepositErrors({ ...depositErrors, depositPassword: '' });
+                            }
+                          }}
+                          required
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-link position-absolute top-50 end-0 translate-middle-y"
+                          onClick={() => setShowDepositPassword(!showDepositPassword)}
+                          style={{ textDecoration: 'none', padding: '0 10px' }}
+                        >
+                          {showDepositPassword ? (
+                            <i className="fas fa-eye-slash text-dark"></i>
+                          ) : (
+                            <i className="fas fa-eye text-dark"></i>
+                          )}
+                        </button>
+                        {depositErrors.depositPassword && (
+                          <div className="text-danger small mt-1">{depositErrors.depositPassword}</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-center mt-4">
+                      <button
+                        type="submit"
+                        className="theme_dark_btn btn btn-primary"
+                        disabled={depositLoading}
+                      >
+                        {depositLoading ? 'Submitting...' : 'Submit'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )} */}
+
+      {withdrawalbalance && (
+        <div className="allcommon">
+          <div
+            className="modal show d-block"
+            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+            onClick={Withdrawalbalanceclose}
+          >
+            <div
+              className="modal-dialog modal-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="common-heading">Add Manual Withdrawal</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={Withdrawalbalanceclose}
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <form className="change-password-sec" onSubmit={handleWithdrawalSubmit}>
+                    <h4 className="h4 mb-3 curent-value">
+                      <label>Current :</label>
+                      <strong className={selectedUser?.credit >= 0 ? "text-success" : "text-danger"}>
+                        {/* {(selectedUser?.credit-selectedUser.exp || 0).toFixed(2)} */}
+                        {((selectedUser?.credit || 0) - (selectedUser?.totalExposure || 0)).toFixed(2)}
+                      </strong>
+                    </h4>
+                    <div className="mb-2 d-flex align-items-center">
+                      <div>
+                        <label className="me-2 w-auto max-auto-auto">Withdrawal Amount</label>
+                      </div>
+                      <div className="w-sm-50">
+                        <input
+                          placeholder="Enter Withdrawal Amount"
+                          name="withdrawalamount"
+                          type="number"
+                          className={`form-control ${withdrawalErrors.withdrawalAmount ? 'is-invalid' : ''}`}
+                          value={withdrawalAmount}
+                          onChange={(e) => {
+                            setWithdrawalAmount(e.target.value);
+                            if (e.target.value && Number(e.target.value) > 0) {
+                              setWithdrawalErrors({ ...withdrawalErrors, withdrawalAmount: '' });
+                            }
+                          }}
+                          required
+                        />
+                        {withdrawalErrors.withdrawalAmount && (
+                          <div className="text-danger small mt-1">{withdrawalErrors.withdrawalAmount}</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="mb-2 d-flex align-items-center">
+                      <div>
+                        <label className="me-2 w-auto max-auto-auto">Password</label>
+                      </div>
+                      <div className="w-sm-50 position-relative">
+                        <input
+                          placeholder="Enter Password"
+                          name="mypassword"
+                          type={showWithdrawalPassword ? "text" : "password"}
+                          className={`form-control ${withdrawalErrors.withdrawalPassword ? 'is-invalid' : ''}`}
+                          value={withdrawalPassword}
+                          onChange={(e) => {
+                            setWithdrawalPassword(e.target.value);
+                            if (e.target.value && e.target.value.length >= 4) {
+                              setWithdrawalErrors({ ...withdrawalErrors, withdrawalPassword: '' });
+                            }
+                          }}
+                          required
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-link position-absolute top-50 end-0 translate-middle-y"
+                          onClick={() => setShowWithdrawalPassword(!showWithdrawalPassword)}
+                          style={{ textDecoration: 'none', padding: '0 10px' }}
+                        >
+                          {showWithdrawalPassword ? (
+                            <i className="fas fa-eye-slash text-dark"></i>
+                          ) : (
+                            <i className="fas fa-eye text-dark"></i>
+                          )}
+                        </button>
+                        {withdrawalErrors.withdrawalPassword && (
+                          <div className="text-danger small mt-1">{withdrawalErrors.withdrawalPassword}</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-center mt-4">
+                      <button
+                        type="submit"
+                        className="theme_dark_btn btn btn-primary"
+                        disabled={withdrawalLoading}
+                      >
+                        {withdrawalLoading ? 'Submitting...' : 'Submit'}
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>

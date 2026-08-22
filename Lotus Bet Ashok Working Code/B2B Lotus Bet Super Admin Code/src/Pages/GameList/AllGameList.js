@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 import { FaEye, FaUnlock } from "react-icons/fa";
 import Loader from "../../Common/Loader";
 import { FaLock, FaLockOpen } from "react-icons/fa";
+import { IoCheckmarkSharp } from "react-icons/io5";
 
 function AllGameList() {
   const [filter, setFilter] = useState(false);
@@ -224,25 +225,25 @@ function AllGameList() {
                           <FaEye />
                         </button>
                         <button
-                          className="btn btn-sm btn-warning gradient-10 border-0"
+                          className="btn btn-rounded btn-warning gradient-10 border-0"
                           onClick={() => handleActive(game.id)}
                           title="Active Events"
                         >
-                          Active
+                        <FaLockOpen/>
                         </button>
                         <button
-                          className="btn btn-sm btn-danger gradient-2 border-0"
+                          className="btn btn-rounded btn-danger gradient-2 border-0"
                           onClick={() => handleInActive(game.id)}
                           title="InActive Events"
-                        >
-                          InActive
+                          >
+                          <FaLock/>
                         </button>
                         <button
-                          className="btn btn-sm btn-success gradient-4 border-0"
+                          className="btn btn-rounded btn-success gradient-4 border-0"
                           onClick={() => handleComplete(game.id)}
                           title="Complete Events"
                         >
-                          Complete
+                          <IoCheckmarkSharp/>
                         </button>
                       </div>
                     </td>

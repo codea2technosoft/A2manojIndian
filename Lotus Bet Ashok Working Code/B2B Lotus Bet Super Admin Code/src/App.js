@@ -159,6 +159,7 @@ import AgentSettlementReport from "./Pages/Ledger/AgentSettlementReport";
 import UserSettlementReport from "./Pages/Ledger/UserSettlementReport";
 import AgentLedger from "./Pages/Ledger/AgentLedger.js";
 import UserLedger from "./Pages/Ledger/UserLedger.js";
+import DeclareResultHorseGreyhund from "./Pages/DeclareResultHorseGreyhund/HorseRacingAndGreyhund";
 
 //Balance Sheet
 
@@ -244,13 +245,17 @@ const App = () => {
         <Route path="/userchat" element={<Userchat />} />
         <Route path="/Chatclose" element={<Chatclose />} />
 
-        <Route path="/" element={<Navigate to="/homedashboard" replace />} />
+        {/* <Route path="/" element={<Navigate to="/homedashboard" replace />} />
         <Route
           path="/homedashboard"
           element={
             <ProtectedRoute element={HomeDashboard} path="/homedashboard" />
           }
-        />
+        /> */}
+
+       
+
+        
 
         <Route
           path="/dashboard"
@@ -1211,6 +1216,14 @@ const App = () => {
             <ProtectedRoute element={DeclareResult} path="/declare_main" />
           }
         />
+
+         <Route
+          path="/declare_result_horsegreyhund"
+          element={
+            <ProtectedRoute element={DeclareResultHorseGreyhund} path="/declare_result_horsegreyhund" />
+          }
+        />
+
         <Route
           path="/fancy-result-list"
           element={

@@ -1003,7 +1003,7 @@ const ProfitLoss = () => {
     setCurrentPage(1);
   };
 
-  const handleSummaryClick = (eventId) => {
+  const handleSummaryClick = (eventId,eventName) => {
     const admin_id = localStorage.getItem("admin_id") || "admin";
     const role = parseInt(localStorage.getItem("role")) || 1;
     const payload = {
@@ -1017,13 +1017,15 @@ const ProfitLoss = () => {
     navigate(`/reports/profit-loss-summary-event/${eventId}`, {
       state: {
         payload: payload,
+         eventName: eventName,
+        
       },
     });
   };
 
   // ✅ REMOVED: Default date useEffect - ab dates empty hain
 
-  const handleDetailClick = (eventId) => {
+  const handleDetailClick = (eventId,eventName) => {
     const admin_id = localStorage.getItem("admin_id") || "admin";
     const role = parseInt(localStorage.getItem("role")) || 1;
     const payload = {
@@ -1036,6 +1038,7 @@ const ProfitLoss = () => {
     navigate(`/reports/profit-loss-detail/${eventId}`, {
       state: {
         payload: payload,
+         eventName: eventName,
       },
     });
   };
@@ -1049,7 +1052,7 @@ const ProfitLoss = () => {
 
       <div className="card">
         <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-md-center gap-2">
-          <h3 className="card-title mb-0">Profit Loss</h3>
+          <h3 className="card-title mb-0">Profit Loss (Super Admin)</h3>
         </div>
 
         <div className="card-body">
@@ -1183,14 +1186,14 @@ const ProfitLoss = () => {
                           <div className="d-flex justify-content-start gap-1">
                             <button
                               className="btn gradient-4 btn-rounded"
-                              onClick={() => handleSummaryClick(item.event_id)}
+                              onClick={() => handleSummaryClick(item.event_id,item.event)}
                               title="View Summary"
                             >
                               S
                             </button>
                             <button
                               className="buttoncommon gradient-2"
-                              onClick={() => handleDetailClick(item.event_id)}
+                              onClick={() => handleDetailClick(item.event_id,item.event)}
                               title="View Detail"
                             >
                               D

@@ -1,5 +1,6 @@
 // import React from "react";
 import React, { useEffect } from "react";
+import GlobalSoundMonitor from "./components/GlobalSoundMonitor";////delete 
 import { useParams } from "react-router-dom";
 import Header from "./Layout/Headerall.jsx"
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
@@ -347,6 +348,10 @@ const App = () => {
   // ✅ MAIN APP - Sabhi routes chalenge
   return (
     <Router>
+      {localStorage.getItem("token") && localStorage.getItem("isLoggedIn") === "true" && (
+        <GlobalSoundMonitor /> ////delete 
+      )}
+
       <Header
         depositPending={depositPending}
         withdrawPending={withdrawPending}

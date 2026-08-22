@@ -3496,7 +3496,9 @@ function Cricket() {
                   onClick={() => setActiveTab(!activeTab)}
                 >
                   <iframe
-                    src={`https://e765432.diamondcricketid.com/dtv.php?id=${event_id}&sportid=4`}
+                    // src={`https://e765432.diamondcricketid.com/dtv.php?id=${event_id}&sportid=4`}
+                    // src={`https://tv.shyammatka.co.in/?eventid=${event_id}`}
+                     src={`https://e765432.diamondcricketid.com/dtv.php?id=${event_id}`}
                     frameBorder="0"
                     width="100%"
                     height="400"
@@ -3513,7 +3515,9 @@ function Cricket() {
                   onClick={() => setActiveTab(!activeTab)}
                 >
                   <iframe
-                    src={`https://e765432.diamondcricketid.com/dtv.php?id=${event_id}&sportid=4`}
+                    // src={`https://e765432.diamondcricketid.com/dtv.php?id=${event_id}&sportid=4`}
+                  //  src={`https://tv.shyammatka.co.in/?eventid=${event_id}`}
+                   src={`https://e765432.diamondcricketid.com/dtv.php?id=${event_id}`}
                     frameBorder="0"
                     width="100%"
                     height="195"

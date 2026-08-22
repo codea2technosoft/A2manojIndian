@@ -49,6 +49,19 @@ export const CompletedEventList = () => {
 export const InActiveEventList = (payload) => {
   return API.post(`inactive-events-list`, payload);
 };
+
+
+export const Add_deposit_amount_by_userTOAdmin = (payload) => {
+  return API.post(`deposit_amount`, payload);
+};
+
+export const Add_withdraw_amount_by_userTOAdmin = (payload) => {
+  return API.post(`withdraw_amount`, payload);
+};
+
+
+
+
 export const ActiveEventList = (payload) => {
   return API.post(`active-Events-list`, payload);
 };

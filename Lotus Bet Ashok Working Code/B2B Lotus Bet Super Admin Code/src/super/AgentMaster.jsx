@@ -1191,7 +1191,7 @@ Login URL:${COPY_API_URL}`;
                   <th rowSpan={2}>REFERENCE</th> */}
                   {/* <th rowSpan={2}>Password</th>
                   <th rowSpan={2}>OTP</th> */}
-                  <th rowSpan={2}>Client Share</th>
+                  <th rowSpan={2}>Client(%) Share</th>
                   <th rowSpan={2}>UP-Line</th>
                   {/* <th rowSpan={2}>Share</th> */}
 
@@ -1515,16 +1515,14 @@ Login URL:${COPY_API_URL}`;
                       <td className="text-center">
                         {row.master_admin_id && row.master_admin_id !== "-" && row.master_admin_id !== "" ? (
                           row.master_admin_id?.startsWith("SM") ? (
-                            <span
+                            <span className="clickable"
                               onClick={() => navigate(`/AgentMasternew/${row.master_admin_id}`)}
-                              style={{ cursor: "pointer", color: "#000"}}
                             >
                               {row.master_admin_id}
                             </span>
                           ) : row.master_admin_id?.startsWith("MA") ? (
-                            <span
+                            <span className="clickable"
                               onClick={() => navigate(`/Mastermyuser/${row.master_admin_id}`)}
-                              style={{ cursor: "pointer", color: "#000"}}
                             >
                               {row.master_admin_id}
                             </span>
@@ -1853,6 +1851,21 @@ Login URL:${COPY_API_URL}`;
                             title="Inactive Users"
                           >
                             <FaRectangleList />
+                          </button>
+
+
+                          <button
+                            className={`btn btn-sm  btn-rounded ${Number(row.is_blocked)
+                                ? "btn-success"
+                                : "btn-danger"
+                              }`}
+                            onClick={() => {
+                              setSelectedAgent(row);
+                              setShowBlockModal(true);
+                            }}
+                            title={Number(row.is_blocked) ? "Unblock" : "Block"}
+                          >
+                            <FiSlash />
                           </button>
                         </div>
                       </td>
@@ -2277,7 +2290,7 @@ Login URL:${COPY_API_URL}`;
 
                     <div className="col-6">
                       <Link
-                       // to={`/icasino-setting/${selectedAgent?.admin_id}`}
+                        // to={`/icasino-setting/${selectedAgent?.admin_id}`}
                         to={`#`}
                         className="btn gradient-2 w-100"
                         onClick={() => setShowSettingModal(false)}

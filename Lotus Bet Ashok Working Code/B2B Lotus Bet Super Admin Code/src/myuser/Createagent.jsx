@@ -615,7 +615,8 @@ const CreateSuperAgentAdmin = () => {
         master_admin_id: formData.master_admin_id,
         super_agent_id: formData.super_agent_id,
         coins: parseInt(formData.coins) || 0,
-        match_share: parseFloat(formData.agentMatchShare) || 0,
+        match_share: 100,
+        // match_share: parseFloat(formData.agentMatchShare) || 0,21-08-2026
         // match_share: parseFloat(formData.agentMatchShare) || 0,
         commission_type: formData.agentCommissionType,
         //match_comm: parseFloat(formData.agentMatchComm) || 0,

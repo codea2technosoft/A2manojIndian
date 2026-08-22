@@ -92,6 +92,14 @@ export const getMarketsByEvent = (event_id) =>
 
 export const getSelectionsByMarket = (market_id) =>
   API.get(`/get-selections`, { params: { market_id } });
+//////declared horse racing and greyhund result
+export const declaresetHorseracinggreyHundResult = (payload) => {
+  return API.post("/set-result-new-horce", payload);
+};
+
+
+export const getCompleteMatchSettledResultListHorse = (payload) =>
+  API.post("/complete-match-settled-result-list-horce", payload);
 
 export const declareMatchResult = (payload) => {
   return API.post("/match-result-settled", payload);
@@ -223,6 +231,12 @@ export const rollbackFancyNow1 = (payload) =>
   API.post("/fancy-rollback", payload);
 export const lenadenasettled = (payload) =>
   API.post("/lena-dena-settled", payload);
+export const getseriesHorseCountryNameList = (payload) =>
+  API.get("/series-horse-country-name", { params: payload });
+export const getseriesHorseCountryMarketNameList = (payload) =>
+  API.get("/series-horse-country-match-list", { params: payload });
+export const getseriesHorseSelectionstNameList = (payload) =>
+  API.get("/get-event-horse-datatimes", { params: payload });
 
 export const settledFancyNow = (payload) =>
   API.post("/settled-fancy-now", payload);
@@ -527,6 +541,7 @@ export const getTopClientAll = (payload) => {
 export const getSettlementReporttAll = (payload) => {
   return API.post("/chip-statement-new", payload);
 };
+
 
 
 export const getsportsSummaryReportAll = (payload) => {

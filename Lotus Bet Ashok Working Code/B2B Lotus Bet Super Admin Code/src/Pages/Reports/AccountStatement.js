@@ -741,6 +741,7 @@ const AccountStatement = () => {
                 <option value="2">Tennis</option>
                 <option value="10">Casino</option>
                 <option value="7">Horse Racing</option>
+                <option value="8">GreyHound Racing</option>
                 <option value="15">Kabaddi</option>
                 <option value="20">Politics</option>
               </Form.Select>

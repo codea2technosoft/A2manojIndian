@@ -7,13 +7,15 @@ function WebSetting() {
   const [settings, setSettings] = useState({
     id: "",
     name: "",
-    whatsapp_no: "",
     telegram_link: "",
     telegram_support: "",
-    whatsapp_support: "",
+    whatsapp_number: "",
+    whatsapp_support: "", // ✅ Added missing field
+    mobile_number: "",
+    email_id: "",
     logo: "",
     description: "",
-    status: "",
+    status: "1",
     fancy_min_bet: "",
     fancy_max_bet: "",
     odds_min_bet: "",
@@ -34,24 +36,17 @@ function WebSetting() {
       case "fancy_min_bet":
       case "odds_min_bet":
       case "bookmaker_min_bet":
-        if (!value || value === "") {
-          error = "Minimum bet is required";
-        } else if (isNaN(value) || parseInt(value) < 1) {
-          error = "Minimum bet must be a positive number";
-        }
-        break;
-
       case "fancy_max_bet":
       case "odds_max_bet":
       case "bookmaker_max_bet":
-        if (!value || value === "") {
-          error = "Maximum bet is required";
+        if (!value || value === "" || value === "0") {
+          error = `${name.replace(/_/g, " ")} is required and must be greater than 0`;
         } else if (isNaN(value) || parseInt(value) < 1) {
-          error = "Maximum bet must be a positive number";
+          error = "Must be a positive number";
         }
         break;
 
-      case "whatsapp_no":
+      case "whatsapp_number":
       case "whatsapp_support":
         if (value && !/^\d{10}$/.test(value.replace(/\D/g, ""))) {
           error = "Please enter a valid 10-digit number";
@@ -72,69 +67,44 @@ function WebSetting() {
     return error;
   };
 
-  // const fetchSettings = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await getSettings();
-  //     console.log("Settings API Response:", response);
-
-  //     if (response.data) {
-  //       setSettings({
-  //         id: response.data.id || "",
-  //         name: response.data.name || "",
-  //         whatsapp_no: response.data.whatsapp_no || "",
-  //         telegram_link: response.data.telegram_link || "",
-  //         telegram_support: response.data.telegram_support || "",
-  //         whatsapp_support: response.data.whatsapp_support || "",
-  //         logo: response.data.logo || "",
-  //         description: response.data.description || "",
-  //         status: response.data.status || "",
-  //         fancy_min_bet: response.data.fancy_min_bet || "",
-  //         fancy_max_bet: response.data.fancy_max_bet || "",
-  //         odds_min_bet: response.data.odds_min_bet || "",
-  //         odds_max_bet: response.data.odds_max_bet || "",
-  //         bookmaker_min_bet: response.data.bookmaker_min_bet || "",
-  //         bookmaker_max_bet: response.data.bookmaker_max_bet || ""
-  //       });
-
-  //       if (response.data.logo) {
-  //         setLogoPreview(`${process.env.REACT_APP_API_URL}/uploads/${response.data.logo}`);
-  //       }
-  //     }
-  //   } catch (err) {
-  //     console.error("Error fetching settings:", err);
-  //     Swal.fire("Error", "Failed to fetch settings", "error");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const fetchSettings = async () => {
     try {
       setLoading(true);
       const response = await getSettings();
 
       const result = response.data?.data?.[0];
-      if (!result) return;
+      if (!result) {
+        console.log("No settings found");
+        return;
+      }
 
       setSettings({
-        id: result._id,
-        description: result.description,
-        status: result.status,
-        fancy_min_bet: result.fancy_min_bet,
-        fancy_max_bet: result.fancy_max_bet,
-        odds_min_bet: result.odds_min_bet,
-        odds_max_bet: result.odds_max_bet,
-        bookmaker_min_bet: result.bookmaker_min_bet,
-        bookmaker_max_bet: result.bookmaker_max_bet,
+        id: result._id || "",
+        name: result.name || "",
+        telegram_link: result.telegram_link || "",
+        telegram_support: result.telegram_support || "",
+        whatsapp_number: result.whatsapp_number || "",
+        whatsapp_support: result.whatsapp_support || "", // ✅ Added
+        mobile_number: result.mobile_number || "",
+        email_id: result.email_id || "",
+        logo: result.logo || "",
+        description: result.description || "",
+        status: result.status !== undefined ? String(result.status) : "1",
+        fancy_min_bet: result.fancy_min_bet !== undefined ? String(result.fancy_min_bet) : "",
+        fancy_max_bet: result.fancy_max_bet !== undefined ? String(result.fancy_max_bet) : "",
+        odds_min_bet: result.odds_min_bet !== undefined ? String(result.odds_min_bet) : "",
+        odds_max_bet: result.odds_max_bet !== undefined ? String(result.odds_max_bet) : "",
+        bookmaker_min_bet: result.bookmaker_min_bet !== undefined ? String(result.bookmaker_min_bet) : "",
+        bookmaker_max_bet: result.bookmaker_max_bet !== undefined ? String(result.bookmaker_max_bet) : "",
       });
 
       if (result.logo) {
         setLogoPreview(
-          `${process.env.REACT_APP_API_URL}/uploads/${result.logo}`,
+          `${process.env.REACT_APP_API_URL}/uploads/${result.logo}`
         );
       }
     } catch (err) {
+      console.error("Error fetching settings:", err);
       Swal.fire("Error", "Failed to fetch settings", "error");
     } finally {
       setLoading(false);
@@ -147,11 +117,16 @@ function WebSetting() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    let newValue = value;
 
-    // Special handling for numeric fields
+    // ✅ Numeric fields ke liye allow empty string
+    let newValue = value;
     if (name.includes("_min_bet") || name.includes("_max_bet")) {
-      newValue = value.replace(/\D/g, "");
+      // Allow empty string or digits only
+      if (value === "" || /^\d+$/.test(value)) {
+        newValue = value;
+      } else {
+        return; // Ignore invalid input
+      }
     }
 
     setSettings((prev) => ({
@@ -171,7 +146,6 @@ function WebSetting() {
     const newErrors = {};
     let isValid = true;
 
-    // Validate all required numeric fields
     const numericFields = [
       "fancy_min_bet",
       "fancy_max_bet",
@@ -193,63 +167,76 @@ function WebSetting() {
     return isValid;
   };
 
-  const handleSave = async (e) => {
-    e.preventDefault();
+const handleSave = async (e) => {
+  e.preventDefault();
 
-    if (!validateAllFields()) {
+  if (!validateAllFields()) {
+    Swal.fire({
+      icon: "warning",
+      title: "Validation Error",
+      text: "Please fix the errors before saving",
+    });
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+  // ✅ Force update with exact value
+const payload = {
+  id: settings.id || "6969cea9fb6d9e9d23dab319",
+  description: settings.description || "",
+  status: Number(settings.status),
+  
+  // Betting Limits
+  fancy_min_bet: settings.fancy_min_bet ? Number(settings.fancy_min_bet) : 0,
+  fancy_max_bet: settings.fancy_max_bet ? Number(settings.fancy_max_bet) : 0,
+  odds_min_bet: settings.odds_min_bet ? Number(settings.odds_min_bet) : 0,
+  odds_max_bet: settings.odds_max_bet ? Number(settings.odds_max_bet) : 0,
+  bookmaker_min_bet: settings.bookmaker_min_bet ? Number(settings.bookmaker_min_bet) : 0,
+  bookmaker_max_bet: settings.bookmaker_max_bet ? Number(settings.bookmaker_max_bet) : 0,
+  
+  // ✅ HARD SET
+  whatsapp_number: settings.whatsapp_number ? settings.whatsapp_number.trim() : "",
+  whatsapp_support: settings.whatsapp_support ? settings.whatsapp_support.trim() : "",
+  mobile_number: settings.mobile_number ? settings.mobile_number.trim() : "",
+  email_id: settings.email_id ? settings.email_id.trim() : "",
+  telegram_link: settings.telegram_link ? settings.telegram_link.trim() : "",
+  telegram_support: settings.telegram_support ? settings.telegram_support.trim() : "",
+};
+
+    console.log("📤 Sending payload:", payload);
+
+    const response = await UpdateSettings(payload);
+
+    if (response.data?.message) {
       Swal.fire({
-        icon: "warning",
-        title: "Validation Error",
-        text: "Please fix the errors before saving",
+        title: "Success",
+        text: response.data.message,
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
       });
-      return;
+      fetchSettings();
     }
-
-    try {
-      setLoading(true);
-
-      const payload = {
-        // id: settings.id,
-        id: "6969cea9fb6d9e9d23dab319",
-        description: settings.description,
-        status: Number(settings.status), // IMPORTANT
-        fancy_min_bet: settings.fancy_min_bet,
-        fancy_max_bet: settings.fancy_max_bet,
-        odds_min_bet: settings.odds_min_bet,
-        odds_max_bet: settings.odds_max_bet,
-        bookmaker_min_bet: settings.bookmaker_min_bet,
-        bookmaker_max_bet: settings.bookmaker_max_bet,
-      };
-      const response = await UpdateSettings(payload);
-
-      if (response.data?.message) {
-        Swal.fire({
-          title: "Success",
-          text: response.data.message,
-          icon: "success",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        fetchSettings();
-      }
-    } catch (error) {
-      console.error("Error saving settings:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: error.response?.data?.message,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (error) {
+    console.error("❌ Error saving settings:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: error.response?.data?.message || "Failed to update settings",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   const renderInput = (
     label,
     name,
     type = "text",
     placeholder = "",
-    maxLength = null,
+    maxLength = null
   ) => (
     <div className="col-md-6 mb-3">
       <label className="form-label">{label}</label>
@@ -257,7 +244,7 @@ function WebSetting() {
         type={type}
         className={`form-control ${errors[name] ? "is-invalid" : ""}`}
         name={name}
-        value={settings[name]}
+        value={settings[name] || ""}
         onChange={handleChange}
         placeholder={placeholder}
         maxLength={maxLength}
@@ -285,7 +272,8 @@ function WebSetting() {
             ) : (
               <form noValidate onSubmit={handleSave}>
                 <div className="row">
-                  <div className="col-md-12 mb-3">
+                  {/* Status */}
+                  {/* <div className="col-md-6 mb-3">
                     <label className="form-label">Status</label>
                     <select
                       className="form-control"
@@ -296,95 +284,98 @@ function WebSetting() {
                       <option value="1">Active</option>
                       <option value="0">Inactive</option>
                     </select>
-                  </div>
+                  </div> */}
 
-                  {/* {renderInput("WhatsApp Number", "whatsapp_no", "text", "Enter WhatsApp number", 10)}
-                {renderInput("WhatsApp Support", "whatsapp_support", "text", "Enter WhatsApp support number", 10)}
-                {renderInput("Telegram Link", "telegram_link", "text", "Enter Telegram link")}
-                {renderInput("Telegram Support", "telegram_support", "text", "Enter Telegram support link")} */}
+                  {/* WhatsApp Number */}
+                  {renderInput(
+                    "WhatsApp Number",
+                    "whatsapp_number",
+                    "text",
+                    "Enter WhatsApp number",
+                    10
+                  )}
 
+                  {/* WhatsApp Support */}
+                  {/* {renderInput(
+                    "WhatsApp Support",
+                    "whatsapp_support",
+                    "text",
+                    "Enter WhatsApp support number",
+                    10
+                  )} */}
+
+                  {/* Mobile Number */}
+                  {renderInput(
+                    "Mobile Number",
+                    "mobile_number",
+                    "text",
+                    "Enter mobile number",
+                    10
+                  )}
+
+                  {/* Email */}
+                  {renderInput(
+                    "Email Id",
+                    "email_id",
+                    "email",
+                    "Enter Email"
+                  )}
+
+                  {/* Description */}
                   <div className="col-md-12 mb-3">
                     <label className="form-label">Description</label>
                     <textarea
                       className="form-control"
                       rows="3"
                       name="description"
-                      value={settings.description}
+                      value={settings.description || ""}
                       onChange={handleChange}
                       placeholder="Enter description"
                     ></textarea>
                   </div>
-                  {/* 
-                <div className="col-md-6 mb-3">
-                  <label className="form-label">Logo</label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    accept="image/*"
-                    onChange={(e) => {
-                      if (e.target.files && e.target.files[0]) {
-                        setLogoFile(e.target.files[0]);
-                        setLogoPreview(URL.createObjectURL(e.target.files[0]));
-                      }
-                    }}
-                  />
-                  {logoPreview && (
-                    <div className="mt-2">
-                      <img
-                        src={logoPreview}
-                        alt="Logo Preview"
-                        style={{ height: "80px", objectFit: "contain" }}
-                      />
-                    </div>
-                  )}
-                </div> */}
-                  <div className="col-12">
-                    <h5 className="border-bottom pb-2">Betting Limits</h5>
+
+                  {/* <div className="col-12">
+                    <h5 className="card-title">Betting Limits</h5>
                   </div>
 
                   {renderInput(
                     "Fancy Minimum Bet",
                     "fancy_min_bet",
                     "text",
-                    "Enter minimum bet for fancy",
-                    10,
+                    "Enter minimum bet for fancy"
                   )}
                   {renderInput(
                     "Fancy Maximum Bet",
                     "fancy_max_bet",
                     "text",
-                    "Enter maximum bet for fancy",
-                    10,
+                    "Enter maximum bet for fancy"
                   )}
                   {renderInput(
                     "Odds Minimum Bet",
                     "odds_min_bet",
                     "text",
-                    "Enter minimum bet for odds",
-                    10,
+                    "Enter minimum bet for odds"
                   )}
                   {renderInput(
                     "Odds Maximum Bet",
                     "odds_max_bet",
                     "text",
-                    "Enter maximum bet for odds",
-                    10,
+                    "Enter maximum bet for odds"
                   )}
                   {renderInput(
                     "Bookmaker Minimum Bet",
                     "bookmaker_min_bet",
                     "text",
-                    "Enter minimum bet for bookmaker",
-                    10,
+                    "Enter minimum bet for bookmaker"
                   )}
                   {renderInput(
                     "Bookmaker Maximum Bet",
                     "bookmaker_max_bet",
                     "text",
-                    "Enter maximum bet for bookmaker",
-                    10,
-                  )}
+                    "Enter maximum bet for bookmaker"
+                  )} */}
 
+                  {/* Submit Button */}
                   <div className="col-md-12">
                     <div className="d-flex justify-content-start">
                       <button
@@ -406,7 +397,8 @@ function WebSetting() {
                         )}
                       </button>
                     </div>
-                  </div>
+                  </div> {/* Betting Limits Section */}
+                 
                 </div>
               </form>
             )}

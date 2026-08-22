@@ -747,8 +747,8 @@ function AgentMasterClone() {
         `${process.env.REACT_APP_API_URL}/common-coin-deposit`,
         {
           amount: depositValue,
-          to_admin_id: selectedAgent.admin_id,
-          from_admin_id: selectedAgent.originalData.super_admin_id,
+          admin_id: selectedAgent.admin_id,
+          parent_admin_id: selectedAgent.originalData.super_admin_id,
           from_role: localStorage.getItem("role"),
           to_role: selectedAgent.originalData?.role,
           remark: `Deposit to ${selectedAgent.username}`,
@@ -1341,7 +1341,7 @@ function AgentMasterClone() {
                   <th rowSpan={2}>REFERENCE</th> */}
                   {/* <th rowSpan={2}>Password</th>
                   <th rowSpan={2}>OTP</th> */}
-                  <th rowSpan={2}>Client Share</th>
+                  <th rowSpan={2}>Client(%) Share</th>
                   <th rowSpan={2}>UP-Line</th>
                   {/* <th colSpan={3} className="text-center">
                     Comm %
@@ -1540,16 +1540,14 @@ function AgentMasterClone() {
                         <td className="text-center">
                           {row.master_admin_id && row.master_admin_id !== "-" && row.master_admin_id !== "" ? (
                             row.master_admin_id?.startsWith("SM") ? (
-                              <span
+                              <span className="clickable"
                                 onClick={() => navigate(`/AgentMasternew/${row.master_admin_id}`)}
-                                style={{ cursor: "pointer", color: "#000" }}
                               >
                                 {row.master_admin_id}
                               </span>
                             ) : row.master_admin_id?.startsWith("MA") ? (
-                              <span
+                              <span className="clickable"
                                 onClick={() => navigate(`/Mastermyuser/${row.master_admin_id}`)}
-                                style={{ cursor: "pointer", color: "#000" }}
                               >
                                 {row.master_admin_id}
                               </span>
@@ -2090,7 +2088,7 @@ function AgentMasterClone() {
                             <button
                               className="btn gradient-8 btn-rounded"
                               onClick={() => {
-                                setSelectedAgent(row); // ✅ YEH ADD KARO - row ko selectedAgent set karo
+                                setSelectedAgent(row);
                                 setShowReportModal(true);
                               }}
                               title="REPORTS"
@@ -2114,7 +2112,7 @@ function AgentMasterClone() {
                                 setSelectedAgent(row); // ✅ YEH ADD KARO
                                 setShowSettingModal(true);
                               }}
-                              title="SETTINGS"
+                              title="SETTINGS "
                             >
                               <FaCogs />
                             </button>
@@ -2186,6 +2184,20 @@ function AgentMasterClone() {
                             title="Inactive Users"
                           >
                             <FaRectangleList />
+                          </button> */}
+
+                            {/* <button
+                            className={`btn btn-sm btn-rounded ${Number(row.is_blocked)
+                              ? "btn-success"
+                              : "btn-danger"
+                              }`}
+                            onClick={() => {
+                              setSelectedAgent(row);
+                              setShowBlockModal(true);
+                            }}
+                            title={Number(row.is_blocked) ? "Unblock" : "Block"}
+                          >
+                            <FiSlash />
                           </button> */}
                           </div>
                         </td>
@@ -2607,7 +2619,7 @@ function AgentMasterClone() {
                     <div className="col-6">
                       <Link
                         // to={`/icasino-setting/${selectedAgent?.admin_id}`}
-                         to={`#`}
+                        to={`#`}
                         className="btn gradient-2 w-100"
                         onClick={() => setShowSettingModal(false)}
                       >

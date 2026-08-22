@@ -1197,7 +1197,7 @@ function AgentMaster() {
                   <th rowSpan={2}>REFERENCE</th> */}
                   {/* <th rowSpan={2}>Password</th> */}
                   {/* <th rowSpan={2}>OTP</th> */}
-                  <th rowSpan={2}>Client Share</th>
+                  <th rowSpan={2}>Client(%) Share</th>
                   <th rowSpan={2}>UP-Line</th>
                   {/* <th rowSpan={2}>Share</th> */}
                   {/* <th colSpan={3} className="text-center">
@@ -1514,16 +1514,14 @@ function AgentMaster() {
                       <td className="text-center">
                         {row.master_admin_id && row.master_admin_id !== "-" && row.master_admin_id !== "" ? (
                           row.master_admin_id?.startsWith("SM") ? (
-                            <span
+                            <span className="clickable"
                               onClick={() => navigate(`/AgentMasternew/${row.master_admin_id}`)}
-                              style={{ cursor: "pointer", color: "#000" }}
                             >
                               {row.master_admin_id}
                             </span>
                           ) : row.master_admin_id?.startsWith("MA") ? (
-                            <span
+                            <span className="clickable"
                               onClick={() => navigate(`/Mastermyuser/${row.master_admin_id}`)}
-                              style={{ cursor: "pointer", color: "#000" }}
                             >
                               {row.master_admin_id}
                             </span>
@@ -1873,6 +1871,20 @@ function AgentMaster() {
                             title="Inactive Users"
                           >
                             <FaRectangleList />
+                          </button>
+
+                           <button
+                            className={`btn btn-sm btn-rounded ${Number(row.is_blocked)
+                              ? "btn-success"
+                              : "btn-danger"
+                              }`}
+                            onClick={() => {
+                              setSelectedAgent(row);
+                              setShowBlockModal(true);
+                            }}
+                            title={Number(row.is_blocked) ? "Unblock" : "Block"}
+                          >
+                            <FiSlash />
                           </button>
                         </div>
                       </td>

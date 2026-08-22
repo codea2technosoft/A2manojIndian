@@ -40,13 +40,33 @@ tr {
     }
   }
 }
-
+label.max-auto-auto{
+  max-width:150px!important;
+  width:150px!important;
+}
 .newwidthallsames.allcommon {
   .modal-dialog {
     max-width: 800px;
   }
 }
-
+.hover_none:hover{
+  background: initial;
+}
+.buttoncommon {
+    color: #fff;
+    background-image: linear-gradient(230deg, #7bff75, #34a400);
+    font-weight: 600;
+    font-size: 11px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    border-radius: 60px;
+    line-height: normal;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    outline: none;
+}
 .allbluebutton.btn.btn-primary {
   background: #0d6efd;
   border: 0px solid #0d6efd;
@@ -3673,12 +3693,41 @@ $withdraw-bg: #dc3545;
   text-transform: uppercase;
   font-size: 14px;
 }
+.btn.hover_none.bg-danger{
+  background: red!important;
+  text-align: center!important;
+  span{
+    color:#fff!important;
+    background: transparent!important;
+       width: auto;
+    padding: 0;
+    margin: auto;
+  }
+}
+.btn.hover_none.bg-success{
+  text-align: center!important;
+  background: green!important;
+  span{ background: transparent!important;
+    color:#fff!important;
+       width: auto;
+    padding: 0;
+    margin: auto;
 
+  }
+}
 // table button  end
 @media (max-width: 991px) {
   .flex-wrap-mobile {
     flex-direction: column;
   }
+  .change-password-sec .w-sm-50{
+    width: 100%;
+  }
+   .change-password-sec  label.max-auto-auto {
+    max-width: 150px !important;
+    width: 150px !important;
+    text-align: left!important;
+}
 
   .myLadger {
     h6 {

@@ -40,8 +40,6 @@ const PendingBets = () => {
     try {
       setLoading(true);
       const loggedInAdminId = localStorage.getItem("admin_id");
-
-       // ✅ URL se admin_id lo
     const getAdminIdFromURL = () => {
       const path = window.location.pathname;
       const parts = path.split('/');
@@ -289,15 +287,15 @@ const PendingBets = () => {
                           <td>{item.username || "-"}</td>
                           <td>{item.event_id}</td>
                           <td>{item.event_name || "-"}</td>
-                          <td>{item.bet_type || "N/A"}</td>
-                          <td>{item.team || "N/A"}</td>
-                          <td>{item.bet_on || "N/A"}</td>
+                          <td>{item.bet_type || "-"}</td>
+                          <td>{item.team || "-"}</td>
+                          <td>{item.bet_on || "-"}</td>
                           <td>{item.odd || 0}</td>
                           <td className="text-end">
                             {item.stake || 0}
                            
                           </td>
-                          <td> {item.total || 0}</td>
+                          <td> {Number(item.total).toFixed(2) || 0}</td>
                           <td>{new Date(item.created_at).toLocaleString()}</td>
                           <td>
                             {item.matched_status === "matched"

@@ -1207,7 +1207,7 @@ Login URL:${COPY_API_URL}`;
                   <th rowSpan={2}>REFERENCE</th> */}
                   {/* <th rowSpan={2}>Password</th>
                   <th rowSpan={2}>OTP</th> */}
-                  <th rowSpan={2}>Client Share</th>
+                  <th rowSpan={2}>Client(%) Share</th>
                   <th rowSpan={2}>UP-Line</th>
                   {/* <th rowSpan={2}>Share</th>
                   <th colSpan={3} className="text-center">
@@ -1693,6 +1693,21 @@ Login URL:${COPY_API_URL}`;
                           >
                             <FaRectangleList />
                           </button> 
+
+                         <button
+                            className={`btn btn-sm btn-rounded ${Number(row.is_blocked)
+                              ? "btn-success"
+                              : "btn-danger"
+                              }`}
+                            onClick={() => {
+                              setSelectedAgent(row);
+                              setShowBlockModal(true);
+                            }}
+                            title={Number(row.is_blocked) ? "Unblock" : "Block"}
+                          >
+                            <FiSlash />
+                          </button>
+
                         </div>
                       </td>
                     </tr>

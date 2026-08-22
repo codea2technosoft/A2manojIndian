@@ -52,11 +52,21 @@ function AgentLists() {
   const [remarks, setRemarks] = useState("");
   const [depositType, setDepositType] = useState("admin");
   const [tableLoading, setTableLoading] = useState(false);
+  const [showDepositPassword, setShowDepositPassword] = useState(false);
+  const [showWithdrawPassword, setShowWithdrawPassword] = useState(false);
+  const [showAgentPassword, setShowAgentPassword] = useState(false);
+  const [showAgentConfirmPassword, setShowAgentConfirmPassword] = useState(false);
   const navigate = useNavigate();
   const [Adduser, setAdduser] = useState(false);
   const [AmountEdit, setAmountEdit] = useState(false);
   const AdduserOpenModalall = () => setAdduser(true);
-  const AdduserCloseModalall = () => setAdduser(false);
+  // const AdduserCloseModalall = () => setAdduser(false);
+  const AdduserCloseModalall = () => {
+    setAdduser(false);
+    // ✅ Sirf password visibility reset karo
+    setShowAgentPassword(false);
+    setShowAgentConfirmPassword(false);
+  };
   const AmountEditOpenModalall = () => setAmountEdit(true);
   const AmountEditCloseModalall = () => setAmountEdit(false);
   // Password change states
@@ -101,7 +111,14 @@ function AgentLists() {
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [editType, setEditType] = useState("");
   // const handleOpenModalall = () => setShowModal(true);
-  const handleCloseModalall = () => setShowModal(false);
+  // const handleCloseModalall = () => setShowModal(false);
+  // 1. Close function mein
+  const handleCloseModalall = () => {
+    setShowModal(false);
+    setShowWithdrawPassword(false); // ✅ Add this
+  };
+
+
   // const handleOpensetDepositmodal = () => setDepositmodal(true);
 
 
@@ -118,9 +135,12 @@ function AgentLists() {
     setWithdrawPassword('');
     setWithdrawAmountError('');
     setWithdrawPasswordError('');
+    setShowWithdrawPassword(false);
   };
   const handleClosesetDepositmodal = () => setDepositmodal(false);
+
   const handleClosesetDepositmodalmarket = () => setBlockMarketModal(false);
+
   // Get admin_id from localStorage
   const admin_id = localStorage.getItem("admin_id");
 
@@ -1398,7 +1418,7 @@ function AgentLists() {
         </div>
       )} */}
 
-      {showModal && (
+      {/* {showModal && (
         <div className="allcommon">
           <div
             className="modal show d-block"
@@ -1508,6 +1528,142 @@ function AgentLists() {
             </div>
           </div>
         </div>
+      )} */}
+
+      {showModal && (
+        <div className="allcommon">
+          <div
+            className="modal show d-block"
+            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+            onClick={handleCloseModalall}
+          >
+            <div
+              className="modal-dialog modal-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="common-heading">Withdraw Amount Edit</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={handleCloseModalall}
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <form className="change-password-sec" onSubmit={handleWithdrawSubmit}>
+                    <h4 className="h4 mb-3 curent-value">
+                      <label>Current :</label>
+                      <strong>{selectedAgent?.withdraw_limit || "0.00"}</strong>
+                    </h4>
+
+                    <div className="mb-2 d-flex align-items-center">
+                      <label className="me-2" style={{ minWidth: '80px' }}>New</label>
+                      <div style={{ width: '200px' }}>
+                        <input
+                          placeholder="Enter Withdraw Amount"
+                          name="withdraw_amount"
+                          type="number"
+                          className={`form-control ${withdrawAmountError ? 'is-invalid' : ''}`}
+                          value={withdrawAmount}
+                          onChange={(e) => {
+                            setWithdrawAmount(e.target.value);
+                            if (e.target.value && Number(e.target.value) > 0) {
+                              setWithdrawAmountError('');
+                            } else {
+                              setWithdrawAmountError('Please enter Withdraw Amount');
+                            }
+                          }}
+                          onBlur={(e) => {
+                            if (!e.target.value) {
+                              setWithdrawAmountError('Please enter Withdraw Amount');
+                            } else if (Number(e.target.value) <= 0) {
+                              setWithdrawAmountError('Amount must be greater than 0');
+                            } else {
+                              setWithdrawAmountError('');
+                            }
+                          }}
+                          required
+                        />
+                        {withdrawAmountError && (
+                          <div className="text-danger small mt-1">{withdrawAmountError}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="mb-2 d-flex align-items-center">
+                      <label className="me-2" style={{ minWidth: '80px' }}>Password</label>
+                      <div style={{ position: 'relative', width: '200px' }}>
+                        <input
+                          placeholder="Enter Password"
+                          name="withdraw_password"
+                          type={showWithdrawPassword ? "text" : "password"}
+                          className={`form-control ${withdrawPasswordError ? 'is-invalid' : ''}`}
+                          value={withdrawPassword}
+                          style={{ paddingRight: '40px' }}
+                          onChange={(e) => {
+                            setWithdrawPassword(e.target.value);
+                            if (e.target.value && e.target.value.length >= 4) {
+                              setWithdrawPasswordError('');
+                            } else {
+                              setWithdrawPasswordError('Please enter password');
+                            }
+                          }}
+                          onBlur={(e) => {
+                            if (!e.target.value) {
+                              setWithdrawPasswordError('Please enter password');
+                            } else if (e.target.value.length < 4) {
+                              setWithdrawPasswordError('Password must be at least 4 characters');
+                            } else {
+                              setWithdrawPasswordError('');
+                            }
+                          }}
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowWithdrawPassword(!showWithdrawPassword)}
+                          style={{
+                            position: 'absolute',
+                            right: '10px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            zIndex: 10,
+                            color: '#6c757d',
+                            padding: '0',
+                            fontSize: '16px'
+                          }}
+                        >
+                          {showWithdrawPassword ? (
+                            <i className="fas fa-eye-slash"></i>
+                          ) : (
+                            <i className="fas fa-eye"></i>
+                          )}
+                        </button>
+                        {withdrawPasswordError && (
+                          <div className="text-danger small mt-1">{withdrawPasswordError}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-center mt-4">
+                      <button
+                        type="submit"
+                        className="theme_dark_btn btn btn-primary"
+                        disabled={loading || withdrawAmountError || withdrawPasswordError}
+                      >
+                        {loading ? "Submitting..." : "Submit"}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
       {/* ===== DEPOSIT MODAL WITH onSubmit ===== */}
       {/* {depositmodal && (
@@ -1569,7 +1725,7 @@ function AgentLists() {
         </div>
       )} */}
 
-      {depositmodal && (
+      {/* {depositmodal && (
         <div className="allcommon">
           <div
             className="modal show d-block"
@@ -1658,6 +1814,142 @@ function AgentLists() {
                           }}
                           required
                         />
+                        {depositPasswordError && (
+                          <div className="text-danger small mt-1">{depositPasswordError}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-center mt-4">
+                      <button
+                        type="submit"
+                        className="theme_dark_btn btn btn-primary"
+                        disabled={loading || depositAmountError || depositPasswordError}
+                      >
+                        {loading ? "Submitting..." : "Submit"}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )} */}
+
+      {depositmodal && (
+        <div className="allcommon">
+          <div
+            className="modal show d-block"
+            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+            onClick={handleClosesetDepositmodal}
+          >
+            <div
+              className="modal-dialog modal-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="common-heading">Deposit Amount Edit</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={handleClosesetDepositmodal}
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <form className="change-password-sec" onSubmit={handleDepositSubmit}>
+                    <h4 className="h4 mb-3 curent-value">
+                      <label>Current :</label>
+                      <strong>{selectedAgent?.credit_ref || "0.00"}</strong>
+                    </h4>
+
+                    <div className="mb-2 d-flex align-items-center">
+                      <label className="me-2" style={{ minWidth: '80px' }}>New</label>
+                      <div style={{ width: '200px' }}>
+                        <input
+                          placeholder="Enter Deposit Amount"
+                          name="deposit_amount"
+                          type="number"
+                          className={`form-control ${depositAmountError ? 'is-invalid' : ''}`}
+                          value={depositAmount}
+                          onChange={(e) => {
+                            setDepositAmount(e.target.value);
+                            if (e.target.value && Number(e.target.value) > 0) {
+                              setDepositAmountError('');
+                            } else {
+                              setDepositAmountError('Please enter Deposit Amount');
+                            }
+                          }}
+                          onBlur={(e) => {
+                            if (!e.target.value) {
+                              setDepositAmountError('Please enter Deposit Amount');
+                            } else if (Number(e.target.value) <= 0) {
+                              setDepositAmountError('Amount must be greater than 0');
+                            } else {
+                              setDepositAmountError('');
+                            }
+                          }}
+                          required
+                        />
+                        {depositAmountError && (
+                          <div className="text-danger small mt-1">{depositAmountError}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="mb-2 d-flex align-items-center">
+                      <label className="me-2" style={{ minWidth: '80px' }}>Password</label>
+                      <div style={{ position: 'relative', width: '200px' }}>
+                        <input
+                          placeholder="Enter Password"
+                          name="deposit_password"
+                          type={showDepositPassword ? "text" : "password"}
+                          className={`form-control ${depositPasswordError ? 'is-invalid' : ''}`}
+                          value={depositPassword}
+                          style={{ paddingRight: '40px' }}
+                          onChange={(e) => {
+                            setDepositPassword(e.target.value);
+                            if (e.target.value && e.target.value.length >= 4) {
+                              setDepositPasswordError('');
+                            } else {
+                              setDepositPasswordError('Please enter password');
+                            }
+                          }}
+                          onBlur={(e) => {
+                            if (!e.target.value) {
+                              setDepositPasswordError('Please enter password');
+                            } else if (e.target.value.length < 4) {
+                              setDepositPasswordError('Password must be at least 4 characters');
+                            } else {
+                              setDepositPasswordError('');
+                            }
+                          }}
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowDepositPassword(!showDepositPassword)}
+                          style={{
+                            position: 'absolute',
+                            right: '10px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            zIndex: 10,
+                            color: '#6c757d',
+                            padding: '0',
+                            fontSize: '16px'
+                          }}
+                        >
+                          {showDepositPassword ? (
+                            <i className="fas fa-eye-slash"></i>
+                          ) : (
+                            <i className="fas fa-eye"></i>
+                          )}
+                        </button>
                         {depositPasswordError && (
                           <div className="text-danger small mt-1">{depositPasswordError}</div>
                         )}
@@ -2080,7 +2372,7 @@ function AgentLists() {
                         </div>
                       </div>
 
-                      <div className="mb-3 col-sm-12">
+                      {/* <div className="mb-3 col-sm-12">
                         <div className="row">
                           <div className="col-md-4">
                             <label className="form-label">Password</label>
@@ -2112,9 +2404,63 @@ function AgentLists() {
                             )}
                           </div>
                         </div>
+                      </div> */}
+                      <div className="mb-3 col-sm-12">
+                        <div className="row">
+                          <div className="col-md-4">
+                            <label className="form-label">Password</label>
+                          </div>
+                          <div className="col-md-8">
+                            <div style={{ position: 'relative' }}>
+                              <input
+                                placeholder="Enter Password"
+                                name="password"
+                                type={showAgentPassword ? "text" : "password"}
+                                className="form-control"
+                                style={{ paddingRight: '40px' }}
+                                value={agentFormData.password}
+                                onChange={(e) =>
+                                  setAgentFormData({
+                                    ...agentFormData,
+                                    password: e.target.value,
+                                  })
+                                }
+                              />
+                              <span
+                                onClick={() => setShowAgentPassword(!showAgentPassword)}
+                                style={{
+                                  position: 'absolute',
+                                  right: '10px',
+                                  top: '50%',
+                                  transform: 'translateY(-50%)',
+                                  cursor: 'pointer',
+                                  zIndex: 10,
+                                  color: '#6c757d'
+                                }}
+                              >
+                                {showAgentPassword ? (
+                                  <i className="fas fa-eye-slash"></i>
+                                ) : (
+                                  <i className="fas fa-eye"></i>
+                                )}
+                              </span>
+                            </div>
+                            {agentErrors.password && (
+                              <div
+                                style={{
+                                  color: "#dc3545",
+                                  fontSize: "14px",
+                                  marginTop: "5px",
+                                }}
+                              >
+                                {agentErrors.password}
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
 
-                      <div className="mb-3 col-sm-12">
+                      {/* <div className="mb-3 col-sm-12">
                         <div className="row">
                           <div className="col-md-4">
                             <label className="form-label">
@@ -2148,10 +2494,66 @@ function AgentLists() {
                             )}
                           </div>
                         </div>
+                      </div> */}
+
+                      <div className="mb-3 col-sm-12">
+                        <div className="row">
+                          <div className="col-md-4">
+                            <label className="form-label">Confirm Password</label>
+                          </div>
+                          <div className="col-md-8">
+                            <div style={{ position: 'relative' }}>
+                              <input
+                                placeholder="Enter confirm password"
+                                name="confirmPassword"
+                                type={showAgentConfirmPassword ? "text" : "password"}
+                                className="form-control"
+                                style={{ paddingRight: '40px' }}
+                                value={agentFormData.confirmPassword}
+                                onChange={(e) =>
+                                  setAgentFormData({
+                                    ...agentFormData,
+                                    confirmPassword: e.target.value,
+                                  })
+                                }
+                              />
+                              <span
+                                onClick={() => setShowAgentConfirmPassword(!showAgentConfirmPassword)}
+                                style={{
+                                  position: 'absolute',
+                                  right: '10px',
+                                  top: '50%',
+                                  transform: 'translateY(-50%)',
+                                  cursor: 'pointer',
+                                  zIndex: 10,
+                                  color: '#6c757d'
+                                }}
+                              >
+                                {showAgentConfirmPassword ? (
+                                  <i className="fas fa-eye-slash"></i>
+                                ) : (
+                                  <i className="fas fa-eye"></i>
+                                )}
+                              </span>
+                            </div>
+                            {agentErrors.confirmPassword && (
+                              <div
+                                style={{
+                                  color: "#dc3545",
+                                  fontSize: "14px",
+                                  marginTop: "5px",
+                                }}
+                              >
+                                {agentErrors.confirmPassword}
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
+
                     </div>
 
-                    <div className="mb-3 col-sm-12">
+                    {/* <div className="mb-3 col-sm-12">
                       <div className="row">
                         <div className="col-md-4">
                           <label className="form-label">Agent Comm (%)</label>
@@ -2183,7 +2585,7 @@ function AgentLists() {
                           )}
                         </div>
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="mt-3 text-center">
                       <button

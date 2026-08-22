@@ -348,80 +348,151 @@ function BlockedChildLists() {
     },
   ];
 
-  const fetchAgentData = async (
-    page = 1,
-    limit = itemsPerPage,
-    search = "",
-    filterData = {},
-  ) => {
-    try {
-      setIsSearching(true);
-      setLoading(true);
-      const payload = {
-        admin_id: admin_id,
-        page: page,
+  // const fetchAgentData = async (
+  //   page = 1,
+  //   limit = itemsPerPage,
+  //   search = "",
+  //   filterData = {},
+  // ) => {
+  //   try {
+  //     setIsSearching(true);
+  //     setLoading(true);
+  //     const payload = {
+  //       admin_id: admin_id,
+  //       page: page,
+  //       limit: limit,
+  //       search: search || "",
+  //     };
+
+  //     const response = await getBlockedChildList(payload);
+  //     if (response.data.success) {
+  //       const data = response.data;
+
+  //       // ✅ _id ko preserve karo, id nahi
+  //       const formattedData = data.data.map((agent) => ({
+  //         ...agent,
+  //         _id: agent._id, // ✅ IMPORTANT: _id preserve karo
+  //         bet_block: agent.bet_block || 0,
+  //         coins: agent.coins || agent.amount || 0,
+  //         total_amount: agent.total_amount || 0,
+  //         credit_ref: agent.reference || "-",
+  //         exposer: agent.exposer || 0,
+  //         master_admin_id:
+  //           agent.master_admin_id ||
+  //           agent.super_agent_id ||
+  //           agent.super_admin_id ||
+  //           "-",
+  //         match_share: agent.match_share || 0,
+  //         admin_otp: agent.admin_otp || agent.otp || "N/A",
+  //         role: agent.role || "N/A",
+  //         active: agent.active || 0,
+  //         parent_username:
+  //           agent.parent_username ||
+  //           agent.super_agent_username ||
+  //           agent.super_username ||
+  //           "N/A",
+  //         username: agent.username || agent.name || "N/A",
+  //         password: agent.password || "N/A",
+  //         admin_id: agent.admin_id || "N/A",
+  //         created_at:
+  //           agent.created_at || agent.createdAt || new Date().toISOString(),
+  //         is_blocked: agent.is_blocked || 0,
+  //       }));
+
+  //       setAgentData(formattedData);
+  //       setTotalItems(data.pagination?.total_records || 0);
+  //       setTotalPages(data.pagination?.total_pages || 1);
+  //       setCurrentPage(data.pagination?.current_page || page);
+  //       setSearchTerm(search);
+  //       setPaginationData({
+  //         total_records: data.pagination?.total_records || 0,
+  //         total_pages: data.pagination?.total_pages || 1,
+  //         current_page: data.pagination?.current_page || page,
+  //         limit: limit,
+  //       });
+  //     } else {
+  //       setAgentData([]);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching agent data:", error);
+  //     setAgentData([]);
+  //   } finally {
+  //     setLoading(false);
+  //     setIsSearching(false);
+  //   }
+  // };
+const fetchAgentData = async (
+  page = 1,
+  limit = itemsPerPage,
+  search = "",
+  filterData = {},
+) => {
+  try {
+    setIsSearching(true);
+    setLoading(true);
+    const payload = {
+      admin_id: admin_id,
+      page: page,
+      limit: limit,
+      search: search || "",
+    };
+
+    console.log("📤 Payload:", payload);
+
+    const response = await getBlockedChildList(payload);
+    console.log("📥 API Response:", response);
+
+    if (response.data.success) {
+      const data = response.data;
+
+      // ✅ FIX: combined array se data lo
+      const combinedData = data.data?.combined || [];
+      console.log("📊 Combined Data Length:", combinedData.length);
+
+      const formattedData = combinedData.map((item) => ({
+        ...item,
+        _id: item._id,
+        bet_block: item.bet_block || 0,
+        coins: item.coins || item.amount || 0,
+        total_amount: item.total_amount || 0,
+        credit_ref: item.reference || "-",
+        exposer: item.exposer || 0,
+        master_admin_id: item.master_admin_id || item.super_agent_id || item.super_admin_id || "-",
+        match_share: item.match_share || 0,
+        admin_otp: item.admin_otp || item.otp || "-",
+        role: item.role || "-",
+        active: item.active || 0,
+        parent_username: item.parent_username || item.super_agent_username || item.super_username || "-",
+        username: item.username || item.name || "-",
+        password: item.password || "-",
+        admin_id: item.admin_id || "-",
+        created_at: item.created_at || item.createdAt || new Date().toISOString(),
+        is_blocked: item.is_blocked || 0,
+        source: item.source || "-",
+      }));
+
+      setAgentData(formattedData);
+      setTotalItems(data.pagination?.total_records || 0);
+      setTotalPages(data.pagination?.total_pages || 1);
+      setCurrentPage(data.pagination?.current_page || page);
+      setSearchTerm(search);
+      setPaginationData({
+        total_records: data.pagination?.total_records || 0,
+        total_pages: data.pagination?.total_pages || 1,
+        current_page: data.pagination?.current_page || page,
         limit: limit,
-        search: search || "",
-      };
-
-      const response = await getBlockedChildList(payload);
-      if (response.data.success) {
-        const data = response.data;
-
-        // ✅ _id ko preserve karo, id nahi
-        const formattedData = data.data.map((agent) => ({
-          ...agent,
-          _id: agent._id, // ✅ IMPORTANT: _id preserve karo
-          bet_block: agent.bet_block || 0,
-          coins: agent.coins || agent.amount || 0,
-          total_amount: agent.total_amount || 0,
-          credit_ref: agent.reference || "-",
-          exposer: agent.exposer || 0,
-          master_admin_id:
-            agent.master_admin_id ||
-            agent.super_agent_id ||
-            agent.super_admin_id ||
-            "-",
-          match_share: agent.match_share || 0,
-          admin_otp: agent.admin_otp || agent.otp || "N/A",
-          role: agent.role || "N/A",
-          active: agent.active || 0,
-          parent_username:
-            agent.parent_username ||
-            agent.super_agent_username ||
-            agent.super_username ||
-            "N/A",
-          username: agent.username || agent.name || "N/A",
-          password: agent.password || "N/A",
-          admin_id: agent.admin_id || "N/A",
-          created_at:
-            agent.created_at || agent.createdAt || new Date().toISOString(),
-          is_blocked: agent.is_blocked || 0,
-        }));
-
-        setAgentData(formattedData);
-        setTotalItems(data.pagination?.total_records || 0);
-        setTotalPages(data.pagination?.total_pages || 1);
-        setCurrentPage(data.pagination?.current_page || page);
-        setSearchTerm(search);
-        setPaginationData({
-          total_records: data.pagination?.total_records || 0,
-          total_pages: data.pagination?.total_pages || 1,
-          current_page: data.pagination?.current_page || page,
-          limit: limit,
-        });
-      } else {
-        setAgentData([]);
-      }
-    } catch (error) {
-      console.error("Error fetching agent data:", error);
+      });
+    } else {
       setAgentData([]);
-    } finally {
-      setLoading(false);
-      setIsSearching(false);
     }
-  };
-
+  } catch (error) {
+    console.error("❌ Error fetching agent data:", error);
+    setAgentData([]);
+  } finally {
+    setLoading(false);
+    setIsSearching(false);
+  }
+};
   useEffect(() => {
     if (token) {
       fetchAgentData(1, itemsPerPage, "", {});
@@ -1214,7 +1285,7 @@ function BlockedChildLists() {
                   <th rowSpan={2}>BALANCE</th>
                   <th rowSpan={2}>P/L</th>
                   {/* <th rowSpan={2}>EXPOSURE</th> */}
-                  <th rowSpan={2}>CLIENT SHARE</th>
+                  <th rowSpan={2}>CLIENT(%) SHARE</th>
                   <th rowSpan={2}>UP-LINE</th>
                   {/* Code */}
                   {/* <th rowSpan={2} className="position-relative">
@@ -1235,9 +1306,9 @@ function BlockedChildLists() {
                   </th> */}
                   {/* <th rowSpan={2}>Chips</th> */}
                   {/* <th rowSpan={2}>Balance</th> */}
-                  <th rowSpan={2}>Status</th>
-                  <th rowSpan={2}>Bet</th>
-                  <th rowSpan={2}>Options</th>
+                  {/* <th rowSpan={2}>Status</th>
+                  <th rowSpan={2}>Bet</th> */}
+                  <th rowSpan={2}>Action</th>
                 </tr>
 
                 {/* <tr>
@@ -1311,7 +1382,7 @@ function BlockedChildLists() {
                           <FiCopy size={14} />
                         </button>
                       </td> */}
-                      <td>{row.admin_id || "N/A"}</td>
+                      <td>{row.admin_id || "-"}</td>
 
                       <td>{row.coins || "0"}</td>
                       <td>
@@ -1327,7 +1398,7 @@ function BlockedChildLists() {
                         {row.parent_username ||
                           row.super_username ||
                           row.super_admin_id ||
-                          "N/A"}
+                          "-"}
                       </td>
 
                       {/* <td>{row.admin_id || "N/A"}</td> */}
@@ -1407,7 +1478,7 @@ function BlockedChildLists() {
                       <td className="text-center">{row.match_comm || "0"}</td>
                       <td className="text-center">{row.session_comm || "0"}</td> */}
 
-                      <td className="text-center">
+                      {/* <td className="text-center">
                         <span
                           onClick={() => {
                             setSelectedAgent(row);
@@ -1424,7 +1495,7 @@ function BlockedChildLists() {
                             />
                           )}
                         </span>
-                      </td>
+                      </td> */}
 
                       {/* <td className="text-center">
                         <span
@@ -1447,7 +1518,7 @@ function BlockedChildLists() {
                         </span>
                       </td> */}
 
-                      <td className="text-center">
+                      {/* <td className="text-center">
                         <span
                           onClick={() => handleBetToggle(row)}
                           style={{ cursor: "pointer" }}
@@ -1469,7 +1540,7 @@ function BlockedChildLists() {
                             />
                           )}
                         </span>
-                      </td>
+                      </td> */}
 
                       {/* <td className="text-center">
                         <span className={`badge ${Number(row.is_blocked) === 1 ? "bg-danger" : "bg-success"}`}>
@@ -1513,8 +1584,7 @@ function BlockedChildLists() {
                             )}
                           </div> */}
 
-                          <div className="position-relative d-inline-block">
-                            {/* ✅ Plus Button - US ke liye hide, baaki sab ke liye show */}
+                          {/* <div className="position-relative d-inline-block">
                             {!row.admin_id?.startsWith("US") && (
                               <button
                                 className="buttoncommon gradient-7"
@@ -1524,7 +1594,6 @@ function BlockedChildLists() {
                               </button>
                             )}
 
-                            {/* ✅ Dropdown Menu with Conditions - No Fallback */}
                             {optionMenu === row.admin_id && (
                               <div
                                 className="dropdown-menu show"
@@ -1542,7 +1611,7 @@ function BlockedChildLists() {
                                   display: "block",
                                 }}
                               >
-                                {/* ✅ CONDITION 1: SM (Super Master) → Master Button */}
+
                                 {row.admin_id?.startsWith("SM") && (
                                   <button
                                     className="dropdown-item"
@@ -1579,7 +1648,6 @@ function BlockedChildLists() {
                                   </button>
                                 )}
 
-                                {/* ✅ CONDITION 2: MA (Master) → Client Button */}
                                 {row.admin_id?.startsWith("MA") && (
                                   <button
                                     className="dropdown-item"
@@ -1617,9 +1685,9 @@ function BlockedChildLists() {
                                 )}
                               </div>
                             )}
-                          </div>
+                          </div> */}
 
-                          <button
+                          {/*  <button
                             className="buttoncommon gradient-9"
                             onClick={() => handleUpdateSuperAgent(row)}
                             title="Edit Profile"
@@ -1641,11 +1709,6 @@ function BlockedChildLists() {
 
                           <button
                             className="buttoncommon gradient-2"
-                            // onClick={() => {
-                            //   setSelectedAgent(row);
-                            //   setWithdrawAmount("");
-                            //   setShowWithdrawModal(true);
-                            // }}
                             onClick={() => {
                               setSelectedAgent(row);
                               setWithdrawAmount("");
@@ -1656,7 +1719,7 @@ function BlockedChildLists() {
                             <span>W</span>
                           </button>
 
-                          <button
+                         <button
                             className="buttoncommon gradient-6"
                             onClick={() => {
                               setSelectedAgent(row);
@@ -1669,7 +1732,7 @@ function BlockedChildLists() {
                             title="Reset Password"
                           >
                             <span>P</span>
-                          </button>
+                          </button> */}
 
                           {/* <button
                             className="btn gradient-8 btn-rounded"
@@ -1691,10 +1754,10 @@ function BlockedChildLists() {
                             <FaCogs />
                           </button> */}
 
-                          <button
+                          {/* <button
                             className="btn gradient-8 btn-rounded"
                             onClick={() => {
-                              setSelectedAgent(row); // ✅ YEH ADD KARO
+                              setSelectedAgent(row); 
                               setShowReportModal(true);
                             }}
                             title="REPORTS"
@@ -1705,13 +1768,13 @@ function BlockedChildLists() {
                           <button
                             className="btn gradient-4 btn-rounded"
                             onClick={() => {
-                              setSelectedAgent(row); // ✅ YEH ADD KARO
+                              setSelectedAgent(row); 
                               setShowSettingModal(true);
                             }}
                             title="SETTINGS"
                           >
                             <FaCogs />
-                          </button>
+                          </button> */}
 
                           {/* <button
                             className="buttoncommon gradient-6"
@@ -1778,7 +1841,23 @@ function BlockedChildLists() {
                             title="Inactive Users"
                           >
                             <FaRectangleList  />
-                          </button> */}
+                          </but
+                          ton> */}
+
+                           <button
+                            // className={`btn btn-sm btn-rounded ${Number(row.is_blocked)
+                            className={`btn btn-sm ${Number(row.is_blocked)
+                              ? "btn-success"
+                              : "btn-danger"
+                              }`}
+                            onClick={() => {
+                              setSelectedAgent(row);
+                              setShowBlockModal(true);
+                            }}
+                            title={Number(row.is_blocked) ? "Unblock" : "Block"}
+                          >
+                            <FiSlash />
+                          </button>
                         </div>
                       </td>
                     </tr>

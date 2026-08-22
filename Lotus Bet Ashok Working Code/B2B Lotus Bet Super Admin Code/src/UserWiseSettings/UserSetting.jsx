@@ -20,7 +20,7 @@ function UserSetting() {
   const [settings, setSettings] = useState({});
   const [submittingMarket, setSubmittingMarket] = useState(null);
 
-  // ✅ Fixed sports sequence
+  // ✅ Sports sequence - Casino removed from here
   const sportOrder = [
     "Football",
     "Cricket",
@@ -28,8 +28,8 @@ function UserSetting() {
     "Horse Racing",
     "Greyhound Racing",
     "Kabaddi",
-    "Casino",
     "Politics",
+    // "Casino", // Commented out - Casino hidden from UI
   ];
 
   useEffect(() => {
@@ -142,7 +142,6 @@ function UserSetting() {
       const responseData = response.data || response;
 
       if (responseData.success) {
-        // ✅ Local state update karo - sirf us market ke values update karo
         setSettings((prevSettings) => ({
           ...prevSettings,
           [activeSport]: {
@@ -162,7 +161,6 @@ function UserSetting() {
           },
         }));
 
-        // ✅ Loader complete hone ke baad message show karein
         await Swal.fire({
           icon: "success",
           title: "Success!",
@@ -205,7 +203,6 @@ function UserSetting() {
       const responseData = response.data || response;
 
       if (responseData.success) {
-        // ✅ Local state update karo - sirf us market ke values update karo
         setSettings((prevSettings) => ({
           ...prevSettings,
           [activeSport]: {
@@ -225,7 +222,6 @@ function UserSetting() {
           },
         }));
 
-        // ✅ Loader complete hone ke baad message show karein
         await Swal.fire({
           icon: "success",
           title: "Success!",
@@ -329,11 +325,6 @@ function UserSetting() {
           </div>
         </div>
         <div className="card-body">
-          {/* <div className="mb-3">
-            <span>Admin ID: </span>
-            <span>{adminId || "-"}</span>
-          </div> */}
-
           <div className="setting_btns d-flex flex-nowrap overflow-auto gap-2 mb-3">
             {sportOrder.map((sport) => {
               if (settings[sport]) {

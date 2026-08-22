@@ -667,14 +667,21 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
             // },
             {
               id: "fancy_management_view",
-              title: "Fancy Result",
+              title: "Declare Fancy Results",
               path: "/view_match",
             },
             {
               id: "declare_result",
-              title: "Result Declare",
+              title: "Declare Match Results",
               path: "/declare_result",
             },
+
+            {
+              id: "declare_horse_greyhound_results",
+              title: "Declare Horse & Greyhound Results",
+              path: "/declare_result_horsegreyhund",
+            },
+
             {
               id: "/fancy-result-list",
               title: "Fancy Result List",

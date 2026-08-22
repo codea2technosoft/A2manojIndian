@@ -314,6 +314,7 @@ const ProfitLossDetail = () => {
   const [loading, setLoading] = useState(true);
   const [detailData, setDetailData] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
+  const eventName = location.state?.eventName || "";
   const [responseMeta, setResponseMeta] = useState({
     admin_id: "",
     role: "",
@@ -398,6 +399,7 @@ const ProfitLossDetail = () => {
     navigate(`/reports/profit-loss-summary-event/${eventId}`, {
       state: {
         payload: payload,
+         eventName: eventName, 
       },
     });
   };
@@ -433,7 +435,10 @@ const ProfitLossDetail = () => {
       <ToastContainer autoClose={500} theme="colored" />
       <div className="card">
         <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center gap-2">
-          <h3 className="card-title mb-0">Detail - Event ID: {eventId}</h3>
+          {/* <h3 className="card-title mb-0">Detail - Event ID: {eventId}</h3> */}
+              <h3 className="card-title mb-0">
+            Profit Loss Of  {eventName ? `- ${eventName}` : `- Event ID: ${eventId}`}
+          </h3>
           <button
             className="btn btn-outline-light"
             onClick={() => navigate(-1)}
@@ -453,7 +458,7 @@ const ProfitLossDetail = () => {
                   <th>COMM OUT</th>
                   <th>AMOUNT</th>
                   <th>TOTAL</th>
-                  <th className="text-center">ACTION</th>
+                  <th className="text-center">INFO</th>
                 </tr>
               </thead>
               <thead className="table-secondary fw-bold">

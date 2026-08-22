@@ -3419,6 +3419,7 @@ function Cricket() {
           style={{ cursor: "pointer", zIndex: 5 }}
         >
           <span>TV</span>
+          
         </div>
         {activeTab === "tv" && (
           <>
@@ -3430,8 +3431,8 @@ function Cricket() {
                   onClick={() => setActiveTab(!activeTab)}
                 >
                   <iframe
-                    // src={`https://e765432.diamondcricketid.com/dtv.php?id=${event_id}&sportid=4`}
-                    src={`https://livetv.datad247.com/api/v1/tv=${event_id}`}
+                    //src={`https://tv.shyammatka.co.in/?eventid=${event_id}`}
+                    src={`https://e765432.diamondcricketid.com/dtv.php?id=${event_id}`}
                     frameBorder="0"
                     width="100%"
                     height="400"
@@ -3449,8 +3450,8 @@ function Cricket() {
                   onClick={() => setActiveTab(!activeTab)}
                 >
                   <iframe
-                    // src={`https://e765432.diamondcricketid.com/dtv.php?id=${event_id}&sportid=4`}
-                    src={`https://livetv.datad247.com/api/v1/tv=${event_id}`}
+                    // src={`https://tv.shyammatka.co.in/?eventid=${event_id}`}
+                       src={`https://e765432.diamondcricketid.com/dtv.php?id=${event_id}`}
                     frameBorder="0"
                     width="100%"
                     height="195"
@@ -3461,14 +3462,14 @@ function Cricket() {
             </div>
           </>
         )}
-        <div>
+        {/* <div>
           <iframe
             width="100%"
             height="200"
             src={`https://tv.tresting.com/lnt.php?eventid=${event_id}`}
             allowFullScreen
           />
-        </div>
+        </div> */}
 
         <section className="cricket_design new_game_design_myxbet">
           <div className="row gy-2">
