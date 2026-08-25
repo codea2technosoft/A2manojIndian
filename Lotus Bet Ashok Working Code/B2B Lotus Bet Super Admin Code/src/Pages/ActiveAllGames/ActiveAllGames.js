@@ -286,18 +286,18 @@ function ActiveAllGames() {
     }
   };
 
-  if (!isInitialLoadDone.current) {
-    loadAllData();
-  }
+  // if (!isInitialLoadDone.current) {
+  //   loadAllData();
+  // }
 
-  pollingIntervalRef.current = setInterval(() => {
-    if (!isFetchingRef.current && isInitialLoadDone.current) {
-      console.log("🔄 Polling API every 10 seconds...");
-      loadAllData();
-    } else if (isFetchingRef.current) {
-      console.log("⏳ Skipping poll - API call already in progress");
-    }
-  }, 10000);
+  // pollingIntervalRef.current = setInterval(() => {
+    // if (!isFetchingRef.current && isInitialLoadDone.current) {
+    //   console.log("🔄 Polling API every 10 seconds...");
+    //   loadAllData();
+    // } else if (isFetchingRef.current) {
+    //   console.log("⏳ Skipping poll - API call already in progress");
+    // }
+  // }, 10000);
 
   // Get current sport data safely
   const currentSport = sportData[sportId] || { name: "Sports", image: null };
@@ -310,6 +310,7 @@ function ActiveAllGames() {
   //   fetchOddsData();
   // }, 500);
   useEffect(() => {
+    loadAllData();
     if (sportId) {
       fetchGames();
     }
@@ -326,15 +327,15 @@ function ActiveAllGames() {
     fetchOddsData(allEvents);
 
     // Ab 10 seconds ke interval par fetch karo (500ms nahi!)
-    const intervalId = setInterval(() => {
+    // const intervalId = setInterval(() => {
       const currentEvents = games.flatMap((series) => series.events || []);
       if (currentEvents.length > 0) {
         fetchOddsData(currentEvents);
       }
-    }, 10000); // 10 seconds - smooth performance!
+    // }, 10000); // 10 seconds - smooth performance!
 
     // Cleanup
-    return () => clearInterval(intervalId);
+    // return () => clearInterval(intervalId);
   }, [games]); // games pe depend karega
 
   // Fetch odds data for all events

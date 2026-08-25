@@ -459,6 +459,7 @@
 // };
 
 // export default AccountStatement;
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -699,24 +700,122 @@ const AccountStatement = () => {
   // }, []);
 
   // Bet History navigate function
-  const handleBetHistoryClick = (item) => {
-    const eventId = item.event_id || item.round_id || "";
-    const marketId = item.market_id || item.event_type_id || "";
+  // const handleBetHistoryClick = (item) => {
+  //   const eventId = item.event_id || item.round_id || "";
+  //   const marketId = item.market_id || item.event_type_id || "";
+  //     const sportId = item.sport_id || item.sport || "";
 
-    console.log("Navigating to Bet History with:", { eventId, marketId });
+  //   console.log("Navigating to Bet History with:", { eventId, marketId });
 
-    navigate(`/reports/bet-history/${eventId}/${marketId}`, {
+  //   navigate(`/reports/bet-history/${eventId}/${marketId}`, {
+  //     state: {
+  //       payload: {
+  //         event_id: eventId,
+  //         market_id: marketId,
+  //         admin_id: item.admin_id || adminId,
+  //         bet_type: "bookmaker",
+  //            sport_id: sportId,
+  //       },
+  //     },
+  //   });
+  // };
+
+//   const handleBetHistoryClick = (item) => {
+//   const eventId = item.event_id || item.round_id || "";
+//   const marketId = item.market_id || item.event_type_id || "";
+//   const sportId = item.sport_id || item.sport || "";
+
+//   console.log("Navigating to Bet History with:", { eventId, marketId, sportId });
+
+//   // ✅ URL: eventId/sportId/marketId
+//   navigate(`/reports/bet-history/${eventId}/${sportId}/${marketId}`, {
+//     state: {
+//       payload: {
+//         event_id: eventId,
+//         market_id: marketId,
+//         admin_id: item.admin_id || adminId,
+//         bet_type: "bookmaker",
+//         sport_id: sportId,
+//       },
+//     },
+//   });
+// };
+
+// const handleBetHistoryClick = (item) => {
+//   const eventId = item.event_id || item.round_id || "";
+//   const marketId = item.market_id || item.event_type_id || "";
+//   const sportId = item.sport_id || item.sport || "";
+
+//   console.log("Navigating to Bet History with:", { eventId, marketId, sportId });
+
+//   // ✅ Casino (sport_id = 10) ke liye alag URL
+//   if (sportId === "10" || sportId === 10) {
+//     navigate(`/reports/bet-history/${sportId}`, {
+//       state: {
+//         payload: {
+//           admin_id: item.admin_id || adminId,
+//           bet_type: "casino",
+//           sport_id: sportId,
+//         },
+//       },
+//     });
+//   } else {
+//     // Baaki sports ke liye normal URL
+//     navigate(`/reports/bet-history/${eventId}/${sportId}/${marketId}`, {
+//       state: {
+//         payload: {
+//           event_id: eventId,
+//           market_id: marketId,
+//           admin_id: item.admin_id || adminId,
+//           bet_type: "bookmaker",
+//           sport_id: sportId,
+//         },
+//       },
+//     });
+//   }
+// };
+const handleBetHistoryClick = (item) => {
+  const eventId = item.event_id || item.round_id || "";
+  const marketId = item.market_id || item.event_type_id || "";
+  const sportId = item.sport_id || item.sport || "";
+
+  console.log("Navigating to Bet History with:", { eventId, marketId, sportId });
+
+  // ✅ Agar sab empty hai toh navigate mat karo
+  if (!eventId && !marketId && !sportId) {
+    toast.warning("No bet details available for this transaction");
+    return;
+  }
+
+  // ✅ Casino (sport_id = 10) ke liye alag URL
+  if (sportId === "10" || sportId === 10) {
+    navigate(`/reports/bet-history/${sportId}`, {
+      state: {
+        payload: {
+          admin_id: item.admin_id || adminId,
+          bet_type: "casino",
+          sport_id: sportId,
+        },
+      },
+    });
+  } else if (eventId && sportId) {
+    // ✅ Baaki sports ke liye normal URL - sirf tab jab eventId aur sportId ho
+    navigate(`/reports/bet-history/${eventId}/${sportId}/${marketId || ""}`, {
       state: {
         payload: {
           event_id: eventId,
           market_id: marketId,
           admin_id: item.admin_id || adminId,
           bet_type: "bookmaker",
+          sport_id: sportId,
         },
       },
     });
-  };
-
+  } else {
+    // ✅ Agar sirf sportId hai toh sirf wahi bhejo
+    toast.warning("No bet details available for this transaction");
+  }
+};
   return (
     <>
       <ToastContainer autoClose={500} theme="colored" />
@@ -839,8 +938,10 @@ const AccountStatement = () => {
                       const dateValue = item.created_at || item.date;
                       const sportName = getSport(item);
 
-                      const amountColor =
-                        amount < 0 ? "text-danger" : "text-success";
+                      // const amountColor =
+                      //   amount < 0 ? "text-danger" : "text-success";
+                      // ✅ win_loss ke hisaab se color
+const amountColor = item.win_loss === "LOSS" ? "text-danger" : "text-success";
 
                       return (
                         <tr key={item.transaction_id || index}>

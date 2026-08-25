@@ -700,7 +700,7 @@ const FancyResult = () => {
                       <tr>
                         <th>#</th>
                         <th>Date</th>
-                        <th>UserId</th>
+                        <th>User Name</th>
                         <th>Phone Number</th>
                         <th>Bet Type</th>
                         <th>Stake</th>
@@ -716,8 +716,8 @@ const FancyResult = () => {
                           <td>
                             {moment(x.created_at).format("DD-MM-YYYY hh:mm A")}
                           </td>
-                          <td>{x.admin_id}</td>
-                          <td>{x.mobile}</td>
+                          <td>{x.user_name || "-"}</td>
+                          <td>{x.phone_number}</td>
                           <td>
                             <span
                               className={`badge ${x.bet_on === "lay" ? "bg-danger" : "bg-success"

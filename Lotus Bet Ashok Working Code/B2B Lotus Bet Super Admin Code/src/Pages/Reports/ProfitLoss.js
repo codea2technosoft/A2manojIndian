@@ -1107,7 +1107,7 @@ const ProfitLoss = () => {
               <thead className="table-dark">
                 <tr>
                   <th>SR NO</th>
-                  <th>EVENT ID</th>
+                  {/* <th>EVENT ID</th> */}
                   <th>SPORT</th>
                   <th>EVENT</th>
                   <th>COMM IN</th>
@@ -1140,7 +1140,7 @@ const ProfitLoss = () => {
                     {pageTotal && (
                       <tr className="table-striped fw-bold">
                         <td>#</td>
-                        <td colSpan="5">Page Total</td>
+                        <td colSpan="4">Page Total</td>
                         <td>{pageTotal.event || ""}</td>
 
                         <td>{formatNumber(pageTotal.amount)}</td>
@@ -1152,7 +1152,7 @@ const ProfitLoss = () => {
                     {grandTotal && (
                       <tr className="table-striped fw-bold">
                         <td>#</td>
-                        <td colSpan="5">Grand Total</td>
+                        <td colSpan="4">Grand Total</td>
                         <td>{grandTotal.event || ""}</td>
 
                         <td>{formatNumber(grandTotal.amount)}</td>
@@ -1164,7 +1164,7 @@ const ProfitLoss = () => {
                     {statementData.map((item, index) => (
                       <tr key={index}>
                         <td>{item.sr_no}</td>
-                        <td>{item.event_id}</td>
+                        {/* <td>{item.event_id}</td> */}
                         <td>{item.sport}</td>
                         <td>{item.event}</td>
                         <td>{formatNumber(item.comm_in)}</td>

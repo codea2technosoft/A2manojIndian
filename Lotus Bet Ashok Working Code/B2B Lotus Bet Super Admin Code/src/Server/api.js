@@ -608,6 +608,12 @@ export const getProfitLossSummary = (payload) =>
 export const getProfitLossFancySettled = (payload) =>
   API.post("/get-fancy-settled", payload);
 
+
+export const getEventBetsMultimarket = (payload) =>
+  API.post("/get-event-bets", payload);
+
+
+
 export const getEventBetsPendingAll = (payload) => {
   return API.post("/get-event-bets-pending", payload);
 };

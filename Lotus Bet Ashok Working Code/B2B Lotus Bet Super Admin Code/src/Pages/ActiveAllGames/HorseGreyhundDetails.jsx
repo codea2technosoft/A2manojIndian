@@ -113,7 +113,8 @@ const HorseGreyhundDetails = () => {
 
           const oddsResponse = await axios
             .get(
-              `https://cricketapinew.shyammatka.co.in/horseracing-grayhond-odds?marketid=${mId}`,
+              // `https://cricketapinew.shyammatka.co.in/horseracing-grayhond-odds?marketid=${mId}`,
+               `https://cricketfancylive.shyammatka.co.in/horseracing-grayhond-odds?marketid=${mId}`,
               { headers: { Authorization: `Bearer ${token}` } },
             )
             .catch((err) => {

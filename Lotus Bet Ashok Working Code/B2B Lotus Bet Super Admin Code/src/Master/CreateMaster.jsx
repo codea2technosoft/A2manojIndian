@@ -10,6 +10,7 @@ const CreateSuperAgentAdmin = () => {
   const [validated, setValidated] = useState(false);
   const navigate = useNavigate();
   const [adminData, setAdminData] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -152,7 +153,8 @@ const CreateSuperAgentAdmin = () => {
         coins > 0 &&
         coins <= myCoins &&
         formData.agentCommissionType !== "" &&
-        passwordRegex.test(formData.password);
+        // passwordRegex.test(formData.password);
+        formData.password.trim() !== "";  // ✅ Sirf empty check karo
 
       setIsFormValid(valid);
     };
@@ -162,7 +164,8 @@ const CreateSuperAgentAdmin = () => {
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
-      password: generatePassword(),
+      // password: generatePassword(),
+      password: "",
     }));
   }, []);
   const allowOnlyNumbers = (e) => {
@@ -221,28 +224,58 @@ const CreateSuperAgentAdmin = () => {
   //     setFormData({ ...formData, [name]: value });
   // };
 
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+
+  //   if (errors[name]) {
+  //     setErrors((prev) => ({ ...prev, [name]: "" }));
+  //   }
+  //   if (name === "coins") {
+  //     if (!/^\d*$/.test(value)) return;
+  //     if (value === "") {
+  //       setFormData((prev) => ({ ...prev, coins: "" }));
+  //       return;
+  //     }
+  //     const assignCoins = Number(value);
+  //     const myCoins = Number(formData.myCoins);
+
+  //     if (assignCoins <= 0) {
+  //       setErrors((prev) => ({
+  //         ...prev,
+  //         coins: "Coins must be greater than 0",
+  //       }));
+  //       return;
+  //     }
+
+  //     if (assignCoins > myCoins) {
+  //       setErrors((prev) => ({
+  //         ...prev,
+  //         coins: `You can assign maximum ${myCoins} coins`,
+  //       }));
+  //       return;
+  //     }
+  //   }
+
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    // error clear
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
-
-    // 🪙 COINS VALIDATION
     if (name === "coins") {
-      // only digits
       if (!/^\d*$/.test(value)) return;
-
-      // ⛔ empty value ko allow karo (typing ke time)
       if (value === "") {
         setFormData((prev) => ({ ...prev, coins: "" }));
         return;
       }
-
       const assignCoins = Number(value);
       const myCoins = Number(formData.myCoins);
-
       if (assignCoins <= 0) {
         setErrors((prev) => ({
           ...prev,
@@ -250,7 +283,6 @@ const CreateSuperAgentAdmin = () => {
         }));
         return;
       }
-
       if (assignCoins > myCoins) {
         setErrors((prev) => ({
           ...prev,
@@ -259,22 +291,17 @@ const CreateSuperAgentAdmin = () => {
         return;
       }
     }
-
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
+
   const handlePercentageChange = (e) => {
     const { name, value } = e.target;
-
-    // Sirf digits allow
     if (!/^\d*$/.test(value)) return;
-
     const numValue = Number(value);
-
-    // 0 se kam ya 100 se zyada allow nahi
     if (numValue < 0 || numValue > 100) {
       setErrors((prev) => ({
         ...prev,
@@ -282,8 +309,6 @@ const CreateSuperAgentAdmin = () => {
       }));
       return;
     }
-
-    // Error clear
     setErrors((prev) => ({ ...prev, [name]: "" }));
 
     setFormData((prev) => ({
@@ -294,8 +319,6 @@ const CreateSuperAgentAdmin = () => {
 
   const blockInvalidKeys = (e) => {
     const key = e.key;
-
-    // Allowed: Only digits + backspace + tab + arrows
     const allowedKeys = [
       "Backspace",
       "Delete",
@@ -303,14 +326,10 @@ const CreateSuperAgentAdmin = () => {
       "ArrowRight",
       "Tab",
     ];
-
-    // ❌ If key is not a digit AND not an allowed special key → block it
     if (!/^\d$/.test(key) && !allowedKeys.includes(key)) {
       e.preventDefault();
     }
   };
-
-  // ✅ Generate new password
   const handleGeneratePassword = () => {
     setFormData((prev) => ({
       ...prev,
@@ -321,13 +340,9 @@ const CreateSuperAgentAdmin = () => {
     }
     toast.info("New password generated!");
   };
-
-  // ✅ Validate form before submission
   const validateForm = () => {
     const newErrors = {};
     let isValid = true;
-
-    // Validate required fields
     if (!formData.name.trim()) {
       newErrors.name = "Name is required";
       isValid = false;
@@ -357,9 +372,14 @@ const CreateSuperAgentAdmin = () => {
 
     // Validate password format
     const passwordRegex = /^[A-Z]{2}[0-9]{4}$/;
-    if (!passwordRegex.test(formData.password)) {
-      newErrors.password =
-        "Password must be 2 capital letters followed by 4 digits";
+    // if (!passwordRegex.test(formData.password)) {
+    //   newErrors.password =
+    //     "Password must be 2 capital letters followed by 4 digits";
+    //   isValid = false;
+    // }
+
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required";
       isValid = false;
     }
 
@@ -772,7 +792,7 @@ const CreateSuperAgentAdmin = () => {
                 )}
 
                 {/* ✅ Password show + editable */}
-                <div className="col-md-6 mb-3">
+                {/* <div className="col-md-6 mb-3">
                   <label className="form-label">
                     Password <span className="text-danger">*</span>
                   </label>
@@ -788,7 +808,7 @@ const CreateSuperAgentAdmin = () => {
                       pattern="[A-Z]{2}[0-9]{4}"
                       title="Format: 2 capital letters followed by 4 digits"
                       disabled={isSubmitting}
-                      readOnly
+                    readOnly
                     />
                     <button
                       type="button"
@@ -811,6 +831,54 @@ const CreateSuperAgentAdmin = () => {
                         Format: 2 capital letters + 4 digits
                       </div>
                     )}
+                </div> */}
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Password <span className="text-danger">*</span>
+                  </label>
+                  <div className="input-group">
+                    <input style={{ borderRight: '0' }}
+                      type={showPassword ? "text" : "password"}
+                      className={`form-control ${errors.password ? "is-invalid" : ""}`}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                      disabled={isSubmitting}
+                    />
+                    {/* <button
+                      type="button"
+                      className="btn btn-outline-secondary"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isSubmitting}
+                      style={{ border: "1px solid #ced4da" }}
+                    >
+                      {showPassword ? "🙈" : "👁️"}
+                    </button> */}
+
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isSubmitting}
+                      style={{ border: "1px solid #ced4da", fontSize: "12px", borderLeft: '0' }}
+                    >
+                      {showPassword ? "👁️‍🗨️" : "👁️"}
+                    </button>
+
+
+                  </div>
+                  {errors.password && (
+                    <div className="invalid-feedback d-block">
+                      {errors.password}
+                    </div>
+                  )}
+                  {validated && !formData.password.match(/^[A-Z]{2}[0-9]{4}$/) && (
+                    <div className="invalid-feedback">
+                      Format: 2 capital letters + 4 digits
+                    </div>
+                  )}
                 </div>
 
                 {/* Agent Match Share */}

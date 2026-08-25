@@ -13,6 +13,7 @@ import Loader from "../../Common/Loader";
 const MarketAnalysisLists = () => {
   const navigate = useNavigate();
 
+  
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);

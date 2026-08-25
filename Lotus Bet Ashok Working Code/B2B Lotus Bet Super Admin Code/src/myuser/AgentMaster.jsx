@@ -1482,9 +1482,16 @@ function AgentMaster() {
                       </td> */}
                       <td>{row.admin_id || "N/A"}</td>
                       <td>{row.credit_ref || "-"}</td>
-                      <td>{row.coins || "-"}</td>
-                      <td>{row.total_amount || "-"}</td>
-                      <td>{Number(row.exposer).toFixed(2) || "-"}</td>
+                      {/* <td>{row.coins || "-"}</td> */}
+                      <td>{row.coins != null ? Number(row.coins).toFixed(2) : "-"}</td>
+                      {/* <td>{row.total_amount || "-"}</td> */}
+                      <td>{row.total_amount != null ? Number(row.total_amount).toFixed(2) : "-"}</td>
+                      {/* <td>{Number(row.exposer).toFixed(2) || "-"}</td>*/}
+                      <td>
+                        {row.exposer != null && !isNaN(Number(row.exposer))
+                          ? Number(row.exposer).toFixed(2)
+                          : "-"}
+                      </td>
                       {/* <td className="text-center">
   {new Date(row.originalData?.createdAt).toLocaleDateString("en-GB")}
 </td> */}
@@ -1687,12 +1694,12 @@ function AgentMaster() {
                           onClick={() => handleBetToggle(row)}
                           style={{ cursor: "pointer" }}
                           title={
-                            row.bet_block === 1
+                            row.bet_block === 0
                               ? "Click to Block Bet"
                               : "Click to Unblock Bet"
                           }
                         >
-                          {row.bet_block === 1 ? (
+                          {row.bet_block === 0 ? (
                             <FaUnlockAlt
                               className="lock_button text-success"
                               title="Bet Open"
@@ -1873,7 +1880,7 @@ function AgentMaster() {
                             <FaRectangleList />
                           </button>
 
-                           <button
+                          <button
                             className={`btn btn-sm btn-rounded ${Number(row.is_blocked)
                               ? "btn-success"
                               : "btn-danger"
@@ -2303,7 +2310,8 @@ function AgentMaster() {
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title">
-                    Reset Password - {selectedAgent.admin_id}
+                    {/* Reset Password - {selectedAgent.admin_id} */}
+                    Reset Password
                   </h5>
                   <button
                     type="button"
@@ -2910,7 +2918,7 @@ function AgentMaster() {
                       </Link>
                     </div>
 
-                    <div className="col-6">
+                    {/* <div className="col-6">
                       <Link
                         to={`/casino-setting/${selectedAgent?.admin_id}`}
                         className="btn gradient-1 w-100"
@@ -2918,18 +2926,17 @@ function AgentMaster() {
                       >
                         Casino Settings
                       </Link>
-                    </div>
+                    </div> */}
 
-                    <div className="col-6">
+                    {/* <div className="col-6">
                       <Link
-                       // to={`/icasino-setting/${selectedAgent?.admin_id}`}
                         to={`#`}
                         className="btn gradient-2 w-100"
                         onClick={() => setShowSettingModal(false)}
                       >
                         iCasino Settings
                       </Link>
-                    </div>
+                    </div> */}
 
                     <div className="col-6">
                       <Link

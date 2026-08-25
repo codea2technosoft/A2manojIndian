@@ -54,12 +54,30 @@ function MainMarket() {
     sport_id: "",
   });
   const [showFilter, setShowFilter] = useState(false);
+  // const fetchGames = async () => {
+  //   try {
+  //     setLoadingGames(true);
+  //     const response = await getAllGames();
+  //     if (response.data.success) {
+  //       setGames(response.data.data || []);
+  //     }
+  //   } catch (err) {
+  //     console.error("Error fetching games:", err);
+  //   } finally {
+  //     setLoadingGames(false);
+  //   }
+  // };
+
   const fetchGames = async () => {
     try {
       setLoadingGames(true);
       const response = await getAllGames();
       if (response.data.success) {
-        setGames(response.data.data || []);
+        // ✅ Filter out sport_id 7 (Horse Racing) and 8 (Greyhound Racing)
+        const filteredGames = response.data.data.filter(
+          (game) => game.id !== 7 && game.id !== 8
+        );
+        setGames(filteredGames || []);
       }
     } catch (err) {
       console.error("Error fetching games:", err);
@@ -386,7 +404,7 @@ function MainMarket() {
               </div>
 
               {/* 🔹 Select Match */}
-              <div className="form_latest_design">
+              {/* <div className="form_latest_design">
                 <label className="form-label">
                   Select Match <span className="text-danger">*</span>
                 </label>
@@ -426,7 +444,44 @@ function MainMarket() {
                     </option>
                   ))}
                 </select>
+              </div> */}
+
+              {/* 🔹 Select Match - Searchable */}
+              <div className="form_latest_design">
+                <label className="form-label">
+                  Select Match <span className="text-danger">*</span>
+                </label>
+
+                <Select
+                  className="basic-single"
+                  classNamePrefix="select"
+                  isLoading={loadingGames}
+                  isDisabled={!selectedSportId || loadingGames}
+                  isClearable={true}
+                  isSearchable={true}
+                  placeholder={loadingGames ? "Loading Matches..." : "Search & Select Match"}
+                  options={matchOptions}
+                  value={matchOptions.find(opt => String(opt.value) === String(selectedEventId)) || null}
+                  onChange={(selected) => {
+                    setSelectedMatch(selected);
+                    setSelectedEventId(selected?.value || "");
+                    setSelectedMarket("");
+                    setSelectedTeam("");
+                    setTeamList([]);
+
+                    if (selected?.market_id) {
+                      fetchSelectionsByMarket(selected.market_id);
+                    } else if (selected) {
+                      Swal.fire({
+                        icon: "info",
+                        title: "Market not available for this match",
+                      });
+                    }
+                  }}
+                  noOptionsMessage={() => "No matches found"}
+                />
               </div>
+
 
               {/* 🔹 Select Selection */}
               <div className="form_latest_design">
@@ -492,7 +547,7 @@ function MainMarket() {
                 {loadingTable ? (
                   <tr>
                     <td colSpan="8" className="table_loader">
-                       <div className="py-5 text-center">
+                      <div className="py-5 text-center">
                         <Loader />
                       </div>
                     </td>

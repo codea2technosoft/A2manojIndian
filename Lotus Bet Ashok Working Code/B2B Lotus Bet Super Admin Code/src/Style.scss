@@ -16,7 +16,25 @@ body {
   background-color: #f3f3f9;
   font-size: 14px;
 }
-
+iframe{
+  background:#fff;
+}
+.betlist-btn {
+    width: 30px;
+    height: 30px;
+    line-height: normal;
+    display: inline-flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background: #fac049;
+    border-radius: 50%;
+    color: #fff !important;
+    font-size: 10px;
+    font-weight: 900;
+    border: none;
+    outline: none;
+}
 a {
   transition: all 0.4s ease-in-out;
 }
@@ -5251,7 +5269,8 @@ label small,
 .market-analysis-container {
   .event-group-header {
     .event-title {
-      font-size: 18px;
+      font-size: 16px;
+      font-weight: 500;
     }
   }
 

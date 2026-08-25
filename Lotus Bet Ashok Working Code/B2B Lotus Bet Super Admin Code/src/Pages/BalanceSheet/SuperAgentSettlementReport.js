@@ -117,7 +117,8 @@ function SuperAgentSettlementReport() {
     <div className="card">
       <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
         <h3 className="card-title mb-0">
-          Account Statement - {username || admin_id}
+          {/* Account Statement - {username || admin_id} */}
+          Account Statement
         </h3>
         <div className="d-flex gap-2">
           <div className="btn btn-outline-light" onClick={() => navigate(-1)}>
@@ -249,13 +250,17 @@ function SuperAgentSettlementReport() {
                       </td> */}
                       <td>{item.comment || item.game_name || "-"}</td>
                       <td>{item.game_name || "-"}</td>
-                      <td>
+                      {/* <td>
                         {item.pay_type === "diya"
                           ? "Debit"
                           : item.pay_type === "liya"
                             ? "Credit"
                             : "-"}
-                      </td>
+                      </td> */}
+                      <td>
+  {item.debit > 0 ? "Debit" : item.credit > 0 ? "Credit" : "-"}
+</td>
+
                       <td>{item.debit > 0 ? item.debit.toFixed(2) : "-"}</td>
                       <td>{item.credit > 0 ? item.credit.toFixed(2) : "-"}</td>
                       {/* <td>{item.credit - item.debit}</td> */}
@@ -268,13 +273,16 @@ function SuperAgentSettlementReport() {
                       >
                         {item.balance ? item.balance.toFixed(2) : "-"}
                       </td> */}
-                      <td>
+                      {/* <td>
                         {item.pay_type === "diya"
                           ? "DR"
                           : item.pay_type === "liya"
                             ? "CR"
                             : "-"}
-                      </td>
+                      </td> */}
+                      <td>
+  {item.debit > 0 ? "D" : item.credit > 0 ? "C" : "-"}
+</td>
 
                       <td>{item.balance || "-"}</td>
 

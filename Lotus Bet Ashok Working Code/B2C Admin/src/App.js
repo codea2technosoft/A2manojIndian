@@ -1,11 +1,12 @@
 // import React from "react";
 import React, { useEffect } from "react";
-import GlobalSoundMonitor from "./components/GlobalSoundMonitor";////delete 
+//import GlobalSoundMonitor from "./components/GlobalSoundMonitor";////delete 
 import { useParams } from "react-router-dom";
 import Header from "./Layout/Headerall.jsx"
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useState } from "react";
 import Layout from "./Layout/Layout";
+import { ToastContainer } from 'react-toastify';
 import GaneRuleModal from "./Layout/GaneRuleModal";
 import Login from "./User/Login";
 import Userchat from "./User/Userchat";
@@ -206,6 +207,9 @@ import Profitlosssportswise from "./allpages/Profitlosssportswise";
 import Downlinesportsplsportswise from "./allpages/Downlinesportsplsportswise";
 import MatchBetDetailssportswise from "./allpages/MatchBetDetailssportswise";
 import Profitlossreportsportswisedownline from "./allpages/Profitlossreportsportswisedownline";
+import SoundNotification from './components/SoundNotification';
+import { useWebSocket } from './hooks/useWebSocket';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   const [depositPending, setDepositPending] = useState(0);
@@ -217,6 +221,7 @@ const App = () => {
   const token = localStorage.getItem("token");
   const isLoggedIn = localStorage.getItem("isLoggedIn");
   const admin_id = localStorage.getItem("admin_id");
+  const { isConnected } = useWebSocket();
 
   // ✅ Profile API Call
   const getAdminProfile = async () => {
@@ -348,15 +353,16 @@ const App = () => {
   // ✅ MAIN APP - Sabhi routes chalenge
   return (
     <Router>
-      {localStorage.getItem("token") && localStorage.getItem("isLoggedIn") === "true" && (
+      {/* {localStorage.getItem("token") && localStorage.getItem("isLoggedIn") === "true" && (
         <GlobalSoundMonitor /> ////delete 
-      )}
-
+      )} */}
+  <SoundNotification />
+    <ToastContainer />
       <Header
         depositPending={depositPending}
         withdrawPending={withdrawPending}
         profileData={profileData}
-      />
+      />  
 
       <Routes>
         {/* ✅ Login Route - Agar already logged in hai toh dashboard pe bhejo */}

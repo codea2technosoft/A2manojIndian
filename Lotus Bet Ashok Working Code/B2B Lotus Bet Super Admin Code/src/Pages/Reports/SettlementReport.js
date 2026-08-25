@@ -14,23 +14,23 @@
 // function SettlementReport() {
 //   const [transactions, setTransactions] = useState([]);
 //   const [loading, setLoading] = useState(true);
-  
+
 //   // ✅ URL se direct admin_id lo - YE FUNCTION DEFINE KARO
 //   const getAdminIdFromURL = () => {
 //   const path = window.location.pathname;
 //   const parts = path.split('/');
 //   const lastPart = parts[parts.length - 1];
-  
+
 //   // ✅ Agar last part me "SM" ya "MA" ya "US" ya "AG" hai toh valid ID hai
 //   if (lastPart && (lastPart.startsWith("SM") || lastPart.startsWith("MA") || lastPart.startsWith("US") || lastPart.startsWith("AG") || lastPart.startsWith("SA"))) {
 //     return lastPart;
 //   }
-  
+
 //   return null;
 // };
-  
+
 // const admin_id = getAdminIdFromURL() || localStorage.getItem("admin_id") || "admin";
-  
+
 //   console.log("admin_id from URL:", admin_id); // 👈 Check karo
 
 //   const [error, setError] = useState("");
@@ -459,20 +459,20 @@ import { Col } from "react-bootstrap";
 function SettlementReport() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   const getAdminIdFromURL = () => {
     const path = window.location.pathname;
     const parts = path.split('/');
     const lastPart = parts[parts.length - 1];
-    
+
     if (lastPart && (lastPart.startsWith("SM") || lastPart.startsWith("MA") || lastPart.startsWith("US") || lastPart.startsWith("AG") || lastPart.startsWith("SA"))) {
       return lastPart;
     }
     return null;
   };
-  
+
   const admin_id = getAdminIdFromURL() || localStorage.getItem("admin_id") || "admin";
-  
+
   console.log("admin_id from URL:", admin_id);
 
   const [error, setError] = useState("");
@@ -556,7 +556,7 @@ function SettlementReport() {
         page: page,
         limit: itemsPerPage,
       };
-      
+
       if (from && from.trim()) payload.from_date = from;
       if (to && to.trim()) payload.to_date = to;
       if (search && search.trim()) payload.search = search;
@@ -833,13 +833,13 @@ function SettlementReport() {
                         <td>{serialNo}</td>
                         <td>{getDescription(transaction)}</td>
                         <td>{getType(transaction)}</td>
-                        <td>
+                        <td className={amount < 0 ? "text-danger" : "text-success"}>
                           <span>{Math.abs(amount).toFixed(2)}</span>
                         </td>
                         <td>
                           <span>{getDC(transaction)}</span>
                         </td>
-                        <td>{transaction.collection_name || "-"}</td>
+                        <td>{transaction.remarks || "-"}</td>
                         <td>{formatDateTime(transaction.created_at)}</td>
                       </tr>
                     );

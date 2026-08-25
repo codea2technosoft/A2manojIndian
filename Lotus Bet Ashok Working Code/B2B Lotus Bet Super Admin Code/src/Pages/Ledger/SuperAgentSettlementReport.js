@@ -167,7 +167,8 @@ function SuperAgentSettlementReport() {
     <div className="card">
       <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
         <h3 className="card-title mb-0">
-          Settlement Report - {username || admin_id}
+          {/* Settlement Report - {username || admin_id} */}
+          Settlement Report
         </h3>
         <div className="d-flex gap-2">
           <div className="btn btn-outline-light" onClick={() => navigate(-1)}>
@@ -303,16 +304,23 @@ function SuperAgentSettlementReport() {
                         </button>
                       </td> */}
                       <td>{item.comment || "-"}</td>
-                      <td>{item.collection_name || "-"}</td>
+                      {/* <td>{item.type || "-"}</td> */}
+                       <td>
+                        {item.debit > 0 ? "Debit" : item.credit > 0 ? "Credit" : "-"}
+                      </td>
+
                       <td>{item.debit > 0 ? item.debit.toFixed(2) : "-"}</td>
                       <td>{item.credit > 0 ? item.credit.toFixed(2) : "-"}</td>
                       <td>{item.balance ? item.balance.toFixed(2) : "-"}</td>
-                      <td>
+                      {/* <td>
                         {item.pay_type == "diya"
                           ? "CR"
                           : item.pay_type == "liya"
                             ? "DR"
                             : "-"}
+                      </td> */}
+                      <td>
+                        {item.debit > 0 ? "D" : item.credit > 0 ? "C" : "-"}
                       </td>
                       <td>{item.remarks || "-"}</td>
                       <td>{formatDate(item.created_at)}</td>

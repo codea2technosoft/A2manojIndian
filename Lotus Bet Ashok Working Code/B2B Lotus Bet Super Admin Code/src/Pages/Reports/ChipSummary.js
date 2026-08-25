@@ -831,7 +831,7 @@ function ChipSummary() {
                         {/* <td>{item.admin_id || 'N/A'}</td> */}
                         <td>{item.coins || 0}</td>
                         <td className={item.total_amount >= 0 ? 'text-success fw-bold' : 'text-danger fw-bold'}>
-                          {item.total_amount || 0}
+                          {item.total_amount.toFixed(2) || 0}
                         </td>
                       </tr>
                     );

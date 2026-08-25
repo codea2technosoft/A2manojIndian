@@ -182,7 +182,7 @@ const ProfitLossMarketUsersDetails = () => {
   console.log("Received sssss:", navigationPayload);
 
   // Get username and type from state
-  const { username, type } = location.state || {};
+  const { username, type,eventName} = location.state || {};
 
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState([]);
@@ -254,9 +254,12 @@ const ProfitLossMarketUsersDetails = () => {
       <ToastContainer autoClose={500} theme="colored" />
       <div className="card">
         <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center gap-2">
-          <h3 className="card-title mb-0">
+          {/* <h3 className="card-title mb-0">
             User Details - {username || eventId}
-          </h3>
+          </h3> */}
+    <h3 className="card-title mb-0">
+  {username ? `${username} Summary of ${eventName || eventId}` : `User Details - ${eventName || eventId}`}
+</h3>
           <div>
             {username && (
               <span className="badge bg-light text-dark me-2">
@@ -269,11 +272,11 @@ const ProfitLossMarketUsersDetails = () => {
           </div>
         </div>
         <div className="card-body">
-          {username && (
+          {/* {username && (
             <div className="alert alert-info mb-3">
               <strong>Showing details for: {username}</strong>
             </div>
-          )}
+          )} */}
 
           <div className="table-responsive">
             <table className="table table-bordered table-striped table-hover">

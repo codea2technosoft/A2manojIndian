@@ -386,7 +386,7 @@ function MainMarket() {
               </div>
 
               {/* Select Match */}
-              <div className="col-12 col-md-4">
+              {/* <div className="col-12 col-md-4">
                 <label className="form-label">
                   Select Match <span style={{ color: "red" }}>*</span>
                 </label>
@@ -428,6 +428,38 @@ function MainMarket() {
                     </option>
                   ))}
                 </select>
+              </div> */}
+              <div className="col-12 col-md-4">
+                <label className="form-label">
+                  Select Match <span style={{ color: "red" }}>*</span>
+                </label>
+
+                <Select
+                  placeholder="Search & Select Match"
+                  options={matchOptions}
+                  value={matchOptions.find(opt => String(opt.value) === String(selectedEventId)) || null}
+                  onChange={(selected) => {
+                    setSelectedMatch(selected);
+                    setSelectedEventId(selected?.value || "");
+                    setSelectedMarket("");
+                    setSelectedTeam("");
+                    setTeamList([]);
+
+                    if (selected?.market_id) {
+                      fetchSelectionsByMarket(selected.market_id);
+                    } else if (selected) {
+                      Swal.fire({
+                        icon: "info",
+                        title: "Market not available for this match",
+                      });
+                    }
+                  }}
+                  isClearable
+                  isSearchable
+                  isLoading={loadingGames}
+                  isDisabled={!selectedSportId || loadingGames}
+                  noOptionsMessage={() => "No matches found"}
+                />
               </div>
 
               {/* Select Selection */}
@@ -461,9 +493,8 @@ function MainMarket() {
               {/* Declare Button */}
               <div className="col-12 col-md-1">
                 <button
-                  className={`btn btn-light theme_dark_btn w-100 ${
-                    isButtonDisabled ? "disabled-button" : ""
-                  }`}
+                  className={`btn btn-light theme_dark_btn w-100 ${isButtonDisabled ? "disabled-button" : ""
+                    }`}
                   type="button"
                   disabled={declareLoading}
                   onClick={handleDeclareResult}
@@ -474,7 +505,7 @@ function MainMarket() {
             </div>
           </form>
         </div>
-        
+
         <div className="card-body">
           <div className="card">
             <div className="card-header bg-primary-yellow">
@@ -614,9 +645,8 @@ function MainMarket() {
                   {getPageNumbers().map((pageNo) => (
                     <div
                       key={pageNo}
-                      className={`paginationnumber ${
-                        pageNo === page ? "active" : ""
-                      }`}
+                      className={`paginationnumber ${pageNo === page ? "active" : ""
+                        }`}
                       onClick={() => handlePageClick(pageNo)}
                     >
                       {pageNo}

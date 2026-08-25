@@ -225,7 +225,7 @@ const ProfitLossMarketSummary = () => {
   console.log("Received Payload ssssssssssssss:", navigationPayload);
 
   // Get username and type from state
-  const { username, type } = location.state || {};
+  const { username, type,eventName } = location.state || {}; 
 
   const [loading, setLoading] = useState(true);
   const [marketData, setMarketData] = useState([]);
@@ -279,6 +279,8 @@ const ProfitLossMarketSummary = () => {
     navigate(`/reports/profit-loss-summary-market-users-details/${eventId}`, {
       state: {
         payload,
+        eventName: eventName, 
+         username: username,
       },
     });
   };
@@ -312,9 +314,13 @@ const ProfitLossMarketSummary = () => {
       <ToastContainer autoClose={500} theme="colored" />
       <div className="card">
         <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center gap-2">
-          <h3 className="card-title mb-0">
+          {/* <h3 className="card-title mb-0">
             Market Summary - {username || eventId}
-          </h3>
+          </h3> */}
+     <h3 className="card-title mb-0">
+  {username ? `${username} Summary of ${eventName || eventId}` : `Market Summary - ${eventName || eventId}`}
+</h3>
+
           <div>
             {username && (
               <span className="badge bg-light text-dark me-2">
@@ -327,12 +333,12 @@ const ProfitLossMarketSummary = () => {
           </div>
         </div>
         <div className="card-body">
-          {username && (
+          {/* {username && (
             <div className="alert alert-info mb-3">
               <strong>Showing markets for: {username}</strong>
-              {/* <span className="ms-2 badge bg-primary">{formatTypeName(type)}</span> */}
+             <span className="ms-2 badge bg-primary">{formatTypeName(type)}</span>
             </div>
-          )}
+          )} */}
 
           <div className="table-responsive">
             <table className="table table-bordered table-striped table-hover">

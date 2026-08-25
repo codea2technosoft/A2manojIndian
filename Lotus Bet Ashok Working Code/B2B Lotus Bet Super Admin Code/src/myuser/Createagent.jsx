@@ -9,6 +9,7 @@ import { IoCreateSharp } from "react-icons/io5";
 
 const CreateSuperAgentAdmin = () => {
   const [validated, setValidated] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const [adminData, setAdminData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -171,7 +172,8 @@ const CreateSuperAgentAdmin = () => {
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
-      password: generatePassword(),
+      // password: generatePassword(),
+       password: "",
     }));
   }, []);
 
@@ -203,8 +205,9 @@ const CreateSuperAgentAdmin = () => {
     const coinsValid = !isNaN(coins) && coins > 0 && coins <= myCoins;
 
     // Validate password format
-    const passwordRegex = /^[A-Z]{2}[0-9]{4}$/;
-    const passwordValid = passwordRegex.test(formData.password);
+    // const passwordRegex = /^[A-Z]{2}[0-9]{4}$/;
+    // const passwordValid = passwordRegex.test(formData.password);
+    const passwordValid = formData.password.trim() !== "";
 
     // Validate agent match share
     // const agentMatchShare = parseFloat(formData.agentMatchShare);
@@ -494,10 +497,15 @@ const CreateSuperAgentAdmin = () => {
     }
 
     // Validate password format
-    const passwordRegex = /^[A-Z]{2}[0-9]{4}$/;
-    if (!passwordRegex.test(formData.password)) {
-      newErrors.password =
-        "Password must be 2 capital letters followed by 4 digits";
+    // const passwordRegex = /^[A-Z]{2}[0-9]{4}$/;
+    // if (!passwordRegex.test(formData.password)) {
+    //   newErrors.password =
+    //     "Password must be 2 capital letters followed by 4 digits";
+    //   isValid = false;
+    // }
+
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required";
       isValid = false;
     }
 
@@ -937,7 +945,7 @@ const CreateSuperAgentAdmin = () => {
                 </div>
 
                 {/* Password */}
-                <div className="col-md-6 mb-3">
+                {/* <div className="col-md-6 mb-3">
                   <label className="form-label text-uppercase">
                     Password <span className="text-danger">*</span>
                   </label>
@@ -981,7 +989,94 @@ const CreateSuperAgentAdmin = () => {
                     onChange={handleChange}
                     disabled={isSubmitting}
                   />
+                </div> */}
+
+                {/* <div className="col-md-6 mb-3">
+                  <label className="form-label text-uppercase">
+                    Password <span className="text-danger">*</span>
+                  </label>
+                  <div className="input-group">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      className={`form-control ${errors.password ? "is-invalid" : ""}`}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                      pattern="[A-Z]{2}[0-9]{4}"
+                      disabled={isSubmitting}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isSubmitting}
+                      style={{ border: "1px solid #ced4da" }}
+                    >
+                      {showPassword ? "🙈" : "👁️"}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-secondary generate_btn"
+                      onClick={handleGeneratePassword}
+                      disabled={isSubmitting}
+                    >
+                      Generate
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <div className="invalid-feedback d-block">
+                      {errors.password}
+                    </div>
+                  )}
+                  <small className="text-muted">
+                    Format: 2 capital letters + 4 digits
+                  </small>
+                </div> */}
+
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label text-uppercase">
+                    Password <span className="text-danger">*</span>
+                  </label>
+                  <div className="input-group">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      className={`form-control border-end-0 ${errors.password ? "is-invalid" : ""}`}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                      disabled={isSubmitting}
+                    />
+                    {/* <button
+                      type="button"
+                      className="btn btn-outline-secondary"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isSubmitting}
+                      style={{ border: "1px solid #ced4da" }}
+                    >
+                      {showPassword ? "🙈" : "👁️"}
+                    </button> */}
+
+                     <button
+                      type="button"
+                      className="btn btn-outline-secondary border-start-0"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isSubmitting}
+                      style={{ border: "1px solid #ced4da", fontSize: "12px" }}
+                    >
+                      {showPassword ? "👁️‍🗨️" : "👁️"}
+                    </button>
+
+                  </div>
+                  {errors.password && (
+                    <div className="invalid-feedback d-block">
+                      {errors.password}
+                    </div>
+                  )}
                 </div>
+
                 {/* Divider */}
                 {/* <div className="col-12 my-3">
                 <h5 className="border-bottom pb-2">Match & Share Info</h5>

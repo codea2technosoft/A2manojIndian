@@ -677,8 +677,8 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
             },
 
             {
-              id: "declare_horse_greyhound_results",
-              title: "Declare Horse & Greyhound Results",
+              id: "declare_horse_greyhound_result",
+              title: "Declare Horse & Greyhound Result",
               path: "/declare_result_horsegreyhund",
             },
 
@@ -698,7 +698,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, userType }) => {
         // },
         {
           id: "web-setting",
-          title: "Web Setting",
+          title: "Admin Settings",
           path: "/web-setting",
           icon: <FaGlobe />,
         },

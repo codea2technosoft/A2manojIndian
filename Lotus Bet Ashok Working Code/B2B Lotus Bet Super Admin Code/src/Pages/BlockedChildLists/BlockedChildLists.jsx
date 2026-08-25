@@ -1384,7 +1384,8 @@ const fetchAgentData = async (
                       </td> */}
                       <td>{row.admin_id || "-"}</td>
 
-                      <td>{row.coins || "0"}</td>
+                      {/* <td>{row.coins || "0"}</td> */}
+                      <td>{row.coins != null ? Number(row.coins).toFixed(2) : "-"}</td>
                       <td>
                         {row.total_amount !== undefined
                           ? `${row.total_amount.toFixed(2)}`

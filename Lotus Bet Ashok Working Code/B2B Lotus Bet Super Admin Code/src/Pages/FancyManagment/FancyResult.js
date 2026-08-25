@@ -517,7 +517,7 @@ const FancyResult = () => {
                 {/* <th>ID</th> */}
                 {/* <th>Stake</th> */}
                 {/* <th>Odd</th> */}
-                <th>Status</th>
+                {/* <th>Status</th> */}
                 <th>Value</th>
                 <th>Actions</th>
               </tr>
@@ -543,7 +543,7 @@ const FancyResult = () => {
                     {/* <td>{f.fancy_id}</td> */}
                     {/* <td>{f.stake}</td> */}
                     {/* <td>{f.odd}</td> */}
-                    <td>
+                    {/* <td>
                       <button
                         className="btn btn-danger btn-sm mt-1"
                         disabled={btnLoading["delete_" + f.fancy_id]}
@@ -553,7 +553,7 @@ const FancyResult = () => {
                           ? "Deleting..."
                           : "Abundent"}
                       </button>
-                    </td>
+                    </td> */}
 
                     <td>
                       <input
@@ -736,7 +736,7 @@ const FancyResult = () => {
                       <tr>
                         <th>#</th>
                         <th>Date</th>
-                        <th>UserId</th>
+                        <th>User Name</th>
                         <th>Bet Type</th>
                         <th>Stake</th>
                         <th>Odd</th>
@@ -754,7 +754,7 @@ const FancyResult = () => {
                               .utcOffset("+05:30")
                               .format("DD-MM-YYYY HH:mm:ss")}
                           </td>
-                          <td>{x.admin_id}</td>
+                          <td>{x.user_name || "-"}</td>
                           <td>
                             <span
                               className={`badge ${

@@ -188,6 +188,7 @@ import PendingBetHistory from "./Pages/Reports/PendingBetHistory";
 import BalanceSheet from "./Pages/Reports/BalanceSheet";
 import ChipStatement from "./Pages/Reports/ChipStatement";
 import ProfitLossBetHistory from "./Pages/Reports/ProfitLossBetHistory";
+import MultimarketBetHistory from "./Pages/Reports/MultimarketBetHistory";
 import ChipSummary from "./Pages/Reports/ChipSummary";
 import ProfitLoss from "./Pages/Reports/ProfitLoss";
 import Settlements from "./Pages/Reports/Settlements";
@@ -1712,6 +1713,16 @@ const App = () => {
             <ProtectedRoute
               element={ProfitLossBetHistory}
               path="/reports/profit-loss-bet-history/:marketId"
+            />
+          }
+        />
+
+        <Route
+          path="/reports/multimarket-bet-history/:marketId"
+          element={
+            <ProtectedRoute
+              element={MultimarketBetHistory}
+              path="/reports/multimarket-bet-history/:marketId"
             />
           }
         />

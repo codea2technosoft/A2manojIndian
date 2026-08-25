@@ -165,7 +165,7 @@ const Login = () => {
                         cursor: "pointer",
                       }}
                     >
-                      {showPassword ? "🙈" : "👁️"}
+                      {showPassword ? "👁️‍🗨️" : "👁️"}
                     </span>
                   </div>
                   {error.password && (

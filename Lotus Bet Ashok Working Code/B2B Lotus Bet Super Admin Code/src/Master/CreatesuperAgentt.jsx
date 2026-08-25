@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useParams } from "react-router-dom";
 import { IoCreateSharp } from "react-icons/io5";
 import Loader from "../Common/Loader";
+import { IoEye, IoEyeOff } from "react-icons/io5";
 
 const CreateSuperAgentAdmin = () => {
   const [validated, setValidated] = useState(false);
@@ -16,6 +17,7 @@ const CreateSuperAgentAdmin = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const token = localStorage.getItem("token");
+  const [showPassword, setShowPassword] = useState(false);
   const { id } = useParams();
 
   const generatePassword = () => {
@@ -176,7 +178,8 @@ const CreateSuperAgentAdmin = () => {
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
-      password: generatePassword(),
+      // password: generatePassword(),
+      password: "",
     }));
   }, []);
   useEffect(() => {
@@ -203,8 +206,8 @@ const CreateSuperAgentAdmin = () => {
     const myCoins = parseFloat(formData.myCoins) || 0;
     const coinsValid = !isNaN(coins) && coins > 0 && coins <= myCoins;
 
-    const passwordRegex = /^[A-Z]{2}[0-9]{4}$/;
-    const passwordValid = passwordRegex.test(formData.password);
+    // const passwordRegex = /^[A-Z]{2}[0-9]{4}$/;
+    // const passwordValid = passwordRegex.test(formData.password);
 
     const agentMatchShare = parseFloat(formData.agentMatchShare);
     const myMatchShare = parseFloat(formData.myMatchShare) || 0;
@@ -253,10 +256,10 @@ const CreateSuperAgentAdmin = () => {
     }
     setIsFormValid(
       allRequiredFilled &&
-        coinsValid &&
-        passwordValid &&
-        matchShareValid &&
-        commissionValid,
+      coinsValid &&
+      // passwordValid &&
+      matchShareValid &&
+      commissionValid,
     );
   };
 
@@ -391,10 +394,14 @@ const CreateSuperAgentAdmin = () => {
     }
 
     // Validate password format
-    const passwordRegex = /^[A-Z]{2}[0-9]{4}$/;
-    if (!passwordRegex.test(formData.password)) {
-      newErrors.password =
-        "Password must be 2 capital letters followed by 4 digits";
+    // const passwordRegex = /^[A-Z]{2}[0-9]{4}$/;
+    // if (!passwordRegex.test(formData.password)) {
+    //   newErrors.password =
+    //     "Password must be 2 capital letters followed by 4 digits";
+    //   isValid = false;
+    // }
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required";
       isValid = false;
     }
 
@@ -1016,7 +1023,7 @@ const CreateSuperAgentAdmin = () => {
                 </div>
 
                 {/* ✅ Password show + editable */}
-                <div className="col-md-6 mb-3">
+                {/* <div className="col-md-6 mb-3">
                   <label className="form-label">
                     Password <span className="text-danger">*</span>
                   </label>
@@ -1053,7 +1060,53 @@ const CreateSuperAgentAdmin = () => {
                         Format: 2 capital letters + 4 digits
                       </div>
                     )}
-                  {/* <small className="text-muted">Format: 2 capital letters + 4 digits</small> */}
+                 <small className="text-muted">Format: 2 capital letters + 4 digits</small>
+                </div> */}
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Password <span className="text-danger">*</span>
+                  </label>
+                  <div className="input-group">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      className={`form-control border-end-0 ${errors.password ? "is-invalid" : ""}`}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                      disabled={isSubmitting}
+                    />
+                    {/* <button
+                      type="button"
+                      className="btn btn-outline-secondary"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isSubmitting}
+                      style={{ border: "1px solid #ced4da" }}
+                    >
+                      {showPassword ? "🙈" : "👁️"}
+                    </button> */}
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary border-start-0"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isSubmitting}
+                      style={{ border: "1px solid #ced4da", fontSize: "12px" }}
+                    >
+                      {showPassword ? "👁️‍🗨️" : "👁️"}
+                    </button>
+
+                  </div>
+                  {errors.password && (
+                    <div className="invalid-feedback d-block">
+                      {errors.password}
+                    </div>
+                  )}
+                  {validated && !formData.password.match(/^[A-Z]{2}[0-9]{4}$/) && (
+                    <div className="invalid-feedback">
+                      Format: 2 capital letters + 4 digits
+                    </div>
+                  )}
                 </div>
 
                 <div className="col-md-6 mb-3">

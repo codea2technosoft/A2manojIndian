@@ -16,7 +16,7 @@
 //   const [loading, setLoading] = useState(true);
 //   const [error, setError] = useState("");
 //   const [toast, setToast] = useState({ show: false, message: "", type: "" });
-  
+
 //   // Filters - Default empty (null)
 //   const [fromDate, setFromDate] = useState("");
 //   const [toDate, setToDate] = useState("");
@@ -36,13 +36,13 @@
 //     const path = location.pathname;
 //     const parts = path.split('/');
 //     const lastPart = parts[parts.length - 1];
-    
+
 //     // Agar last part page name hai toh ignore karo
 //     const ignoreList = ["sport-summary-report", "chip-summary", "settlement-report", "pending-bet-history", "bet-history-details"];
 //     if (ignoreList.includes(lastPart)) {
 //       return null;
 //     }
-    
+
 //     return lastPart;
 //   };
 
@@ -93,7 +93,7 @@
 
 //       // ✅ Get admin_id - priority: URL > localStorage > default "admin"
 //       let admin_id = adminIdFromURL;
-      
+
 //       if (!admin_id) {
 //         admin_id = localStorage.getItem("admin_id") || "admin";
 //       }
@@ -119,7 +119,7 @@
 //         if (Array.isArray(apiData.data)) {
 //           setTransactions(apiData.data);
 //           setTotalItems(apiData.data.length);
-          
+
 //           if (apiData.pagination) {
 //             setCurrentPage(apiData.pagination.current_page || 1);
 //             setTotalPages(apiData.pagination.total_pages || 1);
@@ -132,10 +132,10 @@
 //           setTotalItems(0);
 //           setTotalPages(1);
 //         }
-        
+
 //         setHasSearched(true);
 //         setError("");
-        
+
 //       } else {
 //         const errorMsg =
 //           response?.data?.error?.message || 
@@ -335,7 +335,7 @@
 //                 {transactions.length > 0 ? (
 //                   transactions.map((transaction, index) => {
 //                     const serialNo = (currentPage - 1) * itemsPerPage + index + 1;
-                    
+
 //                     return (
 //                       <tr key={transaction.sr_no || transaction.sport_id || index}>
 //                         <td>{serialNo}</td>
@@ -430,7 +430,7 @@ function SportSummaryReport() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
-  
+
   // Filters - Default empty (null)
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -462,12 +462,12 @@ function SportSummaryReport() {
     const path = location.pathname;
     const parts = path.split('/');
     const lastPart = parts[parts.length - 1];
-    
+
     const ignoreList = ["sport-summary-report"];
     if (ignoreList.includes(lastPart)) {
       return null;
     }
-    
+
     return lastPart;
   };
 
@@ -517,7 +517,7 @@ function SportSummaryReport() {
       setError("");
 
       let admin_id = adminIdFromURL;
-      
+
       if (!admin_id) {
         admin_id = localStorage.getItem("admin_id") || "admin";
       }
@@ -557,7 +557,7 @@ function SportSummaryReport() {
         if (Array.isArray(apiData.data)) {
           setTransactions(apiData.data);
           setTotalItems(apiData.data.length);
-          
+
           if (apiData.pagination) {
             setCurrentPage(apiData.pagination.current_page || 1);
             setTotalPages(apiData.pagination.total_pages || 1);
@@ -570,13 +570,13 @@ function SportSummaryReport() {
           setTotalItems(0);
           setTotalPages(1);
         }
-        
+
         setHasSearched(true);
         setError("");
-        
+
       } else {
         const errorMsg =
-          response?.data?.error?.message || 
+          response?.data?.error?.message ||
           response?.data?.message ||
           "Failed to fetch settlement report";
         setError(errorMsg);
@@ -671,8 +671,8 @@ function SportSummaryReport() {
               <div className="text-danger mb-3">
                 <p><strong>Error:</strong> {error}</p>
               </div>
-              <button 
-                className="btn btn-primary" 
+              <button
+                className="btn btn-primary"
                 onClick={() => fetchSettlementReport(null, null, "", 1)}
               >
                 Retry
@@ -759,10 +759,10 @@ function SportSummaryReport() {
                   <th>SPORTS NAME</th>
                   <th>TOTAL</th>
                   <th>100% CLIENTS</th>
-                  <th>TOTAL WIN</th>
+                  {/* <th>TOTAL WIN</th>
                   <th>TOTAL LOSS</th>
-                  <th>TOTAL STAKE</th>
-                  
+                  <th>TOTAL STAKE</th> */}
+
                 </tr>
               </thead>
               <tbody>
@@ -771,19 +771,41 @@ function SportSummaryReport() {
                     {/* Data Rows */}
                     {transactions.map((transaction, index) => {
                       const serialNo = (currentPage - 1) * itemsPerPage + index + 1;
-                      
+
                       return (
                         <tr key={transaction.sr_no}>
                           <td>{serialNo}</td>
                           <td>
                             <strong>{transaction.sport_name || 'N/A'}</strong>
                           </td>
-                          <td>{transaction.total_amount || 0}</td>
-                          <td>{transaction.total_clients || 0}</td>
-                          <td className="text-success">{transaction.total_win || 0}</td>
+                          {/* <td>{transaction.total_amount || 0}</td>
+                          <td>{transaction.total_clients || 0}</td> */}
+
+                          <td className={
+                            transaction.total_amount < 0
+                              ? "text-danger"
+                              : transaction.total_amount > 0
+                                ? "text-success"
+                                : ""
+                          }>
+                            {transaction.total_amount || 0}
+                          </td>
+
+                          <td className={
+                            transaction.total_clients < 0
+                              ? "text-danger"
+                              : transaction.total_clients > 0
+                                ? "text-success"
+                                : ""
+                          }>
+                            {transaction.total_clients || 0}
+                          </td>
+
+
+                          {/* <td className="text-success">{transaction.total_win || 0}</td>
                           <td className="text-danger">{transaction.total_loss || 0}</td>
-                          <td>{transaction.total_stake || 0}</td>
-                          
+                          <td>{transaction.total_stake || 0}</td> */}
+
                         </tr>
                       );
                     })}
@@ -791,15 +813,23 @@ function SportSummaryReport() {
                     {/* ✅ Grand Total Row - at the bottom */}
                     <tr className="table-primary fw-bold">
                       <td colSpan="2" className="text-center">TOTAL</td>
-                      <td>{grandTotal.total_amount || 0}</td>
-                      <td>{grandTotal.total_clients || 0}</td>
+                      {/* <td>{grandTotal.total_amount || 0}</td>
+                      <td>{grandTotal.total_clients || 0}</td> */}
+                      <td className={grandTotal.total_amount < 0 ? "text-danger" : "text-success"}>
+                        {grandTotal.total_amount || 0}
+                      </td>
+
+                      <td className={grandTotal.total_clients < 0 ? "text-danger" : "text-success"}>
+                        {grandTotal.total_clients || 0}
+                      </td>
+
                       {/* <td className="text-success">{grandTotal.total_win || 0}</td>
                       <td className="text-danger">{grandTotal.total_loss || 0}</td>
                       <td>{grandTotal.total_stake || 0}</td> */}
+                      {/* <td></td>
                       <td></td>
-                      <td></td>
-                      <td></td>
-                      
+                      <td></td> */}
+
                     </tr>
                   </>
                 ) : (
@@ -819,9 +849,9 @@ function SportSummaryReport() {
           {totalPages > 1 && (
             <div className="d-flex justify-content-center align-items-center mt-4">
               <div className="paginationall d-flex align-items-center gap-1">
-                <button 
+                <button
                   className="btn btn-sm btn-outline-secondary"
-                  disabled={currentPage === 1 || loading} 
+                  disabled={currentPage === 1 || loading}
                   onClick={handlePrev}
                 >
                   <MdKeyboardDoubleArrowLeft /> Previous

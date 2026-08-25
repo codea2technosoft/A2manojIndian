@@ -32,6 +32,7 @@ const ProfitLossBetHistory = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [limit] = useState(50);
+  const marketName = location.state?.marketName || marketId;
 
   const [total, setTotal] = useState({
     commIn: 0,
@@ -190,7 +191,8 @@ const ProfitLossBetHistory = () => {
       <div className="card">
         <div className="card-header flex-wrap-mobile bg-primary-yellow d-flex justify-content-between align-items-md-center gap-2">
           <h5 className="card-title mb-0">
-            Bet History - Market ID: {marketId}
+            {/* Bet History - Market ID: {marketId} */}
+            Bet History - {marketName || `Market ID: ${marketId}`}
           </h5>
           <div className="d-flex align-items-center">
             <button
@@ -317,14 +319,14 @@ const ProfitLossBetHistory = () => {
                           <td>{serialNo}</td>
                           <td>{item.username || "N/A"}</td>
                           <td>{item.team_name || "N/A"}</td>
-                          <td>{!isNaN(item.amount) ? Number(item.amount).toFixed(2) : "-"}</td>
-                          <td>{!isNaN(item.stake) ? Number(item.stake).toFixed(2) : "-"}</td>
-                          <td>{!isNaN(item.comm_in) ? Number(item.comm_in).toFixed(2) : "-"}</td>
-                          <td>{!isNaN(item.comm_out) ? Number(item.comm_out).toFixed(2) : "-"}</td>
+                          <td>{item.odd || "0.00"} / {item.amount.toFixed(2)}</td>
+                          <td>{formatNumber(item.stake)}</td>
+                          <td>{formatNumber(item.comm_in)}</td>
+                          <td>{formatNumber(item.comm_out)}</td>
                           <td
                             className={`fw-bold ${item.total >= 0 ? "text-success" : "text-danger"}`}
                           >
-                            {formatNumber(item.total || 0)}
+                            {formatNumber(item.win || 0)}
                           </td>
                           <td>{new Date(item.created_at).toLocaleString()}</td>
                         </tr>

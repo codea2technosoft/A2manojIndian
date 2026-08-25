@@ -274,15 +274,15 @@ const SportSection = ({
     if (games && games.length > 0) {
       fetchOddsData();
 
-      oddsIntervalRef.current = setInterval(() => {
+      // oddsIntervalRef.current = setInterval(() => {
         fetchOddsData();
-      }, 10000);
+      // }, 10000);
 
       return () => {
-        if (oddsIntervalRef.current) {
-          clearInterval(oddsIntervalRef.current);
-          oddsIntervalRef.current = null;
-        }
+        // if (oddsIntervalRef.current) {
+        //   clearInterval(oddsIntervalRef.current);
+        //   oddsIntervalRef.current = null;
+        // }
       };
     }
   }, [games, sportId]);
@@ -865,21 +865,21 @@ export default function Dashboard() {
       loadAllData();
     }
 
-    pollingIntervalRef.current = setInterval(() => {
+    // pollingIntervalRef.current = setInterval(() => {
       if (!isFetchingRef.current && isInitialLoadDone.current) {
         console.log("🔄 Polling API every 10 seconds...");
         loadAllData();
       } else if (isFetchingRef.current) {
         console.log("⏳ Skipping poll - API call already in progress");
       }
-    }, 10000);
+    // }, 10000);
 
     return () => {
       isMountedRef.current = false;
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-        pollingIntervalRef.current = null;
-      }
+      // if (pollingIntervalRef.current) {
+      //   clearInterval(pollingIntervalRef.current);
+      //   pollingIntervalRef.current = null;
+      // }
     };
   }, [sportId, seriesId, activeTab]);
 

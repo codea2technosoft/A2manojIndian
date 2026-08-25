@@ -347,11 +347,12 @@ const ProfitLossDetail = () => {
           sr_no: index + 1,
           username: item.username || "N/A",
           market: item.market_name || "N/A",
-          comm_in: item.admin_win || 0,
-          comm_out: item.admin_loss || 0,
+          comm_in: item.comm_in || 0,
+          comm_out: item.comm_in || 0,
           amount: item.amount || 0,
           total: item.total || 0,
           market_id: item.market_id || "",
+          market_name: item.market_name || "", // ✅ NEW - Added this line
           bet_type: item.bet_type || "",
           team_name: item.team_name || "",
           stake: item.stake || 0,
@@ -404,7 +405,7 @@ const ProfitLossDetail = () => {
     });
   };
 
-  const handleBetHistoryClick = (marketId, betType) => {
+  const handleBetHistoryClick = (marketId, betType,marketName) => {
     const admin_id = localStorage.getItem("admin_id") || "admin";
     const role = parseInt(localStorage.getItem("role")) || 1;
 
@@ -426,6 +427,7 @@ const ProfitLossDetail = () => {
     navigate(`/reports/profit-loss-bet-history/${marketId}`, {
       state: {
         payload: payload,
+         marketName: marketName // 
       },
     });
   };
@@ -492,8 +494,8 @@ const ProfitLossDetail = () => {
                       <td>{item.sr_no}</td>
                       <td>{item.username}</td>
                       <td>{item.market}</td>
-                      <td>{formatNumber(item.comm_in)}</td>
-                      <td>{formatNumber(item.comm_out)}</td>
+                      <td>{item.comm_in || 0.00}</td>
+                      <td>{item.comm_out || 0.00}</td>
                       <td
                         className={`fw-bold ${item.amount >= 0 ? "text-success" : "text-danger"}`}
                       >
@@ -518,6 +520,7 @@ const ProfitLossDetail = () => {
                               handleBetHistoryClick(
                                 item.market_id,
                                 item.bet_type,
+                                 item.market_name 
                               )
                             }
                             title="View Bet History"

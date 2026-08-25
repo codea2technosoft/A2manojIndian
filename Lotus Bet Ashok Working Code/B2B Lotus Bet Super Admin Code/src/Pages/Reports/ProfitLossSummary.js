@@ -315,12 +315,15 @@ import "react-toastify/dist/ReactToastify.css";
 import Loader from "../../Common/Loader";
 import { getProfitLossSummary } from "../../Server/api";
 
+
 const ProfitLossSummary = () => {
   const { eventId } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [summaryData, setSummaryData] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
+  const eventName = location.state?.eventName;
   const [responseMeta, setResponseMeta] = useState({
     admin_id: "",
     role: "",
@@ -328,7 +331,7 @@ const ProfitLossSummary = () => {
     level: "",
   });
 
-  const location = useLocation();
+
   const navigationPayload = location.state?.payload || {};
   console.log("Received Payload:", navigationPayload);
 
@@ -390,6 +393,8 @@ const ProfitLossSummary = () => {
     navigate(`/reports/profit-loss-summary-market/${responseMeta.event_id}`, {
       state: {
         payload,
+        eventName: eventName,
+        username: username, 
       },
     });
   };
@@ -399,13 +404,15 @@ const ProfitLossSummary = () => {
       <ToastContainer autoClose={500} theme="colored" />
       <div className="card">
         <div className="card-header bg-primary-yellow align-items-center d-flex justify-content-between align-items-md-center gap-2">
-          <h3 className="card-title mb-0">Summary - Event ID: {eventId}</h3>
+          <h3 className="card-title mb-0">
+            {/* Summary - Event ID: {eventId} */}
+            Summary {eventName ? `- ${eventName}` : `- Event ID: ${eventId}`}
+          </h3>
           <button className="btn btn-outline-light" onClick={() => navigate(-1)}>
             Back
           </button>
         </div>
         <div className="card-body">
-          {/* Table */}
           <div className="table-responsive">
             <table className="table table-bordered table-striped table-hover">
               <thead className="table-dark">
@@ -462,7 +469,7 @@ const ProfitLossSummary = () => {
                 <tfoot className="table-striped fw-bold">
                   <tr>
                     <td colSpan="1" className="text-start">Total</td>
-                    <td className={ totalAmount < 0 ? "text-danger fw-bold" : "text-success fw-bold"}>
+                    <td className={totalAmount < 0 ? "text-danger fw-bold" : "text-success fw-bold"}>
                       {formatNumber(totalAmount)}
                     </td>
                   </tr>
