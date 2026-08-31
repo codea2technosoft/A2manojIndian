@@ -695,6 +695,24 @@ function SuperAgentLedger() {
   const navigate = useNavigate();
   const masterIdFromURL = searchParams.get("master_id");
 
+  // ✅ UT TYPE DETECT FUNCTION
+ const getUTType = (adminId) => {
+  if (!adminId) return "#";
+  const id = String(adminId).toUpperCase();
+  
+  // SM -> S (Sub Agent)
+  if (id.startsWith("SM")) return "S";
+  
+  // MA -> M (Master)
+  if (id.startsWith("MA")) return "M";
+  
+  // US -> C (Client)
+  if (id.startsWith("US")) return "C";
+  
+  // Kuch aur -> #
+  return "#";
+};
+
   // ✅ CHANGE 1: Default dates wala useEffect HATAYA
   // useEffect(() => {
   //   const today = new Date();
@@ -737,6 +755,7 @@ function SuperAgentLedger() {
 
       const res = await getChildList(params);
       const apiData = res.data.data;
+      
       setTotals(
         apiData.total || {
           lena: 0,
@@ -744,8 +763,21 @@ function SuperAgentLedger() {
           clear: 0,
         },
       );
-      setLenaList(apiData.lena || []);
-      setDenaList(apiData.dena || []);
+      
+      // ✅ LENA LIST - UT ADD KARO
+      const lenaWithUT = (apiData.lena || []).map(item => ({
+        ...item,
+        ut: getUTType(item.admin_id)
+      }));
+
+      // ✅ DENA LIST - UT ADD KARO
+      const denaWithUT = (apiData.dena || []).map(item => ({
+        ...item,
+        ut: getUTType(item.admin_id)
+      }));
+
+      setLenaList(lenaWithUT);
+      setDenaList(denaWithUT);
       setClearList(apiData.clear || []);
     } catch (err) {
       console.log(err);
@@ -942,6 +974,7 @@ function SuperAgentLedger() {
                       <table className="table table-bordered table-hover table-striped align-middle mb-0">
                         <thead className="table-light sticky_top">
                           <tr>
+                            <th>UT</th>
                             <th>Username</th>
                             <th>Amount</th>
                             <th>Action</th>
@@ -951,45 +984,61 @@ function SuperAgentLedger() {
                         <tbody>
                           {lenaList.length === 0 ? (
                             <tr>
-                              <td colSpan="3" className="text-center py-4">
+                              <td colSpan="4" className="text-center py-4">
                                 No Data
                               </td>
                             </tr>
                           ) : (
-                            lenaList.map((m, index) => (
-                              <tr key={m.id || index}>
-                                <td>
-                                  <div
-                                    className="d-flex align-items-center gap-2 hover_user"
-                                    onClick={() =>
-                                      navigate(
-                                        `/reports/agent-ledger?superagent_id=${m.admin_id}`,
-                                      )
-                                    }
-                                  >
-                                    <span>{m.username}</span>
-                                  </div>
-                                </td>
+                            <>
+                              {lenaList.map((m, index) => (
+                                <tr key={m.id || index}>
+                                  <td>
+                                    <span className={`ut-badge ${m.ut === 'M' ? 'ut-master' : m.ut === 'S' ? 'ut-sub' : m.ut === 'C' ? 'ut-client' : 'ut-default'}`}>
+                                      {m.ut || '#'}
+                                    </span>
+                                  </td>
+                                  <td>
+                                    <div
+                                      className="d-flex align-items-center gap-2 hover_user"
+                                      onClick={() =>
+                                        navigate(
+                                          `/reports/agent-ledger?superagent_id=${m.admin_id}`,
+                                        )
+                                      }
+                                    >
+                                      <span>{m.username}</span>
+                                    </div>
+                                  </td>
 
-                                <td className="fw-bold text-success">
-                                  {Number(m.amount || 0).toFixed(2)}
-                                </td>
+                                  <td className="fw-bold text-success">
+                                    {Number(m.amount || 0).toFixed(2)}
+                                  </td>
 
+                                  <td>
+                                    <button
+                                      className="btn btn-sm btn-danger"
+                                      onClick={() =>
+                                        navigate(
+                                          `/reports/super-agent-ledger-settlement-report/${m.admin_id}`,
+                                        )
+                                      }
+                                      title="History"
+                                    >
+                                      H
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                              {/* ✅ TOTAL ROW - LENA */}
+                              <tr className="table-secondary fw-bold">
                                 <td>
-                                  <button
-                                    className="btn btn-sm btn-danger"
-                                    onClick={() =>
-                                      navigate(
-                                        `/reports/super-agent-ledger-settlement-report/${m.admin_id}`,
-                                      )
-                                    }
-                                    title="History"
-                                  >
-                                    H
-                                  </button>
+                                  <span className="ut-badge ut-default">#</span>
                                 </td>
+                                <td colSpan="1">Total</td>
+                                <td className="text-success">{totals.lena.toFixed(2)}</td>
+                                <td></td>
                               </tr>
-                            ))
+                            </>
                           )}
                         </tbody>
                       </table>
@@ -1013,6 +1062,7 @@ function SuperAgentLedger() {
                       <table className="table table-bordered table-hover table-striped align-middle mb-0">
                         <thead className="table-light sticky_top">
                           <tr>
+                            <th>UT</th>
                             <th>Username</th>
                             <th>Amount</th>
                             <th>Action</th>
@@ -1022,45 +1072,61 @@ function SuperAgentLedger() {
                         <tbody>
                           {denaList.length === 0 ? (
                             <tr>
-                              <td colSpan="3" className="text-center py-4">
+                              <td colSpan="4" className="text-center py-4">
                                 No Data
                               </td>
                             </tr>
                           ) : (
-                            denaList.map((m, index) => (
-                              <tr key={m.admin_id || index}>
-                                <td>
-                                  <div
-                                    className="d-flex align-items-center gap-2 hover_user"
-                                    onClick={() =>
-                                      navigate(
-                                        `/reports/agent-ledger?superagent_id=${m.admin_id}`,
-                                      )
-                                    }
-                                  >
-                                    <span>{m.username}</span>
-                                  </div>
-                                </td>
+                            <>
+                              {denaList.map((m, index) => (
+                                <tr key={m.admin_id || index}>
+                                  <td>
+                                    <span className={`ut-badge ${m.ut === 'M' ? 'ut-master' : m.ut === 'S' ? 'ut-sub' : m.ut === 'C' ? 'ut-client' : 'ut-default'}`}>
+                                      {m.ut || '#'}
+                                    </span>
+                                  </td>
+                                  <td>
+                                    <div
+                                      className="d-flex align-items-center gap-2 hover_user"
+                                      onClick={() =>
+                                        navigate(
+                                          `/reports/agent-ledger?superagent_id=${m.admin_id}`,
+                                        )
+                                      }
+                                    >
+                                      <span>{m.username}</span>
+                                    </div>
+                                  </td>
 
-                                <td className="fw-bold text-danger">
-                                  {Number(m.amount || 0).toFixed(2)}
-                                </td>
+                                  <td className="fw-bold text-danger">
+                                    {Number(m.amount || 0).toFixed(2)}
+                                  </td>
 
+                                  <td>
+                                    <button
+                                      className="btn btn-sm btn-danger"
+                                      onClick={() =>
+                                        navigate(
+                                          `/reports/super-agent-ledger-settlement-report/${m.admin_id}`,
+                                        )
+                                      }
+                                      title="Statement"
+                                    >
+                                      S
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                              {/* ✅ TOTAL ROW - DENA */}
+                              <tr className="table-secondary fw-bold">
                                 <td>
-                                  <button
-                                    className="btn btn-sm btn-danger"
-                                    onClick={() =>
-                                      navigate(
-                                        `/reports/super-agent-ledger-settlement-report/${m.admin_id}`,
-                                      )
-                                    }
-                                    title="Statement"
-                                  >
-                                    S
-                                  </button>
+                                  <span className="ut-badge ut-default">#</span>
                                 </td>
+                                <td colSpan="1">Total</td>
+                                <td className="text-danger">{totals.dena.toFixed(2)}</td>
+                                <td></td>
                               </tr>
-                            ))
+                            </>
                           )}
                         </tbody>
                       </table>
@@ -1192,6 +1258,34 @@ function SuperAgentLedger() {
           </div>
         )}
       </div>
+
+      <style jsx>{`
+        .ut-badge {
+          display: inline-block;
+          padding: 2px 10px;
+          border-radius: 4px;
+          font-size: 12px;
+          font-weight: 700;
+          text-align: center;
+          min-width: 30px;
+        }
+        .ut-master {
+          background-color: #4CAF50;
+          color: white;
+        }
+        .ut-sub {
+          background-color: #FF9800;
+          color: white;
+        }
+        .ut-client {
+          background-color: #2196F3;
+          color: white;
+        }
+        .ut-default {
+          background-color: #9E9E9E;
+          color: white;
+        }
+      `}</style>
     </>
   );
 }

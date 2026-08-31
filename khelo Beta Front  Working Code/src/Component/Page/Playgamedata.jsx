@@ -1,0 +1,47 @@
+const playgamedata =[
+    {
+        gamename:"morningstar",
+        gamepath:"/Playgame",
+    },
+    {
+        gamename:"Siver",
+        gamepath:"/Playgame",
+    },
+    {
+        gamename:"Golden",
+        gamepath:"/Playgame",
+    },
+    {
+        gamename:"Gali",
+        gamepath:"/Playgame",
+    },
+    {
+        gamename:"morningstar",
+        gamepath:"/Playgame",
+    },
+    {
+        gamename:"morningstar",
+        gamepath:"/Playgame",
+    },
+    {
+        gamename:"morningstar",
+        gamepath:"/Playgame",
+    },
+    {
+        gamename:"Siver",
+        gamepath:"/Playgame",
+    },
+    {
+        gamename:"Golden",
+        gamepath:"/Playgame",
+    },
+    {
+        gamename:"Gali",
+        gamepath:"/Playgame",
+    },
+    {
+        gamename:"morningstar",
+        gamepath:"/Playgame",
+    },
+];
+export default playgamedata;

@@ -609,6 +609,8 @@ export const getProfitLossFancySettled = (payload) =>
   API.post("/get-fancy-settled", payload);
 
 
+
+
 export const getEventBetsMultimarket = (payload) =>
   API.post("/get-event-bets", payload);
 

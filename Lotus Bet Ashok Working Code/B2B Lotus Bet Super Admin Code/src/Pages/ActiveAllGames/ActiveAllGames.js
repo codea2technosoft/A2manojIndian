@@ -150,7 +150,8 @@ function ActiveAllGames() {
       },
       {
         label: "LIFETIME PL",
-        value: plData?.lifetime_pl || 0,
+        // value: plData?.lifetime_pl || 0,
+value: Number(plData?.lifetime_pl || 0).toFixed(2),
         valueIcon:
           (plData?.lifetime_pl || 0) >= 0 ? (
             <FaCircleArrowUp />

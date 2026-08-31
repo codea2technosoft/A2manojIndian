@@ -357,7 +357,7 @@ const BetHistoryDetails = () => {
                             {item.stake || 0}
 
                           </td>
-                          <td> {item.total.toFixed(2) || 0}</td>
+                          <td>{Number(item.total || 0).toFixed(2)}</td>
                           <td>{new Date(item.created_at).toLocaleString()}</td>
                           <td>
                             {item.matched_status === "matched"

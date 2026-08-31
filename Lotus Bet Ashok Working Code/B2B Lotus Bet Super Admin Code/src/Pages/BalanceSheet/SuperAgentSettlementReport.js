@@ -202,9 +202,8 @@ function SuperAgentSettlementReport() {
             <table className="table table-striped table-bordered table-sm">
               <thead>
                 <tr>
-                  <th>S.No.</th>
+                  {/* <th>S.No.</th>
                   <th>DATE</th>
-                  {/* <th>DELETE</th> */}
                   <th>Desc</th>
                   <th>Sport</th>
                   <th>Type</th>
@@ -213,8 +212,18 @@ function SuperAgentSettlementReport() {
                   <th>DR</th>
                   <th>D/C</th>
                   <th>Balance</th>
-                  
-                  <th>Details</th>
+
+                  <th>Details</th> */}
+                  <th>NO</th>
+                  <th>DESC</th>
+                  <th>Type</th>
+                  <th>Collection Name</th>
+                  <th>DR</th>
+                  <th>CR</th>
+                  <th>Balance</th>
+                  <th>D/C</th>
+                  <th>Note</th>
+                  <th>DATE</th>
                 </tr>
               </thead>
               <tbody>
@@ -237,56 +246,47 @@ function SuperAgentSettlementReport() {
                 ) : (
                   historyData.map((item, index) => (
                     <tr key={item._id || index}>
-                        <td>{index + 1}</td>
-                      <td>{formatDate(item.created_at)}</td>
-                      {/* <td>
-                        <button
-                          className="btn btn-link text-danger p-0"
-                          style={{ fontSize: '16px', textDecoration: 'none' }}
-                          onClick={() => handleDelete(item)}
-                        >
-                          🗑️
-                        </button>
-                      </td> */}
+                      {/* <td>{formatDate(item.created_at)}</td>
+                  
                       <td>{item.comment || item.game_name || "-"}</td>
                       <td>{item.game_name || "-"}</td>
-                      {/* <td>
-                        {item.pay_type === "diya"
-                          ? "Debit"
-                          : item.pay_type === "liya"
-                            ? "Credit"
-                            : "-"}
-                      </td> */}
+                  
                       <td>
-  {item.debit > 0 ? "Debit" : item.credit > 0 ? "Credit" : "-"}
-</td>
+                        {item.debit > 0 ? "Debit" : item.credit > 0 ? "Credit" : "-"}
+                      </td>
 
                       <td>{item.debit > 0 ? item.debit.toFixed(2) : "-"}</td>
                       <td>{item.credit > 0 ? item.credit.toFixed(2) : "-"}</td>
-                      {/* <td>{item.credit - item.debit}</td> */}
+                   
+                      <td>
+                        {item.debit > 0 ? "D" : item.credit > 0 ? "C" : "-"}
+                      </td>
 
-                      {/* <td
-                        style={{
-                          fontSize: "12px",
-                          fontWeight: "600",
-                        }}
-                      >
-                        {item.balance ? item.balance.toFixed(2) : "-"}
-                      </td> */}
+                      <td>{item.balance.toFixed(2) || "-"}</td>
+
+                      <td>{item.remarks || "-"}</td> */}
+                      <td>{index + 1}</td>
+                      <td>{item.comment || "-"}</td>
+                      {/* <td>{item.type || "-"}</td> */}
+                      <td>
+                        {item.debit > 0 ? "Debit" : item.credit > 0 ? "Credit" : "-"}
+                      </td>
+<td>{item.collection_name || "-"}</td>
+                      <td>{item.debit > 0 ? item.debit.toFixed(2) : "-"}</td>
+                      <td>{item.credit > 0 ? item.credit.toFixed(2) : "-"}</td>
+                      <td>{item.balance ? item.balance.toFixed(2) : "-"}</td>
                       {/* <td>
-                        {item.pay_type === "diya"
-                          ? "DR"
-                          : item.pay_type === "liya"
-                            ? "CR"
+                        {item.pay_type == "diya"
+                          ? "CR"
+                          : item.pay_type == "liya"
+                            ? "DR"
                             : "-"}
                       </td> */}
                       <td>
-  {item.debit > 0 ? "D" : item.credit > 0 ? "C" : "-"}
-</td>
-
-                      <td>{item.balance || "-"}</td>
-
+                        {item.debit > 0 ? "D" : item.credit > 0 ? "C" : "-"}
+                      </td>
                       <td>{item.remarks || "-"}</td>
+                      <td>{formatDate(item.created_at)}</td>
                     </tr>
                   ))
                 )}

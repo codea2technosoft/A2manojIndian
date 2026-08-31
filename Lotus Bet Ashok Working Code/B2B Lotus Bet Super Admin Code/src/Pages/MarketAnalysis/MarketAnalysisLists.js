@@ -13,7 +13,6 @@ import Loader from "../../Common/Loader";
 const MarketAnalysisLists = () => {
   const navigate = useNavigate();
 
-  
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,9 +23,14 @@ const MarketAnalysisLists = () => {
   const fetchMarketAnalysis = async (page = currentPage) => {
     try {
       setLoading(true);
+      
+      // ✅ localStorage se admin_id lo
+      const adminId = localStorage.getItem("admin_id") || "admin";
+      
       const res = await getMarketAnalysis({
         page,
         limit,
+        admin_id: adminId, // ✅ admin_id send karo
       });
 
       const response = res.data;
@@ -212,14 +216,6 @@ const MarketAnalysisLists = () => {
                       <h4 className="event-title">
                         {event.event_name || event.name || "Unnamed"}
                       </h4>
-                      {/* <div className="event-meta">
-                        <span className="meta-item">
-                          {event.series_name || ""}
-                        </span>
-                        <span className="meta-item">
-                          {event.date_time || ""}
-                        </span>
-                      </div> */}
                     </div>
 
                     <div className="event-sections">
@@ -302,31 +298,6 @@ const MarketAnalysisLists = () => {
                           </tbody>
                         </table>
                       )}
-
-                      {/* GRAND TOTAL */}
-                      {/* {event.totals?.grand_total !== undefined && (
-                        <table className="table table-bordered">
-                          <thead>
-                            <tr className="table-warning">
-                              <th colSpan="2">GRAND TOTAL</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>Total</td>
-                              <td
-                                className={
-                                  Number(event.totals.grand_total) < 0
-                                    ? "text-danger fw-bold"
-                                    : "text-success fw-bold"
-                                }
-                              >
-                                {event.totals.grand_total}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      )} */}
                     </div>
                   </div>
                 ))}

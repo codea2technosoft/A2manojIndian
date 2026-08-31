@@ -186,82 +186,123 @@ const CreateSuperAgentAdmin = () => {
     checkFormValidity();
   }, [formData]);
 
+  // const checkFormValidity = () => {
+  //   const requiredFields = [
+  //     "name",
+  //     "coins",
+  //     "password",
+  //     "agentMatchShare",
+  //     "agentCommissionType",
+  //   ];
+
+  //   const allRequiredFilled = requiredFields.every((field) => {
+  //     const value = formData[field];
+  //     return (
+  //       value !== null && value !== undefined && value.toString().trim() !== ""
+  //     );
+  //   });
+
+  //   const coins = parseFloat(formData.coins);
+  //   const myCoins = parseFloat(formData.myCoins) || 0;
+  //   const coinsValid = !isNaN(coins) && coins > 0 && coins <= myCoins;
+
+  //   // const passwordRegex = /^[A-Z]{2}[0-9]{4}$/;
+  //   // const passwordValid = passwordRegex.test(formData.password);
+
+  //   const agentMatchShare = parseFloat(formData.agentMatchShare);
+  //   const myMatchShare = parseFloat(formData.myMatchShare) || 0;
+  //   const matchShareValid =
+  //     !isNaN(agentMatchShare) &&
+  //     agentMatchShare >= 0 &&
+  //     agentMatchShare <= myMatchShare;
+
+  //   let commissionValid = true;
+  //   if (formData.agentCommissionType === "1") {
+  //     const agentMatchComm = parseFloat(formData.agentMatchComm);
+  //     const agentSessionComm = parseFloat(formData.agentSessionComm);
+  //     const myMatchComm = parseFloat(formData.myMatchComm) || 0;
+
+  //     const agentFootballComm = parseFloat(formData.agentFootballComm);
+  //     const agentTennisComm = parseFloat(formData.agentTennisComm);
+  //     const agentHorseRacingComm = parseFloat(formData.agentHorseRacingComm);
+  //     const agentGreyhoundRacingComm = parseFloat(
+  //       formData.agentGreyhoundRacingComm,
+  //     );
+  //     const agentPoliticsComm = parseFloat(formData.agentPoliticsComm);
+  //     const agentCasinoComm = parseFloat(formData.agentCasinoComm);
+  //     //const agentSessionComm = parseFloat(formData.agentSessionComm);
+
+  //     const myFootballComm = parseFloat(formData.myFootballComm) || 0;
+  //     const myTennisComm = parseFloat(formData.myTennisComm) || 0;
+  //     const myHorseRacingComm = parseFloat(formData.myHorseRacingComm) || 0;
+  //     const myGreyhoundRacingComm =
+  //       parseFloat(formData.myGreyhoundRacingComm) || 0;
+  //     const myPoliticsComm = parseFloat(formData.myPoliticsComm) || 0;
+  //     const myCasinoComm = parseFloat(formData.myCasinoComm) || 0;
+  //     const mySessionComm = parseFloat(formData.mySessionComm) || 0;
+
+  //     const matchCommValid =
+  //       !isNaN(agentMatchComm) &&
+  //       agentMatchComm >= 0 &&
+  //       agentMatchComm <= myMatchComm;
+  //     const sessionCommValid =
+  //       !isNaN(agentSessionComm) &&
+  //       agentSessionComm >= 0 &&
+  //       agentSessionComm <= mySessionComm;
+
+  //     commissionValid = matchCommValid && sessionCommValid;
+  //   } else if (formData.agentCommissionType === "0") {
+  //     commissionValid = true;
+  //   }
+  //   setIsFormValid(
+  //     allRequiredFilled &&
+  //     coinsValid &&
+  //     // passwordValid &&
+  //     matchShareValid &&
+  //     commissionValid,
+  //   );
+  // };
+
   const checkFormValidity = () => {
-    const requiredFields = [
-      "name",
-      "coins",
-      "password",
-      "agentMatchShare",
-      "agentCommissionType",
-    ];
+  const requiredFields = [
+    "name",
+    "coins",
+    "password",
+    // "agentMatchShare",
+    // "agentCommissionType",
+  ];
 
-    const allRequiredFilled = requiredFields.every((field) => {
-      const value = formData[field];
-      return (
-        value !== null && value !== undefined && value.toString().trim() !== ""
-      );
-    });
-
-    const coins = parseFloat(formData.coins);
-    const myCoins = parseFloat(formData.myCoins) || 0;
-    const coinsValid = !isNaN(coins) && coins > 0 && coins <= myCoins;
-
-    // const passwordRegex = /^[A-Z]{2}[0-9]{4}$/;
-    // const passwordValid = passwordRegex.test(formData.password);
-
-    const agentMatchShare = parseFloat(formData.agentMatchShare);
-    const myMatchShare = parseFloat(formData.myMatchShare) || 0;
-    const matchShareValid =
-      !isNaN(agentMatchShare) &&
-      agentMatchShare >= 0 &&
-      agentMatchShare <= myMatchShare;
-
-    let commissionValid = true;
-    if (formData.agentCommissionType === "1") {
-      const agentMatchComm = parseFloat(formData.agentMatchComm);
-      const agentSessionComm = parseFloat(formData.agentSessionComm);
-      const myMatchComm = parseFloat(formData.myMatchComm) || 0;
-
-      const agentFootballComm = parseFloat(formData.agentFootballComm);
-      const agentTennisComm = parseFloat(formData.agentTennisComm);
-      const agentHorseRacingComm = parseFloat(formData.agentHorseRacingComm);
-      const agentGreyhoundRacingComm = parseFloat(
-        formData.agentGreyhoundRacingComm,
-      );
-      const agentPoliticsComm = parseFloat(formData.agentPoliticsComm);
-      const agentCasinoComm = parseFloat(formData.agentCasinoComm);
-      //const agentSessionComm = parseFloat(formData.agentSessionComm);
-
-      const myFootballComm = parseFloat(formData.myFootballComm) || 0;
-      const myTennisComm = parseFloat(formData.myTennisComm) || 0;
-      const myHorseRacingComm = parseFloat(formData.myHorseRacingComm) || 0;
-      const myGreyhoundRacingComm =
-        parseFloat(formData.myGreyhoundRacingComm) || 0;
-      const myPoliticsComm = parseFloat(formData.myPoliticsComm) || 0;
-      const myCasinoComm = parseFloat(formData.myCasinoComm) || 0;
-      const mySessionComm = parseFloat(formData.mySessionComm) || 0;
-
-      const matchCommValid =
-        !isNaN(agentMatchComm) &&
-        agentMatchComm >= 0 &&
-        agentMatchComm <= myMatchComm;
-      const sessionCommValid =
-        !isNaN(agentSessionComm) &&
-        agentSessionComm >= 0 &&
-        agentSessionComm <= mySessionComm;
-
-      commissionValid = matchCommValid && sessionCommValid;
-    } else if (formData.agentCommissionType === "0") {
-      commissionValid = true;
-    }
-    setIsFormValid(
-      allRequiredFilled &&
-      coinsValid &&
-      // passwordValid &&
-      matchShareValid &&
-      commissionValid,
+  const allRequiredFilled = requiredFields.every((field) => {
+    const value = formData[field];
+    return (
+      value !== null && value !== undefined && value.toString().trim() !== ""
     );
-  };
+  });
+
+  const coins = parseFloat(formData.coins);
+  const myCoins = parseFloat(formData.myCoins) || 0;
+  const coinsValid = !isNaN(coins) && coins > 0 && coins <= myCoins;
+
+  const matchShareValid = true; // ✅ Force true kyunki field comment hai
+
+  let commissionValid = true;
+  
+  // ✅ Agar commissionType select kiya hai toh check karo, warna true
+  if (formData.agentCommissionType === "1") {
+    // ... existing validation code
+  } else if (formData.agentCommissionType === "0") {
+    commissionValid = true;
+  } else {
+    commissionValid = true; // ✅ Agar select nahi kiya toh bhi true
+  }
+
+  setIsFormValid(
+    allRequiredFilled &&
+    coinsValid &&
+    matchShareValid &&
+    commissionValid,
+  );
+};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -1138,7 +1179,7 @@ const CreateSuperAgentAdmin = () => {
                   />
                 </div>
                 {/* My Match Share (From API) */}
-                <div className="col-md-6 mb-3">
+                {/* <div className="col-md-6 mb-3">
                   <label className="form-label">My Share (%)</label>
                   <input
                     type="text"
@@ -1147,10 +1188,10 @@ const CreateSuperAgentAdmin = () => {
                     value={formData.myMatchShare}
                     disabled
                   />
-                </div>
+                </div> */}
 
                 {/* Agent Match Share */}
-                <div className="col-md-6 mb-3">
+                {/* <div className="col-md-6 mb-3">
                   <label className="form-label">
                     {" "}
                     Super Agent Match Share (%){" "}
@@ -1180,10 +1221,10 @@ const CreateSuperAgentAdmin = () => {
                       Please enter agent match share
                     </div>
                   )}
-                </div>
+                </div> */}
 
                 {/* My Commission Type (From API) */}
-                <div className="col-md-6 mb-3">
+                {/* <div className="col-md-6 mb-3">
                   <label className="form-label">My Commission Type</label>
                   <input
                     type="text"
@@ -1195,10 +1236,10 @@ const CreateSuperAgentAdmin = () => {
                     }
                     disabled
                   />
-                </div>
+                </div> */}
 
                 {/* Agent Commission Type */}
-                <div className="col-md-6 mb-3">
+                {/* <div className="col-md-6 mb-3">
                   <label className="form-label">
                     Agent Commission Type <span className="text-danger">*</span>
                   </label>
@@ -1225,7 +1266,7 @@ const CreateSuperAgentAdmin = () => {
                       Please select commission type
                     </div>
                   )}
-                </div>
+                </div> */}
 
                 {/* My Match Comm (From API) */}
                 {/* <div className="col-md-6 mb-3">
@@ -1306,7 +1347,7 @@ const CreateSuperAgentAdmin = () => {
 
                 <div className="col-md-12 mb-3">
                   <div className="d-flex justify-content-between mb-2">
-                    <label className="fw-bold mb-0">RATIO (CRICKET) :</label>
+                    <label className="fw-bold mb-0">PARTNERSHIP(CRICKET) :</label>
 
                     <small className="new_label fw-bold">
                       AVAILABLE PARTNERSHIP: {formData.myMatchComm}
@@ -1350,7 +1391,7 @@ const CreateSuperAgentAdmin = () => {
 
                 <div className="col-md-12 mb-3">
                   <div className="d-flex justify-content-between mb-2">
-                    <label className="fw-bold mb-0">RATIO (Session) :</label>
+                    <label className="fw-bold mb-0">PARTNERSHIP(Session) :</label>
 
                     <small className="new_label fw-bold">
                       AVAILABLE PARTNERSHIP: {formData.mySessionComm}
@@ -1394,7 +1435,7 @@ const CreateSuperAgentAdmin = () => {
 
                 <div className="col-md-12 mb-3">
                   <div className="d-flex justify-content-between mb-2">
-                    <label className="fw-bold mb-0">Ratio (Football) :</label>
+                    <label className="fw-bold mb-0">PARTNERSHIP(Football) :</label>
                     <small className="new_label fw-bold">
                       AVAILABLE PARTNERSHIP: {formData.myFootballComm}
                     </small>
@@ -1432,7 +1473,7 @@ const CreateSuperAgentAdmin = () => {
 
                 <div className="col-md-12 mb-3">
                   <div className="d-flex justify-content-between mb-2">
-                    <label className="fw-bold mb-0">Ratio (Tennis) :</label>
+                    <label className="fw-bold mb-0">PARTNERSHIP(Tennis) :</label>
                     <small className="new_label fw-bold">
                       AVAILABLE PARTNERSHIP: {formData.myTennisComm}
                     </small>
@@ -1471,7 +1512,7 @@ const CreateSuperAgentAdmin = () => {
                 <div className="col-md-12 mb-3">
                   <div className="d-flex justify-content-between mb-2">
                     <label className="fw-bold mb-0">
-                      Ratio (Horse Racing) :
+                      PARTNERSHIP(Horse Racing) :
                     </label>
                     <small className="new_label fw-bold">
                       AVAILABLE PARTNERSHIP: {formData.myHorseRacingComm}
@@ -1511,7 +1552,7 @@ const CreateSuperAgentAdmin = () => {
                 <div className="col-md-12 mb-3">
                   <div className="d-flex justify-content-between mb-2">
                     <label className="fw-bold mb-0">
-                      Ratio (Greyhound Racing) :
+                      PARTNERSHIP(Greyhound Racing) :
                     </label>
                     <small className="new_label fw-bold">
                       AVAILABLE PARTNERSHIP: {formData.myGreyhoundRacingComm}
@@ -1550,7 +1591,7 @@ const CreateSuperAgentAdmin = () => {
 
                 <div className="col-md-12 mb-3">
                   <div className="d-flex justify-content-between mb-2">
-                    <label className="fw-bold mb-0">Ratio (Politics) :</label>
+                    <label className="fw-bold mb-0">PARTNERSHIP(Politics) :</label>
                     <small className="new_label fw-bold">
                       AVAILABLE PARTNERSHIP: {formData.myPoliticsComm}
                     </small>
@@ -1588,7 +1629,7 @@ const CreateSuperAgentAdmin = () => {
 
                 <div className="col-md-12 mb-3">
                   <div className="d-flex justify-content-between mb-2">
-                    <label className="fw-bold mb-0">Ratio (Casino) :</label>
+                    <label className="fw-bold mb-0">PARTNERSHIP(Casino) :</label>
                     <small className="new_label fw-bold">
                       AVAILABLE PARTNERSHIP: {formData.myCasinoComm}
                     </small>

@@ -779,8 +779,10 @@ function SettlementReport() {
               <thead className="table-dark">
                 <tr>
                   <th>NO</th>
+                   <th>Game Name</th>
                   <th>DESC</th>
-                  <th>TYPE</th>
+                 
+                  <th>Pay TYPE</th>
                   <th>AMOUNT</th>
                   <th>D/C</th>
                   <th>NOTE</th>
@@ -831,8 +833,11 @@ function SettlementReport() {
                     return (
                       <tr key={transaction._id ?? index}>
                         <td>{serialNo}</td>
+                        <td>{transaction.game_name}</td>
                         <td>{getDescription(transaction)}</td>
-                        <td>{getType(transaction)}</td>
+                         
+                        <td>{transaction.pay_type}</td>
+                       
                         <td className={amount < 0 ? "text-danger" : "text-success"}>
                           <span>{Math.abs(amount).toFixed(2)}</span>
                         </td>

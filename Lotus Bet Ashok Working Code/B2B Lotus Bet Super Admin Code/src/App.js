@@ -645,10 +645,10 @@ const App = () => {
             />
           }
         />
-        {/* <Route
+        <Route
           path="/Superagentadminview"
           element={<ProtectedRoute element={Superagentadminview} path="/Superagentadminview" />}
-        /> */}
+        />
 
         <Route
           path="/Superagentadminview/:id"

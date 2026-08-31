@@ -192,18 +192,32 @@ const getCardConfig = (plData) => {
     //   bg: "#6b00ff",
     // },
 
+    // {
+    //   label: "LIFETIME PL",
+    //   value: plData?.lifetime_pl || 0,
+    //   valueIcon:
+    //     (plData?.lifetime_pl || 0) >= 0 ? (
+    //       <FaCircleArrowUp />
+    //     ) : (
+    //       <FaCircleArrowDown />
+    //     ),
+    //   icon: <FaSyncAlt />,
+    //   bg: "#6b00ff",
+    // },
+
     {
-      label: "LIFETIME PL",
-      value: plData?.lifetime_pl || 0,
-      valueIcon:
-        (plData?.lifetime_pl || 0) >= 0 ? (
-          <FaCircleArrowUp />
-        ) : (
-          <FaCircleArrowDown />
-        ),
-      icon: <FaSyncAlt />,
-      bg: "#6b00ff",
-    },
+  label: "LIFETIME PL",
+  value: Number(plData?.lifetime_pl || 0).toFixed(2),
+  valueIcon:
+    Number(plData?.lifetime_pl || 0) >= 0 ? (
+      <FaCircleArrowUp />
+    ) : (
+      <FaCircleArrowDown />
+    ),
+  icon: <FaSyncAlt />,
+  bg: "#6b00ff",
+},
+
   ];
 };
 

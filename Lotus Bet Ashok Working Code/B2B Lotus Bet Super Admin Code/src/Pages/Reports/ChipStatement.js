@@ -271,6 +271,7 @@ const ChipStatement = () => {
                   <th>NO</th>
                   <th>DATE</th>
                   <th>DESC</th>
+                  <th>To User</th>
                   <th>TYPE</th>
                   <th className="text-end">COMM IN</th>
                   <th className="text-end">COMM OUT</th>
@@ -318,6 +319,7 @@ const ChipStatement = () => {
                             ).toLocaleString()}
                           </td>
                           <td>{item.remark  || "N/A"}</td>
+                          <td>{item.to_username  || "N/A"}</td>
                           <td>{item.tr_type || "N/A"}</td>
                           <td className="text-end">
                             {formatNumber(item.comm_in || 0)}

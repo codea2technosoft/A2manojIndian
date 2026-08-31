@@ -174,11 +174,11 @@ const Login = () => {
                     </span>
                   )}
                 </div>
-                <div className="terms">
+                {/* <div className="terms">
                   This site is protected by reCAPTCHA and the Google{" "}
                   <Link to={"/"}> Privacy Policy</Link> and{" "}
                   <Link to={"/"}> Terms of Service</Link> apply.
-                </div>
+                </div> */}
 
                 {/* Submit */}
                 <div className="form-group mb-0 text-end">

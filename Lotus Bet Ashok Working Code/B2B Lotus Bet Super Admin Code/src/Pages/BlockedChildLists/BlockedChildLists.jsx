@@ -1285,7 +1285,7 @@ const fetchAgentData = async (
                   <th rowSpan={2}>BALANCE</th>
                   <th rowSpan={2}>P/L</th>
                   {/* <th rowSpan={2}>EXPOSURE</th> */}
-                  <th rowSpan={2}>CLIENT(%) SHARE</th>
+                  {/* <th rowSpan={2}>CLIENT(%) SHARE</th> */}
                   <th rowSpan={2}>UP-LINE</th>
                   {/* Code */}
                   {/* <th rowSpan={2} className="position-relative">
@@ -1393,7 +1393,7 @@ const fetchAgentData = async (
                       </td>
 
                       {/* <td>0</td> */}
-                      <td>{row.match_share || "0"}</td>
+                      {/* <td>{row.match_share || "0"}</td> */}
 
                       <td>
                         {row.parent_username ||

@@ -1197,7 +1197,7 @@ function AgentMaster() {
                   <th rowSpan={2}>REFERENCE</th> */}
                   {/* <th rowSpan={2}>Password</th> */}
                   {/* <th rowSpan={2}>OTP</th> */}
-                  <th rowSpan={2}>Client(%) Share</th>
+                  {/* <th rowSpan={2}>Client(%) Share</th> */}
                   <th rowSpan={2}>UP-Line</th>
                   {/* <th rowSpan={2}>Share</th> */}
                   {/* <th colSpan={3} className="text-center">
@@ -1513,7 +1513,7 @@ function AgentMaster() {
 
                       <td>{row?.reference ? row.reference : "-"}</td> */}
 
-                      <td className="text-center">{row.share}</td>
+                      {/* <td className="text-center">{row.share}</td> */}
 
 
                       {/* <td className="text-center">{row.master_admin_id}</td> */}

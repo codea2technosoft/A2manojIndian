@@ -263,6 +263,7 @@ function SuperAgentSettlementReport() {
                   <th>NO</th>
                   <th>DESC</th>
                   <th>Type</th>
+                  <th>Collection Name</th>
                   <th>DR</th>
                   <th>CR</th>
                   <th>Balance</th>
@@ -308,6 +309,8 @@ function SuperAgentSettlementReport() {
                        <td>
                         {item.debit > 0 ? "Debit" : item.credit > 0 ? "Credit" : "-"}
                       </td>
+
+                      <td>{item.collection_name || "-"}</td>
 
                       <td>{item.debit > 0 ? item.debit.toFixed(2) : "-"}</td>
                       <td>{item.credit > 0 ? item.credit.toFixed(2) : "-"}</td>

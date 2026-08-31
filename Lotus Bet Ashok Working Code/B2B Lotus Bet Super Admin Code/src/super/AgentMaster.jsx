@@ -1191,7 +1191,7 @@ Login URL:${COPY_API_URL}`;
                   <th rowSpan={2}>REFERENCE</th> */}
                   {/* <th rowSpan={2}>Password</th>
                   <th rowSpan={2}>OTP</th> */}
-                  <th rowSpan={2}>Client(%) Share</th>
+                  {/* <th rowSpan={2}>Client(%) Share</th> */}
                   <th rowSpan={2}>UP-Line</th>
                   {/* <th rowSpan={2}>Share</th> */}
 
@@ -1491,7 +1491,7 @@ Login URL:${COPY_API_URL}`;
                       <td>{row.admin_id || "N/A"}</td>
                       <td>{row.credit_ref || "-"}</td>
                       {/* <td>{row.coins || "-"}</td> */}
-                        <td>{row.coins != null ? Number(row.coins).toFixed(2) : "-"}</td>
+                      <td>{row.coins != null ? Number(row.coins).toFixed(2) : "-"}</td>
                       <td>
                         {" "}
                         {row.total_amount != null
@@ -1508,7 +1508,7 @@ Login URL:${COPY_API_URL}`;
                       </td>
                       <td className="text-center">{row.doj}</td>
                       <td>{row?.reference ? row.reference : "-"}</td> */}
-                      <td className="text-center">{row.share}</td>
+                      {/* <td className="text-center">{row.share}</td> */}
 
 
                       {/* <td className="text-center">{row.master_admin_id}</td> */}
@@ -1703,6 +1703,14 @@ Login URL:${COPY_API_URL}`;
                           >
                             <FiEdit />
                           </button>
+                          <button
+                            className="buttoncommon gradient-9"
+                            onClick={() => handleViewDetails(row)}
+                            title="View"
+                          >
+                            <FaEye />
+                          </button>
+
 
                           <button
                             className="btn gradient-10 btn-rounded"
@@ -1857,8 +1865,8 @@ Login URL:${COPY_API_URL}`;
 
                           <button
                             className={`btn btn-sm  btn-rounded ${Number(row.is_blocked)
-                                ? "btn-success"
-                                : "btn-danger"
+                              ? "btn-success"
+                              : "btn-danger"
                               }`}
                             onClick={() => {
                               setSelectedAgent(row);

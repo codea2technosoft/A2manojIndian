@@ -655,7 +655,7 @@
 //                 <option value="10">Casino</option>
 //                 <option value="15">Kabaddi</option>
 //                 <option value="20">Politics</option>
-                
+
 //               </Form.Select>
 //             </div>
 
@@ -1003,7 +1003,7 @@ const ProfitLoss = () => {
     setCurrentPage(1);
   };
 
-  const handleSummaryClick = (eventId,eventName) => {
+  const handleSummaryClick = (eventId, eventName) => {
     const admin_id = localStorage.getItem("admin_id") || "admin";
     const role = parseInt(localStorage.getItem("role")) || 1;
     const payload = {
@@ -1017,15 +1017,15 @@ const ProfitLoss = () => {
     navigate(`/reports/profit-loss-summary-event/${eventId}`, {
       state: {
         payload: payload,
-         eventName: eventName,
-        
+        eventName: eventName,
+
       },
     });
   };
 
   // ✅ REMOVED: Default date useEffect - ab dates empty hain
 
-  const handleDetailClick = (eventId,eventName) => {
+  const handleDetailClick = (eventId, eventName) => {
     const admin_id = localStorage.getItem("admin_id") || "admin";
     const role = parseInt(localStorage.getItem("role")) || 1;
     const payload = {
@@ -1038,7 +1038,7 @@ const ProfitLoss = () => {
     navigate(`/reports/profit-loss-detail/${eventId}`, {
       state: {
         payload: payload,
-         eventName: eventName,
+        eventName: eventName,
       },
     });
   };
@@ -1071,7 +1071,7 @@ const ProfitLoss = () => {
                 <option value="10">Casino</option>
                 <option value="15">Kabaddi</option>
                 <option value="20">Politics</option>
-                
+
               </Form.Select>
             </div>
 
@@ -1108,6 +1108,7 @@ const ProfitLoss = () => {
                 <tr>
                   <th>SR NO</th>
                   {/* <th>EVENT ID</th> */}
+                  <th>Date Time</th>
                   <th>SPORT</th>
                   <th>EVENT</th>
                   <th>COMM IN</th>
@@ -1140,7 +1141,7 @@ const ProfitLoss = () => {
                     {pageTotal && (
                       <tr className="table-striped fw-bold">
                         <td>#</td>
-                        <td colSpan="4">Page Total</td>
+                        <td colSpan="5">Page Total</td>
                         <td>{pageTotal.event || ""}</td>
 
                         <td>{formatNumber(pageTotal.amount)}</td>
@@ -1152,7 +1153,7 @@ const ProfitLoss = () => {
                     {grandTotal && (
                       <tr className="table-striped fw-bold">
                         <td>#</td>
-                        <td colSpan="4">Grand Total</td>
+                        <td colSpan="5">Grand Total</td>
                         <td>{grandTotal.event || ""}</td>
 
                         <td>{formatNumber(grandTotal.amount)}</td>
@@ -1164,6 +1165,19 @@ const ProfitLoss = () => {
                     {statementData.map((item, index) => (
                       <tr key={index}>
                         <td>{item.sr_no}</td>
+                        <td>
+                          {item.latest_transaction_date
+                            ? new Date(item.latest_transaction_date).toLocaleString("en-IN", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: true,
+                            })
+                            : "-"}
+                        </td>
                         {/* <td>{item.event_id}</td> */}
                         <td>{item.sport}</td>
                         <td>{item.event}</td>
@@ -1186,14 +1200,14 @@ const ProfitLoss = () => {
                           <div className="d-flex justify-content-start gap-1">
                             <button
                               className="btn gradient-4 btn-rounded"
-                              onClick={() => handleSummaryClick(item.event_id,item.event)}
+                              onClick={() => handleSummaryClick(item.event_id, item.event)}
                               title="View Summary"
                             >
                               S
                             </button>
                             <button
                               className="buttoncommon gradient-2"
-                              onClick={() => handleDetailClick(item.event_id,item.event)}
+                              onClick={() => handleDetailClick(item.event_id, item.event)}
                               title="View Detail"
                             >
                               D

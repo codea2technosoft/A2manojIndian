@@ -107,7 +107,8 @@ function UserSettlementReport() {
     <div className="card">
       <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
         <h3 className="card-title mb-0">
-          Account Statement - {username || admin_id}
+          {/* Account Statement - {username || admin_id} */}
+          Account Statement
         </h3>
         <div className="d-flex gap-2">
           <div className="btn btn-outline-light" onClick={() => navigate(-1)}>
@@ -193,14 +194,23 @@ function UserSettlementReport() {
             <table className="table table-bordered table-striped table-sm">
               <thead>
                 <tr>
-                  <th>DATE</th>
-                  {/* <th>DELETE</th> */}
+                  {/* <th>DATE</th>
                   <th>DESCRIPTION</th>
                   <th>DR</th>
                   <th>CR</th>
                   <th>BALANCE</th>
                   <th>PAYMENT TYPE</th>
-                  <th>REMARK</th>
+                  <th>REMARK</th> */}
+                  <th>NO</th>
+                  <th>DESC</th>
+                  <th>Type</th>
+                  <th>Collection Name</th>
+                  <th>DR</th>
+                  <th>CR</th>
+                  <th>Balance</th>
+                  <th>D/C</th>
+                  <th>Note</th>
+                  <th>DATE</th>
                 </tr>
               </thead>
               <tbody>
@@ -223,7 +233,8 @@ function UserSettlementReport() {
                 ) : (
                   historyData.map((item, index) => (
                     <tr key={item._id || index}>
-                      <td>{formatDate(item.created_at)}</td>
+                      <td>{index + 1}</td>
+
                       {/* <td>
                         <button
                           className="btn btn-link text-danger p-0"
@@ -233,15 +244,40 @@ function UserSettlementReport() {
                           🗑️
                         </button>
                       </td> */}
-                      <td>{item.comment || item.game_name || "-"}</td>
+                      {/* <td>{item.comment || "-"}</td>
+                      <td>{item.collection_name || "-"}</td>
+                      <td>{item.balance ? item.balance.toFixed(2) : "-"}</td>
+                      <td>
+                        {item.pay_type == "diya"
+                          ? "CR"
+                          : item.pay_type == "liya"
+                            ? "DR"
+                            : "-"}
+                      </td>
+                      <td>{item.remarks || "-"}</td>
+                      <td>{formatDate(item.created_at)}</td> */}
+
+                      <td>{item.comment || "-"}</td>
+                      {/* <td>{item.type || "-"}</td> */}
+                      <td>
+                        {item.debit > 0 ? "Debit" : item.credit > 0 ? "Credit" : "-"}
+                      </td>
+                      <td>{item.collection_name || "-"}</td>
                       <td>{item.debit > 0 ? item.debit.toFixed(2) : "-"}</td>
                       <td>{item.credit > 0 ? item.credit.toFixed(2) : "-"}</td>
                       <td>{item.balance ? item.balance.toFixed(2) : "-"}</td>
-                      {/* <td>{item.type || "-"}</td> */}
+                      {/* <td>
+                        {item.pay_type == "diya"
+                          ? "CR"
+                          : item.pay_type == "liya"
+                            ? "DR"
+                            : "-"}
+                      </td> */}
                       <td>
-                        {item.pay_type === "diya" ? "Debit" : "Credit"}
+                        {item.debit > 0 ? "D" : item.credit > 0 ? "C" : "-"}
                       </td>
                       <td>{item.remarks || "-"}</td>
+                      <td>{formatDate(item.created_at)}</td>
                     </tr>
                   ))
                 )}

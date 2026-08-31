@@ -194,7 +194,7 @@ function SuperAgentLedger() {
           <div className="col-md-6">
             <div className="card ledger-card">
               <div className="ledger-header lena">
-                <span>Client In Plus (Profit)</span>
+                <span>Client In Plus (Profit) asdasd</span>
                 <span>{totals.lena.toFixed(2)}</span>
               </div>
 

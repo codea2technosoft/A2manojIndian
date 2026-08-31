@@ -1207,7 +1207,7 @@ Login URL:${COPY_API_URL}`;
                   <th rowSpan={2}>REFERENCE</th> */}
                   {/* <th rowSpan={2}>Password</th>
                   <th rowSpan={2}>OTP</th> */}
-                  <th rowSpan={2}>Client(%) Share</th>
+                  {/* <th rowSpan={2}>Client(%) Share</th> */}
                   <th rowSpan={2}>UP-Line</th>
                   {/* <th rowSpan={2}>Share</th>
                   <th colSpan={3} className="text-center">
@@ -1301,7 +1301,7 @@ Login URL:${COPY_API_URL}`;
 
                       {/* <td className="text-center">{row.doj}</td>
                       <td>{row?.reference ? row.reference : "-"}</td> */}
-                      <td className="text-center">{row.share}</td>
+                      {/* <td className="text-center">{row.share}</td> */}
                       <td className="text-center">{row.master_admin_id}</td>
                       {/* <td className="text-center">
                         <div className="d-flex" style={{ width: "120px" }}>
@@ -1540,6 +1540,19 @@ Login URL:${COPY_API_URL}`;
                           >
                             <FaRegEdit />
                           </button>
+
+                             <button
+                            className="buttoncommon gradient-9"
+                            onClick={() => handleViewDetails(row)}
+                            title="View"
+                          >
+                            <FaEye />
+                          </button>
+
+                          
+
+                         
+
 
                           <button
                             className="buttoncommon gradient-10"

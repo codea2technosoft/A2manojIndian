@@ -352,18 +352,21 @@ const ProfitLossDetail = () => {
           amount: item.amount || 0,
           total: item.total || 0,
           market_id: item.market_id || "",
-          market_name: item.market_name || "", // ✅ NEW - Added this line
+          market_name: item.market_name || "",
           bet_type: item.bet_type || "",
           team_name: item.team_name || "",
           stake: item.stake || 0,
           odd: item.odd || 0,
           result_val: item.result_val || "Pending",
           event_id: item.event_id || eventId,
+          admin_id: item.admin_id || "",
+          user_role: item.user_role || 5,
+          admin_win: item.admin_win || 0,   // ✅ ADDED
+          admin_loss: item.admin_loss || 0, // ✅ ADDED
         }));
 
         setDetailData(mappedData);
-        
-        // ✅ FIX: Calculate total from 'amount' field, not 'total'
+
         const total = mappedData.reduce((sum, item) => sum + item.amount, 0);
         setTotalAmount(total);
 
@@ -383,7 +386,6 @@ const ProfitLossDetail = () => {
       setLoading(false);
     }
   };
-
   const formatNumber = (num) => Number(num || 0).toFixed(2);
 
   const handleMarketSummaryClick = (eventId) => {
@@ -400,20 +402,25 @@ const ProfitLossDetail = () => {
     navigate(`/reports/profit-loss-summary-event/${eventId}`, {
       state: {
         payload: payload,
-         eventName: eventName, 
+        eventName: eventName,
       },
     });
   };
 
-  const handleBetHistoryClick = (marketId, betType,marketName) => {
-    const admin_id = localStorage.getItem("admin_id") || "admin";
-    const role = parseInt(localStorage.getItem("role")) || 1;
+  const handleBetHistoryClick = (item, marketId, betType, marketName) => {
+    const admin_id = item.admin_id;
+    const role = item.user_role || 5;
+
+    if (!admin_id) {
+      toast.error("Admin ID not found for this user");
+      return;
+    }
 
     const payload = {
       market_id: marketId,
       admin_id: admin_id,
       role: role,
-      event_id: eventId,
+      event_id: item.event_id || eventId,
       bet_type: betType,
       page: 1,
       limit: 50,
@@ -424,10 +431,11 @@ const ProfitLossDetail = () => {
 
     console.log("✅ Bet History Payload:", payload);
 
+    // ✅ SIRF marketId bhejo, marketName mat bhejo
     navigate(`/reports/profit-loss-bet-history/${marketId}`, {
       state: {
         payload: payload,
-         marketName: marketName // 
+        marketName: marketName, // state mein bhejo, URL mein nahi
       },
     });
   };
@@ -438,7 +446,7 @@ const ProfitLossDetail = () => {
       <div className="card">
         <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center gap-2">
           {/* <h3 className="card-title mb-0">Detail - Event ID: {eventId}</h3> */}
-              <h3 className="card-title mb-0">
+          <h3 className="card-title mb-0">
             Profit Loss Of  {eventName ? `- ${eventName}` : `- Event ID: ${eventId}`}
           </h3>
           <button
@@ -501,7 +509,11 @@ const ProfitLossDetail = () => {
                       >
                         {formatNumber(item.amount)}
                       </td>
-                      <td>{formatNumber(item.total)}</td>
+                      <td
+                        className={`fw-bold ${item.amount >= 0 ? "text-success" : "text-danger"}`}
+                      >
+                        {formatNumber(item.admin_win)}
+                      </td>
                       <td>
                         <div className="d-flex justify-content-start gap-1">
                           <button
@@ -518,9 +530,10 @@ const ProfitLossDetail = () => {
                             className="buttoncommon gradient-3"
                             onClick={() =>
                               handleBetHistoryClick(
+                                item,
                                 item.market_id,
                                 item.bet_type,
-                                 item.market_name 
+                                item.market_name
                               )
                             }
                             title="View Bet History"

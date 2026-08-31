@@ -25,9 +25,14 @@ const Multimarket = () => {
   const fetchMarketAnalysis = async (page = currentPage) => {
     try {
       setLoading(true);
+      
+      // ✅ localStorage se admin_id lo
+      const adminId = localStorage.getItem("admin_id") || "admin";
+      
       const res = await getMarketAnalysis({
         page,
         limit,
+        admin_id: adminId, // ✅ SIRF YAHI CHANGE HAI
       });
 
       const response = res.data;
@@ -592,8 +597,24 @@ const Multimarket = () => {
           color: #000;
         }
 
-        /* B Button Styles */
-     
+        .betlist-btn {
+          background: #17a2b8;
+          color: #fff;
+          border: none;
+          border-radius: 4px;
+          padding: 4px 12px;
+          font-weight: 600;
+          font-size: 14px;
+          cursor: pointer;
+          transition: all 0.2s;
+          min-width: 36px;
+          height: 34px;
+        }
+
+        .betlist-btn:hover {
+          background: #138496;
+          transform: scale(1.02);
+        }
 
         /* Match Odds & Bookmaker & Fancy */
         .match-odds-container,

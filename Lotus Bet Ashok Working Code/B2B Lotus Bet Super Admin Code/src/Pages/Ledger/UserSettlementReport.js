@@ -157,7 +157,8 @@ function UserSettlementReport() {
     <div className="card">
       <div className="card-header bg-primary-yellow d-flex justify-content-between align-items-center">
         <h3 className="card-title mb-0">
-          Settlement Report - {username || admin_id}
+          {/* Settlement Report - {username || admin_id} */}
+          Settlement Report 
         </h3>
         <div className="d-flex gap-2">
           <div className="btn btn-outline-light" onClick={() => navigate(-1)}>
@@ -247,12 +248,20 @@ function UserSettlementReport() {
               <thead>
                 <tr>
                   {/* <th>DELETE</th> */}
-                  <th>NO</th>
+                  {/* <th>NO</th>
                   <th>DESC</th>
                   <th>Type</th>
-                  {/* <th>DR</th>
-                  <th>CR</th> */}
                   <th>Amount</th>
+                  <th>D/C</th>
+                  <th>Note</th>
+                  <th>DATE</th> */}
+                   <th>NO</th>
+                  <th>DESC</th>
+                  <th>Type</th>
+                  <th>Collection Name</th>
+                  <th>DR</th>
+                  <th>CR</th>
+                  <th>Balance</th>
                   <th>D/C</th>
                   <th>Note</th>
                   <th>DATE</th>
@@ -290,10 +299,8 @@ function UserSettlementReport() {
                           🗑️
                         </button>
                       </td> */}
-                      <td>{item.comment || "-"}</td>
+                      {/* <td>{item.comment || "-"}</td>
                       <td>{item.collection_name || "-"}</td>
-                      {/* <td>{item.debit > 0 ? item.debit.toFixed(2) : "-"}</td>
-                      <td>{item.credit > 0 ? item.credit.toFixed(2) : "-"}</td> */}
                       <td>{item.balance ? item.balance.toFixed(2) : "-"}</td>
                       <td>
                         {item.pay_type == "diya"
@@ -303,7 +310,32 @@ function UserSettlementReport() {
                             : "-"}
                       </td>
                       <td>{item.remarks || "-"}</td>
+                      <td>{formatDate(item.created_at)}</td> */}
+
+                        <td>{item.comment || "-"}</td>
+                      {/* <td>{item.type || "-"}</td> */}
+                       <td>
+                        {item.debit > 0 ? "Debit" : item.credit > 0 ? "Credit" : "-"}
+                      </td>
+<td>{item.collection_name || "-"}</td>
+                      <td>{item.debit > 0 ? item.debit.toFixed(2) : "-"}</td>
+                      
+
+                      <td>{item.credit > 0 ? item.credit.toFixed(2) : "-"}</td>
+                      <td>{item.balance ? item.balance.toFixed(2) : "-"}</td>
+                      {/* <td>
+                        {item.pay_type == "diya"
+                          ? "CR"
+                          : item.pay_type == "liya"
+                            ? "DR"
+                            : "-"}
+                      </td> */}
+                      <td>
+                        {item.debit > 0 ? "D" : item.credit > 0 ? "C" : "-"}
+                      </td>
+                      <td>{item.remarks || "-"}</td>
                       <td>{formatDate(item.created_at)}</td>
+
                     </tr>
                   ))
                 )}

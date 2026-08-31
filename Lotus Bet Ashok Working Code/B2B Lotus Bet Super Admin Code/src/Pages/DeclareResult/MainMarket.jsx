@@ -15,6 +15,7 @@ import {
   declareMatchResult,
   getAllMatchResultList,
   rollbackFancyNow,
+
   lenadenasettled,
 } from "../../Server/api";
 import { getAllGames } from "../../Server/game.service";
@@ -230,28 +231,28 @@ function MainMarket() {
     }
   };
 
-  const fetchMatchResultList = async (pageNo) => {
-    try {
-      setLoadingTable(true);
+  // const fetchMatchResultList = async (pageNo) => {
+  //   try {
+  //     setLoadingTable(true);
 
-      const payload = {
-        admin_id: admin_id,
-        page: pageNo,
-        limit: limit,
-      };
-      const res = await getAllMatchResultList(payload);
+  //     const payload = {
+  //       admin_id: admin_id,
+  //       page: pageNo,
+  //       limit: limit,
+  //     };
+  //     const res = await getAllMatchResultList(payload);
 
-      if (res.data.success) {
-        setMarketData(res.data.results || []);
-        setTotal(res.data.pagination.total);
-        setTotalPages(res.data.pagination.totalPages);
-      }
-    } catch (err) {
-      console.error("Match result list error", err);
-    } finally {
-      setLoadingTable(false);
-    }
-  };
+  //     if (res.data.success) {
+  //       setMarketData(res.data.results || []);
+  //       setTotal(res.data.pagination.total);
+  //       setTotalPages(res.data.pagination.totalPages);
+  //     }
+  //   } catch (err) {
+  //     console.error("Match result list error", err);
+  //   } finally {
+  //     setLoadingTable(false);
+  //   }
+  // };
 
   // const handleRollback = async (item) => {
   //   const confirm = await Swal.fire({
@@ -285,6 +286,48 @@ function MainMarket() {
   //   }
   // };
 
+  const fetchMatchResultList = async (pageNo) => {
+    try {
+      setLoadingTable(true);
+
+      const payload = {
+        admin_id: admin_id,
+        page: pageNo,
+        limit: limit,
+      };
+
+      const res = await getAllMatchResultList(payload);
+
+      if (res.data.success) {
+        const results = res.data.results || [];
+
+        // Sport ID 7 (Horse Racing) and 8 (Greyhound)
+        // ko MainMarket listing se remove karo
+        const filteredResults = results.filter(
+          (item) =>
+            Number(item.sport_id) !== 7 &&
+            Number(item.sport_id) !== 8
+        );
+
+        setMarketData(filteredResults);
+
+        setTotal(res.data.pagination?.total || 0);
+        setTotalPages(res.data.pagination?.totalPages || 1);
+      } else {
+        setMarketData([]);
+        setTotal(0);
+        setTotalPages(1);
+      }
+    } catch (err) {
+      console.error("Match result list error", err);
+      setMarketData([]);
+      setTotal(0);
+      setTotalPages(1);
+    } finally {
+      setLoadingTable(false);
+    }
+  };
+
   const handleRollbacklenadenasettled = async (item) => {
     const confirm = await Swal.fire({
       title: " Settled Result?",
@@ -296,12 +339,14 @@ function MainMarket() {
 
     if (!confirm.isConfirmed) return;
 
+
     try {
       setBtnLoader(item._id, true);
 
       const res = await lenadenasettled({
         result_id: item._id,
         event_id: item.event_id,
+        sport_id: item.sport_id,
       });
       if (res.data?.success) {
         Swal.fire("Success", res.data.message, "success");
@@ -575,7 +620,18 @@ function MainMarket() {
                         {/* <span className={item.result === 1 ? "text-success" : "text-danger"}>
                             {item.result === 1 ? "Win" : "Lose"}
                           </span> */}
-                        {item.result}
+                        {/* {item.result} */}
+                        <td>
+                          <span
+                            className={
+                              Number(item.result) === 1
+                                ? "text-success fw-bold"
+                                : "text-danger fw-bold"
+                            }
+                          >
+                            {Number(item.result) === 1 ? "Declared" : "Pending"}
+                          </span>
+                        </td>
                       </td>
                       {/* <td>
                           <button
@@ -587,16 +643,16 @@ function MainMarket() {
                           </button>
                         </td> */}
                       {/* <td>
-  {item.lenadena_settle === 1 && (
-    <button
-      className="btn btn-warning btn-sm"
-      disabled={btnLoading[item._id]}
-      onClick={() => handleRollbacklenadenasettled(item)}
-    >
-      {btnLoading[item._id] ? "Processing..." : "settled"}
-    </button>
-  )}
-</td> */}
+                      {item.lenadena_settle === 1 && (
+                        <button
+                          className="btn btn-warning btn-sm"
+                          disabled={btnLoading[item._id]}
+                          onClick={() => handleRollbacklenadenasettled(item)}
+                        >
+                          {btnLoading[item._id] ? "Processing..." : "settled"}
+                        </button>
+                      )}
+                    </td> */}
 
                       <td>
                         {item.lenadena_settle === 0 ? (
