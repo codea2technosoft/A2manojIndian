@@ -60,11 +60,11 @@ const Login = () => {
       if (response.ok && data.success === true) {
         localStorage.setItem("token", data.accessToken);
         localStorage.setItem("refreshToken", data.refreshToken);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        // localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("admin_id", data.user.admin_id);
         localStorage.setItem("role", data.user.role);
-        localStorage.setItem("check", password);
+        // localStorage.setItem("check", password);
 
         await Swal.fire({
           icon: "success",

@@ -1,0 +1,183 @@
+.adminlogin {
+  height: 100vh;
+  width: 100vw;
+  background: url("../assets/images/loginbg.jpg");
+  padding: 0px;
+  box-sizing: border-box;
+  margin: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.adminlogin .login_form {
+  padding: 30px;
+  gap: 25px;
+  background: #fff;
+  max-width: 1000px;
+  width: 100%;
+  margin: auto;
+  align-items: center;
+  border-radius: 25px;
+}
+
+.adminlogin .imagelogin {
+  height: 100%;
+  width: 50%;
+  display: flex;
+  position: relative;
+}
+
+.adminlogin .imagelogin .quotes {
+  position: absolute;
+  text-align: right;
+  color: #000000;
+  top: 28px;
+  width: 60%;
+  right: 32px;
+  text-transform: capitalize;
+  font-weight: 600;
+}
+
+.adminlogin .imagelogin .quotes p {
+  margin-bottom: 0px;
+  line-height: 126%;
+  text-align: right;
+  color: #000;
+}
+
+.adminlogin .imagelogin img {
+  height: 100%;
+  filter: drop-shadow(1px 1px 6px black);
+  width: 100%;
+  object-fit: cover;
+}
+
+.adminlogin .form_design {
+  flex: 1 1 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: #fff;
+}
+
+.adminlogin .login-wrapper {
+  flex: 1 1 50%;
+}
+
+.adminlogin .form_design {
+  max-width: 100%;
+  width: 100%;
+  padding: 0px;
+  text-align: center;
+  flex-direction: column;
+}
+
+.adminlogin .form_design .logo img {
+  max-width: 80px;
+  margin-bottom: 20px;
+}
+
+.adminlogin .form_design h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 10px 0px 0px;
+}
+
+.adminlogin .form_design p {
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.adminlogin .form_design .social-btn {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  gap: 10px;
+}
+
+.adminlogin .form_design .social-btn.google {
+  background: #fff;
+}
+
+.adminlogin .form_design .social-btn.apple {
+  background: #fff;
+}
+
+.adminlogin .form_design .divider {
+  margin: 20px 0;
+  text-align: center;
+  position: relative;
+}
+
+.adminlogin .form_design .divider span {
+  background: #fff;
+  padding: 0 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.adminlogin .form_design .divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 1px;
+  width: 100%;
+  background: #ccc;
+  z-index: 0;
+}
+
+.adminlogin .form_design .login-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 15px;
+}
+
+.adminlogin .form_design .login-form input {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.adminlogin .form_design .form-options {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.adminlogin .form_design .form-options a {
+  color: #333;
+  text-decoration: none;
+}
+
+.adminlogin .form_design .login-btn {
+  margin-top: 20px;
+  padding: 12px;
+  background: linear-gradient(45deg, #262f55, #078ac8);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.adminlogin .form_design .signup-text {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.adminlogin .form_design .signup-text a {
+  font-weight: bold;
+  color: #28294d;
+  text-decoration: none;
+}

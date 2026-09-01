@@ -1,0 +1,10 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 28" width="50" height="28">
+	<title>sell_rent_icon</title>
+	<style>
+		.s0 { fill: none;stroke: #fdedec;stroke-width: 2 } 
+		.s1 { fill: #28294d;stroke: #ffffff } 
+	</style>
+	<path class="s0" d="m3 25l22.2-25 21.8 25"/>
+	<path fill-rule="evenodd" class="s1" d="m47 27.5c-1.4 0-2.5-1.1-2.5-2.5 0-1.4 1.1-2.5 2.5-2.5 1.4 0 2.5 1.1 2.5 2.5 0 1.4-1.1 2.5-2.5 2.5z"/>
+	<path fill-rule="evenodd" class="s1" d="m3 27.5c-1.4 0-2.5-1.1-2.5-2.5 0-1.4 1.1-2.5 2.5-2.5 1.4 0 2.5 1.1 2.5 2.5 0 1.4-1.1 2.5-2.5 2.5z"/>
+</svg>

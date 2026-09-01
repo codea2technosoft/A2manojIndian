@@ -447,8 +447,82 @@ const [showPassword, setShowPassword] = useState(false);
 //   }
 // };
 
+// const handleSubmit = async () => {
+//   if (!oldPassword || !newPassword || !confirmPassword) {
+//     Swal.fire({
+//       icon: "error",
+//       title: "Missing Fields",
+//       text: "Please fill all password fields.",
+//     });
+//     return;
+//   }
+
+//   if (newPassword !== confirmPassword) {
+//     Swal.fire({
+//       icon: "error",
+//       title: "Failed",
+//       text: "Confirm Password Wrong",
+//     });
+//     return;
+//   }
+  
+//   setIsLoading(true);
+//   try {
+//     const token = localStorage.getItem("token");
+//     const admin_id = localStorage.getItem("admin_id");
+    
+//     // ✅ SIRF YEH 3 FIELDS BHEJO
+//     const requestData = { 
+//       admin_id,
+//       oldPassword,
+//       password: newPassword  // ✅ newPassword ko "password" key se bhejo
+//     };
+
+//     const response = await fetch(
+//       `${process.env.REACT_APP_API_URL}/change-password`,
+//       {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//         },
+//         body: JSON.stringify(requestData),
+//       }
+//     );
+
+//     const resJson = await response.json();
+
+//     if (resJson.success) {
+//       Swal.fire({
+//         icon: "success",
+//         title: "Success",
+//         text: resJson.message || "Password changed successfully!",
+//       });
+//       setIsOpen(false);
+//       setOldPassword("");
+//       setNewPassword("");
+//       setConfirmPassword("");
+//     } else {
+//       Swal.fire({
+//         icon: "error",
+//         title: "Failed",
+//         text: resJson.message || "Something went wrong",
+//       });
+//     }
+//   } catch (err) {
+//     Swal.fire({
+//       icon: "error",
+//       title: "Error",
+//       text: err.message || "Network error",
+//     });
+//   } finally {
+//     setIsLoading(false);
+//   }
+// };
+
 const handleSubmit = async () => {
-  if (!oldPassword || !newPassword || !confirmPassword) {
+  // if (!oldPassword || !newPassword || !confirmPassword) {  // ✅ OLD VALIDATION COMMENTED
+  if (!newPassword || !confirmPassword) {  // ✅ SIRF NEW + CONFIRM CHECK
     Swal.fire({
       icon: "error",
       title: "Missing Fields",
@@ -457,6 +531,18 @@ const handleSubmit = async () => {
     return;
   }
 
+  
+  // ✅ NEW: Minimum 6 characters validation
+  if (newPassword.length < 6) {
+    Swal.fire({
+      icon: "error",
+      title: "Weak Password",
+      text: "Password must be at least 6 characters long.",
+    });
+    return;
+  }
+
+  
   if (newPassword !== confirmPassword) {
     Swal.fire({
       icon: "error",
@@ -471,11 +557,10 @@ const handleSubmit = async () => {
     const token = localStorage.getItem("token");
     const admin_id = localStorage.getItem("admin_id");
     
-    // ✅ SIRF YEH 3 FIELDS BHEJO
     const requestData = { 
       admin_id,
-      oldPassword,
-      password: newPassword  // ✅ newPassword ko "password" key se bhejo
+      // oldPassword,  // ✅ COMMENTED - Profile se auto lega
+      password: newPassword  // ✅ Sirf new password bhejo
     };
 
     const response = await fetch(
@@ -499,7 +584,7 @@ const handleSubmit = async () => {
         text: resJson.message || "Password changed successfully!",
       });
       setIsOpen(false);
-      setOldPassword("");
+      // setOldPassword("");  // ✅ COMMENTED
       setNewPassword("");
       setConfirmPassword("");
     } else {
@@ -519,7 +604,6 @@ const handleSubmit = async () => {
     setIsLoading(false);
   }
 };
-
 useEffect(() => {
     let startY = 0;
     let isRefreshing = false;
@@ -881,59 +965,55 @@ useEffect(() => {
         <Modal.Header closeButton>
           <Modal.Title>Change Password</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <Form.Group    style={{ position: "relative" }} className="mb-3">
-            <Form.Label>Old Password</Form.Label>
-            <Form.Control
+       <Modal.Body>
+  {/* ✅ OLD PASSWORD FIELD COMMENTED - Profile se auto fill hoga */}
+  {/* <Form.Group style={{ position: "relative" }} className="mb-3">
+    <Form.Label>Old Password</Form.Label>
+    <Form.Control
       type={showPassword === "old" ? "text" : "password"}
-
-              placeholder="Enter old password"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-              disabled={isLoading}
-            />
-            <span
-        onClick={() =>
-        setShowPassword(showPassword === "old" ? null : "old")
-      }
-        style={{
-            position: "absolute",
-            right: "12px",
-            top: "30px",
-            cursor: "pointer",
-            color: "#6c757d",
-            zIndex: 10,
-        }}
+      placeholder="Enter old password"
+      value={oldPassword}
+      onChange={(e) => setOldPassword(e.target.value)}
+      disabled={isLoading}
+    />
+    <span
+      onClick={() => setShowPassword(showPassword === "old" ? null : "old")}
+      style={{
+        position: "absolute",
+        right: "12px",
+        top: "30px",
+        cursor: "pointer",
+        color: "#6c757d",
+        zIndex: 10,
+      }}
     >
-         {showPassword === "old" ? (
+      {showPassword === "old" ? (
         <FaEyeSlash size={18} />
       ) : (
         <FaEye size={18} />
       )}
     </span>
-          </Form.Group>
-          <Form.Group     style={{ position: "relative" }} className="mb-3">
-            <Form.Label>New Password</Form.Label>
-            <Form.Control
-      type={showPassword === "new" ? "text" : "password"}
+  </Form.Group> */}
 
-              placeholder="Enter new password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              disabled={isLoading}
-            />
-            <span
-          onClick={() =>
-        setShowPassword(showPassword === "new" ? null : "new")
-      }
-        style={{
-            position: "absolute",
-            right: "12px",
-            top: "30px",
-            cursor: "pointer",
-            color: "#6c757d",
-            zIndex: 10,
-        }}
+  <Form.Group style={{ position: "relative" }} className="mb-3">
+    <Form.Label>New Password</Form.Label>
+    <Form.Control
+      type={showPassword === "new" ? "text" : "password"}
+      placeholder="Enter new password"
+      value={newPassword}
+      onChange={(e) => setNewPassword(e.target.value)}
+      disabled={isLoading}
+    />
+    <span
+      onClick={() => setShowPassword(showPassword === "new" ? null : "new")}
+      style={{
+        position: "absolute",
+        right: "12px",
+        top: "30px",
+        cursor: "pointer",
+        color: "#6c757d",
+        zIndex: 10,
+      }}
     >
       {showPassword === "new" ? (
         <FaEyeSlash size={18} />
@@ -941,38 +1021,36 @@ useEffect(() => {
         <FaEye size={18} />
       )}
     </span>
-          </Form.Group>
-          <Form.Group   style={{ position: "relative" }} className="mb-3">
-            <Form.Label>Confirm Password</Form.Label>
-            <Form.Control
+  </Form.Group>
+  
+  <Form.Group style={{ position: "relative" }} className="mb-3">
+    <Form.Label>Confirm Password</Form.Label>
+    <Form.Control
       type={showPassword === "confirm" ? "text" : "password"}
-
-              placeholder="Enter confirm password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              disabled={isLoading}
-            />
-<span
-        onClick={() =>
-        setShowPassword(showPassword === "confirm" ? null : "confirm")
-      }
-        style={{
-            position: "absolute",
-            right: "12px",
-            top: "30px",
-            cursor: "pointer",
-            color: "#6c757d",
-            zIndex: 10,
-        }}
+      placeholder="Enter confirm password"
+      value={confirmPassword}
+      onChange={(e) => setConfirmPassword(e.target.value)}
+      disabled={isLoading}
+    />
+    <span
+      onClick={() => setShowPassword(showPassword === "confirm" ? null : "confirm")}
+      style={{
+        position: "absolute",
+        right: "12px",
+        top: "30px",
+        cursor: "pointer",
+        color: "#6c757d",
+        zIndex: 10,
+      }}
     >
-       {showPassword === "confirm" ? (
+      {showPassword === "confirm" ? (
         <FaEyeSlash size={18} />
       ) : (
         <FaEye size={18} />
       )}
     </span>
-          </Form.Group>
-        </Modal.Body>
+  </Form.Group>
+</Modal.Body>
         <Modal.Footer>
           <Button
             variant="secondary"
